@@ -15,7 +15,7 @@ Animation::Animation( int x,int y,int width,int height,int count,
 
 void Animation::Draw(DirectX::XMFLOAT2 coordinates,Graphics& gfx ) const
 {
-	gfx.DrawSpriteGhost(coordinates.x, coordinates.y,frames[iCurFrame],sprite,chroma );
+	gfx.DrawSprite(coordinates.x, coordinates.y,frames[iCurFrame],sprite,chroma );
 }
 
 void Animation::Draw(DirectX::XMFLOAT2 coordinates,Graphics& gfx,const RectI& clip ) const

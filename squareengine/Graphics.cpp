@@ -301,7 +301,7 @@ void Graphics::EndFrame()
 	pImmediateContext->Draw(6u, 0u);
 }
 
-void Graphics::BeginFrame( float red,float green,float blue ) noexcept
+void Graphics::BeginFrame() noexcept
 {
 #if IS_ENGINE_MODE
 	// imgui begin frame

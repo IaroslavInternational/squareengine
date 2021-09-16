@@ -97,7 +97,7 @@ public:
 	~Graphics();
 	
 	void EndFrame();
-	void BeginFrame( float red,float green,float blue ) noexcept;
+	void BeginFrame() noexcept;
 	
 	void DrawIndexed( UINT count ) noxnd;
 

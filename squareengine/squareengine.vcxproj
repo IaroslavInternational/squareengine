@@ -102,7 +102,6 @@
     <ClCompile Include="AdapterData.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="Character.cpp" />
     <ClCompile Include="cnpy.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -114,7 +113,8 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="imgui\imnodes.cpp" />
-    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Object2D.cpp" />
+    <ClCompile Include="Person.cpp" />
     <ClCompile Include="RectI.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneDataReader.cpp" />
@@ -153,7 +153,6 @@
     <ClCompile Include="ScriptCommander.cpp" />
     <ClCompile Include="Vec2.cpp" />
     <ClCompile Include="Vei2.cpp" />
-    <ClCompile Include="VisibleObject.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
     <ClCompile Include="WinMain.cpp" />
@@ -163,7 +162,6 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="AppLog.h" />
-    <ClInclude Include="Character.h" />
     <ClInclude Include="cnpy.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="EngineConverter.h" />
@@ -182,7 +180,8 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="LogCommands.h" />
-    <ClInclude Include="Object.h" />
+    <ClInclude Include="Object2D.h" />
+    <ClInclude Include="Person.h" />
     <ClInclude Include="RectI.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneDataReader.h" />
@@ -209,7 +208,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vei2.h" />
-    <ClInclude Include="VisibleObject.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />
     <ClInclude Include="WindowsThrowMacros.h" />

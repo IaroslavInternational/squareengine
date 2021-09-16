@@ -10,14 +10,14 @@
 
 //#include "SceneObjects.h"
 
-#include "Character.h"
+#include "Person.h"
 
 namespace dx = DirectX;
 
 class Scene
 {
 public:
-	Scene(std::string sceneName,	   std::shared_ptr<Window> _wnd, 
+	Scene(std::string name,	std::shared_ptr<Window> _wnd, 
 		  std::string data);
 	~Scene();
 
@@ -30,9 +30,6 @@ public:
 	void Render(float dt);
 
 	std::pair<std::string, bool> IsOnTheSceneTrigger();
-
-	// Возращение камеры на исходное положение
-	void ResetPos();
 
 	// Геттер имени сцены
 	std::string GetName() const;
@@ -98,13 +95,9 @@ private:
 #endif // IS_ENGINE_MODE
 private:
 	// Идентификаторы сцены
-	std::string sceneName;
+	std::string name;
 
 	// Настройки
-#if IS_ENGINE_MODE
-	bool savingDepth = false;
-#endif // IS_ENGINE_MODE
-
 	bool showDemoWindow = true;
 	bool onTrigger = false; const char* triggerGoal = nullptr;
 	bool cursorState = false;
@@ -148,11 +141,9 @@ private:
 	// Указатель на главное окно 
 	std::shared_ptr<Window> wnd;
 
-	// Рендер граф
 	/********* -Объекты- *********/
 
-	//SceneObjects objects;
-	Character person;
+	Person person;
 
 	/*****************************/
 };

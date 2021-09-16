@@ -5,22 +5,17 @@
 #if IS_ENGINE_MODE
 #include "AdapterData.h"
 #include "imgui/imgui.h"
-#include "imgui/ImGuiFileDialog.h"
-#include "imgui/imnodes.h"
 #endif // IS_ENGINE_MODE
 
 #include <sstream>
 
-Scene::Scene(std::string sceneName,		  std::shared_ptr<Window> _wnd, 
+Scene::Scene(std::string name,	std::shared_ptr<Window> _wnd, 
 			 std::string data)
 	:
 	wnd(_wnd),
-	person("Images\\link90x90.bmp", { 1000.0f, 200.0f }),
-	//objects(data, wnd->Gfx(), rg),
-	sceneName(sceneName)
+	name(name),
+	person("Ray", { 500.0f, 200.0f }, "Images\\link90x90.bmp", 110.0f)
 {	
-	//objects.LinkTechniques(rg);
-
 #if IS_ENGINE_MODE
 	SetGuiColors();
 #endif // IS_ENGINE_MODE
@@ -31,7 +26,6 @@ Scene::~Scene()
 
 void Scene::ProcessInput(float dt)
 {
-
 	while (const auto e = wnd->kbd.ReadKey())
 	{
 		if (!e->IsPress())
@@ -92,7 +86,7 @@ void Scene::Render(float dt)
 {
 	/* Начало кадра */
 
-	wnd->Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
+	wnd->Gfx().BeginFrame();
 
 	ShowGui();
 	person.Draw(wnd->Gfx());
@@ -105,10 +99,6 @@ void Scene::Render(float dt)
 std::pair<std::string, bool> Scene::IsOnTheSceneTrigger()
 {
 	return std::pair{ "NULL", false };
-}
-
-void Scene::ResetPos()
-{
 }
 
 #if IS_ENGINE_MODE
@@ -224,7 +214,6 @@ void Scene::ShowMenu()
 
 					if (ImGui::MenuItem("Добавить"))
 					{
-						ImGuiFileDialog::Instance()->OpenDialog("ModelOD", "Выбирете файл", ".obj,.mtl,.gltf", "");
 					}
 
 					//objects.models.OpenDialog();
@@ -547,5 +536,5 @@ void Scene::ShowImguiDemoWindow()
 
 std::string Scene::GetName() const
 {
-	return sceneName;
+	return name;
 }

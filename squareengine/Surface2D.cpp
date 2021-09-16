@@ -40,7 +40,7 @@ Surface2D::Surface2D( const std::string& filename )
 		yEnd = -1;
 		dy = -1;
 	}
-
+	
 	pPixels = new Color[width*height];
 
 	file.seekg( bmFileHeader.bfOffBits );

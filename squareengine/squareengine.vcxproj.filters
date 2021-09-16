@@ -198,16 +198,7 @@
     <ClCompile Include="WindowsMessageMap.cpp">
       <Filter>Исходные файлы\Окна</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
-    </ClCompile>
-    <ClCompile Include="VisibleObject.cpp">
-      <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Font.cpp">
@@ -224,6 +215,12 @@
     </ClCompile>
     <ClCompile Include="Surface2D.cpp">
       <Filter>Исходные файлы\Система\Графика</Filter>
+    </ClCompile>
+    <ClCompile Include="Object2D.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
+    </ClCompile>
+    <ClCompile Include="Person.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -359,19 +356,10 @@
     <ClInclude Include="EngineFunctions.hpp">
       <Filter>Заголовочные файлы\Система\Утилиты</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
-    </ClInclude>
-    <ClInclude Include="VisibleObject.h">
-      <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
-    </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="Vec2.h">
@@ -388,6 +376,12 @@
     </ClInclude>
     <ClInclude Include="RectI.h">
       <Filter>Заголовочные файлы\Система\Графика</Filter>
+    </ClInclude>
+    <ClInclude Include="Object2D.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
+    </ClInclude>
+    <ClInclude Include="Person.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -48,7 +48,7 @@ void App::DoFrame(float dt)
 					if (it->first->GetName() == t.first)
 					{						
 						it->second = true;
-						it->first->ResetPos();						
+						//it->first->ResetPos();						
 						break;
 					}
 				}
