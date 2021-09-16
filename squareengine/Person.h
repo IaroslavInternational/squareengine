@@ -2,11 +2,12 @@
 
 #include "Object2D.h"
 #include "Animation.h"
+#include "Window.h"
 
 class Person : public Object2D
 {
 public:
-	Person(std::string name, DirectX::XMFLOAT2 position, std::string pathTosprite, 
+	Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite, 
 		float speed = 1.0f, float effectDuration = 0.045f, float effectTime = 0.0f,
 		bool effectActive = false);
 public:

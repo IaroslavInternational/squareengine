@@ -7,10 +7,8 @@
 #endif
 
 #include "EngineTimer.h"
-
-//#include "SceneObjects.h"
-
-#include "Person.h"
+#include "SceneDataReader.h"
+#include "PersonContainer.h"
 
 namespace dx = DirectX;
 
@@ -141,9 +139,11 @@ private:
 	// ”казатель на главное окно 
 	std::shared_ptr<Window> wnd;
 
+	SceneDataReader sdr;
+
 	/********* -ќбъекты- *********/
 
-	Person person;
+	PersonContainer pc;
 
 	/*****************************/
 };

@@ -9,15 +9,9 @@ public:
 	SceneDataReader(std::string path);
 	~SceneDataReader();
 public:
-	std::string GetCameraContainerPath() const;		// Путь к файлу с данными о контейнере камер
-	std::string GetPointLightContainerPath() const;	// Путь к файлу с данными о контейнере точ. ист. освещения
-	std::string GetModelContainerPath() const;		// Путь к файлу с данными о контейнере моделей
-	std::string GetTriggerContainerPath() const;	// Путь к файлу с данными о контейнере триггеров
+	std::string GetPersonContainerPath() const;		// Путь к файлу с данными о контейнере объектов
 private:
-	// 0 - Путь к моделям
-	// 1 - Путь к триггерам 
-	// 2 - Путь к точечным источникам света
-	// 3 - Путь к камерам
+	// 0 - Путь к персонажам
 	std::vector<std::string>& GetPaths();
 private:
 	std::vector<std::string> paths;

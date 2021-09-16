@@ -14,7 +14,9 @@ Scene::Scene(std::string name,	std::shared_ptr<Window> _wnd,
 	:
 	wnd(_wnd),
 	name(name),
-	person("Ray", { 500.0f, 200.0f }, "Images\\link90x90.bmp", 110.0f)
+	sdr(data),
+	pc(sdr.GetPersonContainerPath())
+	
 {	
 #if IS_ENGINE_MODE
 	SetGuiColors();
@@ -51,7 +53,7 @@ void Scene::ProcessInput(float dt)
 			showDemoWindow = true;
 			break;
 		case VK_SPACE:
-			person.ActivateEffect();
+			//person.ActivateEffect();
 		default:
 			break;
 		}
@@ -77,9 +79,9 @@ void Scene::ProcessInput(float dt)
 			dir.x += 1.0f;
 		}
 	}
-	person.SetDirection(dir);
-	// update character
-	person.Update(dt);
+
+
+	//pc.Process(&wnd->kbd, wnd->CursorEnabled(), dt);
 }
 
 void Scene::Render(float dt)
@@ -89,7 +91,7 @@ void Scene::Render(float dt)
 	wnd->Gfx().BeginFrame();
 
 	ShowGui();
-	person.Draw(wnd->Gfx());
+	pc.Draw(wnd->Gfx());
 
 	wnd->Gfx().EndFrame();
 
@@ -422,7 +424,7 @@ void Scene::ShowFPSAndGPU()
 
 void Scene::ShowLog()
 {
-	//objects.DrawLog();
+	pc.DrawLog();
 }
 
 void Scene::ShowNodeEditor()

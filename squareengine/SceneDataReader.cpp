@@ -30,25 +30,25 @@ SceneDataReader::SceneDataReader(std::string path)
 		{
 			/* Запись пути моделей */
 			
-			paths.emplace_back(obj.at("modelsPath"));
+			paths.emplace_back(obj.at("objectsPath"));
 
 			/***********************/
 
 			/* Запись пути триггеров */
 
-			paths.emplace_back(obj.at("triggersPath"));
+			//paths.emplace_back(obj.at("triggersPath"));
 
 			/*************************/
 
 			/* Запись пути триггеров */
 
-			paths.emplace_back(obj.at("pLightsPath"));
+			//paths.emplace_back(obj.at("pLightsPath"));
 
 			/*************************/
 
 			/* Запись пути камер */
 
-			paths.emplace_back(obj.at("camerasPath"));
+			//paths.emplace_back(obj.at("camerasPath"));
 
 			/*************************/
 		}
@@ -59,24 +59,9 @@ SceneDataReader::~SceneDataReader()
 {
 }
 
-std::string SceneDataReader::GetCameraContainerPath() const
-{
-	return paths[3];
-}
-
-std::string SceneDataReader::GetPointLightContainerPath() const
-{
-	return paths[2];
-}
-
-std::string SceneDataReader::GetModelContainerPath() const
+std::string SceneDataReader::GetPersonContainerPath() const
 {
 	return paths[0];
-}
-
-std::string SceneDataReader::GetTriggerContainerPath() const
-{
-	return paths[1];
 }
 
 std::vector<std::string>& SceneDataReader::GetPaths()

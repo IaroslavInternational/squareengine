@@ -1,10 +1,10 @@
 #include "Person.h"
 
-Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathTosprite,
+Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite,
 			   float speed, float effectDuration, float effectTime, bool effectActive)
 	:
 	Object2D(name, position),
-	sprite(pathTosprite),
+	sprite(pathToSprite),
 	speed(speed),
 	effectDuration(effectDuration),
 	effectTime(effectTime),
