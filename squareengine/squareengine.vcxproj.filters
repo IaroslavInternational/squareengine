@@ -225,6 +225,9 @@
     <ClCompile Include="PersonContainer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="GUISystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -387,6 +390,9 @@
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
     <ClInclude Include="PersonContainer.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="GUISystem.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>

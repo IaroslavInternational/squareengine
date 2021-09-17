@@ -71,7 +71,6 @@ void PersonContainer::Draw(Graphics& gfx)
 	}
 }
 
-#if IS_ENGINE_MODE
 void PersonContainer::DrawLog()
 {
 	ImGui::Begin("Ћог", NULL, ImGuiWindowFlags_NoMove |
@@ -82,4 +81,8 @@ void PersonContainer::DrawLog()
 	applog.Draw("Ћог", NULL);
 	ImGui::End();
 }
-#endif // IS_ENGINE_MODE
+
+std::vector<std::unique_ptr<Person>>* PersonContainer::GetPersons()
+{
+	return &persons;
+}

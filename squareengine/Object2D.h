@@ -17,6 +17,7 @@ public:
 
 	// Получить позицию объекта
 	DirectX::XMFLOAT2 GetPosition();
+	DirectX::XMFLOAT2* GetPositionPtr();
 
 	// Установить имя объекта
 	void			  SetName(std::string name);

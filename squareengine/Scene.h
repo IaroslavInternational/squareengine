@@ -2,13 +2,11 @@
 
 #include "Window.h"
 
-#if IS_ENGINE_MODE
-#include "ImguiManager.h"
-#endif
-
 #include "EngineTimer.h"
 #include "SceneDataReader.h"
 #include "PersonContainer.h"
+
+#include "GUISystem.h"
 
 namespace dx = DirectX;
 
@@ -34,64 +32,6 @@ public:
 
 	/***** \Методы сцены/ *****/
 private:
-#if IS_ENGINE_MODE
-	/* -- Интерфейс -- */
-
-	/**** Панели ****/
-
-	// Установка положения и размеров панели
-	void SetPanelWidthAndPos(int corner, float width, float height, float x_offset = 0.0f, float y_offset = 0.0f);
-
-	// Верхня панель меню
-	void ShowMenu();
-
-	// Левая панель
-	void ShowLeftSide();
-
-	// Правая панель
-	void ShowRightSide();
-
-	// Левая нижняя панель
-	void ShowLeftBottomSide();
-
-	// Нижняя панель
-	void ShowBottomPanel();	
-
-	/****************/
-
-	// Отслеживание пересечения триггера
-	void ShowTrigCheck();
-
-	// Показать FPS и графические адаптеры *Левая нижняя панель*
-	void ShowFPSAndGPU();
-
-	// Показать лог *Нижняя панель*
-	void ShowLog();
-
-	// Показать редактор узлов *Отдельное окно*
-	void ShowNodeEditor();
-
-	// Отключить боковые панели
-	void DisableSides();
-
-	// Отключить все панели
-	void DisableAll();
-
-	// Показать интерфейс
-	void ShowGui();
-
-	// Цветовая гамма ImGui
-	void SetGuiColors();
-
-	/*******************/
-	
-	// Демо-интерфейс 
-	void ShowImguiDemoWindow();
-
-	/*******************/
-
-#endif // IS_ENGINE_MODE
-private:
 	// Идентификаторы сцены
 	std::string name;
 
@@ -103,33 +43,6 @@ private:
 #if IS_ENGINE_MODE
 	/* Интерфейс */
 
-	// Левая панель моделей на сцене
-	bool ShowModelsList = true;
-
-	// Правая панель управления настройками моделей
-	bool ShowModelsSettings = true;
-
-	// FPS и информация о графическом адаптере
-	bool ShowHardwareInfo = true;
-
-	// Лог
-	bool ShowLogs = true;
-
-	// Левая панель триггеров на сцене
-	bool ShowTriggersList = false;
-
-	// Правая панель триггеров на сцене
-	bool ShowTriggersSettings = false;
-
-	// Левая панель точечных источников света на сцене
-	bool ShowPLightsList = false;
-
-	// Правая панель управления настройками точечных источников света
-	bool ShowPLightsSettings = false;
-
-	// Левая панель камер на сцене с настройками
-	bool ShowCamsList = false;
-
 	// Редактор узлов
 	bool ShowNodeEditorWnd = false;
 
@@ -138,6 +51,8 @@ private:
 private:
 	// Указатель на главное окно 
 	std::shared_ptr<Window> wnd;
+
+	GUISystem gui;
 
 	SceneDataReader sdr;
 

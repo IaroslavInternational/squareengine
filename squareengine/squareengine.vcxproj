@@ -104,6 +104,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="cnpy.cpp" />
     <ClCompile Include="Font.cpp" />
+    <ClCompile Include="GUISystem.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\ImGuiFileDialog.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="EngineConverter.h" />
     <ClInclude Include="EngineFunctions.hpp" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="GUISystem.h" />
     <ClInclude Include="imgui\dirent\dirent.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />

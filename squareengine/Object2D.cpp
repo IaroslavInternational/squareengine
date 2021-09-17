@@ -16,6 +16,11 @@ DirectX::XMFLOAT2 Object2D::GetPosition()
 	return position;
 }
 
+DirectX::XMFLOAT2* Object2D::GetPositionPtr()
+{
+	return &position;
+}
+
 void Object2D::SetName(std::string name)
 {
 	this->name = name;
