@@ -31,6 +31,11 @@ void GUISystem::Hide()
 	ShowLogs = false;
 }
 
+void GUISystem::AddLog(const char* text)
+{
+	applog.AddLog(text);
+}
+
 void GUISystem::SetGUIColors()
 {
 	/*Стиль интерфейса*/
@@ -269,7 +274,7 @@ void GUISystem::ShowBottomPanel()
 
 	if (ShowLogs)
 	{
-		//ShowLog();
+		ShowLog();
 	}
 
 	/**************/
@@ -317,13 +322,24 @@ void GUISystem::ShowFPSAndGPU()
 	ImGui::End();
 }
 
+void GUISystem::ShowLog()
+{
+	ImGui::Begin("Лог", NULL, ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+	applog.Draw("Лог", NULL);
+	ImGui::End();
+}
+
 void GUISystem::ShowPersonList()
 {
 	if (ImGui::Begin("Персонажи", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		for (auto p = pv_ptr->begin(); p < pv_ptr->end(); p++)
+		for (auto p = pv_ptr->begin(); p != pv_ptr->end(); p++)
 		{
 			char label[128];
 			sprintf_s(label, p->get()->GetName().c_str(), personSelected);
@@ -359,14 +375,19 @@ void GUISystem::ShowPersonControl()
 				if (ImGui::BeginChild(""))
 				{
 					bool posDirty = false;
+					bool effDirty = false;
 
 					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; };
 
-					ImGui::Text("Позиция");
+					ImGui::Text("Позиция:");
 					dcheck(ImGui::SliderFloat("X", &pv_ptr->at(k)->GetPositionPtr()->x, -1000.0f, 1000.0f, "%.1f"), posDirty);
 					dcheck(ImGui::SliderFloat("Y", &pv_ptr->at(k)->GetPositionPtr()->y, -1000.0f, 1000.0f, "%.1f"), posDirty);
 
-//					ImGui::Checkbox("Скрыть", &visibility);
+					ImGui::Text("Эффект:");
+					dcheck(ImGui::SliderFloat("Продолжитель.", pv_ptr->at(k)->GetEffectDuration(), 0.0f, 100.0f, "%.1f"), effDirty);
+					dcheck(ImGui::SliderFloat("Время", pv_ptr->at(k)->GetEffectTime(), 0.0f, 100.0f, "%.1f"), effDirty);
+					
+					ImGui::Checkbox("Активен", pv_ptr->at(k)->GetEffectActive());
 
 					if (ImGui::Button("Удалить", ImVec2(100, 20)))
 					{

@@ -4,7 +4,11 @@
       "name": "Raymond",
       "path": "C:\\Users\\Yaros\\source\\projects\\squareengine\\squareengine\\Images\\link90x90.bmp",
       "pos-x": 500.0,
-      "pos-y": 100.0
+      "pos-y": 100.0,
+      "speed": 100.0,
+      "eff-d": 0.045,
+      "eff-t": 0.0,
+      "eff-a": false
     }
   ],
   "person 2": [
@@ -12,7 +16,11 @@
       "name": "Clark",
       "path": "C:\\Users\\Yaros\\source\\projects\\squareengine\\squareengine\\Images\\link90x90.bmp",
       "pos-x": 700.0,
-      "pos-y": 100.0
+      "pos-y": 100.0,
+      "speed": 100.0,
+      "eff-d": 0.045,
+      "eff-t": 0.0,
+      "eff-a": false
     }
   ]
 }

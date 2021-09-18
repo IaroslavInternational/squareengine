@@ -15,14 +15,21 @@ public:
 	void SetDirection(DirectX::XMFLOAT2 dir);
 	void Update(float dt);
 	void ActivateEffect();
+	Surface2D& GetSurface();
+	float* GetEffectDuration();
+	float* GetEffectTime();
+	bool* GetEffectActive();
 private:
 	Surface2D sprite;
 	DirectX::XMFLOAT2 vel = { 0.0f,0.0f };
 private:
 	float speed;
-	float effectDuration;
-	float effectTime;
-	bool effectActive;
+	struct
+	{
+		float Duration;
+		float Time;
+		bool Active;
+	} effect;
 private:
 	enum class Sequence
 	{

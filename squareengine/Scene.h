@@ -36,24 +36,16 @@ private:
 	std::string name;
 
 	// Настройки
-	bool showDemoWindow = true;
 	bool onTrigger = false; const char* triggerGoal = nullptr;
 	bool cursorState = false;
-
-#if IS_ENGINE_MODE
-	/* Интерфейс */
-
-	// Редактор узлов
-	bool ShowNodeEditorWnd = false;
-
-	/*************/
-#endif // IS_ENGINE_MODE
 private:
 	// Указатель на главное окно 
 	std::shared_ptr<Window> wnd;
 
+	// Интерфейс
 	GUISystem gui;
 
+	// Ридер данных сцены
 	SceneDataReader sdr;
 
 	/********* -Объекты- *********/

@@ -3,6 +3,7 @@
 #include "ImguiManager.h"
 #include "imgui/imgui.h"
 #include "AdapterData.h"
+#include "AppLog.h"
 
 #include <map>
 #include <string>
@@ -19,6 +20,8 @@ public: // Главные методы
 
 	// Скрыть интерфейс
 	void Hide();
+
+	void AddLog(const char* text);
 private: // Методы настройки и отрисовки панелей
 	void SetGUIColors();
 
@@ -46,6 +49,8 @@ private: // Методы отрисовки конкретных интерфейсов
 	// Показать панель с ифнормацией об FPS и графическом адаптере 
 	void ShowFPSAndGPU();
 
+	void ShowLog();
+
 	void ShowPersonList();
 	void ShowPersonControl();
 private: // Переменные видимости панелей
@@ -67,6 +72,8 @@ private: // Переменные видимости панелей
 	// Правая панель триггеров на сцене
 	bool ShowTriggersSettings = false;
 private:
+	// Лог
+	AppLog applog;
 	std::map<std::wstring, double> gpu_desc;
 private:
 	std::string personSelected = "";

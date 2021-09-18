@@ -39,9 +39,6 @@ void Scene::ProcessInput(float dt)
 				wnd->mouse.DisableRaw();
 			}
 			break;
-		case VK_F1:
-			showDemoWindow = true;
-			break;
 		case VK_SPACE:
 			//person.ActivateEffect();
 		default:
@@ -69,7 +66,6 @@ void Scene::ProcessInput(float dt)
 			dir.x += 1.0f;
 		}
 	}
-
 
 	//pc.Process(&wnd->kbd, wnd->CursorEnabled(), dt);
 }

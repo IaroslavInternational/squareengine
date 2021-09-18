@@ -5,11 +5,12 @@ Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToS
 	:
 	Object2D(name, position),
 	sprite(pathToSprite),
-	speed(speed),
-	effectDuration(effectDuration),
-	effectTime(effectTime),
-	effectActive(effectActive)
+	speed(speed)
 {
+	effect.Duration = effectDuration;
+	effect.Active = effectTime;
+	effect.Time =   effectActive;
+
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
 		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, sprite, 0.16f));
@@ -22,7 +23,7 @@ Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToS
 
 void Person::Draw(Graphics& gfx)
 {
-	if (effectActive)
+	if (effect.Active)
 	{
 		animations[(int)iCurSequence].DrawColor(DirectX::XMFLOAT2({ position.x, position.y }), gfx, Colors::Red);
 	}
@@ -83,19 +84,39 @@ void Person::Update(float dt)
 
 	animations[(int)iCurSequence].Update(dt);
 	// update effect time if active
-	if (effectActive)
+	if (effect.Active)
 	{
-		effectTime += dt;
+		effect.Time += dt;
 		// deactivate effect if duration exceeded
-		if (effectTime >= effectDuration)
+		if (effect.Time >= effect.Duration)
 		{
-			effectActive = false;
+			effect.Active = false;
 		}
 	}
 }
 
 void Person::ActivateEffect()
 {
-	effectActive = true;
-	effectTime = 0.0f;
+	effect.Active = true;
+	effect.Time = 0.0f;
+}
+
+Surface2D& Person::GetSurface()
+{
+	return sprite;
+}
+
+float* Person::GetEffectDuration()
+{
+	return &effect.Duration;
+}
+
+float* Person::GetEffectTime()
+{
+	return &effect.Time;
+}
+
+bool* Person::GetEffectActive()
+{
+	return &effect.Active;
 }

@@ -3,10 +3,6 @@
 
 PersonContainer::PersonContainer(std::string dataPath)
 {
-#if IS_ENGINE_MODE
-	applog.AddLog(OBJECT_LOG, "Инициализация\n");
-#endif // IS_ENGINE_MODE
-
 	std::ifstream dataFile(dataPath);
 	if (!dataFile.is_open())
 	{
@@ -29,7 +25,7 @@ PersonContainer::PersonContainer(std::string dataPath)
 			std::string name = obj.at("name");
 			std::transform(name.begin(), name.end(), name.begin(), tolower);
 
-			/************************/
+			/***************************/
 
 			/* Получение позиции */
 
@@ -38,25 +34,27 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 			DirectX::XMFLOAT2 position = { pos_x, pos_y };
 
-			/******************/
+			/*********************/
 
 			/* Получение пути к изображению */
 
 			std::string pathToSprite = obj.at("path");
 
-			/***************************/
+			/********************************/
 
-			/* Инициализация модели */
+			/* Получение настроек эффекта */
 
-			persons.emplace_back(std::make_unique<Person>(name, position, pathToSprite));
+			float eff_d = obj.at("eff-d");
+			float eff_t = obj.at("eff-t");
+			float eff_a = obj.at("eff-a");
+			
+			/******************************/
 
-#if IS_ENGINE_MODE
-			std::ostringstream oss;
-			oss << "Добавлен персонаж: " << name << "\n";
+			/* Инициализация объекта */
 
-			applog.AddLog(OBJECT_LOG, oss.str());
-#endif // IS_ENGINE_MODE
-			/**************************************************/
+			persons.emplace_back(std::make_unique<Person>(name, position, pathToSprite, eff_d, eff_t, eff_a));
+
+			/*************************/
 		}
 	}
 
@@ -69,17 +67,6 @@ void PersonContainer::Draw(Graphics& gfx)
 	{
 		p->Draw(gfx);
 	}
-}
-
-void PersonContainer::DrawLog()
-{
-	ImGui::Begin("Лог", NULL, ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus);
-
-	applog.Draw("Лог", NULL);
-	ImGui::End();
 }
 
 std::vector<std::unique_ptr<Person>>* PersonContainer::GetPersons()
