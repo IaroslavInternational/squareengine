@@ -1,4 +1,5 @@
 #include "GUISystem.h"
+#include <sstream>
 
 GUISystem::GUISystem(std::vector<std::unique_ptr<Person>>* pv_ptr)
 	:
@@ -21,6 +22,21 @@ void GUISystem::Show()
 	ShowRightSide();
 	ShowLeftBottomSide();
 	ShowBottomPanel();
+
+	ImGui::SetNextWindowPos({ ImGui::GetMousePos().x, ImGui::GetMousePos().y + 30 }, ImGuiCond_Always);
+	if (ImGui::Begin("mouse coord", (bool*)0,
+		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+		| ImGuiWindowFlags_NoBackground))
+	{
+		std::ostringstream pos_str;
+		pos_str << "x: " << ImGui::GetMousePos().x
+			<< "\ny: " << ImGui::GetMousePos().y;
+
+		ImGui::Text(pos_str.str().c_str());
+
+		ImGui::End();
+	}
 }
 
 void GUISystem::Hide()

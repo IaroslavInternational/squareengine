@@ -75,6 +75,7 @@ private:
 	// Ћог
 	AppLog applog;
 	std::map<std::wstring, double> gpu_desc;
+	bool test = true;
 private:
 	std::string personSelected = "";
 	std::vector<std::unique_ptr<Person>>* pv_ptr;

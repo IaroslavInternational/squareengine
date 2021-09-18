@@ -6,6 +6,7 @@
 #include "SceneDataReader.h"
 #include "PersonContainer.h"
 
+#include "Font.h"
 #include "GUISystem.h"
 
 namespace dx = DirectX;

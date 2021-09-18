@@ -222,11 +222,11 @@
     <ClCompile Include="Person.cpp">
       <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
     </ClCompile>
-    <ClCompile Include="GUISystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="PersonContainer.cpp">
       <Filter>Исходные файлы\Сцена\Объекты</Filter>
+    </ClCompile>
+    <ClCompile Include="GUISystem.cpp">
+      <Filter>Исходные файлы\Интерфейс</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -389,11 +389,11 @@
     <ClInclude Include="Person.h">
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
-    <ClInclude Include="GUISystem.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="PersonContainer.h">
       <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
+    </ClInclude>
+    <ClInclude Include="GUISystem.h">
+      <Filter>Заголовочные файлы\Интерфейс</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
