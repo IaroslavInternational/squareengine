@@ -42,6 +42,16 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 			/********************************/
 
+			/* Получение настроек хит-бокса */
+
+			DirectX::XMINT4 hb_coord;
+			hb_coord.x = obj.at("hb-ltx");
+			hb_coord.y = obj.at("hb-lty");	
+			hb_coord.z = obj.at("hb-rbx");
+			hb_coord.w = obj.at("hb-rby");
+
+			/********************************/
+			
 			/* Получение настроек эффекта */
 
 			float eff_d = obj.at("eff-d");
@@ -52,7 +62,7 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 			/* Инициализация объекта */
 
-			persons.emplace_back(std::make_unique<Person>(name, position, pathToSprite, eff_d, eff_t, eff_a));
+			persons.emplace_back(std::make_unique<Person>(name, position, pathToSprite, HitBox(hb_coord), eff_d, eff_t, eff_a));
 
 			/*************************/
 		}

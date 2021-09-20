@@ -228,6 +228,9 @@
     <ClCompile Include="GUISystem.cpp">
       <Filter>Исходные файлы\Интерфейс</Filter>
     </ClCompile>
+    <ClCompile Include="HitBox.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -394,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="GUISystem.h">
       <Filter>Заголовочные файлы\Интерфейс</Filter>
+    </ClInclude>
+    <ClInclude Include="HitBox.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

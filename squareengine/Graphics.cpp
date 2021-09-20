@@ -463,6 +463,32 @@ void Graphics::PutPixel(int x, int y, Color c)
 	pSysBuffer[Graphics::width * y + x] = c;
 }
 
+void Graphics::DrawVerticalLine(int start_x, int start_y, int end_y, Color c)
+{
+	for (size_t i = start_y; i < end_y; i++)
+	{
+		PutPixel(start_x, i, c);
+	}
+}
+
+void Graphics::DrawHorizontalLine(int start_x, int end_x, int start_y, Color c)
+{
+	for (size_t i = start_x; i < end_x; i++)
+	{
+		PutPixel(i, start_y, c);
+	}
+}
+
+void Graphics::DrawHitBox(HitBox& hb, Color c)
+{
+	auto& coord = hb.GetCoordinates();
+	
+	DrawVerticalLine(coord.x, coord.y, coord.w, c);
+	DrawVerticalLine(coord.z, coord.y, coord.w, c);
+	DrawHorizontalLine(coord.x, coord.z, coord.y, c);
+	DrawHorizontalLine(coord.x, coord.z, coord.w, c);
+}
+
 Color Graphics::GetPixel(int x, int y) const
 {
 	assert(x >= 0);

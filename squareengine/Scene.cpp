@@ -10,7 +10,7 @@ Scene::Scene(std::string name,	std::shared_ptr<Window> _wnd,
 	name(name),
 	sdr(data),
 	pc(sdr.GetPersonContainerPath()),
-	gui(pc.GetPersons())
+	gui(wnd, pc.GetPersons())
 {}
 
 Scene::~Scene()
@@ -66,8 +66,6 @@ void Scene::ProcessInput(float dt)
 			dir.x += 1.0f;
 		}
 	}
-
-	//pc.Process(&wnd->kbd, wnd->CursorEnabled(), dt);
 }
 
 void Scene::Render(float dt)
@@ -78,7 +76,7 @@ void Scene::Render(float dt)
 
 	gui.Show();
 	pc.Draw(wnd->Gfx());
-
+	
 	wnd->Gfx().EndFrame();
 
 	/***************/

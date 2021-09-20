@@ -3,11 +3,12 @@
 #include "Object2D.h"
 #include "Animation.h"
 #include "Window.h"
+#include "HitBox.h"
 
 class Person : public Object2D
 {
 public:
-	Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite, 
+	Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite, HitBox hitbox,
 		float speed = 1.0f, float effectDuration = 0.045f, float effectTime = 0.0f,
 		bool effectActive = false);
 public:
@@ -19,6 +20,7 @@ public:
 	float* GetEffectDuration();
 	float* GetEffectTime();
 	bool* GetEffectActive();
+	bool* GetHitBoxVisability();
 private:
 	Surface2D sprite;
 	DirectX::XMFLOAT2 vel = { 0.0f,0.0f };
@@ -30,6 +32,8 @@ private:
 		float Time;
 		bool Active;
 	} effect;
+	HitBox hitbox;
+	bool hitbox_visability = false;
 private:
 	enum class Sequence
 	{

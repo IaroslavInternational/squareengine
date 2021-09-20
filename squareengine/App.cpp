@@ -8,7 +8,7 @@ namespace dx = DirectX;
 App::App(const std::string& commandLine)
 	:
 	commandLine(commandLine),
-	wnd(std::make_shared<Window>("Legacy")),
+	wnd(std::make_shared<Window>("SquareEngine 1.0")),
 	scriptCommander(TokenizeQuoted(commandLine))
 {
 	scenes.emplace(std::make_unique<Scene>("Scene 1", wnd, "Scenes\\Scene 1\\scene_1.json"), true);

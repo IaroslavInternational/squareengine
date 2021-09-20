@@ -13,7 +13,7 @@
 class GUISystem
 {
 public:
-	GUISystem(std::vector<std::unique_ptr<Person>>* pv_ptr);
+	GUISystem(std::shared_ptr<Window> wnd, std::vector<std::unique_ptr<Person>>* pv_ptr);
 public: // Главные методы
 	// Показать интерфейс
 	void Show();
@@ -49,6 +49,8 @@ private: // Методы отрисовки конкретных интерфейсов
 	// Показать панель с ифнормацией об FPS и графическом адаптере 
 	void ShowFPSAndGPU();
 
+	void ShowMouseCoordinates();
+
 	void ShowLog();
 
 	void ShowPersonList();
@@ -72,10 +74,14 @@ private: // Переменные видимости панелей
 	// Правая панель триггеров на сцене
 	bool ShowTriggersSettings = false;
 private:
+	std::shared_ptr<Window> wnd;
+
 	// Лог
 	AppLog applog;
 	std::map<std::wstring, double> gpu_desc;
 	bool test = true;
+	std::pair<bool, std::pair<int, int>> pointSet = { false, {0, 0} };
+	bool clicked = false;
 private:
 	std::string personSelected = "";
 	std::vector<std::unique_ptr<Person>>* pv_ptr;

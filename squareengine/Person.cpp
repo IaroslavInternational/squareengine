@@ -1,10 +1,11 @@
 #include "Person.h"
 
-Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite,
+Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite, HitBox hitbox,
 			   float speed, float effectDuration, float effectTime, bool effectActive)
 	:
 	Object2D(name, position),
 	sprite(pathToSprite),
+	hitbox(hitbox),
 	speed(speed)
 {
 	effect.Duration = effectDuration;
@@ -30,6 +31,11 @@ void Person::Draw(Graphics& gfx)
 	else
 	{
 		animations[(int)iCurSequence].Draw(DirectX::XMFLOAT2({ position.x, position.y }), gfx);
+	}
+
+	if (hitbox_visability)
+	{
+		gfx.DrawHitBox(hitbox, Colors::White);
 	}
 }
 
@@ -119,4 +125,9 @@ float* Person::GetEffectTime()
 bool* Person::GetEffectActive()
 {
 	return &effect.Active;
+}
+
+bool* Person::GetHitBoxVisability()
+{
+	return &hitbox_visability;
 }

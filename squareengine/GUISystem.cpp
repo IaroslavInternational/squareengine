@@ -1,8 +1,11 @@
 #include "GUISystem.h"
 #include <sstream>
 
-GUISystem::GUISystem(std::vector<std::unique_ptr<Person>>* pv_ptr)
+#include "HitBox.h"
+
+GUISystem::GUISystem(std::shared_ptr<Window> wnd, std::vector<std::unique_ptr<Person>>* pv_ptr)
 	:
+	wnd(wnd),
 	pv_ptr(pv_ptr)
 {
 	SetGUIColors();
@@ -23,20 +26,7 @@ void GUISystem::Show()
 	ShowLeftBottomSide();
 	ShowBottomPanel();
 
-	ImGui::SetNextWindowPos({ ImGui::GetMousePos().x, ImGui::GetMousePos().y + 30 }, ImGuiCond_Always);
-	if (ImGui::Begin("mouse coord", (bool*)0,
-		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
-		| ImGuiWindowFlags_NoBackground))
-	{
-		std::ostringstream pos_str;
-		pos_str << "x: " << ImGui::GetMousePos().x
-			<< "\ny: " << ImGui::GetMousePos().y;
-
-		ImGui::Text(pos_str.str().c_str());
-
-		ImGui::End();
-	}
+	ShowMouseCoordinates();
 }
 
 void GUISystem::Hide()
@@ -338,6 +328,24 @@ void GUISystem::ShowFPSAndGPU()
 	ImGui::End();
 }
 
+void GUISystem::ShowMouseCoordinates()
+{
+	ImGui::SetNextWindowPos({ ImGui::GetMousePos().x, ImGui::GetMousePos().y + 30 }, ImGuiCond_Always);
+	if (ImGui::Begin("mouse coord", (bool*)0,
+		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+		| ImGuiWindowFlags_NoBackground))
+	{
+		std::ostringstream pos_str;
+		pos_str << "x: " << ImGui::GetMousePos().x
+			<< "\ny: " << ImGui::GetMousePos().y;
+
+		ImGui::Text(pos_str.str().c_str());
+
+		ImGui::End();
+	}
+}
+
 void GUISystem::ShowLog()
 {
 	ImGui::Begin("Лог", NULL, ImGuiWindowFlags_NoMove |
@@ -399,11 +407,47 @@ void GUISystem::ShowPersonControl()
 					dcheck(ImGui::SliderFloat("X", &pv_ptr->at(k)->GetPositionPtr()->x, -1000.0f, 1000.0f, "%.1f"), posDirty);
 					dcheck(ImGui::SliderFloat("Y", &pv_ptr->at(k)->GetPositionPtr()->y, -1000.0f, 1000.0f, "%.1f"), posDirty);
 
+					ImGui::Separator();
+
 					ImGui::Text("Эффект:");
-					dcheck(ImGui::SliderFloat("Продолжитель.", pv_ptr->at(k)->GetEffectDuration(), 0.0f, 100.0f, "%.1f"), effDirty);
-					dcheck(ImGui::SliderFloat("Время", pv_ptr->at(k)->GetEffectTime(), 0.0f, 100.0f, "%.1f"), effDirty);
+					dcheck(ImGui::SliderFloat("Продолжитель.", pv_ptr->at(k)->GetEffectDuration(), 0.0f, 100.0f, "%.3f"), effDirty);
+					dcheck(ImGui::SliderFloat("Время", pv_ptr->at(k)->GetEffectTime(), 0.0f, 100.0f, "%.3f"), effDirty);
 					
 					ImGui::Checkbox("Активен", pv_ptr->at(k)->GetEffectActive());
+
+					ImGui::Separator();
+
+					ImGui::Text("Hit-box:");
+					ImGui::Checkbox("Показать", pv_ptr->at(k)->GetHitBoxVisability());
+
+					if (ImGui::Button("Изменить", ImVec2(100, 20)))
+					{
+						if (!pointSet.first)
+						{
+							clicked = true;		
+						}
+					}
+
+					if (clicked)
+					{
+						if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+						{
+							auto pos = wnd->mouse.GetPos();
+							pointSet = { true, pos };
+							clicked = false;
+						}
+					}
+					else if (pointSet.first)
+					{
+						auto pos = pointSet.second;
+						
+						int ms_posX = wnd->mouse.GetPosX();
+						int ms_posY = wnd->mouse.GetPosY();
+
+						HitBox hb(pos.first, pos.second, ms_posX, ms_posY);
+
+						wnd->Gfx().DrawHitBox(hb);
+					}
 
 					if (ImGui::Button("Удалить", ImVec2(100, 20)))
 					{
