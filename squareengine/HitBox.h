@@ -10,7 +10,11 @@ public:
 		   int rightBottomX, int rightBottomY);
 public:
 	HitBox operator-(DirectX::XMINT2 delta);
+	HitBox operator+(DirectX::XMINT2 delta);
 public:
+	void Update(DirectX::XMINT2 delta);
+	void Update(int dx, int dy);
+
 	DirectX::XMINT4& GetCoordinates();
 private:
 	DirectX::XMINT4 coordinates;

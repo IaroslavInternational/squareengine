@@ -16,11 +16,16 @@ public:
 	void SetDirection(DirectX::XMFLOAT2 dir);
 	void Update(float dt);
 	void ActivateEffect();
+public:
+	void SetHitBox(HitBox hb);
 	Surface2D& GetSurface();
 	float* GetEffectDuration();
 	float* GetEffectTime();
 	bool* GetEffectActive();
 	bool* GetHitBoxVisability();
+	HitBox& GetHitBox();
+private:
+	void CalculateDeltas();
 private:
 	Surface2D sprite;
 	DirectX::XMFLOAT2 vel = { 0.0f,0.0f };

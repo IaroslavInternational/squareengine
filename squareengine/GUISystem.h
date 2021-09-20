@@ -79,9 +79,8 @@ private:
 	// Ћог
 	AppLog applog;
 	std::map<std::wstring, double> gpu_desc;
-	bool test = true;
 	std::pair<bool, std::pair<int, int>> pointSet = { false, {0, 0} };
-	bool clicked = false;
+	bool IsDrawingHitBox = false;
 private:
 	std::string personSelected = "";
 	std::vector<std::unique_ptr<Person>>* pv_ptr;

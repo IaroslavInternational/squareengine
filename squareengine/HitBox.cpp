@@ -17,6 +17,25 @@ HitBox HitBox::operator-(DirectX::XMINT2 delta)
 				  coordinates.z - delta.x, coordinates.w - delta.y);
 }
 
+HitBox HitBox::operator+(DirectX::XMINT2 delta)
+{
+	return HitBox(coordinates.x + delta.x, coordinates.y + delta.y,
+				  coordinates.z + delta.x, coordinates.w + delta.y);
+}
+
+void HitBox::Update(DirectX::XMINT2 delta)
+{
+	coordinates.x += delta.x;
+	coordinates.y += delta.y;
+	coordinates.z += delta.x;
+	coordinates.w += delta.y;
+}
+
+void HitBox::Update(int dx, int dy)
+{
+	Update(DirectX::XMINT2(dx, dy));
+}
+
 DirectX::XMINT4& HitBox::GetCoordinates()
 {
 	return coordinates;

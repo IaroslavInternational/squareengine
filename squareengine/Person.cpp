@@ -12,8 +12,7 @@ Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToS
 	effect.Active = effectTime;
 	effect.Time =   effectActive;
 
-	dx = hitbox.GetCoordinates().x - position.x;
-	dy = hitbox.GetCoordinates().y - position.y;
+	CalculateDeltas();
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
@@ -91,6 +90,8 @@ void Person::Update(float dt)
 	position.x += vel.x;
 	position.y += vel.y;
 
+	hitbox.Update((int)vel.x, (int)vel.y);
+
 	animations[(int)iCurSequence].Update(dt);
 	// update effect time if active
 	if (effect.Active)
@@ -108,6 +109,12 @@ void Person::ActivateEffect()
 {
 	effect.Active = true;
 	effect.Time = 0.0f;
+}
+
+void Person::SetHitBox(HitBox hb)
+{
+	hitbox = hb + DirectX::XMINT2(dx, dy);
+	CalculateDeltas();
 }
 
 Surface2D& Person::GetSurface()
@@ -133,4 +140,15 @@ bool* Person::GetEffectActive()
 bool* Person::GetHitBoxVisability()
 {
 	return &hitbox_visability;
+}
+
+HitBox& Person::GetHitBox()
+{
+	return hitbox;
+}
+
+void Person::CalculateDeltas()
+{
+	dx = hitbox.GetCoordinates().x - position.x;
+	dy = hitbox.GetCoordinates().y - position.y;
 }

@@ -424,30 +424,44 @@ void GUISystem::ShowPersonControl()
 					{
 						if (!pointSet.first)
 						{
-							clicked = true;		
+							IsDrawingHitBox = true;
 						}
 					}
 
-					if (clicked)
+					if (IsDrawingHitBox)
 					{
 						if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
 						{
 							auto pos = wnd->mouse.GetPos();
 							pointSet = { true, pos };
-							clicked = false;
+							IsDrawingHitBox = false;
 						}
 					}
 					else if (pointSet.first)
 					{
-						auto pos = pointSet.second;
+						auto pos_start = pointSet.second;
 						
 						int ms_posX = wnd->mouse.GetPosX();
 						int ms_posY = wnd->mouse.GetPosY();
 
-						HitBox hb(pos.first, pos.second, ms_posX, ms_posY);
-
+						HitBox hb(pos_start.first, pos_start.second, ms_posX, ms_posY);
+						
+						*pv_ptr->at(k)->GetHitBoxVisability() = false;
+						
 						wnd->Gfx().DrawHitBox(hb);
+
+						if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+						{
+							auto pos_end = wnd->mouse.GetPos();
+
+							HitBox hb_new(pos_start.first, pos_start.second, pos_end.first, pos_end.second);
+							pv_ptr->at(k)->SetHitBox(hb);
+							*pv_ptr->at(k)->GetHitBoxVisability() = true;
+
+							pointSet.first = false;
+						}
 					}
+
 
 					if (ImGui::Button("Удалить", ImVec2(100, 20)))
 					{
