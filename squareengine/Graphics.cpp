@@ -479,7 +479,7 @@ void Graphics::DrawHorizontalLine(int start_x, int end_x, int start_y, Color c)
 	}
 }
 
-void Graphics::DrawHitBox(HitBox& hb, Color c)
+void Graphics::DrawHitBox(HitBox hb, Color c)
 {
 	auto& coord = hb.GetCoordinates();
 	

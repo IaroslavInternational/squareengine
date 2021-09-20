@@ -12,6 +12,9 @@ Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToS
 	effect.Active = effectTime;
 	effect.Time =   effectActive;
 
+	dx = hitbox.GetCoordinates().x - position.x;
+	dy = hitbox.GetCoordinates().y - position.y;
+
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
 		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, sprite, 0.16f));
@@ -26,16 +29,16 @@ void Person::Draw(Graphics& gfx)
 {
 	if (effect.Active)
 	{
-		animations[(int)iCurSequence].DrawColor(DirectX::XMFLOAT2({ position.x, position.y }), gfx, Colors::Red);
+		animations[(int)iCurSequence].DrawColor(DirectX::XMFLOAT2({ position.x - dx, position.y - dy }), gfx, Colors::Red);
 	}
 	else
 	{
-		animations[(int)iCurSequence].Draw(DirectX::XMFLOAT2({ position.x, position.y }), gfx);
+		animations[(int)iCurSequence].Draw(DirectX::XMFLOAT2({ position.x - dx, position.y - dy}), gfx);
 	}
 
 	if (hitbox_visability)
 	{
-		gfx.DrawHitBox(hitbox, Colors::White);
+		gfx.DrawHitBox(hitbox - DirectX::XMINT2(dx, dy), Colors::White);
 	}
 }
 

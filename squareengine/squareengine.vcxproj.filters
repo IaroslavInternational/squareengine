@@ -219,9 +219,6 @@
     <ClCompile Include="Object2D.cpp">
       <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
     </ClCompile>
-    <ClCompile Include="Person.cpp">
-      <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
-    </ClCompile>
     <ClCompile Include="PersonContainer.cpp">
       <Filter>Исходные файлы\Сцена\Объекты</Filter>
     </ClCompile>
@@ -229,7 +226,10 @@
       <Filter>Исходные файлы\Интерфейс</Filter>
     </ClCompile>
     <ClCompile Include="HitBox.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Сцена\Объекты</Filter>
+    </ClCompile>
+    <ClCompile Include="Person.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -389,9 +389,6 @@
     <ClInclude Include="Object2D.h">
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
-    <ClInclude Include="Person.h">
-      <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
-    </ClInclude>
     <ClInclude Include="PersonContainer.h">
       <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
     </ClInclude>
@@ -399,7 +396,10 @@
       <Filter>Заголовочные файлы\Интерфейс</Filter>
     </ClInclude>
     <ClInclude Include="HitBox.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
+    </ClInclude>
+    <ClInclude Include="Person.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

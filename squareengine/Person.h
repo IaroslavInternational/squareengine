@@ -34,6 +34,7 @@ private:
 	} effect;
 	HitBox hitbox;
 	bool hitbox_visability = false;
+	int dx, dy;
 private:
 	enum class Sequence
 	{
