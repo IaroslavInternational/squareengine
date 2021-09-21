@@ -33,6 +33,7 @@ private:
 	void ShowRightSide();														// Правая панель
 	void ShowLeftBottomSide();													// Левая нижняя панель
 	void ShowBottomPanel();														// Нижняя панель
+	void ShowMouseHelperPanel(std::string info);								// Панель под курсором
 	void DisableSides();														// Отключить боковые панели
 
 	/****************************************/
@@ -82,5 +83,6 @@ private:
 	std::string		personSelected	  = "";		// Имя выбранного персонажа
 
 	/******************************************************************/
-};
 
+	std::string mouseHelpInfo = "";	// Подпись под курсором
+};

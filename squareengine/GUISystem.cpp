@@ -28,7 +28,18 @@ void GUISystem::Show()
 	ShowLeftBottomSide();
 	ShowBottomPanel();
 
-	ShowMouseCoordinates();
+	if (mouseHelpInfo == "")
+	{
+		std::ostringstream pos;
+		pos << "x: " << ImGui::GetMousePos().x
+			<< "\ny: " << ImGui::GetMousePos().y;
+
+		ShowMouseHelperPanel(pos.str().c_str());
+	}
+	else
+	{
+		ShowMouseHelperPanel(mouseHelpInfo);
+	}
 }
 
 void GUISystem::Hide()
@@ -294,6 +305,19 @@ void GUISystem::ShowBottomPanel()
 	/* Конец нижней стороны */
 }
 
+void GUISystem::ShowMouseHelperPanel(std::string info)
+{
+	ImGui::SetNextWindowPos({ ImGui::GetMousePos().x, ImGui::GetMousePos().y + 30 }, ImGuiCond_Always);
+	if (ImGui::Begin("mouse info helper", (bool*)0,
+		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+		| ImGuiWindowFlags_NoBackground))
+	{
+		ImGui::Text(info.c_str());
+		ImGui::End();
+	}
+}
+
 void GUISystem::DisableSides()
 {
 	ShowPersonEnum = false;
@@ -340,20 +364,6 @@ void GUISystem::ShowFPSAndGPU()
 
 void GUISystem::ShowMouseCoordinates()
 {
-	ImGui::SetNextWindowPos({ ImGui::GetMousePos().x, ImGui::GetMousePos().y + 30 }, ImGuiCond_Always);
-	if (ImGui::Begin("mouse coord", (bool*)0,
-		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
-		| ImGuiWindowFlags_NoBackground))
-	{
-		std::ostringstream pos_str;
-		pos_str << "x: " << ImGui::GetMousePos().x
-			<< "\ny: " << ImGui::GetMousePos().y;
-
-		ImGui::Text(pos_str.str().c_str());
-
-		ImGui::End();
-	}
 }
 
 void GUISystem::ShowLog()
@@ -450,6 +460,8 @@ void GUISystem::ShowPersonControl()
 					{
 						if (ImGui::Button("Изменить", ImVec2(100, 20)))
 						{
+							AddLog("Изменение Hit-box:\n");
+
 							DrawingHitBox = true;
 							*persConPtr->persons.at(k)->GetHitBoxVisability() = false;
 						}
@@ -458,16 +470,26 @@ void GUISystem::ShowPersonControl()
 						{
 							if (!SettedFirstPoint)
 							{
+								mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+
 								if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
 								{
 									auto pos = wnd->mouse.GetPos();
 									firstPoint = { pos.first, pos.second };
-
+									
 									SettedFirstPoint = true;
+									std::ostringstream oss;
+									oss << "Поставлена первая точка:\n" <<
+										"[x: " << firstPoint.x <<
+										" y: " << firstPoint.y << "]\n";
+
+									AddLog(oss.str().c_str());
 								}
 							}
 							else if (!SettedSecondPoint)
 							{
+								mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
 								int ms_posX = wnd->mouse.GetPosX();
 								int ms_posY = wnd->mouse.GetPosY();
 
@@ -481,8 +503,48 @@ void GUISystem::ShowPersonControl()
 
 									HitBox hb_new(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
 									persConPtr->persons.at(k)->SetHitBox(hb);
-									*persConPtr->persons.at(k)->GetHitBoxVisability() = true;
+									*persConPtr->persons.at(k)->GetHitBoxVisability() = true;									
+									
+									std::ostringstream oss;
+									oss << "Поставлена вторая точка:\n" <<
+										"[x: " << secondPoint.x <<
+										" y: " << secondPoint.y << "]\n";
 
+									AddLog(oss.str().c_str());
+
+									AddLog("Сохранение Hit-box:\n");
+
+									auto actual_hb = persConPtr->persons.at(k)->GetHitBox();
+
+									EngineFunctions::SetNewValue<int>(
+										personSelected,
+										"hb-ltx", actual_hb.GetCoordinates().x,
+										persConPtr->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<int>(
+										personSelected,
+										"hb-lty", actual_hb.GetCoordinates().y,
+										persConPtr->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<int>(
+										personSelected,
+										"hb-rbx", actual_hb.GetCoordinates().z,
+										persConPtr->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<int>(
+										personSelected,
+										"hb-rby", actual_hb.GetCoordinates().w,
+										persConPtr->dataPath,
+										&applog
+										);
+
+									mouseHelpInfo = "";
 									SettedSecondPoint = true;
 								}
 							}

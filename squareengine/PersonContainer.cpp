@@ -80,9 +80,3 @@ void PersonContainer::Draw(Graphics& gfx)
 		p->Draw(gfx);
 	}
 }
-
-std::string PersonContainer::GetDataPath()
-{
-	return dataPath;
-}
-
