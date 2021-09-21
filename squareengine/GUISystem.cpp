@@ -1,12 +1,12 @@
 #include "GUISystem.h"
-#include <sstream>
 
+#include "EngineFunctions.hpp"
 #include "HitBox.h"
 
-GUISystem::GUISystem(std::shared_ptr<Window> wnd, std::vector<std::unique_ptr<Person>>* pv_ptr)
+GUISystem::GUISystem(std::shared_ptr<Window> wnd, PersonContainer* persons)
 	:
 	wnd(wnd),
-	pv_ptr(pv_ptr)
+	persConPtr(persons)
 {
 	SetGUIColors();
 
@@ -17,6 +17,8 @@ GUISystem::GUISystem(std::shared_ptr<Window> wnd, std::vector<std::unique_ptr<Pe
 		gpu_desc.emplace(std::wstring(d.desc.Description), round(static_cast<double>(d.desc.DedicatedVideoMemory) / 1073741824));
 	}
 }
+
+/* Главные методы для отрисовки интерфейса */
 
 void GUISystem::Show()
 {
@@ -41,6 +43,10 @@ void GUISystem::AddLog(const char* text)
 {
 	applog.AddLog(text);
 }
+
+/*******************************************/
+
+/* Методы настройки и отрисовки панелей */
 
 void GUISystem::SetGUIColors()
 {
@@ -296,6 +302,10 @@ void GUISystem::DisableSides()
 	ShowTriggersSettings = false;
 }
 
+/****************************************/
+
+/* Методы отрисовки конкретных интерфейсов */
+
 void GUISystem::ShowFPSAndGPU()
 {
 	if (ImGui::Begin("Представление", NULL,
@@ -363,7 +373,7 @@ void GUISystem::ShowPersonList()
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		for (auto p = pv_ptr->begin(); p != pv_ptr->end(); p++)
+		for (auto p = persConPtr->persons.begin(); p != persConPtr->persons.end(); p++)
 		{
 			char label[128];
 			sprintf_s(label, p->get()->GetName().c_str(), personSelected);
@@ -392,87 +402,108 @@ void GUISystem::ShowPersonControl()
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		for (int k = 0; k < pv_ptr->size(); k++)
+		// Цикл по персонажам
+		for (int k = 0; k < persConPtr->persons.size(); k++)
 		{
-			if (pv_ptr->at(k)->GetName() == personSelected)
+			// Поиск выбранного персонажа
+			if (persConPtr->persons.at(k)->GetName() == personSelected)
 			{				
 				if (ImGui::BeginChild(""))
 				{
-					bool posDirty = false;
-					bool effDirty = false;
+					/* Переменные управления сбросом интерфейса */
 
-					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; };
+					bool posDirty = false; // Контроль позиции
+					bool effDirty = false; // Котнроль эффекта
+
+					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+					/********************************************/
+
+					/* Элементы управления позицией персонажа */
 
 					ImGui::Text("Позиция:");
-					dcheck(ImGui::SliderFloat("X", &pv_ptr->at(k)->GetPositionPtr()->x, -1000.0f, 1000.0f, "%.1f"), posDirty);
-					dcheck(ImGui::SliderFloat("Y", &pv_ptr->at(k)->GetPositionPtr()->y, -1000.0f, 1000.0f, "%.1f"), posDirty);
+					dcheck(ImGui::SliderFloat("X", &persConPtr->persons.at(k)->GetPositionPtr()->x, -1000.0f, 1000.0f, "%.2f"), posDirty);
+					dcheck(ImGui::SliderFloat("Y", &persConPtr->persons.at(k)->GetPositionPtr()->y, -1000.0f, 1000.0f, "%.2f"), posDirty);
 
-					ImGui::Separator();
+					/******************************************/
+
+					ImGui::Separator();	// Разделитель
+
+					/* Элементы управления эффектом персонажа */
 
 					ImGui::Text("Эффект:");
-					dcheck(ImGui::SliderFloat("Продолжитель.", pv_ptr->at(k)->GetEffectDuration(), 0.0f, 100.0f, "%.3f"), effDirty);
-					dcheck(ImGui::SliderFloat("Время", pv_ptr->at(k)->GetEffectTime(), 0.0f, 100.0f, "%.3f"), effDirty);
-					
-					ImGui::Checkbox("Активен", pv_ptr->at(k)->GetEffectActive());
+					dcheck(ImGui::SliderFloat("Продолжитель.", persConPtr->persons.at(k)->GetEffectDuration(), 0.0f, 100.0f, "%.3f"), effDirty);
+					dcheck(ImGui::SliderFloat("Время", persConPtr->persons.at(k)->GetEffectTime(), 0.0f, 100.0f, "%.3f"), effDirty);
 
-					ImGui::Separator();
+					ImGui::Checkbox("Активен", persConPtr->persons.at(k)->GetEffectActive());
+
+					/******************************************/
+
+					ImGui::Separator();	// Разделитель
+
+					/* Элементы управления хитбоксом персонажа */
 
 					ImGui::Text("Hit-box:");
-					ImGui::Checkbox("Показать", pv_ptr->at(k)->GetHitBoxVisability());
+					ImGui::Checkbox("Показать", persConPtr->persons.at(k)->GetHitBoxVisability());
 
-					if (ImGui::Button("Изменить", ImVec2(100, 20)))
+					/* Если нажата кнопка изменить HitBox */
 					{
-						if (!pointSet.first)
+						if (ImGui::Button("Изменить", ImVec2(100, 20)))
 						{
-							IsDrawingHitBox = true;
+							DrawingHitBox = true;
+							*persConPtr->persons.at(k)->GetHitBoxVisability() = false;
+						}
+
+						if (DrawingHitBox)
+						{
+							if (!SettedFirstPoint)
+							{
+								if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+								{
+									auto pos = wnd->mouse.GetPos();
+									firstPoint = { pos.first, pos.second };
+
+									SettedFirstPoint = true;
+								}
+							}
+							else if (!SettedSecondPoint)
+							{
+								int ms_posX = wnd->mouse.GetPosX();
+								int ms_posY = wnd->mouse.GetPosY();
+
+								HitBox hb(firstPoint.x, firstPoint.y, ms_posX, ms_posY);
+								wnd->Gfx().DrawHitBox(hb);
+
+								if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+								{
+									auto pos = wnd->mouse.GetPos();
+									secondPoint = { pos.first, pos.second };
+
+									HitBox hb_new(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+									persConPtr->persons.at(k)->SetHitBox(hb);
+									*persConPtr->persons.at(k)->GetHitBoxVisability() = true;
+
+									SettedSecondPoint = true;
+								}
+							}
+							else if (SettedFirstPoint && SettedSecondPoint)
+							{
+								DrawingHitBox = false;
+								SettedFirstPoint = false;
+								SettedSecondPoint = false;
+							}
 						}
 					}
-
-					if (IsDrawingHitBox)
-					{
-						if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-						{
-							auto pos = wnd->mouse.GetPos();
-							pointSet = { true, pos };
-							IsDrawingHitBox = false;
-						}
-					}
-					else if (pointSet.first)
-					{
-						auto pos_start = pointSet.second;
-						
-						int ms_posX = wnd->mouse.GetPosX();
-						int ms_posY = wnd->mouse.GetPosY();
-
-						HitBox hb(pos_start.first, pos_start.second, ms_posX, ms_posY);
-						
-						*pv_ptr->at(k)->GetHitBoxVisability() = false;
-						
-						wnd->Gfx().DrawHitBox(hb);
-
-						if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-						{
-							auto pos_end = wnd->mouse.GetPos();
-
-							HitBox hb_new(pos_start.first, pos_start.second, pos_end.first, pos_end.second);
-							pv_ptr->at(k)->SetHitBox(hb);
-							*pv_ptr->at(k)->GetHitBoxVisability() = true;
-
-							pointSet.first = false;
-						}
-					}
-
+					/*******************************************/
 
 					if (ImGui::Button("Удалить", ImVec2(100, 20)))
 					{
-						//IsDelete = true;
 					}
 
 					ImGui::SameLine();
 
 					if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 					{
-						//IsSave = true;
 					}
 
 					ImGui::EndChild();
@@ -485,3 +516,5 @@ void GUISystem::ShowPersonControl()
 
 	ImGui::End();
 }
+
+/*******************************************/

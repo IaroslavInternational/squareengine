@@ -10,7 +10,7 @@ Scene::Scene(std::string name,	std::shared_ptr<Window> _wnd,
 	name(name),
 	sdr(data),
 	pc(sdr.GetPersonContainerPath()),
-	gui(wnd, pc.GetPersons())
+	gui(wnd, &pc)
 {}
 
 Scene::~Scene()

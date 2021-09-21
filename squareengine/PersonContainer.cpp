@@ -2,6 +2,8 @@
 #include "EngineFunctions.hpp"
 
 PersonContainer::PersonContainer(std::string dataPath)
+	:
+	dataPath(dataPath)
 {
 	std::ifstream dataFile(dataPath);
 	if (!dataFile.is_open())
@@ -79,7 +81,8 @@ void PersonContainer::Draw(Graphics& gfx)
 	}
 }
 
-std::vector<std::unique_ptr<Person>>* PersonContainer::GetPersons()
+std::string PersonContainer::GetDataPath()
 {
-	return &persons;
+	return dataPath;
 }
+
