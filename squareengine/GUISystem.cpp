@@ -635,11 +635,24 @@ void GUISystem::ShowPersonControl()
 
 					ImGui::SameLine();
 
-					if (ImGui::Button("Удалить", ImVec2(100, 20)))
+					/* Если нажата кнопка удалить персонажа */
 					{
+						if (ImGui::Button("Удалить", ImVec2(100, 20)))
+						{
+							for (auto i = persConPtr->persons.begin(); i != persConPtr->persons.end(); i++)
+							{
+								if (i->get()->GetName() == personSelected)
+								{
+									persConPtr->persons.erase(i);
+									break;
+								}
+							}
+							
+							EngineFunctions::DeleteJsonObject(personSelected, persConPtr->dataPath);
+						}
 					}
+					/****************************************/
 
-					
 					ImGui::EndChild();
 				}
 
