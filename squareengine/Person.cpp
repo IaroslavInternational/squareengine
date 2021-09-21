@@ -142,6 +142,11 @@ bool* Person::GetHitBoxVisability()
 	return &hitbox_visability;
 }
 
+float* Person::GetSpeedPtr()
+{
+	return &speed;
+}
+
 HitBox& Person::GetHitBox()
 {
 	return hitbox;

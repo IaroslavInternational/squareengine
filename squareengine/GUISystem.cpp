@@ -422,18 +422,22 @@ void GUISystem::ShowPersonControl()
 				{
 					/* Переменные управления сбросом интерфейса */
 
-					bool posDirty = false; // Контроль позиции
-					bool effDirty = false; // Котнроль эффекта
+					bool posDirty   = false;	// Контроль позиции
+					bool effDirty   = false;	// Котнроль эффекта
+					bool speedDirty = false;	// Котнроль эффекта
 
 					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
 
 					/********************************************/
 
-					/* Элементы управления позицией персонажа */
+					/* Элементы управления позицией и скорости персонажа */
 
 					ImGui::Text("Позиция:");
 					dcheck(ImGui::SliderFloat("X", &persConPtr->persons.at(k)->GetPositionPtr()->x, -1000.0f, 1000.0f, "%.2f"), posDirty);
 					dcheck(ImGui::SliderFloat("Y", &persConPtr->persons.at(k)->GetPositionPtr()->y, -1000.0f, 1000.0f, "%.2f"), posDirty);
+
+					ImGui::Text("Скорость:");
+					dcheck(ImGui::SliderFloat("",   persConPtr->persons.at(k)->GetSpeedPtr(),		 0.0f,    1000.0f, "%.2f"), speedDirty);
 
 					/******************************************/
 
@@ -443,7 +447,7 @@ void GUISystem::ShowPersonControl()
 
 					ImGui::Text("Эффект:");
 					dcheck(ImGui::SliderFloat("Продолжитель.", persConPtr->persons.at(k)->GetEffectDuration(), 0.0f, 100.0f, "%.3f"), effDirty);
-					dcheck(ImGui::SliderFloat("Время", persConPtr->persons.at(k)->GetEffectTime(), 0.0f, 100.0f, "%.3f"), effDirty);
+					dcheck(ImGui::SliderFloat("Время",		   persConPtr->persons.at(k)->GetEffectTime(),	   0.0f, 100.0f, "%.3f"), effDirty);
 
 					ImGui::Checkbox("Активен", persConPtr->persons.at(k)->GetEffectActive());
 
@@ -481,7 +485,7 @@ void GUISystem::ShowPersonControl()
 									std::ostringstream oss;
 									oss << "Поставлена первая точка:\n" <<
 										"[x: " << firstPoint.x <<
-										" y: " << firstPoint.y << "]\n";
+										"; y: " << firstPoint.y << "]\n";
 
 									AddLog(oss.str().c_str());
 								}
@@ -508,7 +512,7 @@ void GUISystem::ShowPersonControl()
 									std::ostringstream oss;
 									oss << "Поставлена вторая точка:\n" <<
 										"[x: " << secondPoint.x <<
-										" y: " << secondPoint.y << "]\n";
+										"; y: " << secondPoint.y << "]\n";
 
 									AddLog(oss.str().c_str());
 
@@ -556,18 +560,86 @@ void GUISystem::ShowPersonControl()
 							}
 						}
 					}
-					/*******************************************/
+					/**************************************/
+
+					ImGui::NewLine();
+					ImGui::NewLine();
+
+					/* Если нажата кнопка сохранить текущие настройки персонажа */
+					{
+						if (ImGui::Button("Сохранить", ImVec2(100, 20)))
+						{
+							AddLog("Сохранение настроек для: ");
+							AddLog(personSelected.c_str());
+							AddLog("\n");
+
+							SavingSettings = true;
+						}
+
+						if (SavingSettings)
+						{
+							/* Сохранение позиции и скорости */
+							
+							EngineFunctions::SetNewValue<float>(
+								personSelected,
+								"pos-x", persConPtr->persons.at(k)->GetPosition().x,
+								persConPtr->dataPath,
+								&applog
+								);
+
+							EngineFunctions::SetNewValue<float>(
+								personSelected,
+								"pos-y", persConPtr->persons.at(k)->GetPosition().y,
+								persConPtr->dataPath,
+								&applog
+								);
+
+							EngineFunctions::SetNewValue<float>(
+								personSelected,
+								"speed", *persConPtr->persons.at(k)->GetSpeedPtr(),
+								persConPtr->dataPath,
+								&applog
+								);
+
+							/**********************/
+
+							/* Сохранение настроек эффекта */
+							
+							EngineFunctions::SetNewValue<bool>(
+								personSelected,
+								"eff-a", *persConPtr->persons.at(k)->GetEffectActive(),
+								persConPtr->dataPath,
+								&applog
+								);
+
+							EngineFunctions::SetNewValue<float>(
+								personSelected,
+								"eff-d", *persConPtr->persons.at(k)->GetEffectDuration(),
+								persConPtr->dataPath,
+								&applog
+								);
+
+							EngineFunctions::SetNewValue<float>(
+								personSelected,
+								"eff-t", *persConPtr->persons.at(k)->GetEffectTime(),
+								persConPtr->dataPath,
+								&applog
+								);
+
+							/*******************************/
+
+							SavingSettings = false;
+						}
+					}
+					/************************************************************/
+
+					ImGui::SameLine();
 
 					if (ImGui::Button("Удалить", ImVec2(100, 20)))
 					{
 					}
 
-					ImGui::SameLine();
-
-					if (ImGui::Button("Сохранить", ImVec2(100, 20)))
-					{
-					}
-
+					
 					ImGui::EndChild();
 				}
 

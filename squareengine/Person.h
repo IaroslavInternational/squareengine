@@ -23,6 +23,7 @@ public:
 	float* GetEffectTime();
 	bool* GetEffectActive();
 	bool* GetHitBoxVisability();
+	float* GetSpeedPtr();
 	HitBox& GetHitBox();
 private:
 	void CalculateDeltas();

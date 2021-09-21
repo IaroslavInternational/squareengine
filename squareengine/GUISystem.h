@@ -76,10 +76,11 @@ private:
 	/* Вспомагательные переменные для работы с контейнером персонажей */
 	
 	bool			DrawingHitBox	  = false;	// Идёт изменение хитбокса персонажа
-	bool			SettedFirstPoint  = false;	// Поставлена первая точка
-	bool			SettedSecondPoint = false;	// Поставлена вторая точка
-	DirectX::XMINT2 firstPoint;					// Координаты первой точки
-	DirectX::XMINT2 secondPoint;				// Координаты второй точки
+	bool			SavingSettings	  = false;	// Идёт сохранение настроек персонажа
+	bool			SettedFirstPoint  = false;	// Поставлена первая точка hitbox
+	bool			SettedSecondPoint = false;	// Поставлена вторая точка hitbox
+	DirectX::XMINT2 firstPoint;					// Координаты первой точки hitbox
+	DirectX::XMINT2 secondPoint;				// Координаты второй точки hitbox
 	std::string		personSelected	  = "";		// Имя выбранного персонажа
 
 	/******************************************************************/

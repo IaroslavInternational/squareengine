@@ -62,9 +62,15 @@ PersonContainer::PersonContainer(std::string dataPath)
 			
 			/******************************/
 
+			/* Получение настройки скорости */
+			
+			float speed = obj.at("speed");
+			
+			/********************************/
+
 			/* Инициализация объекта */
 
-			persons.emplace_back(std::make_unique<Person>(name, position, pathToSprite, HitBox(hb_coord), eff_d, eff_t, eff_a));
+			persons.emplace_back(std::make_unique<Person>(name, position, pathToSprite, HitBox(hb_coord), speed, eff_d, eff_t, eff_a));
 
 			/*************************/
 		}

@@ -1,1 +1,34 @@
-{"clark":[{"eff-a":false,"eff-d":0.045,"eff-t":0.0,"hb-ltx":717,"hb-lty":105,"hb-rbx":772,"hb-rby":189,"name":"clark","path":"C:\\Users\\Yaros\\source\\projects\\squareengine\\squareengine\\Images\\link90x90.bmp","pos-x":700.0,"pos-y":100.0,"speed":100.0}],"raymond":[{"eff-a":false,"eff-d":0.045,"eff-t":0.0,"hb-ltx":518,"hb-lty":106,"hb-rbx":570,"hb-rby":189,"name":"raymond","path":"C:\\Users\\Yaros\\source\\projects\\squareengine\\squareengine\\Images\\link90x90.bmp","pos-x":500.0,"pos-y":100.0,"speed":100.0}]}
+{
+  "clark": [
+    {
+      "eff-a": false,
+      "eff-d": 0.04500000178813934,
+      "eff-t": 0.0,
+      "hb-ltx": 717,
+      "hb-lty": 105,
+      "hb-rbx": 772,
+      "hb-rby": 189,
+      "name": "clark",
+      "path": "C:\\Users\\Yaros\\source\\projects\\squareengine\\squareengine\\Images\\link90x90.bmp",
+      "pos-x": 700.0,
+      "pos-y": 100.0,
+      "speed": 183.00999450683594
+    }
+  ],
+  "raymond": [
+    {
+      "eff-a": false,
+      "eff-d": 0.045,
+      "eff-t": 0.0,
+      "hb-ltx": 518,
+      "hb-lty": 106,
+      "hb-rbx": 570,
+      "hb-rby": 189,
+      "name": "raymond",
+      "path": "C:\\Users\\Yaros\\source\\projects\\squareengine\\squareengine\\Images\\link90x90.bmp",
+      "pos-x": 500.0,
+      "pos-y": 100.0,
+      "speed": 100.0
+    }
+  ]
+}
