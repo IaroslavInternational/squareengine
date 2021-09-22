@@ -5,6 +5,7 @@
 #include "AdapterData.h"
 #include "AppLog.h"
 #include "PersonContainer.h"
+#include "Window.h"
 
 #include <map>
 #include <string>
@@ -41,7 +42,6 @@ private:
 	/* Методы отрисовки конкретных интерфейсов */
 	
 	void ShowFPSAndGPU();			// Показать панель с ифнормацией об FPS и графическом адаптере 
-	void ShowMouseCoordinates();	// Показать подпись координат под курсором
 	void ShowLog();					// Показать панель лога
 	void ShowPersonList();			// Показать список персонажей 
 	void ShowPersonControl();		// Показать настройки для выбранного персонажа

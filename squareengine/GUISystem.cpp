@@ -66,7 +66,7 @@ void GUISystem::SetGUIColors()
 	ImGui::GetStyle().FrameRounding = 4.0f;									// Закругление компонентов
 	ImGui::GetStyle().WindowBorderSize = 0.0f;								// Размер границы
 	ImGui::GetStyle().WindowRounding = 0.0f;								// Закругление окон
-
+	
 	// Цвета
 	ImVec4* colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_MenuBarBg] = ImVec4(0.15f, 0.36f, 0.39f, 1.00f);		// Главное меню
@@ -362,10 +362,6 @@ void GUISystem::ShowFPSAndGPU()
 	ImGui::End();
 }
 
-void GUISystem::ShowMouseCoordinates()
-{
-}
-
 void GUISystem::ShowLog()
 {
 	ImGui::Begin("Лог", NULL, ImGuiWindowFlags_NoMove |
@@ -416,8 +412,9 @@ void GUISystem::ShowPersonControl()
 		for (int k = 0; k < persConPtr->persons.size(); k++)
 		{
 			// Поиск выбранного персонажа
-			if (persConPtr->persons.at(k)->GetName() == personSelected)
+			if (persConPtr->persons.at(k)->name == personSelected)
 			{				
+				
 				if (ImGui::BeginChild(""))
 				{
 					/* Переменные управления сбросом интерфейса */
@@ -433,11 +430,11 @@ void GUISystem::ShowPersonControl()
 					/* Элементы управления позицией и скорости персонажа */
 
 					ImGui::Text("Позиция:");
-					dcheck(ImGui::SliderFloat("X", &persConPtr->persons.at(k)->GetPositionPtr()->x, -1000.0f, 1000.0f, "%.2f"), posDirty);
-					dcheck(ImGui::SliderFloat("Y", &persConPtr->persons.at(k)->GetPositionPtr()->y, -1000.0f, 1000.0f, "%.2f"), posDirty);
+					dcheck(ImGui::SliderFloat("X", &persConPtr->persons.at(k)->position.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
+					dcheck(ImGui::SliderFloat("Y", &persConPtr->persons.at(k)->position.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
 
 					ImGui::Text("Скорость:");
-					dcheck(ImGui::SliderFloat("",   persConPtr->persons.at(k)->GetSpeedPtr(),		 0.0f,    1000.0f, "%.2f"), speedDirty);
+					dcheck(ImGui::SliderFloat("",  &persConPtr->persons.at(k)->speed,		0.0f,    1000.0f, "%.2f"), speedDirty);
 
 					/******************************************/
 
@@ -446,10 +443,10 @@ void GUISystem::ShowPersonControl()
 					/* Элементы управления эффектом персонажа */
 
 					ImGui::Text("Эффект:");
-					dcheck(ImGui::SliderFloat("Продолжитель.", persConPtr->persons.at(k)->GetEffectDuration(), 0.0f, 100.0f, "%.3f"), effDirty);
-					dcheck(ImGui::SliderFloat("Время",		   persConPtr->persons.at(k)->GetEffectTime(),	   0.0f, 100.0f, "%.3f"), effDirty);
+					dcheck(ImGui::SliderFloat("Продолжитель.", &persConPtr->persons.at(k)->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
+					dcheck(ImGui::SliderFloat("Время",		   &persConPtr->persons.at(k)->effect.Time,	    0.0f, 100.0f, "%.3f"), effDirty);
 
-					ImGui::Checkbox("Активен", persConPtr->persons.at(k)->GetEffectActive());
+					ImGui::Checkbox("Активен", &persConPtr->persons.at(k)->effect.Active);
 
 					/******************************************/
 
@@ -458,7 +455,7 @@ void GUISystem::ShowPersonControl()
 					/* Элементы управления хитбоксом персонажа */
 
 					ImGui::Text("Hit-box:");
-					ImGui::Checkbox("Показать", persConPtr->persons.at(k)->GetHitBoxVisability());
+					ImGui::Checkbox("Показать", &persConPtr->persons.at(k)->hitbox_visability);
 
 					/* Если нажата кнопка изменить HitBox */
 					{
@@ -467,7 +464,9 @@ void GUISystem::ShowPersonControl()
 							AddLog("Изменение Hit-box:\n");
 
 							DrawingHitBox = true;
-							*persConPtr->persons.at(k)->GetHitBoxVisability() = false;
+							persConPtr->persons.at(k)->hitbox_visability = false;
+							
+							ImGui::GetStyle().Alpha = 0.1f;							 
 						}
 
 						if (DrawingHitBox)
@@ -507,7 +506,7 @@ void GUISystem::ShowPersonControl()
 
 									HitBox hb_new(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
 									persConPtr->persons.at(k)->SetHitBox(hb);
-									*persConPtr->persons.at(k)->GetHitBoxVisability() = true;									
+									persConPtr->persons.at(k)->hitbox_visability = true;									
 									
 									std::ostringstream oss;
 									oss << "Поставлена вторая точка:\n" <<
@@ -518,7 +517,7 @@ void GUISystem::ShowPersonControl()
 
 									AddLog("Сохранение Hit-box:\n");
 
-									auto actual_hb = persConPtr->persons.at(k)->GetHitBox();
+									auto actual_hb = persConPtr->persons.at(k)->hitbox;
 
 									EngineFunctions::SetNewValue<int>(
 										personSelected,
@@ -557,6 +556,8 @@ void GUISystem::ShowPersonControl()
 								DrawingHitBox = false;
 								SettedFirstPoint = false;
 								SettedSecondPoint = false;
+
+								ImGui::GetStyle().Alpha = 1.0f;
 							}
 						}
 					}
@@ -582,21 +583,21 @@ void GUISystem::ShowPersonControl()
 							
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"pos-x", persConPtr->persons.at(k)->GetPosition().x,
+								"pos-x", persConPtr->persons.at(k)->position.x,
 								persConPtr->dataPath,
 								&applog
 								);
 
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"pos-y", persConPtr->persons.at(k)->GetPosition().y,
+								"pos-y", persConPtr->persons.at(k)->position.y,
 								persConPtr->dataPath,
 								&applog
 								);
 
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"speed", *persConPtr->persons.at(k)->GetSpeedPtr(),
+								"speed", persConPtr->persons.at(k)->speed,
 								persConPtr->dataPath,
 								&applog
 								);
@@ -607,21 +608,21 @@ void GUISystem::ShowPersonControl()
 							
 							EngineFunctions::SetNewValue<bool>(
 								personSelected,
-								"eff-a", *persConPtr->persons.at(k)->GetEffectActive(),
+								"eff-a", persConPtr->persons.at(k)->effect.Active,
 								persConPtr->dataPath,
 								&applog
 								);
 
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"eff-d", *persConPtr->persons.at(k)->GetEffectDuration(),
+								"eff-d", persConPtr->persons.at(k)->effect.Duration,
 								persConPtr->dataPath,
 								&applog
 								);
 
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"eff-t", *persConPtr->persons.at(k)->GetEffectTime(),
+								"eff-t", persConPtr->persons.at(k)->effect.Time,
 								persConPtr->dataPath,
 								&applog
 								);

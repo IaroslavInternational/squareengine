@@ -24,6 +24,8 @@ Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToS
 	}
 }
 
+/* Главные методы для отрисовки персонажа */
+
 void Person::Draw(Graphics& gfx)
 {
 	if (effect.Active)
@@ -111,6 +113,10 @@ void Person::ActivateEffect()
 	effect.Time = 0.0f;
 }
 
+/******************************************/
+
+/* Главные методы для взаимодействия с персонажем */
+
 void Person::SetHitBox(HitBox hb)
 {
 	hitbox = hb + DirectX::XMINT2(dx, dy);
@@ -122,38 +128,19 @@ Surface2D& Person::GetSurface()
 	return sprite;
 }
 
-float* Person::GetEffectDuration()
-{
-	return &effect.Duration;
-}
-
-float* Person::GetEffectTime()
-{
-	return &effect.Time;
-}
-
-bool* Person::GetEffectActive()
-{
-	return &effect.Active;
-}
-
-bool* Person::GetHitBoxVisability()
-{
-	return &hitbox_visability;
-}
-
-float* Person::GetSpeedPtr()
-{
-	return &speed;
-}
-
 HitBox& Person::GetHitBox()
 {
 	return hitbox;
 }
+
+/**************************************************/
+
+/* Внутренние методы */
 
 void Person::CalculateDeltas()
 {
 	dx = hitbox.GetCoordinates().x - position.x;
 	dy = hitbox.GetCoordinates().y - position.y;
 }
+
+/*********************/

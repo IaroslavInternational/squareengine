@@ -87,44 +87,6 @@ std::pair<std::string, bool> Scene::IsOnTheSceneTrigger()
 	return std::pair{ "NULL", false };
 }
 
-#if IS_ENGINE_MODE
-/***************** Интерфейс *****************/
-/*
-void Scene::ShowTrigCheck()
-{
-	if (ImGui::Begin("Попадание", NULL, 
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus))
-	{
-		if (onTrigger)
-		{
-			ImGui::Text("Отслежено cтолкновение");
-			ImGui::Text("Цель триггера:");
-			ImGui::Text(triggerGoal);
-		}
-		else
-		{
-			onTrigger = false;
-			ImGui::Text("Не на триггере");
-		}
-	}
-
-	ImGui::End();
-}
-
-void Scene::ShowImguiDemoWindow()
-{
-	if (showDemoWindow)
-	{
-		ImGui::ShowDemoWindow(&showDemoWindow);
-	}
-}
-*/
-/*********************************************/
-#endif
-
 std::string Scene::GetName() const
 {
 	return name;
