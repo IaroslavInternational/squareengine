@@ -31,6 +31,7 @@ public:
 	Surface2D& GetSurface();					// Получить плоскость изображения спрайта
 	HitBox&	   GetHitBox();						// Получить hitbox
 
+	void Process();
 	/**************************************************/
 private:
 	/* Внутренние методы */
@@ -61,6 +62,11 @@ private:
 	int	   dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
 
 	/***************************************/
+
+	float goalx = 600.0f;
+	float homex;
+	bool GoingOn = true;
+	bool GoingBack = false;
 private:
 	/* Переменные описания работы с анимациями */
 	

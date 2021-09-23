@@ -86,3 +86,11 @@ void PersonContainer::Draw(Graphics& gfx)
 		p->Draw(gfx);
 	}
 }
+
+void PersonContainer::Process()
+{
+	for (auto& p : persons)
+	{
+		p->Process();
+	}
+}

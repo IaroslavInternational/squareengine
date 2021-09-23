@@ -14,6 +14,8 @@ Person::Person(std::string name, DirectX::XMFLOAT2 position, std::string pathToS
 
 	CalculateDeltas();
 
+	homex = position.x;
+
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
 		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, sprite, 0.16f));
@@ -131,6 +133,59 @@ Surface2D& Person::GetSurface()
 HitBox& Person::GetHitBox()
 {
 	return hitbox;
+}
+
+void Person::Process()
+{
+	if (position.x == goalx && GoingOn)
+	{
+		GoingOn = false;
+		GoingBack = true;
+	}
+	else if (position.x == homex && GoingBack)
+	{
+		GoingOn = true;
+		GoingBack = false;
+	}
+
+	if (GoingOn)
+	{
+		if (position.x < goalx)
+		{
+			if (position.x != goalx)
+			{
+				position.x += 1.0f;
+				hitbox.Update(1, 0);
+			}
+		}
+		else 
+		{
+			if (position.x != goalx)
+			{
+				position.x -= 1.0f;
+				hitbox.Update(-1, 0);
+			}
+		}
+	}
+	else if (GoingBack)
+	{
+		if (position.x < homex)
+		{
+			if (position.x != homex)
+			{
+				position.x += 1.0f;
+				hitbox.Update(1, 0);
+			}
+		}
+		else
+		{
+			if (position.x != homex)
+			{
+				position.x -= 1.0f;
+				hitbox.Update(-1, 0);
+			}
+		}
+	}
 }
 
 /**************************************************/

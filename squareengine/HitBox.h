@@ -16,6 +16,8 @@ public:
 	void Update(int dx, int dy);
 
 	DirectX::XMINT4& GetCoordinates();
+public:
+	bool IsCollide(HitBox& hb);
 private:
 	DirectX::XMINT4 coordinates;
 };

@@ -77,6 +77,13 @@ void Scene::Render(float dt)
 	gui.Show();
 	pc.Draw(wnd->Gfx());
 	
+	if (pc.TestCollision())
+	{
+		gui.AddLog("Collision\n");
+	}		
+	
+	pc.Process();
+
 	wnd->Gfx().EndFrame();
 
 	/***************/
