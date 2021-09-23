@@ -46,7 +46,7 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 			/* Получение настроек хит-бокса */
 
-			DirectX::XMINT4 hb_coord;
+			DirectX::XMFLOAT4 hb_coord;
 			hb_coord.x = obj.at("hb-ltx");
 			hb_coord.y = obj.at("hb-lty");	
 			hb_coord.z = obj.at("hb-rbx");

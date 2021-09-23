@@ -48,8 +48,8 @@ protected:
 
 	HitBox hitbox;						// Hitbox
 	bool   hitbox_visability = true;	// Видимость hitbox
-	int	   dx;							// Корректирующий отступ hitbox от блока спрайта по оси x
-	int	   dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
+	float  dx;							// Корректирующий отступ hitbox от блока спрайта по оси x
+	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
 
 	/***************************************/
 };

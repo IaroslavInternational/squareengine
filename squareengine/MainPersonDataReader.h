@@ -13,7 +13,7 @@ public:
 	std::string		  name;
 	DirectX::XMFLOAT2 position;
 	std::string		  pathToSprite;
-	DirectX::XMINT4	  hb_coord;
+	DirectX::XMFLOAT4 hb_coord;
 	float			  eff_d;
 	float			  eff_t;
 	float			  eff_a;

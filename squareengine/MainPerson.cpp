@@ -36,7 +36,7 @@ void MainPerson::Draw()
 
 	if (hitbox_visability)
 	{
-		wnd->Gfx().DrawHitBox(hitbox - DirectX::XMINT2(dx, dy));
+		wnd->Gfx().DrawHitBox(hitbox - DirectX::XMFLOAT2(dx, dy));
 	}
 }
 
@@ -89,7 +89,8 @@ void MainPerson::Update(float dt)
 	position.x += vel.x;
 	position.y += vel.y;
 
-	hitbox.Update((int)vel.x, (int)vel.y);
+	hitbox.Update(vel.x, vel.y);
+	CalculateDeltas();
 
 	animations[(int)iCurSequence].Update(dt);
 	// update effect time if active

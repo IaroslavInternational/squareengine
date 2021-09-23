@@ -29,7 +29,7 @@ void Object2D::SetSurface(Surface2D sprite)
 
 void Object2D::SetHitBox(HitBox hb)
 {
-	hitbox = hb + DirectX::XMINT2(dx, dy);
+	hitbox = hb + DirectX::XMFLOAT2(dx, dy);
 	CalculateDeltas();
 }
 

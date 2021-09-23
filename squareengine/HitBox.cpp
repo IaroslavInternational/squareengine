@@ -1,31 +1,31 @@
 #include "HitBox.h"
 
-HitBox::HitBox(DirectX::XMINT4 coordinates, Color color)
+HitBox::HitBox(DirectX::XMFLOAT4 coordinates, Color color)
 	:
 	coordinates(coordinates),
 	color(color)
 {}
 
-HitBox::HitBox(int   leftTopX,     int leftTopY,
-			   int   rightBottomX, int rightBottomY,
+HitBox::HitBox(float   leftTopX,     float leftTopY,
+			   float   rightBottomX, float rightBottomY,
 			   Color color)
 	:
-	HitBox(DirectX::XMINT4(leftTopX, leftTopY, rightBottomX, rightBottomY), color)
+	HitBox(DirectX::XMFLOAT4(leftTopX, leftTopY, rightBottomX, rightBottomY), color)
 {}
 
-HitBox HitBox::operator-(DirectX::XMINT2 delta)
+HitBox HitBox::operator-(DirectX::XMFLOAT2 delta)
 {
 	return HitBox(coordinates.x - delta.x, coordinates.y - delta.y,
 				  coordinates.z - delta.x, coordinates.w - delta.y);
 }
 
-HitBox HitBox::operator+(DirectX::XMINT2 delta)
+HitBox HitBox::operator+(DirectX::XMFLOAT2 delta)
 {
 	return HitBox(coordinates.x + delta.x, coordinates.y + delta.y,
 				  coordinates.z + delta.x, coordinates.w + delta.y);
 }
 
-void HitBox::Update(DirectX::XMINT2 delta)
+void HitBox::Update(DirectX::XMFLOAT2 delta)
 {
 	coordinates.x += delta.x;
 	coordinates.y += delta.y;
@@ -33,12 +33,12 @@ void HitBox::Update(DirectX::XMINT2 delta)
 	coordinates.w += delta.y;
 }
 
-void HitBox::Update(int dx, int dy)
+void HitBox::Update(float dx, float dy)
 {
-	Update(DirectX::XMINT2(dx, dy));
+	Update(DirectX::XMFLOAT2(dx, dy));
 }
 
-DirectX::XMINT4& HitBox::GetCoordinates()
+DirectX::XMFLOAT4& HitBox::GetCoordinates()
 {
 	return coordinates;
 }
