@@ -9,7 +9,9 @@ Scene::Scene(std::string name,	std::shared_ptr<Window> _wnd,
 	wnd(_wnd),
 	name(name),
 	sdr(data),
+	mdr(sdr.GetMainPersonDataPath()),
 	pc(sdr.GetPersonContainerPath()),
+	hero(mdr, wnd),
 	gui(wnd, &pc)
 {}
 
@@ -45,27 +47,6 @@ void Scene::ProcessInput(float dt)
 			break;
 		}
 	}
-
-	DirectX::XMFLOAT2 dir = { 0.0f,0.0f };
-	if (!wnd->CursorEnabled())
-	{
-		if (wnd->kbd.KeyIsPressed('W'))
-		{
-			dir.y -= 1.0f;
-		}
-		if (wnd->kbd.KeyIsPressed('A'))
-		{
-			dir.x -= 1.0f;
-		}
-		if (wnd->kbd.KeyIsPressed('S'))
-		{
-			dir.y += 1.0f;
-		}
-		if (wnd->kbd.KeyIsPressed('D'))
-		{
-			dir.x += 1.0f;
-		}
-	}
 }
 
 void Scene::Render(float dt)
@@ -75,14 +56,12 @@ void Scene::Render(float dt)
 	wnd->Gfx().BeginFrame();
 
 	gui.Show();
+	
 	pc.Draw(wnd->Gfx());
 	
-	if (pc.TestCollision())
-	{
-		gui.AddLog("Collision\n");
-	}		
-	
-	pc.Process();
+	hero.ProcessMoving(dt);
+	hero.Draw();
+
 
 	wnd->Gfx().EndFrame();
 

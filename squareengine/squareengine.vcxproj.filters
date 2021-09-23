@@ -231,6 +231,12 @@
     <ClCompile Include="Person.cpp">
       <Filter>Исходные файлы\Сцена\Объекты</Filter>
     </ClCompile>
+    <ClCompile Include="MainPerson.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPersonDataReader.cpp">
+      <Filter>Исходные файлы\Сцена</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -400,6 +406,12 @@
     </ClInclude>
     <ClInclude Include="Person.h">
       <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPerson.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPersonDataReader.h">
+      <Filter>Заголовочные файлы\Сцена</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

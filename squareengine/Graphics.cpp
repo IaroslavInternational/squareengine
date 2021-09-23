@@ -479,14 +479,14 @@ void Graphics::DrawHorizontalLine(int start_x, int end_x, int start_y, Color c)
 	}
 }
 
-void Graphics::DrawHitBox(HitBox hb, Color c)
+void Graphics::DrawHitBox(HitBox hb)
 {
 	auto& coord = hb.GetCoordinates();
 	
-	DrawVerticalLine(coord.x, coord.y, coord.w, c);
-	DrawVerticalLine(coord.z, coord.y, coord.w, c);
-	DrawHorizontalLine(coord.x, coord.z, coord.y, c);
-	DrawHorizontalLine(coord.x, coord.z, coord.w, c);
+	DrawVerticalLine(  coord.x, coord.y, coord.w, Colors::DodgerBlue);
+	DrawVerticalLine(  coord.z, coord.y, coord.w, Colors::DodgerBlue);
+	DrawHorizontalLine(coord.x, coord.z, coord.y, Colors::DodgerBlue);
+	DrawHorizontalLine(coord.x, coord.z, coord.w, Colors::DodgerBlue);
 }
 
 Color Graphics::GetPixel(int x, int y) const

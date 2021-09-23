@@ -26,7 +26,7 @@ private:
 	/* Методы настройки и отрисовки панелей */
 	
 	void SetGUIColors();														// Установка цветовой гаммы
-	void SetPanelWidthAndPosition(int corner,			float width,			// Установка положения и размеров панели
+	void SetPanelWidthAndPosition(int   corner,			float width,			// Установка положения и размеров панели
 								  float height,			float x_offset = 0.0f, 
 								  float y_offset = 0.0f); 	
 	void ShowMenu(); 															// Верхняя панель меню

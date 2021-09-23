@@ -34,9 +34,9 @@ SceneDataReader::SceneDataReader(std::string path)
 
 			/***********************/
 
-			/* Запись пути триггеров */
+			/* Запись пути главного героя */
 
-			//paths.emplace_back(obj.at("triggersPath"));
+			paths.emplace_back(obj.at("mainPersonPath"));
 
 			/*************************/
 
@@ -62,6 +62,11 @@ SceneDataReader::~SceneDataReader()
 std::string SceneDataReader::GetPersonContainerPath() const
 {
 	return paths[0];
+}
+
+std::string SceneDataReader::GetMainPersonDataPath() const
+{
+	return paths[1];
 }
 
 std::vector<std::string>& SceneDataReader::GetPaths()

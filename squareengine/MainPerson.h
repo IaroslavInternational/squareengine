@@ -1,35 +1,34 @@
 #pragma once
 
+#include "MainPersonDataReader.h"
 #include "Object2D.h"
 #include "Animation.h"
+#include "Window.h"
 
-class Person : public Object2D
+class MainPerson : Object2D
 {
 public:
-	friend class GUISystem;
+	MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd);
 public:
-	Person(std::string name,		 DirectX::XMFLOAT2 position,
-		   std::string pathToSprite, HitBox			   hitbox,
-		   float	   speed 		  =	1.0f, 
-		   float	   effectDuration = 0.045f, 
-		   float	   effectTime 	  =	0.0f, 
-		   bool		   effectActive   =	false);
-public:
-	/* Главные методы для отрисовки персонажа */
-	
-	void Draw(Graphics& gfx);					// Отрисовать персонажа
+	/* Главные методы для отрисовки главного персонажа */
+
+	void Draw();								// Отрисовать главного персонажа
 	void SetDirection(DirectX::XMFLOAT2 dir);	// Установить направление положения 
-	void Update(float dt);						// Обновить состояние персонажа
+	void Update(float dt);						// Обновить состояние главного персонажа
 	void ActivateEffect();						// Активировать эффект
 
-	/******************************************/
+	/***************************************************/
 public:
-	/* Главные методы для взаимодействия с персонажем */
-	
-	/**************************************************/
+	/* Главные методы для взаимодействия с главным персонажем */
+
+	void ProcessMoving(float dt);
+
+	/**********************************************************/
 private:
 	/* Переменные описания состояния персонажа */
-	
+
+	std::string dataPath;
+
 	DirectX::XMFLOAT2 vel = { 0.0f, 0.0f };	// Вектор скорости движения
 	float			  speed;				// Скорость перемещения
 	struct
@@ -42,7 +41,7 @@ private:
 	/*******************************************/
 private:
 	/* Переменные описания работы с анимациями */
-	
+
 	enum class Sequence
 	{
 		WalkingLeft,
@@ -60,4 +59,8 @@ private:
 	Sequence			   iCurSequence = Sequence::StandingDown;	// Текущее состояние анимаций
 
 	/*******************************************/
+private:
+	std::shared_ptr<Window> wnd;
 };
+
+

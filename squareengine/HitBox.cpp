@@ -1,14 +1,16 @@
 #include "HitBox.h"
 
-HitBox::HitBox(DirectX::XMINT4 coordinates)
+HitBox::HitBox(DirectX::XMINT4 coordinates, Color color)
 	:
-	coordinates(coordinates)
+	coordinates(coordinates),
+	color(color)
 {}
 
-HitBox::HitBox(int leftTopX,     int leftTopY,
-			   int rightBottomX, int rightBottomY)
+HitBox::HitBox(int   leftTopX,     int leftTopY,
+			   int   rightBottomX, int rightBottomY,
+			   Color color)
 	:
-	HitBox(DirectX::XMINT4(leftTopX, leftTopY, rightBottomX, rightBottomY))
+	HitBox(DirectX::XMINT4(leftTopX, leftTopY, rightBottomX, rightBottomY), color)
 {}
 
 HitBox HitBox::operator-(DirectX::XMINT2 delta)
@@ -39,6 +41,16 @@ void HitBox::Update(int dx, int dy)
 DirectX::XMINT4& HitBox::GetCoordinates()
 {
 	return coordinates;
+}
+
+void HitBox::SetColor(Color color)
+{
+	this->color = color;
+}
+
+Color& HitBox::GetColor(Color color)
+{
+	return color;
 }
 
 bool HitBox::IsCollide(HitBox& hb)

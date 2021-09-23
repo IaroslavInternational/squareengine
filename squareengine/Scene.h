@@ -5,6 +5,7 @@
 #include "EngineTimer.h"
 #include "SceneDataReader.h"
 #include "PersonContainer.h"
+#include "MainPerson.h"
 
 #include "Font.h"
 #include "GUISystem.h"
@@ -48,10 +49,11 @@ private:
 
 	// Ридер данных сцены
 	SceneDataReader sdr;
+	MainPersonDataReader mdr;
 
 	/********* -Объекты- *********/
 
 	PersonContainer pc;
-
+	MainPerson hero;
 	/*****************************/
 };

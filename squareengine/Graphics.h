@@ -82,7 +82,7 @@ public:
 	void PutPixel(int x, int y, Color c);
 	void DrawVerticalLine(int start_x, int start_y, int end_y, Color c = Colors::Red);
 	void DrawHorizontalLine(int start_x, int end_x, int start_y, Color c = Colors::Red);
-	void DrawHitBox(HitBox hb, Color c = Colors::Red);
+	void DrawHitBox(HitBox hb);
 	void DrawSpriteNonChroma(int x, int y, const Surface2D& s);
 	void DrawSpriteNonChroma(int x, int y, const RectI& srcRect, const Surface2D& s);
 	void DrawSpriteNonChroma(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s);

@@ -1,16 +1,15 @@
-#include "Person.h"
+#include "MainPerson.h"
 
-Person::Person(std::string name,		 DirectX::XMFLOAT2 position,
-			   std::string pathToSprite, HitBox			   hitbox,
-			   float	   speed,		 float			   effectDuration,
-			   float	   effectTime,	 bool			   effectActive)
+MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd)
 	:
-	Object2D(name, position, pathToSprite, hitbox),
-	speed(speed)
+	Object2D(data.name, data.position, data.pathToSprite, HitBox(data.hb_coord)),
+	dataPath(data.dataPath),
+	speed(data.speed),
+	wnd(wnd)
 {
-	effect.Duration = effectDuration;
-	effect.Active = effectTime;
-	effect.Time =   effectActive;
+	effect.Duration = data.eff_d;
+	effect.Time = data.eff_t;
+	effect.Active = data.eff_a;
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
@@ -22,26 +21,26 @@ Person::Person(std::string name,		 DirectX::XMFLOAT2 position,
 	}
 }
 
-/* √лавные методы дл€ отрисовки персонажа */
+/* √лавные методы дл€ отрисовки главного персонажа */
 
-void Person::Draw(Graphics& gfx)
+void MainPerson::Draw()
 {
 	if (effect.Active)
 	{
-		animations[(int)iCurSequence].DrawColor(DirectX::XMFLOAT2({ position.x - dx, position.y - dy }), gfx, Colors::Red);
+		animations[(int)iCurSequence].DrawColor(DirectX::XMFLOAT2({ position.x - dx, position.y - dy }), wnd->Gfx(), Colors::Red);
 	}
 	else
 	{
-		animations[(int)iCurSequence].Draw(DirectX::XMFLOAT2({ position.x - dx, position.y - dy}), gfx);
+		animations[(int)iCurSequence].Draw(DirectX::XMFLOAT2({ position.x - dx, position.y - dy }), wnd->Gfx());
 	}
 
 	if (hitbox_visability)
 	{
-		gfx.DrawHitBox(hitbox - DirectX::XMINT2(dx, dy));
+		wnd->Gfx().DrawHitBox(hitbox - DirectX::XMINT2(dx, dy));
 	}
 }
 
-void Person::SetDirection(DirectX::XMFLOAT2 dir)
+void MainPerson::SetDirection(DirectX::XMFLOAT2 dir)
 {
 	if (dir.x > 0.0f)
 	{
@@ -82,7 +81,7 @@ void Person::SetDirection(DirectX::XMFLOAT2 dir)
 	vel.y = dir.y * speed;
 }
 
-void Person::Update(float dt)
+void MainPerson::Update(float dt)
 {
 	vel.x *= dt;
 	vel.y *= dt;
@@ -105,14 +104,41 @@ void Person::Update(float dt)
 	}
 }
 
-void Person::ActivateEffect()
+void MainPerson::ActivateEffect()
 {
 	effect.Active = true;
 	effect.Time = 0.0f;
 }
 
-/******************************************/
+/***************************************************/
 
-/* √лавные методы дл€ взаимодействи€ с персонажем */
+/* √лавные методы дл€ взаимодействи€ с главным персонажем */
 
-/**************************************************/
+void MainPerson::ProcessMoving(float dt)
+{
+	DirectX::XMFLOAT2 dir = { 0.0f,0.0f };
+	if (!wnd->CursorEnabled())
+	{
+		if (wnd->kbd.KeyIsPressed('W'))
+		{
+			dir.y -= 1.0f;
+		}
+		if (wnd->kbd.KeyIsPressed('A'))
+		{
+			dir.x -= 1.0f;
+		}
+		if (wnd->kbd.KeyIsPressed('S'))
+		{
+			dir.y += 1.0f;
+		}
+		if (wnd->kbd.KeyIsPressed('D'))
+		{
+			dir.x += 1.0f;
+		}
+	}
+
+	SetDirection(dir);
+	Update(dt);
+}
+
+/**********************************************************/

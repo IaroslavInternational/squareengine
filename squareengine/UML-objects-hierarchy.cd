@@ -1,12 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Person">
-    <Position X="4.5" Y="1.25" Width="1.5" />
+    <Position X="1.5" Y="6.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <NestedTypes>
+      <Struct Name="Person::__unnamed_struct_01e0_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Person.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
       <Enum Name="Person::Sequence">
         <TypeIdentifier>
           <NewMemberFileName>Person.h</NewMemberFileName>
@@ -14,15 +19,34 @@
       </Enum>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AIQAAAAAAAQAAgAAACQAgAAAAJAAEQEAAACAAAAAAAA=</HashCode>
+      <HashCode>AIQACAAAAAAAAgAAACAAAAAAAIAAEQEAAACAAAAAAAA=</HashCode>
       <FileName>Person.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Object2D">
-    <Position X="1.5" Y="1.25" Width="1.5" />
+    <Position X="2.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIAAAACAAAAAAAAAAIAAAAAAEAgAAAAAAQAAABAA=</HashCode>
+      <HashCode>AAAAIIQAACAAAEAAQAAIJAAAABAEAgAgAAQAQAAABAA=</HashCode>
       <FileName>Object2D.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainPerson">
+    <Position X="3.75" Y="6.5" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="MainPerson::__unnamed_struct_0385_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>MainPerson.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Enum Name="MainPerson::Sequence" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>MainPerson.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BASACAAAAAAAAgAAASAAAAAAAIAAEQEAAACAAAAAACA=</HashCode>
+      <FileName>MainPerson.h</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
