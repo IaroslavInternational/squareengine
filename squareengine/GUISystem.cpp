@@ -937,6 +937,40 @@ void GUISystem::ShowMainPersonControl()
 
 					/*******************************/
 
+					/* Пересохранение hitbox */
+
+					auto actual_hb = mPersPtr->hitbox;
+
+					EngineFunctions::SetNewValue<float>(
+						mPersPtr->name,
+						"hb-ltx", actual_hb.GetCoordinates().x,
+						mPersPtr->dataPath,
+						&applog
+						);
+
+					EngineFunctions::SetNewValue<float>(
+						mPersPtr->name,
+						"hb-lty", actual_hb.GetCoordinates().y,
+						mPersPtr->dataPath,
+						&applog
+						);
+
+					EngineFunctions::SetNewValue<float>(
+						mPersPtr->name,
+						"hb-rbx", actual_hb.GetCoordinates().z,
+						mPersPtr->dataPath,
+						&applog
+						);
+
+					EngineFunctions::SetNewValue<float>(
+						mPersPtr->name,
+						"hb-rby", actual_hb.GetCoordinates().w,
+						mPersPtr->dataPath,
+						&applog
+						);
+
+					/*************************/
+
 					SavingSettings = false;
 				}
 			}

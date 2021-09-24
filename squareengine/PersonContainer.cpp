@@ -86,3 +86,17 @@ void PersonContainer::Draw(Graphics& gfx)
 		p->Draw(gfx);
 	}
 }
+
+std::pair<bool, Person*> PersonContainer::CheckCollision(HitBox& hb)
+{
+	for (auto& p : persons)
+	{
+		if (hb.IsCollide(p->GetHitBox()))
+		{
+			return { true, p.get() };
+			break;
+		}
+	}
+
+	return { false, nullptr };
+}

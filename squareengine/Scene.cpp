@@ -59,6 +59,13 @@ void Scene::Render(float dt)
 	pc.Draw(wnd->Gfx());
 	hero.Draw();
 
+	auto collisionState = pc.CheckCollision(hero.GetHitBox());
+
+	if (collisionState.first)
+	{
+		collisionState.second->ActivateEffect();
+	}
+
 	wnd->Gfx().EndFrame();		// Конец кадра
 
 	/*************/
