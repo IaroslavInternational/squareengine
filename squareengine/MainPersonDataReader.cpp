@@ -1,6 +1,8 @@
 #include "MainPersonDataReader.h"
 
 MainPersonDataReader::MainPersonDataReader(std::string dataPath)
+	:
+	dataPath(dataPath)
 {
 	std::ifstream dataFile(dataPath);
 	if (!dataFile.is_open())

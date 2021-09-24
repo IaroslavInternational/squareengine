@@ -5,15 +5,15 @@
 #include "AdapterData.h"
 #include "AppLog.h"
 #include "PersonContainer.h"
+#include "MainPerson.h"
 #include "Window.h"
 
 #include <map>
-#include <string>
 
 class GUISystem
 {
 public:
-	GUISystem(std::shared_ptr<Window> wnd, PersonContainer* persons);
+	GUISystem(std::shared_ptr<Window> wnd, PersonContainer* persons, MainPerson* mPersPtr);
 public:
 	/* Главные методы для отрисовки интерфейса */
 	
@@ -45,17 +45,21 @@ private:
 	void ShowLog();					// Показать панель лога
 	void ShowPersonList();			// Показать список персонажей 
 	void ShowPersonControl();		// Показать настройки для выбранного персонажа
+	void ShowMainPersonList();		// Показать главного персонажа в списке
+	void ShowMainPersonControl();	// Показать настройки для главного персонажа
 
 	/*******************************************/
 private:
 	/* Переменные видимости панелей */
 	
-	bool ShowPersonEnum 	  =	true;	// Левая панель объектов на сцене
-	bool ShowPersonSettings   =	true;	// Правая панель управления настройками объектов
-	bool ShowHardwareInfo 	  =	true;	// FPS и информация о графическом адаптере
-	bool ShowLogs 			  =	true;	// Лог
-	bool ShowTriggersList 	  =	false;	// Левая панель триггеров на сцене
-	bool ShowTriggersSettings = false;	// Правая панель триггеров на сцене
+	bool ShowPersonEnum 	    =	true;	// Левая панель объектов на сцене
+	bool ShowPersonSettings     =	true;	// Правая панель управления настройками объектов	
+	bool ShowMainPersonEnum 	=	false;	// Левая панель главного персонажа на сцене
+	bool ShowMainPersonSettings =	false;	// Правая панель управления настройками главного персонажа
+	bool ShowHardwareInfo 	    =	true;	// FPS и информация о графическом адаптере
+	bool ShowLogs 			    =	true;	// Лог
+	bool ShowTriggersList 	    =	false;	// Левая панель триггеров на сцене
+	bool ShowTriggersSettings   =	false;	// Правая панель триггеров на сцене
 
 	/********************************/
 private:
@@ -67,9 +71,10 @@ private:
 
 	/************************/
 private:
-	/* Указатели на контейнеры */
+	/* Указатели на объекты */
 
-	PersonContainer* persConPtr;
+	PersonContainer* persConPtr;	// Указатель на контейнер персонажей
+	MainPerson*		 mPersPtr;		// Указатель на главного персонажа
 
 	/***************************/
 private:

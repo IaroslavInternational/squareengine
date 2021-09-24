@@ -5,7 +5,7 @@ Scene::Scene(std::string name,	std::shared_ptr<Window> wnd,
 	:
 	name(name),
 	wnd(wnd),
-	gui(wnd, &pc),
+	gui(wnd, &pc, &hero),
 	sdr(data),
 	mdr(sdr.GetMainPersonDataPath()),
 	pc( sdr.GetPersonContainerPath()),

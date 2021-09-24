@@ -8,6 +8,8 @@
 class MainPerson : public Object2D
 {
 public:
+	friend class GUISystem;
+public:
 	MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd);
 public:
 	/* √лавные методы дл€ отрисовки главного персонажа */
