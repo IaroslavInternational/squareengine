@@ -2,12 +2,10 @@
 
 #include "Window.h"
 
-#include "EngineTimer.h"
 #include "SceneDataReader.h"
 #include "PersonContainer.h"
 #include "MainPerson.h"
 
-#include "Font.h"
 #include "GUISystem.h"
 
 namespace dx = DirectX;
@@ -15,45 +13,38 @@ namespace dx = DirectX;
 class Scene
 {
 public:
-	Scene(std::string name,	std::shared_ptr<Window> _wnd, 
+	Scene(std::string name,	std::shared_ptr<Window> wnd, 
 		  std::string data);
 	~Scene();
+public:
+	/* Методы сцены */
 
-	/***** /Методы сцены\ *****/
+	void						 ProcessInput(float dt);	// Обработка входных данных переферии
+	void						 Render(float dt);			// Отрисовка сцены
+	std::pair<std::string, bool> IsOnTheSceneTrigger();		// Состояние вызова триггера перехода на сцене 
+	const std::string&			 GetName() const;			// Получить имя сцены
 
-	// Обработка входных данных
-	void ProcessInput(float dt);
-
-	// Отрисовка сцены
-	void Render(float dt);
-
-	std::pair<std::string, bool> IsOnTheSceneTrigger();
-
-	// Геттер имени сцены
-	std::string GetName() const;
-
-	/***** \Методы сцены/ *****/
+	/****************/
 private:
-	// Идентификаторы сцены
-	std::string name;
+	/* Переменные описания сцены */
+	
+	std::string name;	// Имя сцены
 
-	// Настройки
-	bool onTrigger = false; const char* triggerGoal = nullptr;
-	bool cursorState = false;
-private:
-	// Указатель на главное окно 
-	std::shared_ptr<Window> wnd;
-
-	// Интерфейс
-	GUISystem gui;
-
-	// Ридер данных сцены
-	SceneDataReader sdr;
-	MainPersonDataReader mdr;
-
-	/********* -Объекты- *********/
-
-	PersonContainer pc;
-	MainPerson hero;
 	/*****************************/
+private:
+	/* Вспомогательные переменные */
+	
+	std::shared_ptr<Window> wnd;	// Указатель на главное окно 
+	GUISystem				gui;	// Интерфейс двжика
+	SceneDataReader			sdr;	// Ридер данных сцены
+	MainPersonDataReader	mdr;	// Ридер данных главного персонажа
+
+	/******************************/
+private:
+	/* Объекты */
+	
+	PersonContainer pc;
+	MainPerson		hero;
+	
+	/***********/
 };

@@ -1,22 +1,21 @@
 #include "Scene.h"
-#include "EngineUtil.h"
 
-#include <sstream>
-
-Scene::Scene(std::string name,	std::shared_ptr<Window> _wnd, 
+Scene::Scene(std::string name,	std::shared_ptr<Window> wnd, 
 			 std::string data)
 	:
-	wnd(_wnd),
 	name(name),
+	wnd(wnd),
+	gui(wnd, &pc),
 	sdr(data),
 	mdr(sdr.GetMainPersonDataPath()),
-	pc(sdr.GetPersonContainerPath()),
-	hero(mdr, wnd),
-	gui(wnd, &pc)
+	pc( sdr.GetPersonContainerPath()),
+	hero(mdr, wnd)
 {}
 
 Scene::~Scene()
 {}
+
+/* Методы сцены */
 
 void Scene::ProcessInput(float dt)
 {
@@ -41,8 +40,6 @@ void Scene::ProcessInput(float dt)
 				wnd->mouse.DisableRaw();
 			}
 			break;
-		case VK_SPACE:
-			//person.ActivateEffect();
 		default:
 			break;
 		}
@@ -51,9 +48,9 @@ void Scene::ProcessInput(float dt)
 
 void Scene::Render(float dt)
 {
-	/* Начало кадра */
+	/* Отрисовка */
 
-	wnd->Gfx().BeginFrame();
+	wnd->Gfx().BeginFrame();	// Начало кадра
 
 	gui.Show();
 	
@@ -62,10 +59,9 @@ void Scene::Render(float dt)
 	hero.ProcessMoving(dt);
 	hero.Draw();
 
+	wnd->Gfx().EndFrame();		// Конец кадра
 
-	wnd->Gfx().EndFrame();
-
-	/***************/
+	/*************/
 }
 
 std::pair<std::string, bool> Scene::IsOnTheSceneTrigger()
@@ -73,7 +69,9 @@ std::pair<std::string, bool> Scene::IsOnTheSceneTrigger()
 	return std::pair{ "NULL", false };
 }
 
-std::string Scene::GetName() const
+const std::string& Scene::GetName() const
 {
 	return name;
 }
+
+/****************/
