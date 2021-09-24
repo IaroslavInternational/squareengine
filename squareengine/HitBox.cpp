@@ -1,17 +1,17 @@
 #include "HitBox.h"
 
-HitBox::HitBox(DirectX::XMFLOAT4 coordinates, Color color)
+HitBox::HitBox(DirectX::XMFLOAT4 coordinates)
 	:
-	coordinates(coordinates),
-	color(color)
+	coordinates(coordinates)
 {}
 
 HitBox::HitBox(float   leftTopX,     float leftTopY,
-			   float   rightBottomX, float rightBottomY,
-			   Color color)
+			   float   rightBottomX, float rightBottomY)
 	:
-	HitBox(DirectX::XMFLOAT4(leftTopX, leftTopY, rightBottomX, rightBottomY), color)
+	HitBox(DirectX::XMFLOAT4(leftTopX, leftTopY, rightBottomX, rightBottomY))
 {}
+
+/* Операторы */
 
 HitBox HitBox::operator-(DirectX::XMFLOAT2 delta)
 {
@@ -24,6 +24,10 @@ HitBox HitBox::operator+(DirectX::XMFLOAT2 delta)
 	return HitBox(coordinates.x + delta.x, coordinates.y + delta.y,
 				  coordinates.z + delta.x, coordinates.w + delta.y);
 }
+
+/*************/
+
+/* Основные методы для работы с hitbox */
 
 void HitBox::Update(DirectX::XMFLOAT2 delta)
 {
@@ -43,15 +47,9 @@ DirectX::XMFLOAT4& HitBox::GetCoordinates()
 	return coordinates;
 }
 
-void HitBox::SetColor(Color color)
-{
-	this->color = color;
-}
+/***************************************/
 
-Color& HitBox::GetColor(Color color)
-{
-	return color;
-}
+/* Методы операций с hitbox */
 
 bool HitBox::IsCollide(HitBox& hb)
 {
@@ -72,3 +70,5 @@ bool HitBox::IsCollide(HitBox& hb)
 			 ((coordinates.y >= hb.coordinates.y &&	   coordinates.y <= hb.coordinates.w)		|| 
 			  (coordinates.w >= hb.coordinates.y &&	   coordinates.w <= hb.coordinates.w))));	
 }
+
+/****************************/

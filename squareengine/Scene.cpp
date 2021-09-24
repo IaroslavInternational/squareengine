@@ -44,6 +44,8 @@ void Scene::ProcessInput(float dt)
 			break;
 		}
 	}
+
+	hero.ProcessMoving(dt);
 }
 
 void Scene::Render(float dt)
@@ -55,8 +57,6 @@ void Scene::Render(float dt)
 	gui.Show();
 	
 	pc.Draw(wnd->Gfx());
-	
-	hero.ProcessMoving(dt);
 	hero.Draw();
 
 	wnd->Gfx().EndFrame();		// Конец кадра

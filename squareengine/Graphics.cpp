@@ -465,7 +465,7 @@ void Graphics::PutPixel(int x, int y, Color c)
 
 void Graphics::DrawVerticalLine(int start_x, int start_y, int end_y, Color c)
 {
-	for (size_t i = start_y; i < end_y; i++)
+	for (int i = start_y; i < end_y; i++)
 	{
 		PutPixel(start_x, i, c);
 	}
@@ -473,7 +473,7 @@ void Graphics::DrawVerticalLine(int start_x, int start_y, int end_y, Color c)
 
 void Graphics::DrawHorizontalLine(int start_x, int end_x, int start_y, Color c)
 {
-	for (size_t i = start_x; i < end_x; i++)
+	for (int i = start_x; i < end_x; i++)
 	{
 		PutPixel(i, start_y, c);
 	}

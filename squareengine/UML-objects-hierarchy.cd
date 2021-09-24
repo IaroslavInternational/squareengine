@@ -3,7 +3,6 @@
   <Class Name="Person">
     <Position X="1.5" Y="6.5" Width="1.5" />
     <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <NestedTypes>
@@ -24,7 +23,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Object2D">
-    <Position X="2.75" Y="1.25" Width="1.5" />
+    <Position X="2.75" Y="1.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAIIQAACAAAEAAQAAIJAAAABAEAgAgAAQAQAAABAA=</HashCode>
       <FileName>Object2D.h</FileName>
@@ -32,6 +31,9 @@
   </Class>
   <Class Name="MainPerson">
     <Position X="3.75" Y="6.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <NestedTypes>
       <Struct Name="MainPerson::__unnamed_struct_0385_1" Collapsed="true">
         <TypeIdentifier>

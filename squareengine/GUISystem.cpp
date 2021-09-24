@@ -519,28 +519,28 @@ void GUISystem::ShowPersonControl()
 
 									auto actual_hb = persConPtr->persons.at(k)->hitbox;
 
-									EngineFunctions::SetNewValue<int>(
+									EngineFunctions::SetNewValue<float>(
 										personSelected,
 										"hb-ltx", actual_hb.GetCoordinates().x,
 										persConPtr->dataPath,
 										&applog
 										);
 
-									EngineFunctions::SetNewValue<int>(
+									EngineFunctions::SetNewValue<float>(
 										personSelected,
 										"hb-lty", actual_hb.GetCoordinates().y,
 										persConPtr->dataPath,
 										&applog
 										);
 
-									EngineFunctions::SetNewValue<int>(
+									EngineFunctions::SetNewValue<float>(
 										personSelected,
 										"hb-rbx", actual_hb.GetCoordinates().z,
 										persConPtr->dataPath,
 										&applog
 										);
 
-									EngineFunctions::SetNewValue<int>(
+									EngineFunctions::SetNewValue<float>(
 										personSelected,
 										"hb-rby", actual_hb.GetCoordinates().w,
 										persConPtr->dataPath,

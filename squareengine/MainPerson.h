@@ -5,7 +5,7 @@
 #include "Animation.h"
 #include "Window.h"
 
-class MainPerson : Object2D
+class MainPerson : public Object2D
 {
 public:
 	MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd);
