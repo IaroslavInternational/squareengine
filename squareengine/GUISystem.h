@@ -52,10 +52,10 @@ private:
 private:
 	/* Переменные видимости панелей */
 	
-	bool ShowPersonEnum 	    =	true;	// Левая панель объектов на сцене
-	bool ShowPersonSettings     =	true;	// Правая панель управления настройками объектов	
-	bool ShowMainPersonEnum 	=	false;	// Левая панель главного персонажа на сцене
-	bool ShowMainPersonSettings =	false;	// Правая панель управления настройками главного персонажа
+	bool ShowPersonEnum 	    =	false;	// Левая панель объектов на сцене
+	bool ShowPersonSettings     =	false;	// Правая панель управления настройками объектов	
+	bool ShowMainPersonEnum 	=	true;	// Левая панель главного персонажа на сцене
+	bool ShowMainPersonSettings =	true;	// Правая панель управления настройками главного персонажа
 	bool ShowHardwareInfo 	    =	true;	// FPS и информация о графическом адаптере
 	bool ShowLogs 			    =	true;	// Лог
 	bool ShowTriggersList 	    =	false;	// Левая панель триггеров на сцене

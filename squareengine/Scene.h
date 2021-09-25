@@ -8,8 +8,6 @@
 
 #include "GUISystem.h"
 
-namespace dx = DirectX;
-
 class Scene
 {
 public:
@@ -45,6 +43,6 @@ private:
 	
 	PersonContainer pc;
 	MainPerson		hero;
-	
+
 	/***********/
 };

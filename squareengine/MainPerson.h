@@ -29,8 +29,7 @@ public:
 private:
 	/* Переменные описания состояния персонажа */
 
-	std::string dataPath;
-
+	std::string		  dataPath;				// Путь к данным о главном персонаже
 	DirectX::XMFLOAT2 vel = { 0.0f, 0.0f };	// Вектор скорости движения
 	float			  speed;				// Скорость перемещения
 	struct
@@ -55,14 +54,13 @@ private:
 		StandingUp,
 		StandingDown,
 		Count
-	};	// Список анимаций
-
+	};																// Список анимаций
 	std::vector<Animation> animations;								// Вектор анимаций
 	Sequence			   iCurSequence = Sequence::StandingDown;	// Текущее состояние анимаций
 
 	/*******************************************/
 private:
-	std::shared_ptr<Window> wnd;
+	std::shared_ptr<Window> wnd;	// Указатель на главное окно
 };
 
 

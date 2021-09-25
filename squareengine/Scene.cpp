@@ -55,7 +55,7 @@ void Scene::Render(float dt)
 	wnd->Gfx().BeginFrame();	// Начало кадра
 
 	gui.Show();
-	
+
 	pc.Draw(wnd->Gfx());
 	hero.Draw();
 
