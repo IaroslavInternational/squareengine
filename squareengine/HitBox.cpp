@@ -42,6 +42,18 @@ void HitBox::Update(float dx, float dy)
 	Update(DirectX::XMFLOAT2(dx, dy));
 }
 
+void HitBox::UpdateX(float dx)
+{
+	coordinates.x += dx;
+	coordinates.z += dx;
+}
+
+void HitBox::UpdateY(float dy)
+{
+	coordinates.y += dy;
+	coordinates.w += dy;
+}
+
 DirectX::XMFLOAT4& HitBox::GetCoordinates()
 {
 	return coordinates;
@@ -51,7 +63,7 @@ DirectX::XMFLOAT4& HitBox::GetCoordinates()
 
 /* Методы операций с hitbox */
 
-bool HitBox::IsCollide(HitBox& hb)
+bool HitBox::IsCollide(HitBox hb)
 {
     return ((((coordinates.x >= hb.coordinates.x &&	   coordinates.x <= hb.coordinates.z)		||
 			  (coordinates.z >= hb.coordinates.x &&	   coordinates.z <= hb.coordinates.z))		&& 

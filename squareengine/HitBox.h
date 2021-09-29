@@ -20,13 +20,15 @@ public:
 	
 	void			   Update(DirectX::XMFLOAT2 delta);	// Обновить 4 координаты углов hitbox корректирующими отступами
 	void			   Update(float dx, float dy);		// Обновить 4 координаты углов hitbox корректирующими отступами
+	void			   UpdateX(float dx);				// Обновить 2 координаты углов hitbox корректирующими отступами
+	void			   UpdateY(float dy);				// Обновить 2 координаты углов hitbox корректирующими отступами
 	DirectX::XMFLOAT4& GetCoordinates();				// Получить 4 координаты углов hitbox 
 
 	/***************************************/
 public:
 	/* Методы операций с hitbox */
 	
-	bool IsCollide(HitBox& hb);	// Проверка столкновения с другим hitbox
+	bool IsCollide(HitBox hb);	// Проверка столкновения с другим hitbox
 
 	/****************************/
 private:

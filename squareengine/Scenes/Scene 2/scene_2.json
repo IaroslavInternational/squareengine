@@ -2,7 +2,8 @@
   "Scene 2": [
     {
       "objectsPath": "Scenes\\Scene 2\\Objects\\objects_scene_2.json",
-      "mainPersonPath": "Scenes\\main_person.json"
+      "mainPersonPath": "Scenes\\main_person.json",
+      "physicsPath": "Scenes\\Scene 2\\physics.json"
     }
   ]
 }

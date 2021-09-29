@@ -9,10 +9,11 @@ App::App(const std::string& commandLine)
 	:
 	commandLine(commandLine),
 	wnd(std::make_shared<Window>("SquareEngine 1.0")),
+	phEngine(std::make_shared<Physics::PhysicsEngine>()),
 	scriptCommander(TokenizeQuoted(commandLine))
 {
-	scenes.emplace(std::make_unique<Scene>("Scene 1", wnd, "Scenes\\Scene 1\\scene_1.json"), true);
-	scenes.emplace(std::make_unique<Scene>("Scene 2", wnd, "Scenes\\Scene 2\\scene_2.json"), false);
+	scenes.emplace(std::make_unique<Scene>("Scene 1", wnd, "Scenes\\Scene 1\\scene_1.json", phEngine), true);
+	//scenes.emplace(std::make_unique<Scene>("Scene 2", wnd, "Scenes\\Scene 2\\scene_2.json", phEngine), false);
 }
 
 void App::HandleInput(float dt)

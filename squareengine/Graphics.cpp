@@ -463,6 +463,48 @@ void Graphics::PutPixel(int x, int y, Color c)
 	pSysBuffer[Graphics::width * y + x] = c;
 }
 
+void Graphics::DrawLine(DirectX::XMFLOAT2 p0, DirectX::XMFLOAT2 p1, Color c)
+{
+	float m = 0.0f;
+
+	if (p1.x != p0.x)
+	{
+		m = (p1.y - p0.y) / (p1.x - p0.x);
+	}
+
+	if (p1.x != p0.x && std::abs(m) <= 1.0f)
+	{
+		if (p0.x > p1.x)
+		{
+			std::swap(p0, p1);
+		}
+
+		const float b = p0.y - m * p0.x;
+
+		for (int x = (int)p0.x; x < (int)p1.x; x++)
+		{
+			const float y = m * (float)x + b;
+			PutPixel(x, (int)y, c);
+		}
+	}
+	else
+	{
+		if (p0.y > p1.y)
+		{
+			std::swap(p0, p1);
+		}
+
+		const float w = (p1.x - p0.x) / (p1.y - p0.y);
+		const float p = p0.x - w * p0.y;
+
+		for (int y = (int)p0.y; y < (int)p1.y; y++)
+		{
+			const float x = w * (float)y + p;
+			PutPixel((int)x, y, c);
+		}
+	}
+}
+
 void Graphics::DrawVerticalLine(int start_x, int start_y, int end_y, Color c)
 {
 	for (int i = start_y; i < end_y; i++)
@@ -491,10 +533,10 @@ void Graphics::DrawHitBox(HitBox hb)
 {
 	auto& coord = hb.GetCoordinates();
 	
-	DrawVerticalLine(  coord.x, coord.y, coord.w, Colors::DodgerBlue);
-	DrawVerticalLine(  coord.z, coord.y, coord.w, Colors::DodgerBlue);
-	DrawHorizontalLine(coord.x, coord.z, coord.y, Colors::DodgerBlue);
-	DrawHorizontalLine(coord.x, coord.z, coord.w, Colors::DodgerBlue);
+	DrawLine({coord.x, coord.y}, {coord.z, coord.y}, Colors::DodgerBlue);
+	DrawLine({coord.x, coord.w}, {coord.z, coord.w}, Colors::DodgerBlue);
+	DrawLine({coord.x, coord.y}, {coord.x, coord.w}, Colors::DodgerBlue);
+	DrawLine({coord.z, coord.y}, {coord.z, coord.w}, Colors::DodgerBlue);
 }
 
 Color Graphics::GetPixel(int x, int y) const

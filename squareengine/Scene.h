@@ -5,14 +5,16 @@
 #include "SceneDataReader.h"
 #include "PersonContainer.h"
 #include "MainPerson.h"
+#include "PhysicsEngine.h"
 
 #include "GUISystem.h"
 
 class Scene
 {
 public:
-	Scene(std::string name,	std::shared_ptr<Window> wnd, 
-		  std::string data);
+	Scene(std::string							  name,	
+		  std::shared_ptr<Window>				  wnd,		std::string scData, 
+		  std::shared_ptr<Physics::PhysicsEngine> phEngine);
 	~Scene();
 public:
 	/* Методы сцены */
@@ -38,6 +40,12 @@ private:
 	MainPersonDataReader	mdr;	// Ридер данных главного персонажа
 
 	/******************************/
+private:
+	/* Модули движка */
+
+	std::shared_ptr<Physics::PhysicsEngine> phEngine;
+
+	/*****************/
 private:
 	/* Объекты */
 	

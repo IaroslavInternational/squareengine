@@ -24,6 +24,14 @@ public:
 	/* Главные методы для взаимодействия с главным персонажем */
 
 	void ProcessMoving(float dt);
+	void AllowMoveUp();
+	void AllowMoveDown();
+	void AllowMoveLeft();
+	void AllowMoveRight();
+	void DisAllowMoveUp();
+	void DisAllowMoveDown();
+	void DisAllowMoveLeft();
+	void DisAllowMoveRight();
 
 	/**********************************************************/
 private:
@@ -38,6 +46,10 @@ private:
 		float Time;		// Время эффекта
 		bool Active;	// Состояние активности эффекта
 	} effect;			// Параметры эффекта
+	bool AllowedMovingUp    = true;
+	bool AllowedMovingDown  = true;	
+	bool AllowedMovingLeft  = true;
+	bool AllowedMovingRight = true;
 
 	/*******************************************/
 private:

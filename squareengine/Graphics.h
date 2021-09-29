@@ -80,6 +80,7 @@ public:
 		PutPixel(x, y, { unsigned char(r),unsigned char(g),unsigned char(b) });
 	}
 	void PutPixel(int x, int y, Color c);
+	void DrawLine(DirectX::XMFLOAT2 p0, DirectX::XMFLOAT2 p1, Color c = Colors::White);
 	void DrawVerticalLine(int start_x, int start_y, int end_y, Color c = Colors::Red);
 	void DrawHorizontalLine(int start_x, int end_x, int start_y, Color c = Colors::Red);
 	void DrawHitBox(HitBox hb);

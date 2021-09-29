@@ -86,10 +86,28 @@ void MainPerson::Update(float dt)
 	vel.x *= dt;
 	vel.y *= dt;
 
-	position.x += vel.x;
-	position.y += vel.y;
+	if (vel.x < 0) // Moving left
+	{
+		position.x += vel.x;
+		hitbox.UpdateX(vel.x);
+	}
+	else if (vel.x > 0)	// Moving right
+	{
+		position.x += vel.x;
+		hitbox.UpdateX(vel.x);
+	}
 
-	hitbox.Update(vel.x, vel.y);
+	if (vel.y < 0) // Moving down
+	{
+		position.y += vel.y;
+		hitbox.UpdateY(vel.y);
+	}
+	else if (vel.y > 0)	// Moving up
+	{
+		position.y += vel.y;
+		hitbox.UpdateY(vel.y);
+	}
+
 	CalculateDeltas();
 
 	animations[(int)iCurSequence].Update(dt);
@@ -122,24 +140,68 @@ void MainPerson::ProcessMoving(float dt)
 	{
 		if (wnd->kbd.KeyIsPressed('W'))
 		{
-			dir.y -= 1.0f;
+			if(AllowedMovingUp)
+				dir.y -= 1.0f;
 		}
 		if (wnd->kbd.KeyIsPressed('A'))
 		{
-			dir.x -= 1.0f;
+			if (AllowedMovingLeft)
+				dir.x -= 1.0f;
 		}
 		if (wnd->kbd.KeyIsPressed('S'))
 		{
-			dir.y += 1.0f;
+			if (AllowedMovingDown)
+				dir.y += 1.0f;
 		}
 		if (wnd->kbd.KeyIsPressed('D'))
 		{
-			dir.x += 1.0f;
+			if (AllowedMovingRight)
+				dir.x += 1.0f;
 		}
 	}
 
 	SetDirection(dir);
 	Update(dt);
+}
+
+void MainPerson::AllowMoveUp()
+{
+	AllowedMovingUp = true;
+}
+
+void MainPerson::AllowMoveDown()
+{
+	AllowedMovingDown = true;
+}
+
+void MainPerson::AllowMoveLeft()
+{
+	AllowedMovingLeft = true;
+}
+
+void MainPerson::AllowMoveRight()
+{
+	AllowedMovingRight = true;
+}
+
+void MainPerson::DisAllowMoveUp()
+{
+	AllowedMovingUp = false;
+}
+
+void MainPerson::DisAllowMoveDown()
+{
+	AllowedMovingDown = false;
+}
+
+void MainPerson::DisAllowMoveLeft()
+{
+	AllowedMovingLeft = false;
+}
+
+void MainPerson::DisAllowMoveRight()
+{
+	AllowedMovingRight = false;
 }
 
 /**********************************************************/

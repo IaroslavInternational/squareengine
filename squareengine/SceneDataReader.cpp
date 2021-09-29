@@ -38,7 +38,13 @@ SceneDataReader::SceneDataReader(std::string path)
 
 			paths.emplace_back(obj.at("mainPersonPath"));
 
-			/*************************/
+			/******************************/	
+			
+			/* Запись пути данных о физике */
+
+			paths.emplace_back(obj.at("physicsPath"));
+
+			/*******************************/
 
 			/* Запись пути триггеров */
 
@@ -67,6 +73,11 @@ std::string SceneDataReader::GetPersonContainerPath() const
 std::string SceneDataReader::GetMainPersonDataPath() const
 {
 	return paths[1];
+}
+
+std::string SceneDataReader::GetPhysicsDataPath() const
+{
+	return paths[2];
 }
 
 std::vector<std::string>& SceneDataReader::GetPaths()

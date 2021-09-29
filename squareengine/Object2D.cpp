@@ -48,9 +48,9 @@ Surface2D& Object2D::GetSurface()
 	return sprite;
 }
 
-HitBox& Object2D::GetHitBox()
+HitBox Object2D::GetHitBox()
 {
-	return hitbox;
+	return hitbox - DirectX::XMFLOAT2(dx, dy);
 }
 
 /***************************************/

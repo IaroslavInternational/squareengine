@@ -7,6 +7,7 @@
 #include "ImguiManager.h"
 
 #include "Scene.h"
+#include "PhysicsEngine.h"
 
 #include <map>
 
@@ -32,6 +33,7 @@ private:
 
 	// ”казатель на окно
 	std::shared_ptr<Window> wnd;
+	std::shared_ptr<Physics::PhysicsEngine> phEngine;
 
 	// ”правление скриптами
 	ScriptCommander scriptCommander;

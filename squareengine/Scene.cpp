@@ -1,16 +1,20 @@
 #include "Scene.h"
 
-Scene::Scene(std::string name,	std::shared_ptr<Window> wnd, 
-			 std::string data)
+Scene::Scene(std::string							 name,
+			 std::shared_ptr<Window>				 wnd,	   std::string scData,
+			 std::shared_ptr<Physics::PhysicsEngine> phEngine)
 	:
 	name(name),
 	wnd(wnd),
 	gui(wnd, &pc, &hero),
-	sdr(data),
+	sdr(scData),
 	mdr(sdr.GetMainPersonDataPath()),
 	pc( sdr.GetPersonContainerPath()),
-	hero(mdr, wnd)
-{}
+	hero(mdr, wnd),
+	phEngine(phEngine)
+{
+	phEngine->LoadData(sdr.GetPhysicsDataPath());
+}
 
 Scene::~Scene()
 {}
@@ -45,6 +49,7 @@ void Scene::ProcessInput(float dt)
 		}
 	}
 
+	phEngine->CheckMainPersonCollision(&hero);
 	hero.ProcessMoving(dt);
 }
 
@@ -59,12 +64,16 @@ void Scene::Render(float dt)
 	pc.Draw(wnd->Gfx());
 	hero.Draw();
 
-	auto collisionState = pc.CheckCollision(hero.GetHitBox());
+	phEngine->Draw(wnd->Gfx());
+	//phEngine->test(wnd->Gfx());
+
+	//test collision
+	/*auto collisionState = pc.CheckCollision(hero.GetHitBox());
 
 	if (collisionState.first)
 	{
 		collisionState.second->ActivateEffect();
-	}
+	}*/
 
 	wnd->Gfx().EndFrame();		// Конец кадра
 

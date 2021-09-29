@@ -26,7 +26,7 @@ public:
 	std::string		  GetName() const;							// Получить имя объекта
 	DirectX::XMFLOAT2 GetPosition();							// Получить позицию объекта
 	Surface2D&		  GetSurface();								// Получить плоскость изображения спрайта
-	HitBox&			  GetHitBox();								// Получить hitbox
+	HitBox			  GetHitBox();								// Получить hitbox
 
 	/***************************************/
 protected:
