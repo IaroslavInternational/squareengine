@@ -92,16 +92,6 @@ void Physics::PhysicsEngine::AddHitBox(float leftTop_x, float leftTop_y, float r
 	AddHitBox(HitBox(leftTop_x, leftTop_y, rightBottom_x, rightBottom_y));
 }
 
-void Physics::PhysicsEngine::test(Graphics& gfx)
-{
-	//        x1       y1     x2       y2
-	Line l1(360.0f, 245.0f, 885.0f, 245.0f);
-	Line l2(550.0f, 245.0f, 650.0f, 245.0f);
-
-	gfx.DrawLine(l1.GetStartPoint(), l1.GetEndPoint(), Colors::DodgerBlue);
-	gfx.DrawLine(l2.GetStartPoint(), l2.GetEndPoint(), Colors::Magenta);
-}
-
 void Physics::PhysicsEngine::CheckMainPersonCollision(MainPerson* mp)
 {
 	auto mpHitBoxCoord = mp->GetHitBox().GetCoordinates();

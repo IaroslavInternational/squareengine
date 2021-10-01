@@ -65,7 +65,6 @@ void Scene::Render(float dt)
 	hero.Draw();
 
 	phEngine->Draw(wnd->Gfx());
-	//phEngine->test(wnd->Gfx());
 
 	//test collision
 	/*auto collisionState = pc.CheckCollision(hero.GetHitBox());

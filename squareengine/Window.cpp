@@ -8,7 +8,7 @@
 #endif // IS_ENGINE_MODE
 
 // Мод запуска окна
-#define ENGINE_WINDOW 1
+#define ENGINE_WINDOW 0
 // Window Class stuff
 Window::WindowClass Window::WindowClass::wndClass;
 

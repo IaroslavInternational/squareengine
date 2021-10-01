@@ -26,7 +26,6 @@ namespace Physics
 		void AddLine(float start_x, float start_y, float end_x, float end_y);
 		void AddHitBox(HitBox hb);
 		void AddHitBox(float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y);
-		void test(Graphics& gfx);
 	public:
 		void CheckMainPersonCollision(MainPerson* mp);
 		bool CheckLineCollision(Line line);

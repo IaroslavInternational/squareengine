@@ -20,7 +20,8 @@ bool Physics::Line::IsIntersect(Line line)
 
     float eps = 5.0f;
 
-    if (y1 == y2 && y3 == y4 && x3 <= x1 && x2 <= x4)
+    if (y1 == y2 && y3 == y4  &&  x3 <= x1 && x2 <= x4 ||
+      ((x1 <= x3 && x2 >= x3) || (x1 <= x4 && x2 >= x4)))
     {
         if (fabs(y1 - y3) <= eps)
         {
