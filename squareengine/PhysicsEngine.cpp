@@ -27,24 +27,26 @@ void Physics::PhysicsEngine::LoadData(std::string dataPath)
 		{
 			for (const auto& obj : j.at(d))
 			{
+				std::string name = d;
 				float start_x = obj.at("start-x");
 				float start_y = obj.at("start-y");
 				float end_x = obj.at("end-x");
 				float end_y = obj.at("end-y");
 
-				AddLine(Line(start_x, start_y, end_x, end_y));
+				AddLine(Line(name, start_x, start_y, end_x, end_y));
 			}
 		}
 		else if (d.find("hb") != d.npos)
 		{
 			for (const auto& obj : j.at(d))
 			{
+				std::string name = d;
 				float lt_x = obj.at("lt-x");
 				float lt_y = obj.at("lt-y");
 				float rb_x = obj.at("rb-x");
 				float rb_y = obj.at("rb-y");
 
-				AddHitBox(HitBox(lt_x, lt_y, rb_x, rb_y));
+				AddHitBox(HitBox(name, lt_x, lt_y, rb_x, rb_y));
 			}
 		}
 	}
@@ -77,9 +79,9 @@ void Physics::PhysicsEngine::AddLine(Line line)
 	lines.emplace_back(line);
 }
 
-void Physics::PhysicsEngine::AddLine(float start_x, float start_y, float end_x, float end_y)
+void Physics::PhysicsEngine::AddLine(std::string name, float start_x, float start_y, float end_x, float end_y)
 {
-	AddLine(Line(start_x, start_y, end_x, end_y));
+	AddLine(Line(name, start_x, start_y, end_x, end_y));
 }
 
 void Physics::PhysicsEngine::AddHitBox(HitBox hb)
@@ -87,14 +89,14 @@ void Physics::PhysicsEngine::AddHitBox(HitBox hb)
 	hitboxes.emplace_back(hb);
 }
 
-void Physics::PhysicsEngine::AddHitBox(float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y)
+void Physics::PhysicsEngine::AddHitBox(std::string name, float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y)
 {
-	AddHitBox(HitBox(leftTop_x, leftTop_y, rightBottom_x, rightBottom_y));
+	AddHitBox(HitBox(name, leftTop_x, leftTop_y, rightBottom_x, rightBottom_y));
 }
 
 void Physics::PhysicsEngine::CheckMainPersonCollision(MainPerson* mp)
 {
-	auto mpHitBoxCoord = mp->GetHitBox().GetCoordinates();
+	auto mpHitBoxCoord = mp->GetHitBox();
 	auto lns = GetLines(mpHitBoxCoord);
 
 	if (CheckLineCollision(lns[0]))
@@ -169,10 +171,10 @@ std::vector<Physics::Line> Physics::GetLines(HitBox hb)
 
 	std::vector<Physics::Line> lines =
 	{
-		Line(hbCoord.x - d, hbCoord.y - d, hbCoord.z + d, hbCoord.y - d),	// top
-		Line(hbCoord.x - d, hbCoord.w + d, hbCoord.z + d, hbCoord.w + d),	// bot
-		Line(hbCoord.x - d, hbCoord.y - d, hbCoord.x - d, hbCoord.w + d),	// left
-		Line(hbCoord.z + d, hbCoord.y + d, hbCoord.z + d, hbCoord.w + d),	// right
+		Line(std::string("Line hitbox top"),    hbCoord.x - d, hbCoord.y - d, hbCoord.z + d, hbCoord.y - d),	// top
+		Line(std::string("Line hitbox bottom"), hbCoord.x - d, hbCoord.w + d, hbCoord.z + d, hbCoord.w + d),	// bot
+		Line(std::string("Line hitbox left"),   hbCoord.x - d, hbCoord.y - d, hbCoord.x - d, hbCoord.w + d),	// left
+		Line(std::string("Line hitbox right"),  hbCoord.z + d, hbCoord.y + d, hbCoord.z + d, hbCoord.w + d),	// right
 	};
 
 	return lines;

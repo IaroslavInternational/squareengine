@@ -484,7 +484,12 @@ void Graphics::DrawLine(DirectX::XMFLOAT2 p0, DirectX::XMFLOAT2 p1, Color c)
 		for (int x = (int)p0.x; x < (int)p1.x; x++)
 		{
 			const float y = m * (float)x + b;
-			PutPixel(x, (int)y, c);
+
+			if (x >= 0 && x < (int)width &&
+				y >= 0 && y < (int)height)
+			{
+				PutPixel(x, (int)y, c);
+			}
 		}
 	}
 	else
@@ -500,7 +505,12 @@ void Graphics::DrawLine(DirectX::XMFLOAT2 p0, DirectX::XMFLOAT2 p1, Color c)
 		for (int y = (int)p0.y; y < (int)p1.y; y++)
 		{
 			const float x = w * (float)y + p;
-			PutPixel((int)x, y, c);
+
+			if (x >= 0 && x < (int)width &&
+				y >= 0 && y < (int)height)
+			{
+				PutPixel((int)x, y, c);
+			}
 		}
 	}
 }

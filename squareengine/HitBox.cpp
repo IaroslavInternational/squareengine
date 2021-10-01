@@ -1,28 +1,29 @@
 #include "HitBox.h"
 
-HitBox::HitBox(DirectX::XMFLOAT4 coordinates)
+HitBox::HitBox(std::string name, DirectX::XMFLOAT4 coordinates)
 	:
+	name(name),
 	coordinates(coordinates)
 {}
 
-HitBox::HitBox(float   leftTopX,     float leftTopY,
-			   float   rightBottomX, float rightBottomY)
+HitBox::HitBox(std::string name, float   leftTopX,     float leftTopY,
+								 float   rightBottomX, float rightBottomY)
 	:
-	HitBox(DirectX::XMFLOAT4(leftTopX, leftTopY, rightBottomX, rightBottomY))
+	HitBox(name, DirectX::XMFLOAT4(leftTopX, leftTopY, rightBottomX, rightBottomY))
 {}
 
 /* Операторы */
 
 HitBox HitBox::operator-(DirectX::XMFLOAT2 delta)
 {
-	return HitBox(coordinates.x - delta.x, coordinates.y - delta.y,
-				  coordinates.z - delta.x, coordinates.w - delta.y);
+	return HitBox(name, coordinates.x - delta.x, coordinates.y - delta.y,
+						coordinates.z - delta.x, coordinates.w - delta.y);
 }
 
 HitBox HitBox::operator+(DirectX::XMFLOAT2 delta)
 {
-	return HitBox(coordinates.x + delta.x, coordinates.y + delta.y,
-				  coordinates.z + delta.x, coordinates.w + delta.y);
+	return HitBox(name, coordinates.x + delta.x, coordinates.y + delta.y,
+					    coordinates.z + delta.x, coordinates.w + delta.y);
 }
 
 /*************/
@@ -52,6 +53,11 @@ void HitBox::UpdateY(float dy)
 {
 	coordinates.y += dy;
 	coordinates.w += dy;
+}
+
+std::string HitBox::GetName()
+{
+	return name;
 }
 
 DirectX::XMFLOAT4& HitBox::GetCoordinates()

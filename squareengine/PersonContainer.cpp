@@ -70,7 +70,7 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 			/* Инициализация объекта */
 
-			persons.emplace_back(std::make_unique<Person>(name, position, pathToSprite, HitBox(hb_coord), speed, eff_d, eff_t, eff_a));
+			persons.emplace_back(std::make_unique<Person>(name, position, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), speed, eff_d, eff_t, eff_a));
 
 			/*************************/
 		}

@@ -16,6 +16,8 @@ namespace Physics
 	class PhysicsEngine
 	{
 	public:
+		friend class GUISystem;
+	public:
 		PhysicsEngine() = default;
 	public:
 		void LoadData(std::string dataPath);
@@ -23,9 +25,9 @@ namespace Physics
 		void Draw(Graphics& gfx);
 	public:
 		void AddLine(Line line);
-		void AddLine(float start_x, float start_y, float end_x, float end_y);
+		void AddLine(std::string name, float start_x, float start_y, float end_x, float end_y);
 		void AddHitBox(HitBox hb);
-		void AddHitBox(float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y);
+		void AddHitBox(std::string name, float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y);
 	public:
 		void CheckMainPersonCollision(MainPerson* mp);
 		bool CheckLineCollision(Line line);

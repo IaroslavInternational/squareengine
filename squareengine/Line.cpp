@@ -2,15 +2,16 @@
 
 #include "EngineFunctions.hpp"
 
-Physics::Line::Line(DirectX::XMFLOAT2 start, DirectX::XMFLOAT2 end)
+Physics::Line::Line(std::string name, DirectX::XMFLOAT2 start, DirectX::XMFLOAT2 end)
 	:
+    name(name),
 	start(start),
 	end(end)
 {}
 
-Physics::Line::Line(float start_x, float start_y, float end_x, float end_y)
+Physics::Line::Line(std::string name, float start_x, float start_y, float end_x, float end_y)
 	:
-	Line(DirectX::XMFLOAT2({ start_x, start_y }), DirectX::XMFLOAT2({ end_x, end_y }))
+	Line(name, DirectX::XMFLOAT2({ start_x, start_y }), DirectX::XMFLOAT2({ end_x, end_y }))
 {}
 
 bool Physics::Line::IsIntersect(Line line)
@@ -57,6 +58,11 @@ bool Physics::Line::IsIntersect(Line line)
         
         return (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1);
     }
+}
+
+std::string Physics::Line::GetName()
+{
+    return name;
 }
 
 DirectX::XMFLOAT2 Physics::Line::GetStartPoint()

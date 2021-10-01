@@ -3,9 +3,13 @@
 #include "EngineFunctions.hpp"
 #include "HitBox.h"
 
-GUISystem::GUISystem(std::shared_ptr<Window> wnd, PersonContainer* persons, MainPerson* mPersPtr)
+GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
+					 PersonContainer*						 persons,
+					 MainPerson*							 mPersPtr,
+					 std::shared_ptr<Physics::PhysicsEngine> phEngPtr)
 	:
 	wnd(wnd),
+	phEngPtr(phEngPtr),
 	persConPtr(persons),
 	mPersPtr(mPersPtr)
 {
@@ -32,7 +36,7 @@ void GUISystem::Show()
 	if (mouseHelpInfo == "")
 	{
 		std::ostringstream pos;
-		pos << "x: " << ImGui::GetMousePos().x
+		pos << "x: "   << ImGui::GetMousePos().x
 			<< "\ny: " << ImGui::GetMousePos().y;
 
 		ShowMouseHelperPanel(pos.str().c_str());
@@ -238,6 +242,10 @@ void GUISystem::ShowLeftSide()
 	{
 		ShowMainPersonList();
 	}
+	else if (ShowPhysicsEngineObjEnum)
+	{
+		ShowPhysicsEngineObjList();
+	}
 	else if (ShowTriggersList)
 	{
 		//objects.triggers.ShowLeftPanel();
@@ -284,6 +292,14 @@ void GUISystem::ShowRightSide()
 
 		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
 		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
+	}
+	else if (ShowPhysicsEngineObjSettings)
+	{
+		ShowPhysicsEngineObjControl();
+
+		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
+		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.15f, io.DisplaySize.y * 0.15f }, ImGuiCond_FirstUseEver);
+
 	}
 	else if (ShowTriggersSettings)
 	{
@@ -362,6 +378,17 @@ void GUISystem::DisableSides()
 
 /* Методы отрисовки конкретных интерфейсов */
 
+void GUISystem::ShowLog()
+{
+	ImGui::Begin("Лог", NULL, ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+	applog.Draw("Лог", NULL);
+	ImGui::End();
+}
+
 void GUISystem::ShowFPSAndGPU()
 {
 	if (ImGui::Begin("Представление", NULL,
@@ -391,17 +418,6 @@ void GUISystem::ShowFPSAndGPU()
 		}
 	}
 
-	ImGui::End();
-}
-
-void GUISystem::ShowLog()
-{
-	ImGui::Begin("Лог", NULL, ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus);
-
-	applog.Draw("Лог", NULL);
 	ImGui::End();
 }
 
@@ -530,7 +546,7 @@ void GUISystem::ShowPersonControl()
 								int ms_posX = wnd->mouse.GetPosX();
 								int ms_posY = wnd->mouse.GetPosY();
 
-								HitBox hb(firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+								HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
 								wnd->Gfx().DrawHitBox(hb);
 
 								if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
@@ -538,13 +554,13 @@ void GUISystem::ShowPersonControl()
 									auto pos = wnd->mouse.GetPos();
 									secondPoint = { (float)pos.first, (float)pos.second };
 
-									HitBox hb_new(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+									HitBox hb_new(persConPtr->persons.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
 									persConPtr->persons.at(k)->SetHitBox(hb);
 									persConPtr->persons.at(k)->hitbox_visability = true;									
 									
 									std::ostringstream oss;
 									oss << "Поставлена вторая точка:\n" <<
-										"[x: " << secondPoint.x <<
+										"[x: "  << secondPoint.x <<
 										"; y: " << secondPoint.y << "]\n";
 
 									AddLog(oss.str().c_str());
@@ -802,7 +818,7 @@ void GUISystem::ShowMainPersonControl()
 						int ms_posX = wnd->mouse.GetPosX();
 						int ms_posY = wnd->mouse.GetPosY();
 
-						HitBox hb(firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+						HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
 						wnd->Gfx().DrawHitBox(hb);
 
 						if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
@@ -810,7 +826,7 @@ void GUISystem::ShowMainPersonControl()
 							auto pos = wnd->mouse.GetPos();
 							secondPoint = { (float)pos.first, (float)pos.second };
 
-							HitBox hb_new(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+							HitBox hb_new(mPersPtr->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
 							mPersPtr->SetHitBox(hb);
 							mPersPtr->hitbox_visability = true;
 
@@ -977,6 +993,335 @@ void GUISystem::ShowMainPersonControl()
 			/*********************************************************************/
 
 			ImGui::EndChild();
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowPhysicsEngineObjList()
+{
+	if (ImGui::Begin("Объекты", NULL,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
+		if (ImGui::BeginTabBar("PhEngTabs", ImGuiTabBarFlags_None))
+		{
+			if (ImGui::BeginTabItem("Линии"))
+			{
+				for (auto l = phEngPtr->lines.begin(); l != phEngPtr->lines.end(); l++)
+				{
+					char label[128];
+					sprintf_s(label, l->GetName().c_str(), objectSelected);
+
+					ImGui::Bullet();
+					if (ImGui::Selectable(label, objectSelected == l->GetName().c_str()))
+					{
+						objectSelected = l->GetName();
+					}
+				}
+				
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Hit-Box'ы"))
+			{
+				for (auto hb = phEngPtr->hitboxes.begin(); hb != phEngPtr->hitboxes.end(); hb++)
+				{
+					char label[128];
+					sprintf_s(label, hb->GetName().c_str(), objectSelected);
+
+					ImGui::Bullet();
+					if (ImGui::Selectable(label, objectSelected == hb->GetName().c_str()))
+					{
+						objectSelected = hb->GetName();
+					}
+				}
+
+				ImGui::EndTabItem();
+			}
+
+			ImGui::EndTabBar();
+		}
+
+		ImGui::NewLine();
+
+		if (ImGui::Button("Добавить"))
+		{
+
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowPhysicsEngineObjControl()
+{
+	if (ImGui::Begin("Опции", NULL,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
+		// Цикл по линиям
+		for (int k = 0; k < phEngPtr->lines.size(); k++)
+		{
+			// Поиск выбранной линии
+			if (phEngPtr->lines.at(k).name == objectSelected)
+			{
+				if (ImGui::BeginChild(""))
+				{
+					/* Переменные управления сбросом интерфейса */
+
+					bool posDirty = false;		// Контроль позиции начала
+					bool effDirty = false;		// Котнроль эффекта
+					bool speedDirty = false;	// Котнроль скорости
+
+					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+					/********************************************/
+
+					/* Элемент управления именем */
+
+					const char* name = phEngPtr->lines.at(k).name.c_str();
+					ImGui::InputText("Имя", const_cast<char*>(name), sizeof(name));
+
+					/*****************************/
+
+					/* Элементы управления позициями точек линии */
+
+					ImGui::Text("Позиция начальной точки:");
+					dcheck(ImGui::SliderFloat("Xs", &phEngPtr->lines.at(k).start.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
+					dcheck(ImGui::SliderFloat("Ys", &phEngPtr->lines.at(k).start.y, -1000.0f, 1000.0f, "%.2f"), posDirty);			
+					
+					ImGui::Text("Позиция конечной точки:");
+					dcheck(ImGui::SliderFloat("Xe", &phEngPtr->lines.at(k).end.x,	-1000.0f, 1000.0f, "%.2f"), posDirty);
+					dcheck(ImGui::SliderFloat("Ye", &phEngPtr->lines.at(k).end.y,	-1000.0f, 1000.0f, "%.2f"), posDirty);
+
+					/*********************************************/
+
+					ImGui::Separator();	// Разделитель
+
+					///* Элементы управления хитбоксом главного персонажа */
+
+					//ImGui::Text("Hit-box:");
+					//ImGui::Checkbox("Показать", &mPersPtr->hitbox_visability);
+
+					///* Если нажата кнопка изменить HitBox */
+					//{
+					//	if (ImGui::Button("Изменить", ImVec2(100, 20)))
+					//	{
+					//		AddLog("Изменение Hit-box для: ");
+					//		AddLog(mPersPtr->name.c_str());
+					//		AddLog("\n");
+
+					//		DrawingHitBox = true;
+					//		mPersPtr->hitbox_visability = false;
+
+					//		ImGui::GetStyle().Alpha = 0.1f;
+					//	}
+
+					//	if (DrawingHitBox)
+					//	{
+					//		if (!SettedFirstPoint)
+					//		{
+					//			mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+					//			if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+					//			{
+					//				auto pos = wnd->mouse.GetPos();
+					//				firstPoint = { (float)pos.first, (float)pos.second };
+
+					//				SettedFirstPoint = true;
+					//				std::ostringstream oss;
+					//				oss << "Поставлена первая точка:\n" <<
+					//					"[x: " << firstPoint.x <<
+					//					"; y: " << firstPoint.y << "]\n";
+
+					//				AddLog(oss.str().c_str());
+					//			}
+					//		}
+					//		else if (!SettedSecondPoint)
+					//		{
+					//			mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+					//			int ms_posX = wnd->mouse.GetPosX();
+					//			int ms_posY = wnd->mouse.GetPosY();
+
+					//			HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+					//			wnd->Gfx().DrawHitBox(hb);
+
+					//			if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+					//			{
+					//				auto pos = wnd->mouse.GetPos();
+					//				secondPoint = { (float)pos.first, (float)pos.second };
+
+					//				HitBox hb_new(mPersPtr->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+					//				mPersPtr->SetHitBox(hb);
+					//				mPersPtr->hitbox_visability = true;
+
+					//				std::ostringstream oss;
+					//				oss << "Поставлена вторая точка:\n" <<
+					//					"[x: " << secondPoint.x <<
+					//					"; y: " << secondPoint.y << "]\n";
+
+					//				AddLog(oss.str().c_str());
+
+					//				AddLog("Сохранение Hit-box:\n");
+
+					//				auto actual_hb = mPersPtr->hitbox;
+
+					//				EngineFunctions::SetNewValue<float>(
+					//					mPersPtr->name,
+					//					"hb-ltx", actual_hb.GetCoordinates().x,
+					//					mPersPtr->dataPath,
+					//					&applog
+					//					);
+
+					//				EngineFunctions::SetNewValue<float>(
+					//					mPersPtr->name,
+					//					"hb-lty", actual_hb.GetCoordinates().y,
+					//					mPersPtr->dataPath,
+					//					&applog
+					//					);
+
+					//				EngineFunctions::SetNewValue<float>(
+					//					mPersPtr->name,
+					//					"hb-rbx", actual_hb.GetCoordinates().z,
+					//					mPersPtr->dataPath,
+					//					&applog
+					//					);
+
+					//				EngineFunctions::SetNewValue<float>(
+					//					mPersPtr->name,
+					//					"hb-rby", actual_hb.GetCoordinates().w,
+					//					mPersPtr->dataPath,
+					//					&applog
+					//					);
+
+					//				mouseHelpInfo = "";
+					//				SettedSecondPoint = true;
+					//			}
+					//		}
+					//		else if (SettedFirstPoint && SettedSecondPoint)
+					//		{
+					//			DrawingHitBox = false;
+					//			SettedFirstPoint = false;
+					//			SettedSecondPoint = false;
+
+					//			ImGui::GetStyle().Alpha = 1.0f;
+					//		}
+					//	}
+					//}
+					///**************************************/
+
+					///****************************************************/
+
+					//ImGui::NewLine();
+					//ImGui::NewLine();
+
+					///* Если нажата кнопка сохранить текущие настройки главного персонажа */
+					//{
+					//	if (ImGui::Button("Сохранить", ImVec2(100, 20)))
+					//	{
+					//		AddLog("Сохранение настроек для: ");
+					//		AddLog(mPersPtr->name.c_str());
+					//		AddLog("\n");
+
+					//		SavingSettings = true;
+					//	}
+
+					//	if (SavingSettings)
+					//	{
+					//		/* Сохранение позиции и скорости */
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"pos-x", mPersPtr->position.x,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"pos-y", mPersPtr->position.y,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"speed", mPersPtr->speed,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		/**********************/
+
+					//		/* Сохранение настроек эффекта */
+
+					//		EngineFunctions::SetNewValue<bool>(
+					//			mPersPtr->name,
+					//			"eff-a", mPersPtr->effect.Active,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"eff-d", mPersPtr->effect.Duration,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"eff-t", mPersPtr->effect.Time,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		/*******************************/
+
+					//		/* Пересохранение hitbox */
+
+					//		auto actual_hb = mPersPtr->hitbox;
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"hb-ltx", actual_hb.GetCoordinates().x,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"hb-lty", actual_hb.GetCoordinates().y,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"hb-rbx", actual_hb.GetCoordinates().z,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		EngineFunctions::SetNewValue<float>(
+					//			mPersPtr->name,
+					//			"hb-rby", actual_hb.GetCoordinates().w,
+					//			mPersPtr->dataPath,
+					//			&applog
+					//			);
+
+					//		/*************************/
+
+					//		SavingSettings = false;
+					//	}
+					//}
+					/*********************************************************************/
+
+					ImGui::EndChild();
+				}
+			}
 		}
 	}
 

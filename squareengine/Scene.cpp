@@ -6,7 +6,7 @@ Scene::Scene(std::string							 name,
 	:
 	name(name),
 	wnd(wnd),
-	gui(wnd, &pc, &hero),
+	gui(wnd, &pc, &hero, phEngine),
 	sdr(scData),
 	mdr(sdr.GetMainPersonDataPath()),
 	pc( sdr.GetPersonContainerPath()),
