@@ -1,5 +1,6 @@
 #include "GUISystem.h"
 
+#include "imgui/implot.h"
 #include "EngineFunctions.hpp"
 #include "HitBox.h"
 #include "Line.h"
@@ -15,6 +16,11 @@ GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 	mPersPtr(mPersPtr)
 {
 	SetGUIColors();
+
+	for (size_t i = 0; i < 100; i++)
+	{
+		counters[i] = float(i);
+	}
 
 	auto GPU_Data = AdapterReader::GetAdapterData();
 
@@ -33,6 +39,29 @@ void GUISystem::Show()
 	ShowRightSide();
 	ShowLeftBottomSide();
 	ShowBottomPanel();
+
+	if (ImGui::Begin("FPS Plot"))
+	{
+		if (counter != 100)
+		{
+			arr[counter] = ImGui::GetIO().Framerate;
+			counter++;
+		}
+		else
+		{
+			counter = 0;
+		}
+
+		//ImGui::Text("FPS");
+		ImPlot::SetNextPlotLimits(0.0f, 100.0f, 0.0f, 150.0f);
+		if (ImPlot::BeginPlot("FPS"))
+		{
+			ImPlot::PlotLine("", counters, arr, 100);
+			ImPlot::EndPlot();
+		}
+	}
+
+	ImGui::End();
 
 	if (mouseHelpInfo == "")
 	{
@@ -393,7 +422,8 @@ void GUISystem::DisableSides()
 
 void GUISystem::ShowLog()
 {
-	ImGui::Begin("Лог", NULL, ImGuiWindowFlags_NoMove |
+	ImGui::Begin("Лог", NULL, 
+		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus);
@@ -408,11 +438,11 @@ void GUISystem::ShowFPSAndGPU()
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus))
+		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		ImGui::Text("FPS:");
 		ImGui::Text("%.3f мс/кадр (%.2f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
+		
 		ImGui::Separator();
 
 		ImGui::Text("Графическое оборудование:");
@@ -1110,6 +1140,25 @@ void GUISystem::ShowPhysicsEngineObjControl()
 					dcheck(ImGui::SliderFloat("Xe", &phEngPtr->lines.at(k).end.x,	-1000.0f, 1000.0f, "%.2f"), posDirty);
 					dcheck(ImGui::SliderFloat("Ye", &phEngPtr->lines.at(k).end.y,	-1000.0f, 1000.0f, "%.2f"), posDirty);
 
+					if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
+					{
+						AddLog("Нормирование по Xs для: ");
+						AddLog(name);
+						AddLog("\n");
+
+						phEngPtr->lines.at(k).end.x = phEngPtr->lines.at(k).start.x;
+					}
+
+					ImGui::SameLine();
+
+					if (ImGui::Button("Нормировать Y", ImVec2(100, 20)))
+					{
+						AddLog("Нормирование по Ys для: ");
+						AddLog(name);
+						AddLog("\n");
+
+						phEngPtr->lines.at(k).end.y = phEngPtr->lines.at(k).start.y;
+					}
 					/*********************************************/
 
 					ImGui::Separator();	// Разделитель

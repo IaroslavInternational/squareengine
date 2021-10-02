@@ -106,5 +106,12 @@ private:
 
 	/**************************************************************/
 
+	/**/
+
+	float arr[100];
+	float counters[100];
+	size_t counter = 0;
+
+	/**/
 	std::string mouseHelpInfo = "";	// Подпись под курсором
 };

@@ -1,5 +1,7 @@
 #include "ImguiManager.h"
 #include "imgui/imgui.h"
+#include "imgui/implot.h"
+
 #include <filesystem>
 
 ImguiManager::ImguiManager()
@@ -12,10 +14,13 @@ ImguiManager::ImguiManager()
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
+		
 	ImGui::StyleColorsDark();
 }
 
 ImguiManager::~ImguiManager()
 {
+	ImPlot::DestroyContext();
 	ImGui::DestroyContext();
 }
