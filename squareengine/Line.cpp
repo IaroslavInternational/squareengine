@@ -14,6 +14,14 @@ Physics::Line::Line(std::string name, float start_x, float start_y, float end_x,
 	Line(name, DirectX::XMFLOAT2({ start_x, start_y }), DirectX::XMFLOAT2({ end_x, end_y }))
 {}
 
+void Physics::Line::operator=(Line line)
+{
+    name = line.name;
+    start = line.start;
+    end = line.end;
+    visability = line.visability;
+}
+
 bool Physics::Line::IsIntersect(Line line)
 {
     float x1 = start.x,      y1 = start.y,      x2 = end.x,      y2 = end.y;
@@ -58,6 +66,26 @@ bool Physics::Line::IsIntersect(Line line)
         
         return (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1);
     }
+}
+
+bool Physics::Line::IsVisable()
+{
+    return visability;
+}
+
+void Physics::Line::SetVisability(bool state)
+{
+    visability = state;
+}
+
+void Physics::Line::SetStartPoint(DirectX::XMFLOAT2 p)
+{
+    start = p;
+}
+
+void Physics::Line::SetEndPoint(DirectX::XMFLOAT2 p)
+{
+    end = p;
 }
 
 std::string Physics::Line::GetName()

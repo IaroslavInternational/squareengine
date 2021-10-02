@@ -14,6 +14,8 @@ void Physics::PhysicsEngine::LoadData(std::string dataPath)
 		throw ("Не удаётся открыть файл с данными о физике");
 	}
 
+	this->dataPath = dataPath;
+
 	json j;
 	dataFile >> j;
 
@@ -65,7 +67,10 @@ void Physics::PhysicsEngine::Draw(Graphics& gfx)
 {
 	for (auto& l : lines)
 	{
-		gfx.DrawLine(l.GetStartPoint(), l.GetEndPoint(), Colors::Green);
+		if (l.IsVisable())
+		{
+			gfx.DrawLine(l.GetStartPoint(), l.GetEndPoint(), Colors::Green);
+		}
 	}
 
 	for (auto& hb : hitboxes)
@@ -92,6 +97,11 @@ void Physics::PhysicsEngine::AddHitBox(HitBox hb)
 void Physics::PhysicsEngine::AddHitBox(std::string name, float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y)
 {
 	AddHitBox(HitBox(name, leftTop_x, leftTop_y, rightBottom_x, rightBottom_y));
+}
+
+void Physics::PhysicsEngine::UpdateLineAt(size_t k, Line line)
+{
+	lines.at(k) = line;
 }
 
 void Physics::PhysicsEngine::CheckMainPersonCollision(MainPerson* mp)

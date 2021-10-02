@@ -13,7 +13,13 @@ namespace Physics
 		Line(std::string name, DirectX::XMFLOAT2 start, DirectX::XMFLOAT2 end);
 		Line(std::string name, float start_x, float start_y, float end_x, float end_y);
 	public:
-		bool IsIntersect(Line line);
+		void operator=(Line line);
+	public:
+		bool			  IsIntersect(Line line);
+		bool			  IsVisable();
+		void			  SetVisability(bool state);
+		void			  SetStartPoint(DirectX::XMFLOAT2 p);
+		void			  SetEndPoint(DirectX::XMFLOAT2 p);
 		std::string		  GetName();
 		DirectX::XMFLOAT2 GetStartPoint();
 		DirectX::XMFLOAT2 GetEndPoint();
@@ -21,5 +27,6 @@ namespace Physics
 		std::string		  name;
 		DirectX::XMFLOAT2 start;
 		DirectX::XMFLOAT2 end;
+		bool			  visability = true;
 	};
 }

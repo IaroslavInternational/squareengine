@@ -2,6 +2,7 @@
 
 #include "EngineFunctions.hpp"
 #include "HitBox.h"
+#include "Line.h"
 
 GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 					 PersonContainer*						 persons,
@@ -353,6 +354,13 @@ void GUISystem::ShowBottomPanel()
 
 void GUISystem::ShowMouseHelperPanel(std::string info)
 {
+	bool IsBlending = false;
+	if (ImGui::GetStyle().Alpha == 0.1f)
+	{
+		ImGui::GetStyle().Alpha = 1.0f;
+		IsBlending = true;
+	}
+
 	ImGui::SetNextWindowPos({ ImGui::GetMousePos().x, ImGui::GetMousePos().y + 30 }, ImGuiCond_Always);
 	if (ImGui::Begin("mouse info helper", (bool*)0,
 		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
@@ -361,6 +369,11 @@ void GUISystem::ShowMouseHelperPanel(std::string info)
 	{
 		ImGui::Text(info.c_str());
 		ImGui::End();
+	}
+
+	if (IsBlending)
+	{
+		ImGui::GetStyle().Alpha = 0.1f;
 	}
 }
 
@@ -1056,12 +1069,14 @@ void GUISystem::ShowPhysicsEngineObjList()
 
 void GUISystem::ShowPhysicsEngineObjControl()
 {
+	using namespace Physics;
+
 	if (ImGui::Begin("Опции", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		// Цикл по линиям
-		for (int k = 0; k < phEngPtr->lines.size(); k++)
+		for (size_t k = 0; k < phEngPtr->lines.size(); k++)
 		{
 			// Поиск выбранной линии
 			if (phEngPtr->lines.at(k).name == objectSelected)
@@ -1099,120 +1114,114 @@ void GUISystem::ShowPhysicsEngineObjControl()
 
 					ImGui::Separator();	// Разделитель
 
-					///* Элементы управления хитбоксом главного персонажа */
+					/* Элементы управления линией */
 
-					//ImGui::Text("Hit-box:");
-					//ImGui::Checkbox("Показать", &mPersPtr->hitbox_visability);
+					/* Если нажата кнопка перерисовать линию */					
+					{
+						if (ImGui::Button("Перерисовать", ImVec2(100, 20)))
+						{
+							AddLog("Изменение линии: ");
+							AddLog(name);
+							AddLog("\n");
 
-					///* Если нажата кнопка изменить HitBox */
-					//{
-					//	if (ImGui::Button("Изменить", ImVec2(100, 20)))
-					//	{
-					//		AddLog("Изменение Hit-box для: ");
-					//		AddLog(mPersPtr->name.c_str());
-					//		AddLog("\n");
+							DrawingLine = true;
+							phEngPtr->lines.at(k).visability = false;
 
-					//		DrawingHitBox = true;
-					//		mPersPtr->hitbox_visability = false;
+							ImGui::GetStyle().Alpha = 0.1f;
+						}
 
-					//		ImGui::GetStyle().Alpha = 0.1f;
-					//	}
+						if (DrawingLine)
+						{
+							if (!SettedFirstPoint)
+							{
+								mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
 
-					//	if (DrawingHitBox)
-					//	{
-					//		if (!SettedFirstPoint)
-					//		{
-					//			mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+								if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+								{
+									auto pos = wnd->mouse.GetPos();
+									firstPoint = { (float)pos.first, (float)pos.second };
 
-					//			if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-					//			{
-					//				auto pos = wnd->mouse.GetPos();
-					//				firstPoint = { (float)pos.first, (float)pos.second };
+									SettedFirstPoint = true;
+									std::ostringstream oss;
+									oss << "Поставлена первая точка:\n" <<
+										"[x: "  << firstPoint.x <<
+										"; y: " << firstPoint.y << "]\n";
 
-					//				SettedFirstPoint = true;
-					//				std::ostringstream oss;
-					//				oss << "Поставлена первая точка:\n" <<
-					//					"[x: " << firstPoint.x <<
-					//					"; y: " << firstPoint.y << "]\n";
+									AddLog(oss.str().c_str());
+								}
+							}
+							else if (!SettedSecondPoint)
+							{
+								mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
 
-					//				AddLog(oss.str().c_str());
-					//			}
-					//		}
-					//		else if (!SettedSecondPoint)
-					//		{
-					//			mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+								int ms_posX = wnd->mouse.GetPosX();
+								int ms_posY = wnd->mouse.GetPosY();
 
-					//			int ms_posX = wnd->mouse.GetPosX();
-					//			int ms_posY = wnd->mouse.GetPosY();
+								Line line(std::string("Drown line"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+								wnd->Gfx().DrawLine(line.start, line.end);
 
-					//			HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-					//			wnd->Gfx().DrawHitBox(hb);
+								if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+								{
+									auto pos = wnd->mouse.GetPos();
+									secondPoint = { (float)pos.first, (float)pos.second };
 
-					//			if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-					//			{
-					//				auto pos = wnd->mouse.GetPos();
-					//				secondPoint = { (float)pos.first, (float)pos.second };
+									Line line_new(objectSelected, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+									phEngPtr->UpdateLineAt(k, line_new);
+									
+									std::ostringstream oss;
+									oss << "Поставлена вторая точка:\n" <<
+										"[x: " << secondPoint.x <<
+										"; y: " << secondPoint.y << "]\n";
 
-					//				HitBox hb_new(mPersPtr->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-					//				mPersPtr->SetHitBox(hb);
-					//				mPersPtr->hitbox_visability = true;
+									AddLog(oss.str().c_str());
 
-					//				std::ostringstream oss;
-					//				oss << "Поставлена вторая точка:\n" <<
-					//					"[x: " << secondPoint.x <<
-					//					"; y: " << secondPoint.y << "]\n";
+									AddLog("Сохранение линии:\n");
 
-					//				AddLog(oss.str().c_str());
+									EngineFunctions::SetNewValue<float>(
+										std::string(name),
+										"start-x", line_new.start.x,
+										phEngPtr->dataPath,
+										&applog
+										);
 
-					//				AddLog("Сохранение Hit-box:\n");
+									EngineFunctions::SetNewValue<float>(
+										std::string(name),
+										"start-y", line_new.start.y,
+										phEngPtr->dataPath,
+										&applog
+										);
 
-					//				auto actual_hb = mPersPtr->hitbox;
+									EngineFunctions::SetNewValue<float>(
+										std::string(name),
+										"end-x", line_new.end.x,
+										phEngPtr->dataPath,
+										&applog
+										);
 
-					//				EngineFunctions::SetNewValue<float>(
-					//					mPersPtr->name,
-					//					"hb-ltx", actual_hb.GetCoordinates().x,
-					//					mPersPtr->dataPath,
-					//					&applog
-					//					);
+									EngineFunctions::SetNewValue<float>(
+										std::string(name),
+										"end-y", line_new.end.y,
+										phEngPtr->dataPath,
+										&applog
+										);
 
-					//				EngineFunctions::SetNewValue<float>(
-					//					mPersPtr->name,
-					//					"hb-lty", actual_hb.GetCoordinates().y,
-					//					mPersPtr->dataPath,
-					//					&applog
-					//					);
+									mouseHelpInfo = "";
+									SettedSecondPoint = true;
+								}
+							}
+							else if (SettedFirstPoint && SettedSecondPoint)
+							{
+								DrawingLine = false;
+								SettedFirstPoint = false;
+								SettedSecondPoint = false;
 
-					//				EngineFunctions::SetNewValue<float>(
-					//					mPersPtr->name,
-					//					"hb-rbx", actual_hb.GetCoordinates().z,
-					//					mPersPtr->dataPath,
-					//					&applog
-					//					);
+								ImGui::GetStyle().Alpha = 1.0f;
+							}
+						}
+					}
+					/*****************************************/
 
-					//				EngineFunctions::SetNewValue<float>(
-					//					mPersPtr->name,
-					//					"hb-rby", actual_hb.GetCoordinates().w,
-					//					mPersPtr->dataPath,
-					//					&applog
-					//					);
-
-					//				mouseHelpInfo = "";
-					//				SettedSecondPoint = true;
-					//			}
-					//		}
-					//		else if (SettedFirstPoint && SettedSecondPoint)
-					//		{
-					//			DrawingHitBox = false;
-					//			SettedFirstPoint = false;
-					//			SettedSecondPoint = false;
-
-					//			ImGui::GetStyle().Alpha = 1.0f;
-					//		}
-					//	}
-					//}
-					///**************************************/
-
-					///****************************************************/
+					/******************************/
 
 					//ImGui::NewLine();
 					//ImGui::NewLine();

@@ -28,9 +28,12 @@ namespace Physics
 		void AddLine(std::string name, float start_x, float start_y, float end_x, float end_y);
 		void AddHitBox(HitBox hb);
 		void AddHitBox(std::string name, float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y);
+		void UpdateLineAt(size_t k, Line line);
 	public:
 		void CheckMainPersonCollision(MainPerson* mp);
 		bool CheckLineCollision(Line line);
+	private:
+		std::string dataPath = "";
 	private:
 		std::vector<Line>	lines;
 		std::vector<HitBox> hitboxes;
