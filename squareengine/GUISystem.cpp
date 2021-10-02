@@ -17,7 +17,7 @@ GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 {
 	SetGUIColors();
 
-	for (size_t i = 0; i < 100; i++)
+	for (size_t i = 0; i < N_POINTS; i++)
 	{
 		counters[i] = float(i);
 	}
@@ -40,28 +40,12 @@ void GUISystem::Show()
 	ShowLeftBottomSide();
 	ShowBottomPanel();
 
-	if (ImGui::Begin("FPS Plot"))
+	if (ShowFPSGraph)
 	{
-		if (counter != 100)
-		{
-			arr[counter] = ImGui::GetIO().Framerate;
-			counter++;
-		}
-		else
-		{
-			counter = 0;
-		}
-
-		//ImGui::Text("FPS");
-		ImPlot::SetNextPlotLimits(0.0f, 100.0f, 0.0f, 150.0f);
-		if (ImPlot::BeginPlot("FPS"))
-		{
-			ImPlot::PlotLine("", counters, arr, 100);
-			ImPlot::EndPlot();
-		}
+		ShowFPS();
 	}
-
-	ImGui::End();
+	
+	ImPlot::ShowDemoWindow();
 
 	if (mouseHelpInfo == "")
 	{
@@ -177,24 +161,6 @@ void GUISystem::ShowMenu()
 		{
 			if (ImGui::BeginMenu("Объекты"))
 			{
-				if (ImGui::MenuItem("Персонажи"))
-				{
-					if (ShowPersonEnum && ShowPersonSettings)
-					{
-						DisableSides();
-
-						ShowPersonEnum = false;
-						ShowPersonSettings = false;
-					}
-					else
-					{
-						DisableSides();
-
-						ShowPersonEnum = true;
-						ShowPersonSettings = true;
-					}
-				}
-
 				if (ImGui::MenuItem("Главный персонаж"))
 				{
 					if (ShowMainPersonEnum && ShowMainPersonSettings)
@@ -210,6 +176,24 @@ void GUISystem::ShowMenu()
 
 						ShowMainPersonEnum = true;
 						ShowMainPersonSettings = true;
+					}
+				}
+
+				if (ImGui::MenuItem("Персонажи"))
+				{
+					if (ShowPersonEnum && ShowPersonSettings)
+					{
+						DisableSides();
+
+						ShowPersonEnum = false;
+						ShowPersonSettings = false;
+					}
+					else
+					{
+						DisableSides();
+
+						ShowPersonEnum = true;
+						ShowPersonSettings = true;
 					}
 				}
 
@@ -234,9 +218,14 @@ void GUISystem::ShowMenu()
 				ImGui::EndMenu();
 			}
 
-			if (ImGui::MenuItem("FPS & GPU"))
+			if (ImGui::MenuItem("GPU"))
 			{
 				ShowHardwareInfo ? ShowHardwareInfo = false : ShowHardwareInfo = true;
+			}
+
+			if (ImGui::MenuItem("График FPS"))
+			{
+				ShowFPSGraph ? ShowFPSGraph = false : ShowFPSGraph = true;
 			}
 
 			if (ImGui::MenuItem("Лог"))
@@ -355,7 +344,7 @@ void GUISystem::ShowLeftBottomSide()
 
 	if (ShowHardwareInfo)
 	{
-		ShowFPSAndGPU();
+		ShowGPU();
 	}
 
 	/**************/
@@ -432,7 +421,7 @@ void GUISystem::ShowLog()
 	ImGui::End();
 }
 
-void GUISystem::ShowFPSAndGPU()
+void GUISystem::ShowGPU()
 {
 	if (ImGui::Begin("Представление", NULL,
 		ImGuiWindowFlags_NoMove |
@@ -458,6 +447,46 @@ void GUISystem::ShowFPSAndGPU()
 				ImGui::PopStyleColor();
 				ImGui::TreePop();
 			}
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowFPS()
+{
+	if (ImGui::Begin("График FPS", &ShowFPSGraph))
+	{
+		float average = 60.0f;
+		float sum = 0.0f;
+
+		if (counter != N_POINTS)
+		{
+			arr[counter] = ImGui::GetIO().Framerate;
+			counter++;
+		}
+		else
+		{
+			counter = 0;
+			for (size_t i = 0; i < N_POINTS; i++)
+			{
+				sum += arr[i];
+			}
+
+			average = sum / N_POINTS;
+		}
+
+
+
+		ImPlot::SetNextPlotLimits(0, N_POINTS - 1, average - 1.0f, average + 1.0f);
+		if (ImPlot::BeginPlot("FPS", "", "FPS"))
+		{
+			ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+			ImPlot::PlotShaded("FPS", counters, arr, N_POINTS);
+			ImPlot::PopStyleVar();
+			ImPlot::PlotLine("", counters, arr, N_POINTS);
+
+			ImPlot::EndPlot();
 		}
 	}
 

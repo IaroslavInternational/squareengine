@@ -22,7 +22,7 @@ public:
 	/***************************************************/
 public:
 	/* Главные методы для взаимодействия с главным персонажем */
-
+	
 	void ProcessMoving(float dt);
 	void AllowMoveUp();
 	void AllowMoveDown();

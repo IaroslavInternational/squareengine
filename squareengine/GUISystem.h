@@ -11,6 +11,8 @@
 
 #include <map>
 
+#define N_POINTS 100	// Максимальное кол-во точек на графике
+
 class GUISystem
 {
 public:
@@ -38,6 +40,7 @@ private:
 	void ShowRightSide();														// Правая панель
 	void ShowLeftBottomSide();													// Левая нижняя панель
 	void ShowBottomPanel();														// Нижняя панель
+	void ShowOptionalPanel();													// Дополнительная панель
 	void ShowMouseHelperPanel(std::string info);								// Панель под курсором
 	void DisableSides();														// Отключить боковые панели
 
@@ -46,7 +49,8 @@ private:
 	/* Методы отрисовки конкретных интерфейсов */
 	
 	void ShowLog();						// Показать панель лога
-	void ShowFPSAndGPU();				// Показать панель с ифнормацией об FPS и графическом адаптере 
+	void ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
+	void ShowFPS();						// Показать панель с графиком изменения FPS
 	void ShowPersonList();				// Показать список персонажей 
 	void ShowPersonControl();			// Показать настройки для выбранного персонажа
 	void ShowMainPersonList();			// Показать главного персонажа в списке
@@ -65,6 +69,7 @@ private:
 	bool ShowPhysicsEngineObjEnum	  = true;	// Левая панель
 	bool ShowPhysicsEngineObjSettings = true;	// Правая панель 
 	bool ShowHardwareInfo 			  =	true;	// FPS и информация о графическом адаптере
+	bool ShowFPSGraph 				  =	false;	// График изменения FPS
 	bool ShowLogs 					  =	true;	// Лог
 	bool ShowTriggersList 			  =	false;	// Левая панель триггеров на сцене
 	bool ShowTriggersSettings		  =	false;	// Правая панель триггеров на сцене
@@ -87,31 +92,37 @@ private:
 
 	/***************************/
 private:
+	/* Общие переменные для работы с интерфейсом */
+
+	bool			  DrawingHitBox		= false;	// Идёт отрисовка хитбокса
+	bool			  DrawingLine		= false;	// Идёт отрисовка линии
+	bool			  SavingSettings    = false;	// Идёт сохранение настроек
+	bool			  SettedFirstPoint  = false;	// Поставлена первая точка изменяемого объекта
+	bool			  SettedSecondPoint = false;	// Поставлена вторая точка изменяемого объекта
+	DirectX::XMFLOAT2 firstPoint;					// Координаты первой точки изменяемого объекта
+	DirectX::XMFLOAT2 secondPoint;					// Координаты второй точки изменяемого объекта
+
+	/*********************************************/
+
 	/* Вспомагательные переменные для работы с контейнером персонажей */
 	
-	bool			  DrawingHitBox	    = false;	// Идёт изменение хитбокса персонажа
-	bool			  SavingSettings	= false;	// Идёт сохранение настроек персонажа
-	bool			  SettedFirstPoint  = false;	// Поставлена первая точка hitbox
-	bool			  SettedSecondPoint = false;	// Поставлена вторая точка hitbox
-	DirectX::XMFLOAT2 firstPoint;					// Координаты первой точки hitbox
-	DirectX::XMFLOAT2 secondPoint;					// Координаты второй точки hitbox
-	std::string		  personSelected    = "";		// Имя выбранного персонажа
+	std::string personSelected = "";	// Имя выбранного персонажа
 
 	/******************************************************************/
 
 	/* Вспомагательные переменные для работы с физическим движком */
 
-	bool DrawingLine		   = false;	//
 	std::string objectSelected = "";	// Имя выбранного объекта из физического движка
 
 	/**************************************************************/
 
-	/**/
+	/* Вспомагательные переменные для отображения FPS */
 
-	float arr[100];
-	float counters[100];
-	size_t counter = 0;
+	float	arr[N_POINTS];		// Массив значений fps
+	float	counters[N_POINTS];	// Массив отчётов
+	size_t	counter = 0;		// Счётчик итерации
 
-	/**/
+	/**************************************************/
+
 	std::string mouseHelpInfo = "";	// Подпись под курсором
 };
