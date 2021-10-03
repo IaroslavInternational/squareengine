@@ -104,6 +104,11 @@ void Physics::PhysicsEngine::UpdateLineAt(size_t k, Line line)
 	lines.at(k) = line;
 }
 
+size_t Physics::PhysicsEngine::GetLinesAmount()
+{
+	return lines.size();
+}
+
 void Physics::PhysicsEngine::CheckMainPersonCollision(MainPerson* mp)
 {
 	auto mpHitBoxCoord = mp->GetHitBox();

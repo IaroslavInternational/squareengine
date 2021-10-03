@@ -45,8 +45,6 @@ void GUISystem::Show()
 		ShowFPS();
 	}
 	
-	ImPlot::ShowDemoWindow();
-
 	if (mouseHelpInfo == "")
 	{
 		std::ostringstream pos;
@@ -94,10 +92,10 @@ void GUISystem::SetGUIColors()
 	colors[ImGuiCol_TitleBgActive] = ImVec4(0.15f, 0.00f, 0.07f, 0.73f);	// Наведение на меню окна
 	colors[ImGuiCol_FrameBg] = ImVec4(0.00f, 0.50f, 0.38f, 0.54f);			// Компонента
 	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.00f, 0.18f, 0.15f, 0.40f);	// Наведение на компоненту
-	colors[ImGuiCol_FrameBgActive] = ImVec4(0.06f, 0.48f, 0.45f, 0.67f);	// Активные компонента
+	colors[ImGuiCol_FrameBgActive] = ImVec4(0.06f, 0.48f, 0.45f, 0.67f);	// Активные компоненты
 	colors[ImGuiCol_CheckMark] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);		// Галочка
 	colors[ImGuiCol_SliderGrab] = ImVec4(0.37f, 0.70f, 0.00f, 1.00f);		// Ползунок слайдера
-	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.62f, 0.82f, 0.19f, 1.00f);	// Актвиный ползунок слайдера
+	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.62f, 0.82f, 0.19f, 1.00f);	// Активный ползунок слайдера
 	colors[ImGuiCol_Button] = ImVec4(0.56f, 0.05f, 0.05f, 0.59f);			// Кнопка
 	colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.01f, 0.17f, 1.00f);	// Наведение на кнопку
 	colors[ImGuiCol_ButtonActive] = ImVec4(0.03f, 0.55f, 0.48f, 1.00f);		// Активная кнопка
@@ -159,6 +157,37 @@ void GUISystem::ShowMenu()
 
 		if (ImGui::BeginMenu("Окна"))
 		{
+			if (ImGui::BeginMenu("Система"))
+			{
+				if (ImGui::MenuItem("Графика"))
+				{
+				}
+
+				if (ImGui::MenuItem("Физика"))
+				{
+					if (ShowPhysicsEngineObjEnum && ShowPhysicsEngineObjSettings)
+					{
+						DisableSides();
+
+						ShowPhysicsEngineObjEnum = false;
+						ShowPhysicsEngineObjSettings = false;
+					}
+					else
+					{
+						DisableSides();
+
+						ShowPhysicsEngineObjEnum = true;
+						ShowPhysicsEngineObjSettings = true;
+					}
+				}
+
+				if (ImGui::MenuItem("Звук"))
+				{
+				}
+
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::BeginMenu("Объекты"))
 			{
 				if (ImGui::MenuItem("Главный персонаж"))
@@ -401,6 +430,8 @@ void GUISystem::DisableSides()
 	ShowPersonSettings = false;
 	ShowMainPersonEnum = false;
 	ShowMainPersonSettings = false;
+	ShowPhysicsEngineObjEnum = false;
+	ShowPhysicsEngineObjSettings = false;
 	ShowTriggersList = false;
 	ShowTriggersSettings = false;
 }
@@ -534,7 +565,6 @@ void GUISystem::ShowPersonControl()
 			// Поиск выбранного персонажа
 			if (persConPtr->persons.at(k)->name == personSelected)
 			{				
-				
 				if (ImGui::BeginChild(""))
 				{
 					/* Переменные управления сбросом интерфейса */
@@ -1073,6 +1103,8 @@ void GUISystem::ShowMainPersonControl()
 
 void GUISystem::ShowPhysicsEngineObjList()
 {
+	using namespace Physics;
+
 	if (ImGui::Begin("Объекты", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
@@ -1093,8 +1125,133 @@ void GUISystem::ShowPhysicsEngineObjList()
 					}
 				}
 				
+				ImGui::NewLine();
+
+				// Если нажата кнопка добавить линию
+				if (ImGui::Button("Добавить"))
+				{
+					AddLog("Добавление линии...");
+					AddLog("\n");
+
+					AddingObject = true;
+				}
+
+				/* Если идёт добавление линии */
+				{
+					if (AddingObject)
+					{
+						if (!SettedFirstPoint)
+						{
+							mouseHelpInfo = "Идёт добавление линии.\nНажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+							if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+							{
+								auto pos = wnd->mouse.GetPos();
+								firstPoint = { (float)pos.first, (float)pos.second };
+
+								SettedFirstPoint = true;
+								std::ostringstream oss;
+								oss << "Поставлена первая точка:\n" <<
+									"[x: "  << firstPoint.x <<
+									"; y: " << firstPoint.y << "]\n";
+
+								AddLog(oss.str().c_str());
+							}
+						}
+						else if (!SettedSecondPoint)
+						{
+							mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+							int ms_posX = wnd->mouse.GetPosX();
+							int ms_posY = wnd->mouse.GetPosY();
+
+							Line line(std::string("Drown line"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+							wnd->Gfx().DrawLine(line.start, line.end);
+
+							if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+							{
+								auto pos = wnd->mouse.GetPos();
+								secondPoint = { (float)pos.first, (float)pos.second };
+
+								std::ostringstream line_name;
+								line_name << "line " << phEngPtr->GetLinesAmount();
+
+								Line line_new(line_name.str(), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);								
+								phEngPtr->AddLine(line_new);
+
+								std::ostringstream oss;
+								oss << "Поставлена вторая точка:\n" <<
+									"[x: "  << secondPoint.x <<
+									"; y: " << secondPoint.y << "]\n";
+
+								AddLog(oss.str().c_str());
+
+								AddLog("Сохранение линии:\n");
+
+								using std::to_string;
+
+								// Открытие файла с данными о моделях
+								std::ifstream dataFile(phEngPtr->dataPath);
+								if (!dataFile.is_open())
+								{
+									throw ("Не удаётся открыть файл с данными о физике сцены");
+								}
+
+								// Чтение файла
+								json j;
+								dataFile >> j;
+
+								// Закрытие файла
+								dataFile.close();
+
+								// Новая модель
+								std::ostringstream newLine;
+								newLine << "\"" << line_name.str() << "\":[{";
+
+								newLine << "\"start-x\": "	<< firstPoint.x  << ",";
+								newLine << "\"start-y\" : " << firstPoint.y  << ",";
+								newLine << "\"end-x\" : "	<< secondPoint.x << ",";
+								newLine << "\"end-y\" : "	<< secondPoint.y << "}]";
+								
+								// Подготовка к вставке в файл
+								std::string json_str = j.dump();
+								size_t pos_of_par = json_str.find_last_of('}');
+								size_t pos_of_par2 = json_str.find_last_of(']');
+
+								json_str.at(pos_of_par) = ' ';
+								json_str.at(pos_of_par2 + 1) = ',';
+
+								// Запись в файл данных новой модели
+								std::ofstream ostream(phEngPtr->dataPath);
+								ostream << json_str + newLine.str() + '}';
+
+								// Закрытие файла
+								ostream.close();
+
+								std::ostringstream oss_l;
+								oss_l << "Добавлено [" << line_name.str() << "]\n";
+
+								AddLog(oss_l.str().c_str());
+
+								mouseHelpInfo = "";
+								SettedSecondPoint = true;
+							}
+						}
+						else if (SettedFirstPoint && SettedSecondPoint)
+						{
+							AddingObject = false;
+							SettedFirstPoint = false;
+							SettedSecondPoint = false;
+
+							ImGui::GetStyle().Alpha = 1.0f;
+						}
+					}
+				}
+				/******************************/
+
 				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("Hit-Box'ы"))
 			{
 				for (auto hb = phEngPtr->hitboxes.begin(); hb != phEngPtr->hitboxes.end(); hb++)
@@ -1109,17 +1266,18 @@ void GUISystem::ShowPhysicsEngineObjList()
 					}
 				}
 
+				ImGui::NewLine();
+
+				// Если нажата кнопка добавить hitbox
+				if (ImGui::Button("Добавить"))
+				{
+
+				}
+
 				ImGui::EndTabItem();
 			}
 
 			ImGui::EndTabBar();
-		}
-
-		ImGui::NewLine();
-
-		if (ImGui::Button("Добавить"))
-		{
-
 		}
 	}
 
@@ -1148,263 +1306,209 @@ void GUISystem::ShowPhysicsEngineObjControl()
 					bool effDirty = false;		// Котнроль эффекта
 					bool speedDirty = false;	// Котнроль скорости
 
-					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение					
 
 					/********************************************/
-
-					/* Элемент управления именем */
-
-					const char* name = phEngPtr->lines.at(k).name.c_str();
-					ImGui::InputText("Имя", const_cast<char*>(name), sizeof(name));
-
-					/*****************************/
-
-					/* Элементы управления позициями точек линии */
-
-					ImGui::Text("Позиция начальной точки:");
-					dcheck(ImGui::SliderFloat("Xs", &phEngPtr->lines.at(k).start.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
-					dcheck(ImGui::SliderFloat("Ys", &phEngPtr->lines.at(k).start.y, -1000.0f, 1000.0f, "%.2f"), posDirty);			
 					
-					ImGui::Text("Позиция конечной точки:");
-					dcheck(ImGui::SliderFloat("Xe", &phEngPtr->lines.at(k).end.x,	-1000.0f, 1000.0f, "%.2f"), posDirty);
-					dcheck(ImGui::SliderFloat("Ye", &phEngPtr->lines.at(k).end.y,	-1000.0f, 1000.0f, "%.2f"), posDirty);
-
-					if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
+					/* Элементы управления позициями точек линии */
+					if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						AddLog("Нормирование по Xs для: ");
-						AddLog(name);
-						AddLog("\n");
+						ImGui::Text("Позиция начальной точки:");
+						dcheck(ImGui::SliderFloat("Xs", &phEngPtr->lines.at(k).start.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
+						dcheck(ImGui::SliderFloat("Ys", &phEngPtr->lines.at(k).start.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
 
-						phEngPtr->lines.at(k).end.x = phEngPtr->lines.at(k).start.x;
-					}
+						ImGui::Text("Позиция конечной точки:");
+						dcheck(ImGui::SliderFloat("Xe", &phEngPtr->lines.at(k).end.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
+						dcheck(ImGui::SliderFloat("Ye", &phEngPtr->lines.at(k).end.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
 
-					ImGui::SameLine();
+						if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
+						{
+							AddLog("Нормирование по Xs для: ");
+							AddLog(objectSelected.c_str());
+							AddLog("\n");
 
-					if (ImGui::Button("Нормировать Y", ImVec2(100, 20)))
-					{
-						AddLog("Нормирование по Ys для: ");
-						AddLog(name);
-						AddLog("\n");
+							phEngPtr->lines.at(k).end.x = phEngPtr->lines.at(k).start.x;
+						}
 
-						phEngPtr->lines.at(k).end.y = phEngPtr->lines.at(k).start.y;
+						ImGui::SameLine();
+
+						if (ImGui::Button("Нормировать Y", ImVec2(100, 20)))
+						{
+							AddLog("Нормирование по Ys для: ");
+							AddLog(objectSelected.c_str());
+							AddLog("\n");
+
+							phEngPtr->lines.at(k).end.y = phEngPtr->lines.at(k).start.y;
+						}
+
+						ImGui::Separator();	// Разделитель
 					}
 					/*********************************************/
 
-					ImGui::Separator();	// Разделитель
-
-					/* Элементы управления линией */
-
-					/* Если нажата кнопка перерисовать линию */					
+					/* Элементы управления линией */	
+					if (ImGui::CollapsingHeader("Изменение", ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						if (ImGui::Button("Перерисовать", ImVec2(100, 20)))
+						/* Если нажата кнопка перерисовать линию */
 						{
-							AddLog("Изменение линии: ");
-							AddLog(name);
-							AddLog("\n");
-
-							DrawingLine = true;
-							phEngPtr->lines.at(k).visability = false;
-
-							ImGui::GetStyle().Alpha = 0.1f;
-						}
-
-						if (DrawingLine)
-						{
-							if (!SettedFirstPoint)
+							if (ImGui::Button("Перерисовать", ImVec2(100, 20)))
 							{
-								mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+								AddLog("Изменение линии: ");
+								AddLog(objectSelected.c_str());
+								AddLog("\n");
 
-								if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+								DrawingLine = true;
+								phEngPtr->lines.at(k).visability = false;
+
+								ImGui::GetStyle().Alpha = 0.1f;
+							}
+
+							if (DrawingLine)
+							{
+								if (!SettedFirstPoint)
 								{
-									auto pos = wnd->mouse.GetPos();
-									firstPoint = { (float)pos.first, (float)pos.second };
+									mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
 
-									SettedFirstPoint = true;
-									std::ostringstream oss;
-									oss << "Поставлена первая точка:\n" <<
-										"[x: "  << firstPoint.x <<
-										"; y: " << firstPoint.y << "]\n";
+									if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+									{
+										auto pos = wnd->mouse.GetPos();
+										firstPoint = { (float)pos.first, (float)pos.second };
 
-									AddLog(oss.str().c_str());
+										SettedFirstPoint = true;
+										std::ostringstream oss;
+										oss << "Поставлена первая точка:\n" <<
+											"[x: "  << firstPoint.x <<
+											"; y: " << firstPoint.y << "]\n";
+
+										AddLog(oss.str().c_str());
+									}
+								}
+								else if (!SettedSecondPoint)
+								{
+									mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+									int ms_posX = wnd->mouse.GetPosX();
+									int ms_posY = wnd->mouse.GetPosY();
+
+									Line line(std::string("Drown line"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+									wnd->Gfx().DrawLine(line.start, line.end);
+
+									if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+									{
+										auto pos = wnd->mouse.GetPos();
+										secondPoint = { (float)pos.first, (float)pos.second };
+
+										Line line_new(objectSelected, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+										phEngPtr->UpdateLineAt(k, line_new);
+
+										std::ostringstream oss;
+										oss << "Поставлена вторая точка:\n" <<
+											"[x: "  << secondPoint.x <<
+											"; y: " << secondPoint.y << "]\n";
+
+										AddLog(oss.str().c_str());
+
+										AddLog("Сохранение линии:\n");
+
+										EngineFunctions::SetNewValue<float>(
+											objectSelected,
+											"start-x", line_new.start.x,
+											phEngPtr->dataPath,
+											&applog
+											);
+
+										EngineFunctions::SetNewValue<float>(
+											objectSelected,
+											"start-y", line_new.start.y,
+											phEngPtr->dataPath,
+											&applog
+											);
+
+										EngineFunctions::SetNewValue<float>(
+											objectSelected,
+											"end-x", line_new.end.x,
+											phEngPtr->dataPath,
+											&applog
+											);
+
+										EngineFunctions::SetNewValue<float>(
+											objectSelected,
+											"end-y", line_new.end.y,
+											phEngPtr->dataPath,
+											&applog
+											);
+
+										mouseHelpInfo = "";
+										SettedSecondPoint = true;
+									}
+								}
+								else if (SettedFirstPoint && SettedSecondPoint)
+								{
+									DrawingLine = false;
+									SettedFirstPoint = false;
+									SettedSecondPoint = false;
+
+									ImGui::GetStyle().Alpha = 1.0f;
 								}
 							}
-							else if (!SettedSecondPoint)
-							{
-								mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
-
-								int ms_posX = wnd->mouse.GetPosX();
-								int ms_posY = wnd->mouse.GetPosY();
-
-								Line line(std::string("Drown line"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-								wnd->Gfx().DrawLine(line.start, line.end);
-
-								if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-								{
-									auto pos = wnd->mouse.GetPos();
-									secondPoint = { (float)pos.first, (float)pos.second };
-
-									Line line_new(objectSelected, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-									phEngPtr->UpdateLineAt(k, line_new);
-									
-									std::ostringstream oss;
-									oss << "Поставлена вторая точка:\n" <<
-										"[x: " << secondPoint.x <<
-										"; y: " << secondPoint.y << "]\n";
-
-									AddLog(oss.str().c_str());
-
-									AddLog("Сохранение линии:\n");
-
-									EngineFunctions::SetNewValue<float>(
-										std::string(name),
-										"start-x", line_new.start.x,
-										phEngPtr->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<float>(
-										std::string(name),
-										"start-y", line_new.start.y,
-										phEngPtr->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<float>(
-										std::string(name),
-										"end-x", line_new.end.x,
-										phEngPtr->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<float>(
-										std::string(name),
-										"end-y", line_new.end.y,
-										phEngPtr->dataPath,
-										&applog
-										);
-
-									mouseHelpInfo = "";
-									SettedSecondPoint = true;
-								}
-							}
-							else if (SettedFirstPoint && SettedSecondPoint)
-							{
-								DrawingLine = false;
-								SettedFirstPoint = false;
-								SettedSecondPoint = false;
-
-								ImGui::GetStyle().Alpha = 1.0f;
-							}
 						}
+						/*****************************************/
+
+						ImGui::Separator();	// Разделитель
 					}
-					/*****************************************/
-
 					/******************************/
 
-					//ImGui::NewLine();
-					//ImGui::NewLine();
+					ImGui::NewLine();
+					ImGui::NewLine();
 
-					///* Если нажата кнопка сохранить текущие настройки главного персонажа */
-					//{
-					//	if (ImGui::Button("Сохранить", ImVec2(100, 20)))
-					//	{
-					//		AddLog("Сохранение настроек для: ");
-					//		AddLog(mPersPtr->name.c_str());
-					//		AddLog("\n");
+					/* Если нажата кнопка сохранить текущие настройки линии */
+					{
+						if (ImGui::Button("Сохранить", ImVec2(100, 20)))
+						{
+							AddLog("Сохранение настроек для: ");
+							AddLog(objectSelected.c_str());
+							AddLog("\n");
 
-					//		SavingSettings = true;
-					//	}
+							SavingSettings = true;
+						}
 
-					//	if (SavingSettings)
-					//	{
-					//		/* Сохранение позиции и скорости */
+						if (SavingSettings)
+						{
+							/* Сохранение координат */
 
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"pos-x", mPersPtr->position.x,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
+							EngineFunctions::SetNewValue<float>(
+								objectSelected,
+								"start-x", phEngPtr->lines.at(k).start.x,
+								phEngPtr->dataPath,
+								&applog
+								);
 
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"pos-y", mPersPtr->position.y,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
+							EngineFunctions::SetNewValue<float>(
+								objectSelected,
+								"start-y", phEngPtr->lines.at(k).start.y,
+								phEngPtr->dataPath,
+								&applog
+								);
 
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"speed", mPersPtr->speed,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
+							EngineFunctions::SetNewValue<float>(
+								objectSelected,
+								"end-x", phEngPtr->lines.at(k).end.x,
+								phEngPtr->dataPath,
+								&applog
+								);
 
-					//		/**********************/
+							EngineFunctions::SetNewValue<float>(
+								objectSelected,
+								"end-y", phEngPtr->lines.at(k).end.y,
+								phEngPtr->dataPath,
+								&applog
+								);
 
-					//		/* Сохранение настроек эффекта */
+							/************************/
 
-					//		EngineFunctions::SetNewValue<bool>(
-					//			mPersPtr->name,
-					//			"eff-a", mPersPtr->effect.Active,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
-
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"eff-d", mPersPtr->effect.Duration,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
-
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"eff-t", mPersPtr->effect.Time,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
-
-					//		/*******************************/
-
-					//		/* Пересохранение hitbox */
-
-					//		auto actual_hb = mPersPtr->hitbox;
-
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"hb-ltx", actual_hb.GetCoordinates().x,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
-
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"hb-lty", actual_hb.GetCoordinates().y,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
-
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"hb-rbx", actual_hb.GetCoordinates().z,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
-
-					//		EngineFunctions::SetNewValue<float>(
-					//			mPersPtr->name,
-					//			"hb-rby", actual_hb.GetCoordinates().w,
-					//			mPersPtr->dataPath,
-					//			&applog
-					//			);
-
-					//		/*************************/
-
-					//		SavingSettings = false;
-					//	}
-					//}
-					/*********************************************************************/
+							SavingSettings = false;
+						}
+					}
+					/********************************************************/
 
 					ImGui::EndChild();
 				}

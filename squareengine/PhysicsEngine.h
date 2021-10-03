@@ -24,11 +24,12 @@ namespace Physics
 		void Clear();
 		void Draw(Graphics& gfx);
 	public:
-		void AddLine(Line line);
-		void AddLine(std::string name, float start_x, float start_y, float end_x, float end_y);
-		void AddHitBox(HitBox hb);
-		void AddHitBox(std::string name, float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y);
-		void UpdateLineAt(size_t k, Line line);
+		void   AddLine(Line line);
+		void   AddLine(std::string name, float start_x, float start_y, float end_x, float end_y);
+		void   AddHitBox(HitBox hb);
+		void   AddHitBox(std::string name, float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y);
+		void   UpdateLineAt(size_t k, Line line);
+		size_t GetLinesAmount();
 	public:
 		void CheckMainPersonCollision(MainPerson* mp);
 		bool CheckLineCollision(Line line);
