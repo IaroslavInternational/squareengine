@@ -34,9 +34,15 @@ bool Physics::Line::IsIntersect(Line line)
     {
         if (fabs(y1 - y3) <= eps)
         {
-            y1 = y3;
-            y2 = y4;
+            return true;
+        }
+    }
 
+    if (x1 == x2 && x3 == x4  &&  y3 <= y1 && y2 <= y4 ||
+      ((y1 <= y3 && y2 >= y3) || (y1 <= y4 && y2 >= y4)))
+    {
+        if (fabs(x1 - x3) <= eps)
+        {
             return true;
         }
     }

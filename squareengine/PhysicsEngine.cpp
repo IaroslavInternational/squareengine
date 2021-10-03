@@ -109,6 +109,11 @@ size_t Physics::PhysicsEngine::GetLinesAmount()
 	return lines.size();
 }
 
+size_t Physics::PhysicsEngine::GetHitBoxAmount()
+{
+	return hitboxes.size();
+}
+
 void Physics::PhysicsEngine::CheckMainPersonCollision(MainPerson* mp)
 {
 	auto mpHitBoxCoord = mp->GetHitBox();
@@ -182,7 +187,7 @@ bool Physics::PhysicsEngine::CheckLineCollision(Line line)
 std::vector<Physics::Line> Physics::GetLines(HitBox hb)
 {
 	auto hbCoord = hb.GetCoordinates();
-	float d = 0.0f;
+	float d = 1.0f;
 
 	std::vector<Physics::Line> lines =
 	{

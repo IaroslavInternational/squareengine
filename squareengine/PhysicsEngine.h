@@ -30,6 +30,7 @@ namespace Physics
 		void   AddHitBox(std::string name, float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y);
 		void   UpdateLineAt(size_t k, Line line);
 		size_t GetLinesAmount();
+		size_t GetHitBoxAmount();
 	public:
 		void CheckMainPersonCollision(MainPerson* mp);
 		bool CheckLineCollision(Line line);

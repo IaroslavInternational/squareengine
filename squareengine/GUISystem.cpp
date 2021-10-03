@@ -1134,6 +1134,8 @@ void GUISystem::ShowPhysicsEngineObjList()
 					AddLog("\n");
 
 					AddingObject = true;
+
+					ImGui::GetStyle().Alpha = 0.1f;
 				}
 
 				/* Если идёт добавление линии */
@@ -1190,7 +1192,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 
 								using std::to_string;
 
-								// Открытие файла с данными о моделях
+								// Открытие файла с данными о физике сцены
 								std::ifstream dataFile(phEngPtr->dataPath);
 								if (!dataFile.is_open())
 								{
@@ -1204,7 +1206,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 								// Закрытие файла
 								dataFile.close();
 
-								// Новая модель
+								// Новая линия
 								std::ostringstream newLine;
 								newLine << "\"" << line_name.str() << "\":[{";
 
@@ -1221,7 +1223,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 								json_str.at(pos_of_par) = ' ';
 								json_str.at(pos_of_par2 + 1) = ',';
 
-								// Запись в файл данных новой модели
+								// Запись в файл данных новой линии
 								std::ofstream ostream(phEngPtr->dataPath);
 								ostream << json_str + newLine.str() + '}';
 
@@ -1271,8 +1273,126 @@ void GUISystem::ShowPhysicsEngineObjList()
 				// Если нажата кнопка добавить hitbox
 				if (ImGui::Button("Добавить"))
 				{
+					AddLog("Добавление Hit-Box'а...");
+					AddLog("\n");
 
+					AddingObject = true;
+
+					ImGui::GetStyle().Alpha = 0.1f;
 				}
+
+				/* Если идёт добавление hitbox */
+				{
+					if (AddingObject)
+					{
+						if (!SettedFirstPoint)
+						{
+							mouseHelpInfo = "Идёт добавление Hit-Box'а.\nНажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+							if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+							{
+								auto pos = wnd->mouse.GetPos();
+								firstPoint = { (float)pos.first, (float)pos.second };
+
+								SettedFirstPoint = true;
+								std::ostringstream oss;
+								oss << "Поставлена первая точка:\n" <<
+									"[x: "  << firstPoint.x <<
+									"; y: " << firstPoint.y << "]\n";
+
+								AddLog(oss.str().c_str());
+							}
+						}
+						else if (!SettedSecondPoint)
+						{
+							mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+							int ms_posX = wnd->mouse.GetPosX();
+							int ms_posY = wnd->mouse.GetPosY();
+
+							HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+							wnd->Gfx().DrawHitBox(hb);
+
+							if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+							{
+								auto pos = wnd->mouse.GetPos();
+								secondPoint = { (float)pos.first, (float)pos.second };
+
+								std::ostringstream hb_name;
+								hb_name << "hb " << phEngPtr->GetHitBoxAmount();
+
+								HitBox hb_new(hb_name.str(), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+								phEngPtr->AddHitBox(hb_new);
+
+								std::ostringstream oss;
+								oss << "Поставлена вторая точка:\n" <<
+									"[x: "  << secondPoint.x <<
+									"; y: " << secondPoint.y << "]\n";
+
+								AddLog(oss.str().c_str());
+
+								AddLog("Сохранение Hit-Box'а:\n");
+
+								using std::to_string;
+
+								// Открытие файла с данными о физике сцены
+								std::ifstream dataFile(phEngPtr->dataPath);
+								if (!dataFile.is_open())
+								{
+									throw ("Не удаётся открыть файл с данными о физике сцены");
+								}
+
+								// Чтение файла
+								json j;
+								dataFile >> j;
+
+								// Закрытие файла
+								dataFile.close();
+
+								// Новый hitbox
+								std::ostringstream newLine;
+								newLine << "\"" << hb_name.str() << "\":[{";
+
+								newLine << "\"lt-x\": " <<  firstPoint.x << ",";
+								newLine << "\"lt-y\" : " << firstPoint.y << ",";
+								newLine << "\"rb-x\" : " << secondPoint.x << ",";
+								newLine << "\"rb-y\" : " << secondPoint.y << "}]";
+
+								// Подготовка к вставке в файл
+								std::string json_str = j.dump();
+								size_t pos_of_par = json_str.find_last_of('}');
+								size_t pos_of_par2 = json_str.find_last_of(']');
+
+								json_str.at(pos_of_par) = ' ';
+								json_str.at(pos_of_par2 + 1) = ',';
+
+								// Запись в файл данных нового hitbox
+								std::ofstream ostream(phEngPtr->dataPath);
+								ostream << json_str + newLine.str() + '}';
+
+								// Закрытие файла
+								ostream.close();
+
+								std::ostringstream oss_l;
+								oss_l << "Добавлено [" << hb_name.str() << "]\n";
+
+								AddLog(oss_l.str().c_str());
+
+								mouseHelpInfo = "";
+								SettedSecondPoint = true;
+							}
+						}
+						else if (SettedFirstPoint && SettedSecondPoint)
+						{
+							AddingObject = false;
+							SettedFirstPoint = false;
+							SettedSecondPoint = false;
+
+							ImGui::GetStyle().Alpha = 1.0f;
+						}
+					}
+				}
+				/******************************/
 
 				ImGui::EndTabItem();
 			}
