@@ -539,14 +539,14 @@ void Graphics::DrawHorizontalLine(int start_x, int end_x, int start_y, Color c)
 	}
 }
 
-void Graphics::DrawHitBox(HitBox hb)
+void Graphics::DrawHitBox(HitBox hb, Color c)
 {
 	auto& coord = hb.GetCoordinates();
 	
-	DrawLine({coord.x, coord.y}, {coord.z, coord.y}, Colors::DodgerBlue);
-	DrawLine({coord.x, coord.w}, {coord.z, coord.w}, Colors::DodgerBlue);
-	DrawLine({coord.x, coord.y}, {coord.x, coord.w}, Colors::DodgerBlue);
-	DrawLine({coord.z, coord.y}, {coord.z, coord.w}, Colors::DodgerBlue);
+	DrawLine({coord.x, coord.y}, {coord.z, coord.y}, c);
+	DrawLine({coord.x, coord.w}, {coord.z, coord.w}, c);
+	DrawLine({coord.x, coord.y}, {coord.x, coord.w}, c);
+	DrawLine({coord.z, coord.y}, {coord.z, coord.w}, c);
 }
 
 Color Graphics::GetPixel(int x, int y) const

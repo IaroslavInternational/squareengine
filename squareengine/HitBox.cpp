@@ -37,12 +37,12 @@ HitBox HitBox::operator+(DirectX::XMFLOAT2 delta)
 
 /* Основные методы для работы с hitbox */
 
-bool HitBox::IsVisable()
+bool HitBox::IsVisible()
 {
 	return visability;
 }
 
-void HitBox::SetVisability(bool state)
+void HitBox::SetVisibility(bool state)
 {
 	visability = state;
 }

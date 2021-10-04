@@ -51,6 +51,22 @@ void Physics::PhysicsEngine::LoadData(std::string dataPath)
 				AddHitBox(HitBox(name, lt_x, lt_y, rb_x, rb_y));
 			}
 		}
+		else if (d.find("settings") != d.npos)
+		{
+			for (const auto& obj : j.at(d))
+			{
+				lineColor[0] = obj.at("l-clr-r");
+				lineColor[1] = obj.at("l-clr-g");
+				lineColor[2] = obj.at("l-clr-b");
+
+				hbColor[0] = obj.at("h-clr-r");
+				hbColor[1] = obj.at("h-clr-g");
+				hbColor[2] = obj.at("h-clr-b");
+
+				deltaCollision = obj.at("delta-collision");
+				objVisability = obj.at("obj-vis");
+			}
+		}
 	}
 
 	lines.shrink_to_fit();
@@ -65,19 +81,22 @@ void Physics::PhysicsEngine::Clear()
 
 void Physics::PhysicsEngine::Draw(Graphics& gfx)
 {
-	for (auto& l : lines)
+	if (objVisability)
 	{
-		if (l.IsVisable())
+		for (auto& l : lines)
 		{
-			gfx.DrawLine(l.GetStartPoint(), l.GetEndPoint(), Colors::Green);
+			if (l.IsVisible())
+			{
+				gfx.DrawLine(l.GetStartPoint(), l.GetEndPoint(), Color(lineColor[0] * 255.0f, lineColor[1] * 255.0f, lineColor[2] * 255.0f));
+			}
 		}
-	}
 
-	for (auto& hb : hitboxes)
-	{
-		if (hb.IsVisable())
+		for (auto& hb : hitboxes)
 		{
-			gfx.DrawHitBox(hb);
+			if (hb.IsVisible())
+			{
+				gfx.DrawHitBox(hb, Color(hbColor[0] * 255.0f, hbColor[1] * 255.0f, hbColor[2] * 255.0f));
+			}
 		}
 	}
 }
@@ -212,17 +231,16 @@ bool Physics::PhysicsEngine::CheckLineCollision(Line line)
 	return false;
 }
 
-std::vector<Physics::Line> Physics::GetLines(HitBox hb)
+std::vector<Physics::Line>  Physics::PhysicsEngine::GetLines(HitBox hb)
 {
 	auto hbCoord = hb.GetCoordinates();
-	float d = 1.0f;
 
 	std::vector<Physics::Line> lines =
 	{
-		Line(std::string("Line hitbox top"),    hbCoord.x - d, hbCoord.y - d, hbCoord.z + d, hbCoord.y - d),	// top
-		Line(std::string("Line hitbox bottom"), hbCoord.x - d, hbCoord.w + d, hbCoord.z + d, hbCoord.w + d),	// bot
-		Line(std::string("Line hitbox left"),   hbCoord.x - d, hbCoord.y - d, hbCoord.x - d, hbCoord.w + d),	// left
-		Line(std::string("Line hitbox right"),  hbCoord.z + d, hbCoord.y + d, hbCoord.z + d, hbCoord.w + d),	// right
+		Line(std::string("Line hitbox top"),    hbCoord.x - deltaCollision, hbCoord.y - deltaCollision, hbCoord.z + deltaCollision, hbCoord.y - deltaCollision),	// top
+		Line(std::string("Line hitbox bottom"), hbCoord.x - deltaCollision, hbCoord.w + deltaCollision, hbCoord.z + deltaCollision, hbCoord.w + deltaCollision),	// bot
+		Line(std::string("Line hitbox left"),   hbCoord.x - deltaCollision, hbCoord.y - deltaCollision, hbCoord.x - deltaCollision, hbCoord.w + deltaCollision),	// left
+		Line(std::string("Line hitbox right"),  hbCoord.z + deltaCollision, hbCoord.y + deltaCollision, hbCoord.z + deltaCollision, hbCoord.w + deltaCollision),	// right
 	};
 
 	return lines;

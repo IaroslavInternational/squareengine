@@ -11,8 +11,6 @@ class MainPerson;
 
 namespace Physics
 {
-	std::vector<Physics::Line> GetLines(HitBox hb);
-
 	class PhysicsEngine
 	{
 	public:
@@ -37,10 +35,15 @@ namespace Physics
 		size_t GetLinesAmount();
 		size_t GetHitBoxAmount();
 	public:
-		void CheckMainPersonCollision(MainPerson* mp);
-		bool CheckLineCollision(Line line);
+		void					   CheckMainPersonCollision(MainPerson* mp);
+		bool					   CheckLineCollision(Line line);
+		std::vector<Physics::Line> GetLines(HitBox hb);
 	private:
 		std::string dataPath = "";
+		float lineColor[3];
+		float hbColor  [3];
+		float deltaCollision;
+		bool  objVisability;
 	private:
 		std::vector<Line>	lines;
 		std::vector<HitBox> hitboxes;

@@ -395,18 +395,9 @@ void GUISystem::ShowBottomPanel()
 void GUISystem::ShowOptionalPanel()
 {
 	if (ShowPhysicsSettings)
-	{
-		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.84f));
-		if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings,
-			ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-			ImGuiWindowFlags_NoResize))
-		{
-
-		}
-
-		ImGui::End();
-		ImGui::PopStyleColor();
+	{	
+		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);	
+		ShowPhysicsEngineSettings();
 	}
 
 	if (ShowFPSGraph)
@@ -417,7 +408,7 @@ void GUISystem::ShowOptionalPanel()
 	if (mouseHelpInfo == "")
 	{
 		std::ostringstream pos;
-		pos << "x: " << ImGui::GetMousePos().x
+		pos << "x: "   << ImGui::GetMousePos().x
 			<< "\ny: " << ImGui::GetMousePos().y;
 
 		ShowMouseHelperPanel(pos.str().c_str());
@@ -463,6 +454,8 @@ void GUISystem::DisableSides()
 	ShowPhysicsEngineObjSettings = false;
 	ShowTriggersList = false;
 	ShowTriggersSettings = false;
+	ShowPhysicsSettings = false;
+	ShowFPSGraph = false;
 }
 
 /****************************************/
@@ -553,6 +546,124 @@ void GUISystem::ShowFPS()
 	}
 
 	ImGui::End();
+}
+
+void GUISystem::ShowPhysicsEngineSettings()
+{
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.84f));
+	if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize))
+	{
+		using namespace Physics;
+
+		if (ImGui::CollapsingHeader("Общая информация", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+
+			ImGui::TextWrapped(
+				"Физический движок позволяет настраивать коллизию объектов и их физические параметры. "
+				"Основными примитивами для создания объектов являтся линии и прямоугольники (Hit-Box).\n");
+			ImGui::Text("Занимаемый объём памяти данными о линиях %d байт (%.1f килобайт).\n", sizeof(phEngPtr->lines) + sizeof(Line) * phEngPtr->lines.size(), float(sizeof(phEngPtr->lines) + sizeof(Line) * phEngPtr->lines.size()) / (1024.0f));
+			ImGui::Text("Занимаемый объём памяти данными о прямоугольниках %d байт (%.1f килобайт).\n", sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size(), float(sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size()) / (1024.0f));
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::CollapsingHeader("Цвета"))
+		{
+			ImGui::ColorEdit3("Цвет линий", phEngPtr->lineColor);
+			ImGui::ColorEdit3("Цвет прямоугольников", phEngPtr->hbColor);
+
+			if (ImGui::Button("Сохранить"))
+			{
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"l-clr-r",
+					phEngPtr->lineColor[0],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"l-clr-g",
+					phEngPtr->lineColor[1],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"l-clr-b",
+					phEngPtr->lineColor[2],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"h-clr-r",
+					phEngPtr->hbColor[0],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"h-clr-g",
+					phEngPtr->hbColor[1],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"h-clr-b",
+					phEngPtr->hbColor[2],
+					phEngPtr->dataPath,
+					&applog
+					);
+			}
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::CollapsingHeader("Параметры объектов и коллизий"))
+		{
+			ImGui::SliderFloat("Отступ между коллизиями объектов", &phEngPtr->deltaCollision, -20.0f, 20.0f);
+			ImGui::SliderFloat("Сторона квадрата", &sq_l, 0.0f, 100.0f);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Длина стороны квадрата, созданного из Hit-Box");
+			}
+
+			ImGui::Checkbox("Скрыть все объекты", &phEngPtr->objVisability);
+
+			if (ImGui::Button("Сохранить"))
+			{
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"delta-collision",
+					phEngPtr->deltaCollision,
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<bool>(
+					"settings",
+					"obj-vis",
+					phEngPtr->objVisability,
+					phEngPtr->dataPath,
+					&applog
+					);
+			}
+
+			ImGui::Separator();
+		}
+	}
+
+	ImGui::End();
+	ImGui::PopStyleColor();
 }
 
 void GUISystem::ShowPersonList()
@@ -1314,6 +1425,11 @@ void GUISystem::ShowPhysicsEngineObjList()
 			{
 				for (auto hb = phEngPtr->hitboxes.begin(); hb != phEngPtr->hitboxes.end(); hb++)
 				{
+					if (objectSelected == "")
+					{
+						objectSelected == phEngPtr->hitboxes[0].name;
+					}
+
 					char label[128];
 					sprintf_s(label, hb->GetName().c_str(), objectSelected);
 
@@ -1748,7 +1864,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 
 							ImGui::NewLine();
 
-							dcheck(ImGui::SliderFloat("Длина стороны квадрата", &sq_l, 1.0f, 1000.0f), boxDirty);
+							dcheck(ImGui::SliderFloat("Длина стороны квадрата", &sq_l, 0.0f, 100.0f), boxDirty);
 
 							if (ImGui::Button("Сделать квадрат", ImVec2(100, 21)))
 							{

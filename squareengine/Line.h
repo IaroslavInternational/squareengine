@@ -16,8 +16,8 @@ namespace Physics
 		void operator=(Line line);
 	public:
 		bool			  IsIntersect(Line line);
-		bool			  IsVisable();
-		void			  SetVisability(bool state);
+		bool			  IsVisible();
+		void			  SetVisibility(bool state);
 		void			  SetStartPoint(DirectX::XMFLOAT2 p);
 		void			  SetEndPoint(DirectX::XMFLOAT2 p);
 		std::string		  GetName();

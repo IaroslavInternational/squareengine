@@ -74,12 +74,12 @@ bool Physics::Line::IsIntersect(Line line)
     }
 }
 
-bool Physics::Line::IsVisable()
+bool Physics::Line::IsVisible()
 {
     return visability;
 }
 
-void Physics::Line::SetVisability(bool state)
+void Physics::Line::SetVisibility(bool state)
 {
     visability = state;
 }
