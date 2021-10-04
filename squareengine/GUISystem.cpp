@@ -1286,10 +1286,35 @@ void GUISystem::ShowPhysicsEngineObjList()
 					char label[128];
 					sprintf_s(label, hb->GetName().c_str(), objectSelected);
 
+					std::string contextMenuId = "Context Menu for " + hb->name;
+
 					ImGui::Bullet();
 					if (ImGui::Selectable(label, objectSelected == hb->GetName().c_str()))
 					{
 						objectSelected = hb->GetName();
+					}
+					if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
+					{
+						if (ImGui::Button("Удалить"))
+						{
+							std::string deletedHitBoxName = hb->name;
+							AddLog("Удаление ");
+							AddLog(deletedHitBoxName.c_str());
+							AddLog("...\n");
+
+							phEngPtr->DeleteHitBoxAt(hb);
+							EngineFunctions::DeleteJsonObject(deletedHitBoxName, phEngPtr->dataPath);
+
+							AddLog("Hit-Box ");
+							AddLog(deletedHitBoxName.c_str());
+							AddLog(" удалён\n");
+
+							ImGui::EndPopup();
+
+							break;
+						}
+
+						ImGui::EndPopup();
 					}
 				}
 

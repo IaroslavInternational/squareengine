@@ -32,6 +32,8 @@ namespace Physics
 		void   DeleteLineAt(size_t k);
 		void   DeleteLineAt(std::vector<Line>::const_iterator it);
 		void   UpdateHitBoxAt(size_t k, HitBox hb);
+		void   DeleteHitBoxAt(size_t k);
+		void   DeleteHitBoxAt(std::vector<HitBox>::const_iterator it);
 		size_t GetLinesAmount();
 		size_t GetHitBoxAmount();
 	public:

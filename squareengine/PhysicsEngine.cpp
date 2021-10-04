@@ -117,6 +117,16 @@ void Physics::PhysicsEngine::DeleteLineAt(std::vector<Line>::const_iterator it)
 	lines.erase(it);
 }
 
+void Physics::PhysicsEngine::DeleteHitBoxAt(size_t k)
+{
+	DeleteHitBoxAt(hitboxes.begin() + k);
+}
+
+void Physics::PhysicsEngine::DeleteHitBoxAt(std::vector<HitBox>::const_iterator it)
+{
+	hitboxes.erase(it);
+}
+
 void Physics::PhysicsEngine::UpdateHitBoxAt(size_t k, HitBox hb)
 {
 	hitboxes.at(k) = hb;
