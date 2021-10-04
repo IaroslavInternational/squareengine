@@ -32,9 +32,9 @@ private:
 	/* Методы настройки и отрисовки панелей */
 	
 	void SetGUIColors();														// Установка цветовой гаммы
-	void SetPanelWidthAndPosition(int   corner,			float width,			// Установка положения и размеров панели
-								  float height,			float x_offset = 0.0f, 
-								  float y_offset = 0.0f); 	
+	void SetPanelSizeAndPosition(int   corner,			float width,			// Установка положения и размеров панели
+								 float height,			float x_offset = 0.0f, 
+								 float y_offset = 0.0f); 	
 	void ShowMenu(); 															// Верхняя панель меню
 	void ShowLeftSide();														// Левая панель	
 	void ShowRightSide();														// Правая панель
@@ -68,6 +68,7 @@ private:
 	bool ShowMainPersonSettings		  =	false;	// Правая панель управления настройками главного персонажа
 	bool ShowPhysicsEngineObjEnum	  = true;	// Левая панель
 	bool ShowPhysicsEngineObjSettings = true;	// Правая панель 
+	bool ShowPhysicsSettings		  = true;	// Панель настроек физического движка
 	bool ShowHardwareInfo 			  =	true;	// FPS и информация о графическом адаптере
 	bool ShowFPSGraph 				  =	false;	// График изменения FPS
 	bool ShowLogs 					  =	true;	// Лог

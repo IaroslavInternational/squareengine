@@ -39,31 +39,14 @@ void GUISystem::Show()
 	ShowRightSide();
 	ShowLeftBottomSide();
 	ShowBottomPanel();
-
-	if (ShowFPSGraph)
-	{
-		ShowFPS();
-	}
-	
-	if (mouseHelpInfo == "")
-	{
-		std::ostringstream pos;
-		pos << "x: "   << ImGui::GetMousePos().x
-			<< "\ny: " << ImGui::GetMousePos().y;
-
-		ShowMouseHelperPanel(pos.str().c_str());
-	}
-	else
-	{
-		ShowMouseHelperPanel(mouseHelpInfo);
-	}
+	ShowOptionalPanel();
 }
 
 void GUISystem::Hide()
 {
 	DisableSides();
 
-	ShowHardwareInfo = false;
+	ShowPhysicsSettings = false;
 	ShowLogs = false;
 }
 
@@ -112,7 +95,7 @@ void GUISystem::SetGUIColors()
 	/******************/
 }
 
-void GUISystem::SetPanelWidthAndPosition(int corner, float width, float height, float x_offset, float y_offset)
+void GUISystem::SetPanelSizeAndPosition(int corner, float width, float height, float x_offset, float y_offset)
 {
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -163,22 +146,32 @@ void GUISystem::ShowMenu()
 				{
 				}
 
-				if (ImGui::MenuItem("Физика"))
+				if (ImGui::BeginMenu("Физика"))
 				{
-					if (ShowPhysicsEngineObjEnum && ShowPhysicsEngineObjSettings)
+					if (ImGui::MenuItem("Объекты"))
 					{
-						DisableSides();
+						if (ShowPhysicsEngineObjEnum && ShowPhysicsEngineObjSettings)
+						{
+							DisableSides();
 
-						ShowPhysicsEngineObjEnum = false;
-						ShowPhysicsEngineObjSettings = false;
+							ShowPhysicsEngineObjEnum = false;
+							ShowPhysicsEngineObjSettings = false;
+						}
+						else
+						{
+							DisableSides();
+
+							ShowPhysicsEngineObjEnum = true;
+							ShowPhysicsEngineObjSettings = true;
+						}
 					}
-					else
+					
+					if (ImGui::MenuItem("Настройки"))
 					{
-						DisableSides();
-
-						ShowPhysicsEngineObjEnum = true;
-						ShowPhysicsEngineObjSettings = true;
+						ShowPhysicsSettings ? ShowPhysicsSettings = false : ShowPhysicsSettings = true;
 					}
+
+					ImGui::EndMenu();
 				}
 
 				if (ImGui::MenuItem("Звук"))
@@ -278,7 +271,7 @@ void GUISystem::ShowLeftSide()
 {
 	/* Левая сторона */
 
-	SetPanelWidthAndPosition(0, 0.2f, 0.75f);
+	SetPanelSizeAndPosition(0, 0.2f, 0.75f);
 
 	/* Содержимое */
 
@@ -323,7 +316,7 @@ void GUISystem::ShowRightSide()
 		(corner & 2) ? 1.0f : 0.0f
 	);
 
-	SetPanelWidthAndPosition(corner, 0.2f, 1.0f);
+	SetPanelSizeAndPosition(corner, 0.2f, 1.0f);
 
 	/* Содержимое */
 
@@ -367,7 +360,7 @@ void GUISystem::ShowLeftBottomSide()
 {
 	/* Левая нижняя сторона */
 
-	SetPanelWidthAndPosition(2, 0.2f, 0.25f);
+	SetPanelSizeAndPosition(2, 0.2f, 0.25f);
 
 	/* Содержимое */
 
@@ -385,7 +378,7 @@ void GUISystem::ShowBottomPanel()
 {
 	/* Нижняя сторона */
 
-	SetPanelWidthAndPosition(3, 0.6f, 0.25f, -0.2f);
+	SetPanelSizeAndPosition(3, 0.6f, 0.25f, -0.2f);
 
 	/* Содержимое */
 
@@ -397,6 +390,42 @@ void GUISystem::ShowBottomPanel()
 	/**************/
 
 	/* Конец нижней стороны */
+}
+
+void GUISystem::ShowOptionalPanel()
+{
+	if (ShowPhysicsSettings)
+	{
+		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.84f));
+		if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings,
+			ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoResize))
+		{
+
+		}
+
+		ImGui::End();
+		ImGui::PopStyleColor();
+	}
+
+	if (ShowFPSGraph)
+	{
+		ShowFPS();
+	}
+
+	if (mouseHelpInfo == "")
+	{
+		std::ostringstream pos;
+		pos << "x: " << ImGui::GetMousePos().x
+			<< "\ny: " << ImGui::GetMousePos().y;
+
+		ShowMouseHelperPanel(pos.str().c_str());
+	}
+	else
+	{
+		ShowMouseHelperPanel(mouseHelpInfo);
+	}
 }
 
 void GUISystem::ShowMouseHelperPanel(std::string info)
@@ -460,9 +489,13 @@ void GUISystem::ShowGPU()
 		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImGui::Text("FPS:");
 		ImGui::Text("%.3f мс/кадр (%.2f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		
+		std::ostringstream s;
+		s << sizeof(*this);
+
+		ImGui::Text("Вес GUI: %s байт", s.str().c_str());
+
 		ImGui::Separator();
 
 		ImGui::Text("Графическое оборудование:");
@@ -506,8 +539,6 @@ void GUISystem::ShowFPS()
 
 			average = sum / N_POINTS;
 		}
-
-
 
 		ImPlot::SetNextPlotLimits(0, N_POINTS - 1, average - 1.0f, average + 1.0f);
 		if (ImPlot::BeginPlot("FPS", "", "FPS"))
