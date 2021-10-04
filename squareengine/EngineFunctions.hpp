@@ -102,10 +102,20 @@ namespace EngineFunctions
 		auto j_str = j.dump();
 
 		auto pos = j_str.find(objectName);
-
-		for (auto i = pos - 1; i < objectName.length() + 7; i++)
+		
+		if (j_str[pos + objectName.length() + 4] == '}')
 		{
-			j_str[i] = '*';
+			for (auto i = pos - 2; i < pos + objectName.length() + 4; i++)
+			{
+				j_str[i] = '*';
+			}
+		}
+		else
+		{
+			for (auto i = pos - 1; i < pos + objectName.length() + 5; i++)
+			{
+				j_str[i] = '*';
+			}
 		}
 
 		j_str.erase(std::remove(j_str.begin(), j_str.end(), '*'), j_str.end());
@@ -116,10 +126,5 @@ namespace EngineFunctions
 
 		// Закрытие файла
 		ostr.close();
-	}
-
-	float static DotProduct(DirectX::XMFLOAT2 a, DirectX::XMFLOAT2 b)
-	{
-		return a.x * b.x + a.y * b.y;
 	}
 }

@@ -14,6 +14,13 @@ HitBox::HitBox(std::string name, float   leftTopX,     float leftTopY,
 
 /* Операторы */
 
+void HitBox::operator=(HitBox hb)
+{
+	name = hb.name;
+	coordinates = hb.coordinates;
+	visability = hb.visability;
+}
+
 HitBox HitBox::operator-(DirectX::XMFLOAT2 delta)
 {
 	return HitBox(name, coordinates.x - delta.x, coordinates.y - delta.y,
@@ -29,6 +36,16 @@ HitBox HitBox::operator+(DirectX::XMFLOAT2 delta)
 /*************/
 
 /* Основные методы для работы с hitbox */
+
+bool HitBox::IsVisable()
+{
+	return visability;
+}
+
+void HitBox::SetVisability(bool state)
+{
+	visability = state;
+}
 
 void HitBox::Update(DirectX::XMFLOAT2 delta)
 {

@@ -6,12 +6,15 @@
 class HitBox
 {
 public:
+	friend class GUISystem;
+public:
 	HitBox(std::string name, DirectX::XMFLOAT4 coordinates);
 	HitBox(std::string name, float leftTopX,     float leftTopY,
 							 float rightBottomX, float rightBottomY);
 public:
 	/* Операторы */
 	
+	void   operator=(HitBox hb);
 	HitBox operator-(DirectX::XMFLOAT2 delta);
 	HitBox operator+(DirectX::XMFLOAT2 delta);
 
@@ -19,6 +22,8 @@ public:
 public:
 	/* Основные методы для работы с hitbox */
 	
+	bool			   IsVisable();
+	void			   SetVisability(bool state);
 	void			   Update(DirectX::XMFLOAT2 delta);	// Обновить 4 координаты углов hitbox корректирующими отступами
 	void			   Update(float dx, float dy);		// Обновить 4 координаты углов hitbox корректирующими отступами
 	void			   UpdateX(float dx);				// Обновить 2 координаты углов hitbox корректирующими отступами
@@ -37,7 +42,8 @@ private:
 	/* Переменные описания hitbox */
 	
 	std::string		  name;
-	DirectX::XMFLOAT4 coordinates; // 4 координаты углов hitbox
+	DirectX::XMFLOAT4 coordinates;		  // 4 координаты углов hitbox
+	bool			  visability = true;  // Видимость
 
 	/******************************/
 };

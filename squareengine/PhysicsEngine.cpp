@@ -75,7 +75,10 @@ void Physics::PhysicsEngine::Draw(Graphics& gfx)
 
 	for (auto& hb : hitboxes)
 	{
-		gfx.DrawHitBox(hb);
+		if (hb.IsVisable())
+		{
+			gfx.DrawHitBox(hb);
+		}
 	}
 }
 
@@ -102,6 +105,21 @@ void Physics::PhysicsEngine::AddHitBox(std::string name, float leftTop_x, float 
 void Physics::PhysicsEngine::UpdateLineAt(size_t k, Line line)
 {
 	lines.at(k) = line;
+}
+
+void Physics::PhysicsEngine::DeleteLineAt(size_t k)
+{
+	DeleteLineAt(lines.begin() + k);
+}
+
+void Physics::PhysicsEngine::DeleteLineAt(std::vector<Line>::const_iterator it)
+{
+	lines.erase(it);
+}
+
+void Physics::PhysicsEngine::UpdateHitBoxAt(size_t k, HitBox hb)
+{
+	hitboxes.at(k) = hb;
 }
 
 size_t Physics::PhysicsEngine::GetLinesAmount()

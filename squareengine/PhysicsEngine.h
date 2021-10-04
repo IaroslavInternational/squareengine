@@ -29,6 +29,9 @@ namespace Physics
 		void   AddHitBox(HitBox hb);
 		void   AddHitBox(std::string name, float leftTop_x, float leftTop_y, float rightBottom_x, float rightBottom_y);
 		void   UpdateLineAt(size_t k, Line line);
+		void   DeleteLineAt(size_t k);
+		void   DeleteLineAt(std::vector<Line>::const_iterator it);
+		void   UpdateHitBoxAt(size_t k, HitBox hb);
 		size_t GetLinesAmount();
 		size_t GetHitBoxAmount();
 	public:
