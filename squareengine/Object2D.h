@@ -19,9 +19,10 @@ public:
 public:
 	/* Главные методы для описания объекта */
 	
+	void			  Translate(DirectX::XMFLOAT2 delta);		//
 	void			  SetName(std::string name);				// Установить имя объекта
 	void			  SetPosition(DirectX::XMFLOAT2 position);	// Установить позицию объекта
-	void			  SetSurface(Surface2D sprite);			// Установить плоскость изображения спрайта
+	void			  SetSurface(Surface2D sprite);				// Установить плоскость изображения спрайта
 	void			  SetHitBox(HitBox hb);						// Установить hitbox
 	std::string		  GetName() const;							// Получить имя объекта
 	DirectX::XMFLOAT2 GetPosition();							// Получить позицию объекта

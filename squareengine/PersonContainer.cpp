@@ -87,6 +87,14 @@ void PersonContainer::Draw(Graphics& gfx)
 	}
 }
 
+void PersonContainer::Translate(DirectX::XMFLOAT2 delta)
+{
+	for (auto& p : persons)
+	{
+		p->Translate(delta);
+	}
+}
+
 std::pair<bool, Person*> PersonContainer::CheckCollision(HitBox& hb)
 {
 	for (auto& p : persons)

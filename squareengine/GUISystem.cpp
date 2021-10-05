@@ -550,7 +550,7 @@ void GUISystem::ShowFPS()
 
 void GUISystem::ShowPhysicsEngineSettings()
 {
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.84f));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.84f));
 	if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize))
@@ -1645,6 +1645,20 @@ void GUISystem::ShowPhysicsEngineObjControl()
 								AddLog("\n");
 
 								phEngPtr->lines.at(k).end.x = phEngPtr->lines.at(k).start.x;
+
+								EngineFunctions::SetNewValue<float>(
+									objectSelected,
+									"start-x", phEngPtr->lines.at(k).start.x,
+									phEngPtr->dataPath,
+									&applog
+									);
+
+								EngineFunctions::SetNewValue<float>(
+									objectSelected,
+									"end-x", phEngPtr->lines.at(k).end.x,
+									phEngPtr->dataPath,
+									&applog
+									);
 							}
 
 							ImGui::SameLine();
@@ -1656,6 +1670,20 @@ void GUISystem::ShowPhysicsEngineObjControl()
 								AddLog("\n");
 
 								phEngPtr->lines.at(k).end.y = phEngPtr->lines.at(k).start.y;
+
+								EngineFunctions::SetNewValue<float>(
+									objectSelected,
+									"start-y", phEngPtr->lines.at(k).start.y,
+									phEngPtr->dataPath,
+									&applog
+									);
+
+								EngineFunctions::SetNewValue<float>(
+									objectSelected,
+									"end-y", phEngPtr->lines.at(k).end.y,
+									phEngPtr->dataPath,
+									&applog
+									);
 							}
 
 							ImGui::Separator();	// Разделитель
@@ -1874,6 +1902,20 @@ void GUISystem::ShowPhysicsEngineObjControl()
 
 								phEngPtr->hitboxes.at(k).coordinates.z = phEngPtr->hitboxes.at(k).coordinates.x + sq_l;
 								phEngPtr->hitboxes.at(k).coordinates.w = phEngPtr->hitboxes.at(k).coordinates.y + sq_l;
+
+								EngineFunctions::SetNewValue<float>(
+									objectSelected,
+									"rb-x", phEngPtr->hitboxes.at(k).coordinates.z,
+									phEngPtr->dataPath,
+									&applog
+									);
+
+								EngineFunctions::SetNewValue<float>(
+									objectSelected,
+									"rb-y", phEngPtr->hitboxes.at(k).coordinates.w,
+									phEngPtr->dataPath,
+									&applog
+									);
 							}
 
 							ImGui::Separator();	// Разделитель

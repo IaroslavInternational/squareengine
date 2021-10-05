@@ -12,6 +12,12 @@ Object2D::Object2D(std::string name, DirectX::XMFLOAT2 position, std::string pat
 
 /* Главные методы для описания объекта */
 
+void Object2D::Translate(DirectX::XMFLOAT2 delta)
+{
+	position.x += delta.x;
+	position.y += delta.y;
+}
+
 void Object2D::SetName(std::string name)
 {
 	this->name = name;

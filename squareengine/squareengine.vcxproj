@@ -102,6 +102,7 @@
     <ClCompile Include="AdapterData.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cnpy.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GUISystem.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="AppLog.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="cnpy.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="EngineConverter.h" />

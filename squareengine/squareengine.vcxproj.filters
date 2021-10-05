@@ -252,6 +252,9 @@
     <ClCompile Include="imgui\implot_demo.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -439,6 +442,9 @@
     </ClInclude>
     <ClInclude Include="imgui\implot.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -10,6 +10,7 @@ public:
 	PersonContainer(std::string dataPath);
 public:
 	void Draw(Graphics& gfx);
+	void Translate(DirectX::XMFLOAT2 delta);
 	std::pair<bool, Person*> CheckCollision(HitBox& hb);
 private:
 	std::string dataPath;
