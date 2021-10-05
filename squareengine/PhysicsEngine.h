@@ -21,6 +21,7 @@ namespace Physics
 		void LoadData(std::string dataPath);
 		void Clear();
 		void Draw(Graphics& gfx);
+		void TranslateObjects(DirectX::XMFLOAT2 delta);
 	public:
 		void   AddLine(Line line);
 		void   AddLine(std::string name, float start_x, float start_y, float end_x, float end_y);

@@ -22,6 +22,15 @@ void Physics::Line::operator=(Line line)
     visability = line.visability;
 }
 
+void Physics::Line::Translate(DirectX::XMFLOAT2 delta)
+{
+    start.x += delta.x;
+    start.y += delta.y;
+
+    end.x += delta.x;
+    end.y += delta.y;
+}
+
 bool Physics::Line::IsIntersect(Line line)
 {
     float x1 = start.x,      y1 = start.y,      x2 = end.x,      y2 = end.y;

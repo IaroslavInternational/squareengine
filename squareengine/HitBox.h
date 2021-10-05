@@ -22,6 +22,7 @@ public:
 public:
 	/* Основные методы для работы с hitbox */
 	
+	void			   Translate(DirectX::XMFLOAT2 delta);
 	bool			   IsVisible();
 	void			   SetVisibility(bool state);
 	void			   Update(DirectX::XMFLOAT2 delta);	// Обновить 4 координаты углов hitbox корректирующими отступами

@@ -37,6 +37,14 @@ HitBox HitBox::operator+(DirectX::XMFLOAT2 delta)
 
 /* Основные методы для работы с hitbox */
 
+void HitBox::Translate(DirectX::XMFLOAT2 delta)
+{
+	coordinates.x += delta.x;
+	coordinates.y += delta.y;
+	coordinates.z += delta.x;
+	coordinates.w += delta.y;
+}
+
 bool HitBox::IsVisible()
 {
 	return visability;

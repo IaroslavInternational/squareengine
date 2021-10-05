@@ -1,11 +1,15 @@
 #pragma once
 
-#include <DirectXMath.h>
+#include "PhysicsEngine.h"
+#include "PersonContainer.h"
 
 class Camera
 {
 public:
-	Camera();
+	Camera(std::shared_ptr<Physics::PhysicsEngine> phEngPtr, PersonContainer* pcPtr);
+public:
+	void Translate(DirectX::XMFLOAT2 delta);
 private:
-	DirectX::XMFLOAT2 position;
+	std::shared_ptr<Physics::PhysicsEngine> phEngPtr;
+	PersonContainer* pcPtr;
 };

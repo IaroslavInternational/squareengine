@@ -16,6 +16,8 @@ void Object2D::Translate(DirectX::XMFLOAT2 delta)
 {
 	position.x += delta.x;
 	position.y += delta.y;
+
+	hitbox.Translate(delta);
 }
 
 void Object2D::SetName(std::string name)

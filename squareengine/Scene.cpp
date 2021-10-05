@@ -6,11 +6,12 @@ Scene::Scene(std::string							 name,
 	:
 	name(name),
 	wnd(wnd),
+	camera(std::make_shared<Camera>(phEngine, &pc)),
 	gui(wnd, &pc, &hero, phEngine),
 	sdr(scData),
 	mdr(sdr.GetMainPersonDataPath()),
 	pc( sdr.GetPersonContainerPath()),
-	hero(mdr, wnd),
+	hero(mdr, wnd, camera),
 	phEngine(phEngine)
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());

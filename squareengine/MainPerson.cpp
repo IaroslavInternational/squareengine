@@ -1,11 +1,12 @@
 #include "MainPerson.h"
 
-MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd)
+MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera)
 	:
 	Object2D(data.name, data.position, data.pathToSprite, HitBox(data.name + std::string(" hitbox"), data.hb_coord)),
 	dataPath(data.dataPath),
 	speed(data.speed),
-	wnd(wnd)
+	wnd(wnd),
+	camera(camera)
 {
 	effect.Duration = data.eff_d;
 	effect.Time = data.eff_t;
@@ -90,22 +91,30 @@ void MainPerson::Update(float dt)
 	{
 		position.x += vel.x;
 		hitbox.UpdateX(vel.x);
+
+		camera->Translate({ -vel.x, 0.0f });
 	}
 	else if (vel.x > 0)	// Moving right
 	{
 		position.x += vel.x;
 		hitbox.UpdateX(vel.x);
+
+		camera->Translate({ -vel.x, 0.0f });
 	}
 
 	if (vel.y < 0) // Moving down
 	{
 		position.y += vel.y;
 		hitbox.UpdateY(vel.y);
+		
+		camera->Translate({ 0.0f, -vel.y });
 	}
 	else if (vel.y > 0)	// Moving up
 	{
 		position.y += vel.y;
 		hitbox.UpdateY(vel.y);
+
+		camera->Translate({ 0.0f, -vel.y });
 	}
 
 	CalculateDeltas();

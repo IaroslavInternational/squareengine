@@ -4,13 +4,14 @@
 #include "Object2D.h"
 #include "Animation.h"
 #include "Window.h"
+#include "Camera.h"
 
 class MainPerson : public Object2D
 {
 public:
 	friend class GUISystem;
 public:
-	MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd);
+	MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera);
 public:
 	/* √лавные методы дл€ отрисовки главного персонажа */
 
@@ -73,6 +74,7 @@ private:
 	/*******************************************/
 private:
 	std::shared_ptr<Window> wnd;	// ”казатель на главное окно
+	std::shared_ptr<Camera> camera;	// ”казатель на камеру
 };
 
 

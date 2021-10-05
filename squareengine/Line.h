@@ -15,6 +15,7 @@ namespace Physics
 	public:
 		void operator=(Line line);
 	public:
+		void			  Translate(DirectX::XMFLOAT2 delta);
 		bool			  IsIntersect(Line line);
 		bool			  IsVisible();
 		void			  SetVisibility(bool state);

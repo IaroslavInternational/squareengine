@@ -101,6 +101,19 @@ void Physics::PhysicsEngine::Draw(Graphics& gfx)
 	}
 }
 
+void Physics::PhysicsEngine::TranslateObjects(DirectX::XMFLOAT2 delta)
+{
+	for (auto& l : lines)
+	{
+		l.Translate(delta);
+	}
+
+	for (auto& hb : hitboxes)
+	{
+		hb.Translate(delta);
+	}
+}
+
 void Physics::PhysicsEngine::AddLine(Line line)
 {
 	lines.emplace_back(line);
