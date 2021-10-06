@@ -51,6 +51,7 @@ private:
 	void ShowLog();						// Показать панель лога
 	void ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
 	void ShowFPS();						// Показать панель с графиком изменения FPS
+	void ShowPhysicsEngineObjHelp();	// Показать подписи имён объектов физического движка
 	void ShowPhysicsEngineSettings();	// Показать панель настроек физического движка
 	void ShowPersonList();				// Показать список персонажей 
 	void ShowPersonControl();			// Показать настройки для выбранного персонажа
@@ -63,12 +64,13 @@ private:
 private:
 	/* Переменные видимости панелей */
 	
-	bool ShowPersonEnum 			  =	false;	// Левая панель объектов на сцене
-	bool ShowPersonSettings			  =	false;	// Правая панель управления настройками объектов	
+	bool ShowPersonEnum 			  =	false;	// Левая панель персонажей на сцене
+	bool ShowPersonSettings			  =	false;	// Правая панель управления настройками персонажей	
 	bool ShowMainPersonEnum 		  =	false;	// Левая панель главного персонажа на сцене
 	bool ShowMainPersonSettings		  =	false;	// Правая панель управления настройками главного персонажа
-	bool ShowPhysicsEngineObjEnum	  = true;	// Левая панель
-	bool ShowPhysicsEngineObjSettings = true;	// Правая панель 
+	bool ShowPhysicsEngineObjEnum	  = true;	// Левая панель физических объектов на сцене
+	bool ShowPhysicsEngineObjSettings = false;	// Правая панель управления настройками выбранного объекта
+	bool ShowPhysicsEngineObjInfo	  = true;	// Подпись имени объекта физического движка  
 	bool ShowPhysicsSettings		  = true;	// Панель настроек физического движка
 	bool ShowHardwareInfo 			  =	true;	// FPS и информация о графическом адаптере
 	bool ShowFPSGraph 				  =	false;	// График изменения FPS
@@ -119,17 +121,23 @@ private:
 
 	/* Переменные для настроек физического движка */
 	
-	float sq_l	   = 0.0f;	// Сторона квадрата для hitbox
-	
+	float sq_l = 0.0f;	// Сторона квадрата для hitbox
+
 	/**********************************************/
 
 	/**************************************************************/
 
 	/* Вспомагательные переменные для отображения FPS */
 
-	float	arr[N_POINTS];		// Массив значений fps
-	float	counters[N_POINTS];	// Массив отчётов
-	size_t	counter = 0;		// Счётчик итерации
+	double	sum     = 0.0;						// Сумма всех элементов массива
+	double  average = 0.0;						// Среднее значение FPS
+	double	pXMin	= 0.0;						// Минимальное значение для масштабирования графика по оси X
+	double	pXMax	= (double)N_POINTS - 1.0;	// Максимальное значение для масштабирования графика по оси X
+	double	pYMin	= 0.0;						// Минимальное значение для масштабирования графика по оси Y
+	double	pYMax	= 0.0;						// Максимальное значение для масштабирования графика по оси Y
+	float	arr[N_POINTS];						// Массив значений fps
+	float	counters[N_POINTS];					// Массив отчётов
+	size_t	counter = 0;						// Счётчик итерации
 
 	/**************************************************/
 

@@ -339,7 +339,7 @@ void GUISystem::ShowRightSide()
 		ShowPhysicsEngineObjControl();
 
 		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
-		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.15f, io.DisplaySize.y * 0.15f }, ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
 
 	}
 	else if (ShowTriggersSettings)
@@ -398,6 +398,10 @@ void GUISystem::ShowOptionalPanel()
 	{	
 		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);	
 		ShowPhysicsEngineSettings();
+	}
+	else if (ShowPhysicsEngineObjInfo)
+	{
+		ShowPhysicsEngineObjHelp();
 	}
 
 	if (ShowFPSGraph)
@@ -514,9 +518,6 @@ void GUISystem::ShowFPS()
 {
 	if (ImGui::Begin("График FPS", &ShowFPSGraph))
 	{
-		float average = 60.0f;
-		float sum = 0.0f;
-
 		if (counter != N_POINTS)
 		{
 			arr[counter] = ImGui::GetIO().Framerate;
@@ -527,13 +528,17 @@ void GUISystem::ShowFPS()
 			counter = 0;
 			for (size_t i = 0; i < N_POINTS; i++)
 			{
-				sum += arr[i];
+				sum += (double)arr[i];
 			}
 
 			average = sum / N_POINTS;
+			sum = 0.0;
+
+			pYMin = average - 1.0;
+			pYMax = average + 1.0;
 		}
 
-		ImPlot::SetNextPlotLimits(0, N_POINTS - 1, average - 1.0f, average + 1.0f);
+		ImPlot::LinkNextPlotLimits(&pXMin, &pXMax, &pYMin, &pYMax);
 		if (ImPlot::BeginPlot("FPS", "", "FPS"))
 		{
 			ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
@@ -548,9 +553,63 @@ void GUISystem::ShowFPS()
 	ImGui::End();
 }
 
+void GUISystem::ShowPhysicsEngineObjHelp()
+{
+	std::string objName;
+	ImVec2 pos;
+
+	for (auto& l : phEngPtr->lines)
+	{
+		std::ostringstream oss;
+		oss << "Physics engine info for " << l.name;
+
+		float offset = -30.0f;
+
+		if (l.start.y == l.end.y)
+		{
+			pos = { (l.start.x + l.end.x) / 2.0f, l.start.y + offset };
+		}
+		else if (l.start.y != l.end.y)
+		{
+			pos = { (l.start.x + l.end.x) / 2.0f, (l.start.y + l.end.y) / 2.0f + offset };
+		}
+
+		ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
+		if (ImGui::Begin(oss.str().c_str(), (bool*)0,
+			ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+			| ImGuiWindowFlags_NoBackground))
+		{
+			ImGui::Text(l.name.c_str());
+			ImGui::End();
+		}
+	}
+
+	for (auto& hb : phEngPtr->hitboxes)
+	{
+		std::ostringstream oss;
+		oss << "Physics engine info for " << hb.name;
+
+		float offset = 7.0f;
+		ImVec2 pos;
+
+		pos = { hb.coordinates.x + offset, hb.coordinates.y + offset };
+
+		ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
+		if (ImGui::Begin(oss.str().c_str(), (bool*)0,
+			ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+			| ImGuiWindowFlags_NoBackground))
+		{
+			ImGui::Text(hb.name.c_str());
+			ImGui::End();
+		}
+	}
+}
+
 void GUISystem::ShowPhysicsEngineSettings()
 {
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.84f));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
 	if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize))
@@ -637,8 +696,8 @@ void GUISystem::ShowPhysicsEngineSettings()
 				ImGui::SetTooltip("Длина стороны квадрата, созданного из Hit-Box");
 			}
 
-			ImGui::Checkbox("Скрыть все объекты", &phEngPtr->objVisability);
-
+			ImGui::Checkbox("Показать все объекты", &phEngPtr->objVisability);
+			ImGui::Checkbox("Показать подписи объектов", &ShowPhysicsEngineObjInfo);
 			if (ImGui::Button("Сохранить"))
 			{
 				EngineFunctions::SetNewValue<float>(
@@ -1425,11 +1484,6 @@ void GUISystem::ShowPhysicsEngineObjList()
 			{
 				for (auto hb = phEngPtr->hitboxes.begin(); hb != phEngPtr->hitboxes.end(); hb++)
 				{
-					if (objectSelected == "")
-					{
-						objectSelected == phEngPtr->hitboxes[0].name;
-					}
-
 					char label[128];
 					sprintf_s(label, hb->GetName().c_str(), objectSelected);
 

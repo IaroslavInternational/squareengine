@@ -89,30 +89,30 @@ void MainPerson::Update(float dt)
 
 	if (vel.x < 0) // Moving left
 	{
-		position.x += vel.x;
-		hitbox.UpdateX(vel.x);
+		//position.x += vel.x;
+		//hitbox.UpdateX(vel.x);
 
 		camera->Translate({ -vel.x, 0.0f });
 	}
 	else if (vel.x > 0)	// Moving right
 	{
-		position.x += vel.x;
-		hitbox.UpdateX(vel.x);
+		//position.x += vel.x;
+		//hitbox.UpdateX(vel.x);
 
 		camera->Translate({ -vel.x, 0.0f });
 	}
 
 	if (vel.y < 0) // Moving down
 	{
-		position.y += vel.y;
-		hitbox.UpdateY(vel.y);
+		//position.y += vel.y;
+		//hitbox.UpdateY(vel.y);
 		
 		camera->Translate({ 0.0f, -vel.y });
 	}
 	else if (vel.y > 0)	// Moving up
 	{
-		position.y += vel.y;
-		hitbox.UpdateY(vel.y);
+		//position.y += vel.y;
+		//hitbox.UpdateY(vel.y);
 
 		camera->Translate({ 0.0f, -vel.y });
 	}
