@@ -73,8 +73,13 @@ private:
 
 	/*******************************************/
 private:
+	enum class CameraMode
+	{
+		SteadyPerson,
+		SteadyWorld
+	};
+
 	std::shared_ptr<Window> wnd;	// ”казатель на главное окно
 	std::shared_ptr<Camera> camera;	// ”казатель на камеру
+	CameraMode				cameraMode = CameraMode::SteadyPerson;
 };
-
-

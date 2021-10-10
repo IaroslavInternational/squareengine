@@ -74,7 +74,7 @@ void Scene::Render(float dt)
 	{
 		collisionState.second->ActivateEffect();
 	}*/
-
+	
 	wnd->Gfx().EndFrame();		// Конец кадра
 
 	/*************/

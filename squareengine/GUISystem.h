@@ -59,6 +59,7 @@ private:
 	void ShowMainPersonControl();		// Показать настройки для главного персонажа
 	void ShowPhysicsEngineObjList();	// Показать список объектов в физическом движке
 	void ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
+	void ShowCameraControl();			// Показать настройки для камеры
 
 	/*******************************************/
 private:
@@ -69,9 +70,9 @@ private:
 	bool ShowMainPersonEnum 		  =	false;	// Левая панель главного персонажа на сцене
 	bool ShowMainPersonSettings		  =	false;	// Правая панель управления настройками главного персонажа
 	bool ShowPhysicsEngineObjEnum	  = true;	// Левая панель физических объектов на сцене
-	bool ShowPhysicsEngineObjSettings = false;	// Правая панель управления настройками выбранного объекта
+	bool ShowPhysicsEngineObjSettings = true;	// Правая панель управления настройками выбранного объекта
 	bool ShowPhysicsEngineObjInfo	  = true;	// Подпись имени объекта физического движка  
-	bool ShowPhysicsSettings		  = true;	// Панель настроек физического движка
+	bool ShowPhysicsSettings		  = false;	// Панель настроек физического движка
 	bool ShowHardwareInfo 			  =	true;	// FPS и информация о графическом адаптере
 	bool ShowFPSGraph 				  =	false;	// График изменения FPS
 	bool ShowLogs 					  =	true;	// Лог
@@ -129,15 +130,15 @@ private:
 
 	/* Вспомагательные переменные для отображения FPS */
 
-	double	sum     = 0.0;						// Сумма всех элементов массива
-	double  average = 0.0;						// Среднее значение FPS
-	double	pXMin	= 0.0;						// Минимальное значение для масштабирования графика по оси X
-	double	pXMax	= (double)N_POINTS - 1.0;	// Максимальное значение для масштабирования графика по оси X
-	double	pYMin	= 0.0;						// Минимальное значение для масштабирования графика по оси Y
-	double	pYMax	= 0.0;						// Максимальное значение для масштабирования графика по оси Y
-	float	arr[N_POINTS];						// Массив значений fps
-	float	counters[N_POINTS];					// Массив отчётов
-	size_t	counter = 0;						// Счётчик итерации
+	double sum     = 0.0;						// Сумма всех элементов массива
+	double average = 0.0;						// Среднее значение FPS
+	double pXMin   = 0.0;						// Минимальное значение для масштабирования графика по оси X
+	double pXMax   = (double)N_POINTS - 1.0;	// Максимальное значение для масштабирования графика по оси X
+	double pYMin   = 0.0;						// Минимальное значение для масштабирования графика по оси Y
+	double pYMax   = 0.0;						// Максимальное значение для масштабирования графика по оси Y
+	float  arr[N_POINTS];						// Массив значений fps
+	float  counters[N_POINTS];					// Массив отчётов
+	size_t counter = 0;							// Счётчик итерации
 
 	/**************************************************/
 

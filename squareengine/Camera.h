@@ -11,5 +11,5 @@ public:
 	void Translate(DirectX::XMFLOAT2 delta);
 private:
 	std::shared_ptr<Physics::PhysicsEngine> phEngPtr;
-	PersonContainer* pcPtr;
+	PersonContainer*						pcPtr;
 };

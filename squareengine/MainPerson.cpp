@@ -89,32 +89,52 @@ void MainPerson::Update(float dt)
 
 	if (vel.x < 0) // Moving left
 	{
-		//position.x += vel.x;
-		//hitbox.UpdateX(vel.x);
-
-		camera->Translate({ -vel.x, 0.0f });
+		if (cameraMode == CameraMode::SteadyPerson)
+		{
+			camera->Translate({ -vel.x, 0.0f });
+		}
+		else if (cameraMode == CameraMode::SteadyWorld)
+		{
+			position.x += vel.x;
+			hitbox.UpdateX(vel.x);
+		}
 	}
 	else if (vel.x > 0)	// Moving right
 	{
-		//position.x += vel.x;
-		//hitbox.UpdateX(vel.x);
-
-		camera->Translate({ -vel.x, 0.0f });
+		if (cameraMode == CameraMode::SteadyPerson)
+		{
+			camera->Translate({ -vel.x, 0.0f });
+		}
+		else if (cameraMode == CameraMode::SteadyWorld)
+		{
+			position.x += vel.x;
+			hitbox.UpdateX(vel.x);
+		}
 	}
 
 	if (vel.y < 0) // Moving down
 	{
-		//position.y += vel.y;
-		//hitbox.UpdateY(vel.y);
-		
-		camera->Translate({ 0.0f, -vel.y });
+		if (cameraMode == CameraMode::SteadyPerson)
+		{
+			camera->Translate({ 0.0f, -vel.y });
+		}
+		else if (cameraMode == CameraMode::SteadyWorld)
+		{
+			position.y += vel.y;
+			hitbox.UpdateY(vel.y);
+		}
 	}
 	else if (vel.y > 0)	// Moving up
 	{
-		//position.y += vel.y;
-		//hitbox.UpdateY(vel.y);
-
-		camera->Translate({ 0.0f, -vel.y });
+		if (cameraMode == CameraMode::SteadyPerson)
+		{
+			camera->Translate({ 0.0f, -vel.y });
+		}
+		else if (cameraMode == CameraMode::SteadyWorld)
+		{
+			position.y += vel.y;
+			hitbox.UpdateY(vel.y);
+		}	
 	}
 
 	CalculateDeltas();
@@ -128,6 +148,7 @@ void MainPerson::Update(float dt)
 		if (effect.Time >= effect.Duration)
 		{
 			effect.Active = false;
+			effect.Time = 0.0f;
 		}
 	}
 }
