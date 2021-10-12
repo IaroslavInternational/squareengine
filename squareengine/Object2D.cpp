@@ -1,13 +1,11 @@
 #include "Object2D.h"
 
-Object2D::Object2D(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite, HitBox hitbox)
+Object2D::Object2D(std::string name, DirectX::XMFLOAT2 position, std::string pathToimage)
 	:
 	name(name),
 	position(position),
-	sprite(pathToSprite),
-	hitbox(hitbox)
+	image(pathToimage)
 {
-	CalculateDeltas();
 }
 
 /* Главные методы для описания объекта */
@@ -16,8 +14,6 @@ void Object2D::Translate(DirectX::XMFLOAT2 delta)
 {
 	position.x += delta.x;
 	position.y += delta.y;
-
-	hitbox.Translate(delta);
 }
 
 void Object2D::SetName(std::string name)
@@ -30,15 +26,9 @@ void Object2D::SetPosition(DirectX::XMFLOAT2 position)
 	this->position = position;
 }
 
-void Object2D::SetSurface(Surface2D sprite)
+void Object2D::SetSurface(Surface2D image)
 {
-	this->sprite = sprite;
-}
-
-void Object2D::SetHitBox(HitBox hb)
-{
-	hitbox = hb + DirectX::XMFLOAT2(dx, dy);
-	CalculateDeltas();
+	this->image = image;
 }
 
 std::string Object2D::GetName() const
@@ -53,22 +43,7 @@ DirectX::XMFLOAT2 Object2D::GetPosition()
 
 Surface2D& Object2D::GetSurface()
 {
-	return sprite;
-}
-
-HitBox Object2D::GetHitBox()
-{
-	return hitbox - DirectX::XMFLOAT2(dx, dy);
+	return image;
 }
 
 /***************************************/
-
-/* Внутренние методы */
-
-void Object2D::CalculateDeltas()
-{
-	dx = hitbox.GetCoordinates().x - position.x;
-	dy = hitbox.GetCoordinates().y - position.y;
-}
-
-/*********************/

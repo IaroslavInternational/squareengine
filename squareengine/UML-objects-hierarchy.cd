@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Person">
-    <Position X="1.5" Y="6.5" Width="1.5" />
+  <Class Name="Person" Collapsed="true">
+    <Position X="1.5" Y="2.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -18,36 +18,24 @@
       </Enum>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AIQACAAAAAAAAgAAACAAAAAAAIAAEQEAAACAAAAAAAA=</HashCode>
+      <HashCode>AIQACIQAAAAAAgAAQCAIBAAAAIAAEQEgAACEAAAABAA=</HashCode>
       <FileName>Person.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Object2D">
-    <Position X="2.75" Y="1.25" Width="1.75" />
+  <Class Name="Object2D" Collapsed="true">
+    <Position X="2.5" Y="1.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAIIQAACAAAEAAQAAIJAAAABAEAgAgAAQAQAAABAA=</HashCode>
+      <HashCode>AAAAIAAAACAAAEAAAAAAIAAAEAAEAgAAAAQEQAAABAA=</HashCode>
       <FileName>Object2D.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="MainPerson">
-    <Position X="3.75" Y="6.5" Width="1.5" />
+  <Class Name="MainPerson" Collapsed="true">
+    <Position X="3.75" Y="2.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
-    <NestedTypes>
-      <Struct Name="MainPerson::__unnamed_struct_0385_1" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>MainPerson.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-      <Enum Name="MainPerson::Sequence" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>MainPerson.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Enum>
-    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>BASACAAAAAAAAgAAASAAAAAAAIAAEQEAAACAAAAAACA=</HashCode>
+      <HashCode>BAXAKIQAAgCAggEAQTCIBAAAAICAEQEgAAKAAgQABCQ=</HashCode>
       <FileName>MainPerson.h</FileName>
     </TypeIdentifier>
   </Class>

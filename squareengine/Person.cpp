@@ -5,20 +5,23 @@ Person::Person(std::string name,		 DirectX::XMFLOAT2 position,
 			   float	   speed,		 float			   effectDuration,
 			   float	   effectTime,	 bool			   effectActive)
 	:
-	Object2D(name, position, pathToSprite, hitbox),
-	speed(speed)
+	Object2D(name, position, pathToSprite),
+	speed(speed),
+	hitbox(hitbox)
 {
+	CalculateDeltas();
+
 	effect.Duration = effectDuration;
 	effect.Active = effectTime;
 	effect.Time =   effectActive;
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
-		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, sprite, 0.16f));
+		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, image, 0.16f));
 	}
 	for (int i = (int)Sequence::StandingLeft; i < (int)Sequence::Count; i++)
 	{
-		animations.emplace_back(Animation(0, 90 * (i - (int)Sequence::StandingLeft), 90, 90, 1, sprite, 0.16f));
+		animations.emplace_back(Animation(0, 90 * (i - (int)Sequence::StandingLeft), 90, 90, 1, image, 0.16f));
 	}
 }
 
@@ -116,4 +119,33 @@ void Person::ActivateEffect()
 
 /* Главные методы для взаимодействия с персонажем */
 
+void Person::Translate(DirectX::XMFLOAT2 delta)
+{
+	position.x += delta.x;
+	position.y += delta.y;
+
+	hitbox.Translate(delta);
+}
+
+void Person::SetHitBox(HitBox hb)
+{
+	hitbox = hb + DirectX::XMFLOAT2(dx, dy);
+	CalculateDeltas();
+}
+
+HitBox Person::GetHitBox()
+{
+	return hitbox - DirectX::XMFLOAT2(dx, dy);
+}
+
 /**************************************************/
+
+/* Внутренние методы */
+
+void Person::CalculateDeltas()
+{
+	dx = hitbox.GetCoordinates().x - position.x;
+	dy = hitbox.GetCoordinates().y - position.y;
+}
+
+/*********************/

@@ -2,23 +2,26 @@
 
 MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera)
 	:
-	Object2D(data.name, data.position, data.pathToSprite, HitBox(data.name + std::string(" hitbox"), data.hb_coord)),
+	Object2D(data.name, data.position, data.pathToSprite),
 	dataPath(data.dataPath),
 	speed(data.speed),
+	hitbox(data.name + std::string(" hitbox"), data.hb_coord),
 	wnd(wnd),
 	camera(camera)
 {
+	CalculateDeltas();
+
 	effect.Duration = data.eff_d;
 	effect.Time = data.eff_t;
 	effect.Active = data.eff_a;
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
-		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, sprite, 0.16f));
+		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, image, 0.16f));
 	}
 	for (int i = (int)Sequence::StandingLeft; i < (int)Sequence::Count; i++)
 	{
-		animations.emplace_back(Animation(0, 90 * (i - (int)Sequence::StandingLeft), 90, 90, 1, sprite, 0.16f));
+		animations.emplace_back(Animation(0, 90 * (i - (int)Sequence::StandingLeft), 90, 90, 1, image, 0.16f));
 	}
 }
 
@@ -39,6 +42,37 @@ void MainPerson::Draw()
 	{
 		wnd->Gfx().DrawHitBox(hitbox - DirectX::XMFLOAT2(dx, dy));
 	}
+}
+
+void MainPerson::ProcessMoving(float dt)
+{
+	DirectX::XMFLOAT2 dir = { 0.0f,0.0f };
+	if (!wnd->CursorEnabled())
+	{
+		if (wnd->kbd.KeyIsPressed('W'))
+		{
+			if (AllowedMovingUp)
+				dir.y -= 1.0f;
+		}
+		if (wnd->kbd.KeyIsPressed('A'))
+		{
+			if (AllowedMovingLeft)
+				dir.x -= 1.0f;
+		}
+		if (wnd->kbd.KeyIsPressed('S'))
+		{
+			if (AllowedMovingDown)
+				dir.y += 1.0f;
+		}
+		if (wnd->kbd.KeyIsPressed('D'))
+		{
+			if (AllowedMovingRight)
+				dir.x += 1.0f;
+		}
+	}
+
+	SetDirection(dir);
+	Update(dt);
 }
 
 void MainPerson::SetDirection(DirectX::XMFLOAT2 dir)
@@ -163,37 +197,6 @@ void MainPerson::ActivateEffect()
 
 /* Главные методы для взаимодействия с главным персонажем */
 
-void MainPerson::ProcessMoving(float dt)
-{
-	DirectX::XMFLOAT2 dir = { 0.0f,0.0f };
-	if (!wnd->CursorEnabled())
-	{
-		if (wnd->kbd.KeyIsPressed('W'))
-		{
-			if(AllowedMovingUp)
-				dir.y -= 1.0f;
-		}
-		if (wnd->kbd.KeyIsPressed('A'))
-		{
-			if (AllowedMovingLeft)
-				dir.x -= 1.0f;
-		}
-		if (wnd->kbd.KeyIsPressed('S'))
-		{
-			if (AllowedMovingDown)
-				dir.y += 1.0f;
-		}
-		if (wnd->kbd.KeyIsPressed('D'))
-		{
-			if (AllowedMovingRight)
-				dir.x += 1.0f;
-		}
-	}
-
-	SetDirection(dir);
-	Update(dt);
-}
-
 void MainPerson::AllowMoveUp()
 {
 	AllowedMovingUp = true;
@@ -234,4 +237,25 @@ void MainPerson::DisAllowMoveRight()
 	AllowedMovingRight = false;
 }
 
+void MainPerson::SetHitBox(HitBox hb)
+{
+	hitbox = hb + DirectX::XMFLOAT2(dx, dy);
+	CalculateDeltas();
+}
+
+HitBox MainPerson::GetHitBox()
+{
+	return hitbox - DirectX::XMFLOAT2(dx, dy);
+}
+
 /**********************************************************/
+
+/* Внутренние методы */
+
+void MainPerson::CalculateDeltas()
+{
+	dx = hitbox.GetCoordinates().x - position.x;
+	dy = hitbox.GetCoordinates().y - position.y;
+}
+
+/*********************/

@@ -16,6 +16,7 @@ public:
 	/* Главные методы для отрисовки главного персонажа */
 
 	void Draw();								// Отрисовать главного персонажа
+	void ProcessMoving(float dt);
 	void SetDirection(DirectX::XMFLOAT2 dir);	// Установить направление положения 
 	void Update(float dt);						// Обновить состояние главного персонажа
 	void ActivateEffect();						// Активировать эффект
@@ -24,17 +25,24 @@ public:
 public:
 	/* Главные методы для взаимодействия с главным персонажем */
 	
-	void ProcessMoving(float dt);
-	void AllowMoveUp();
-	void AllowMoveDown();
-	void AllowMoveLeft();
-	void AllowMoveRight();
-	void DisAllowMoveUp();
-	void DisAllowMoveDown();
-	void DisAllowMoveLeft();
-	void DisAllowMoveRight();
+	void   AllowMoveUp();
+	void   AllowMoveDown();
+	void   AllowMoveLeft();
+	void   AllowMoveRight();
+	void   DisAllowMoveUp();
+	void   DisAllowMoveDown();
+	void   DisAllowMoveLeft();
+	void   DisAllowMoveRight();
+	void   SetHitBox(HitBox hb);	// Установить hitbox
+	HitBox GetHitBox();				// Получить hitbox
 
 	/**********************************************************/
+private:
+	/* Внутренние методы */
+
+	void CalculateDeltas();	// Рассчитать корректирующие отступы hitbox от блока спрайта персонажа
+
+	/*********************/
 private:
 	/* Переменные описания состояния персонажа */
 
@@ -72,6 +80,15 @@ private:
 	Sequence			   iCurSequence = Sequence::StandingDown;	// Текущее состояние анимаций
 
 	/*******************************************/
+private:
+	/* Переменные описания работы с hitbox */
+
+	HitBox hitbox;						// Hitbox
+	bool   hitbox_visability = true;	// Видимость hitbox
+	float  dx;							// Корректирующий отступ hitbox от блока спрайта по оси x
+	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
+
+	/***************************************/
 private:
 	enum class CameraMode
 	{
