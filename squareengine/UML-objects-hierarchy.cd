@@ -5,27 +5,15 @@
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
-    <NestedTypes>
-      <Struct Name="Person::__unnamed_struct_01e0_1" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Person.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-      <Enum Name="Person::Sequence">
-        <TypeIdentifier>
-          <NewMemberFileName>Person.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Enum>
-    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AIQACIQAAAAAAgAAQCAIBAAAAIAAEQEgAACEAAAABAA=</HashCode>
       <FileName>Person.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Object2D" Collapsed="true">
-    <Position X="2.5" Y="1.25" Width="1.75" />
+    <Position X="3.5" Y="1.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAIAAAACAAAEAAAAAAIAAAEAAEAgAAAAQEQAAABAA=</HashCode>
+      <HashCode>AAAAIAAAACAAAkAAAAAAIAAEEAAEAgAAAAQEQAAABAA=</HashCode>
       <FileName>Object2D.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -34,9 +22,33 @@
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
+    <NestedTypes>
+      <Struct Name="MainPerson::__unnamed_struct_0385_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>MainPerson.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Enum Name="MainPerson::Sequence" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>MainPerson.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="MainPerson::CameraMode" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>MainPerson.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
     <TypeIdentifier>
       <HashCode>BAXAKIQAAgCAggEAQTCIBAAAAICAEQEgAAKAAgQABCQ=</HashCode>
       <FileName>MainPerson.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InteractableObject2D" Collapsed="true">
+    <Position X="6" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEgAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>InteractableObject2D.h</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

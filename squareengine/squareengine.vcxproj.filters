@@ -112,6 +112,45 @@
     <Filter Include="Исходные файлы\Сцена\Объекты\База объектов">
       <UniqueIdentifier>{419528ed-173b-4fdf-82fd-365fabebdf11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Заголовочные файлы\Система\Графика\Цвета">
+      <UniqueIdentifier>{8242f571-1403-487f-8a63-d62d95a0fb17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Система\Графика\Геометрия">
+      <UniqueIdentifier>{51a7cc1b-d896-4466-bef7-775a03e4c7c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Система\Физика">
+      <UniqueIdentifier>{c3efa3a8-a394-40f1-b9ad-031bedb9c1f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Система\Графика\Текст">
+      <UniqueIdentifier>{8a5ce619-cf3d-4a70-bc26-9696e9d7ce33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Система\Графика\Анимация">
+      <UniqueIdentifier>{8bebddec-520e-4bfa-bea5-eb536805a247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Сцена\Объекты\Контейнеры объектов">
+      <UniqueIdentifier>{370d6f41-a30a-42bb-9e2c-5e13ca974d4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Система\Считыватели данных">
+      <UniqueIdentifier>{ebf784e3-0ed5-436f-958f-6da2f5f28273}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Система\Физика">
+      <UniqueIdentifier>{ae873e36-6d8c-4436-b184-43ebafe51e78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Система\Считыватели данных">
+      <UniqueIdentifier>{2a91c3d9-ea55-4fb7-a18c-55e3a82eb625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Система\Графика\Геометрия">
+      <UniqueIdentifier>{f701e7cf-e304-4d05-9746-0e8854147bcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Система\Графика\Текст">
+      <UniqueIdentifier>{61c3fbb7-b71c-423d-9e75-9c6b8b1d58c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Система\Графика\Анимация">
+      <UniqueIdentifier>{9768d4cc-133d-4128-a35f-ff1bf080f131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Сцена\Объекты\Контейнеры объектов">
+      <UniqueIdentifier>{3c415182-a30c-4890-88ff-6e578ec179a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -177,14 +216,8 @@
     <ClCompile Include="WinMain.cpp">
       <Filter>Исходные файлы\Окна</Filter>
     </ClCompile>
-    <ClCompile Include="SceneDataReader.cpp">
-      <Filter>Исходные файлы\Сцена</Filter>
-    </ClCompile>
     <ClCompile Include="AdapterData.cpp">
       <Filter>Исходные файлы\Интерфейс</Filter>
-    </ClCompile>
-    <ClCompile Include="ImguiManager.cpp">
-      <Filter>Исходные файлы\Система\Графика</Filter>
     </ClCompile>
     <ClCompile Include="DxgiInfoManager.cpp">
       <Filter>Исходные файлы\Система</Filter>
@@ -198,50 +231,20 @@
     <ClCompile Include="WindowsMessageMap.cpp">
       <Filter>Исходные файлы\Окна</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Vec2.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Vei2.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="RectI.cpp">
-      <Filter>Исходные файлы\Система\Графика</Filter>
-    </ClCompile>
     <ClCompile Include="Surface2D.cpp">
       <Filter>Исходные файлы\Система\Графика</Filter>
     </ClCompile>
     <ClCompile Include="Object2D.cpp">
       <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
     </ClCompile>
-    <ClCompile Include="PersonContainer.cpp">
-      <Filter>Исходные файлы\Сцена\Объекты</Filter>
-    </ClCompile>
     <ClCompile Include="GUISystem.cpp">
       <Filter>Исходные файлы\Интерфейс</Filter>
-    </ClCompile>
-    <ClCompile Include="HitBox.cpp">
-      <Filter>Исходные файлы\Сцена\Объекты</Filter>
     </ClCompile>
     <ClCompile Include="Person.cpp">
       <Filter>Исходные файлы\Сцена\Объекты</Filter>
     </ClCompile>
     <ClCompile Include="MainPerson.cpp">
       <Filter>Исходные файлы\Сцена\Объекты</Filter>
-    </ClCompile>
-    <ClCompile Include="MainPersonDataReader.cpp">
-      <Filter>Исходные файлы\Сцена</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsEngine.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Line.cpp">
-      <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="imgui\implot_items.cpp">
       <Filter>imgui</Filter>
@@ -252,17 +255,53 @@
     <ClCompile Include="imgui\implot_demo.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="ImguiManager.cpp">
+      <Filter>Исходные файлы\Интерфейс</Filter>
+    </ClCompile>
+    <ClCompile Include="RectI.cpp">
+      <Filter>Исходные файлы\Система\Графика\Геометрия</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Исходные файлы\Система\Графика\Анимация</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Исходные файлы\Система\Графика\Геометрия</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Исходные файлы\Система\Графика\Текст</Filter>
+    </ClCompile>
+    <ClCompile Include="Vei2.cpp">
+      <Filter>Исходные файлы\Система\Утилиты</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec2.cpp">
+      <Filter>Исходные файлы\Система\Утилиты</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsEngine.cpp">
+      <Filter>Исходные файлы\Система\Физика</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPersonDataReader.cpp">
+      <Filter>Исходные файлы\Система\Считыватели данных</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneDataReader.cpp">
+      <Filter>Исходные файлы\Система\Считыватели данных</Filter>
     </ClCompile>
     <ClCompile Include="InteractableObject2D.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Сцена\Объекты</Filter>
     </ClCompile>
-    <ClCompile Include="Layers.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="HitBox.cpp">
+      <Filter>Исходные файлы\Система\Графика\Геометрия</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Исходные файлы\Сцена</Filter>
+    </ClCompile>
+    <ClCompile Include="PersonContainer.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
     </ClCompile>
     <ClCompile Include="InteractableObject2DContainer.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,12 +377,6 @@
     <ClInclude Include="Graphics.h">
       <Filter>Заголовочные файлы\Система\Графика</Filter>
     </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Заголовочные файлы\Система\Графика</Filter>
-    </ClInclude>
-    <ClInclude Include="ImguiManager.h">
-      <Filter>Заголовочные файлы\Система\Графика</Filter>
-    </ClInclude>
     <ClInclude Include="EngineException.h">
       <Filter>Заголовочные файлы\Система\Исключения</Filter>
     </ClInclude>
@@ -358,9 +391,6 @@
     </ClInclude>
     <ClInclude Include="EngineXM.h">
       <Filter>Заголовочные файлы\Система\Утилиты</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneDataReader.h">
-      <Filter>Заголовочные файлы\Сцена</Filter>
     </ClInclude>
     <ClInclude Include="EngineWRL.h">
       <Filter>Заголовочные файлы\Система\Утилиты</Filter>
@@ -386,9 +416,6 @@
     <ClInclude Include="PerfLog.h">
       <Filter>Заголовочные файлы\Система</Filter>
     </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>Заголовочные файлы\Система</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptCommander.h">
       <Filter>Заголовочные файлы\Система</Filter>
     </ClInclude>
@@ -398,38 +425,14 @@
     <ClInclude Include="EngineFunctions.hpp">
       <Filter>Заголовочные файлы\Система\Утилиты</Filter>
     </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec2.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Vei2.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Colors.h">
-      <Filter>Заголовочные файлы\Система\Графика</Filter>
-    </ClInclude>
     <ClInclude Include="Surface2D.h">
-      <Filter>Заголовочные файлы\Система\Графика</Filter>
-    </ClInclude>
-    <ClInclude Include="RectI.h">
       <Filter>Заголовочные файлы\Система\Графика</Filter>
     </ClInclude>
     <ClInclude Include="Object2D.h">
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
-    <ClInclude Include="PersonContainer.h">
-      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
-    </ClInclude>
     <ClInclude Include="GUISystem.h">
       <Filter>Заголовочные файлы\Интерфейс</Filter>
-    </ClInclude>
-    <ClInclude Include="HitBox.h">
-      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
     </ClInclude>
     <ClInclude Include="Person.h">
       <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
@@ -437,32 +440,68 @@
     <ClInclude Include="MainPerson.h">
       <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
     </ClInclude>
-    <ClInclude Include="MainPersonDataReader.h">
-      <Filter>Заголовочные файлы\Сцена</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsEngine.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Line.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\implot_internal.h">
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\implot.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="ImguiManager.h">
+      <Filter>Заголовочные файлы\Интерфейс</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Заголовочные файлы\Система\Графика\Цвета</Filter>
+    </ClInclude>
+    <ClInclude Include="Colors.h">
+      <Filter>Заголовочные файлы\Система\Графика\Цвета</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Заголовочные файлы\Система\Утилиты</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Заголовочные файлы\Система\Графика\Геометрия</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngine.h">
+      <Filter>Заголовочные файлы\Система\Физика</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Заголовочные файлы\Система\Графика\Текст</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Заголовочные файлы\Система\Графика\Анимация</Filter>
+    </ClInclude>
+    <ClInclude Include="RectI.h">
+      <Filter>Заголовочные файлы\Система\Графика\Геометрия</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneDataReader.h">
+      <Filter>Заголовочные файлы\Система\Считыватели данных</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPersonDataReader.h">
+      <Filter>Заголовочные файлы\Система\Считыватели данных</Filter>
+    </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="InteractableObject2D.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Layers.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\Сцена</Filter>
     </ClInclude>
     <ClInclude Include="InteractableObject2DContainer.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
+    </ClInclude>
+    <ClInclude Include="PersonContainer.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
+    </ClInclude>
+    <ClInclude Include="InteractableObject2D.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
+    </ClInclude>
+    <ClInclude Include="HitBox.h">
+      <Filter>Заголовочные файлы\Система\Графика\Геометрия</Filter>
+    </ClInclude>
+    <ClInclude Include="Vei2.h">
+      <Filter>Заголовочные файлы\Система\Утилиты</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec2.h">
+      <Filter>Заголовочные файлы\Система\Утилиты</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
