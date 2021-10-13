@@ -6,7 +6,9 @@
 class InteractableObject2DContainer
 {
 public:
-	InteractableObject2DContainer();
+	friend class Layers;
+public:
+	InteractableObject2DContainer(std::string dataPath);
 private:
 	std::vector<InteractableObject2D> objects;
 };

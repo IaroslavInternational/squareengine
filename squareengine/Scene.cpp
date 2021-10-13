@@ -11,7 +11,9 @@ Scene::Scene(std::string							 name,
 	sdr(scData),
 	mdr(sdr.GetMainPersonDataPath()),
 	pc( sdr.GetPersonContainerPath()),
+	Iobj(sdr.GetInteractableObjectsDataPath()),
 	hero(mdr, wnd, camera),
+	layers(&hero, &pc, &Iobj),
 	phEngine(phEngine)
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
@@ -59,13 +61,9 @@ void Scene::Render(float dt)
 	/* Отрисовка */
 
 	wnd->Gfx().BeginFrame();	// Начало кадра
-
 	gui.Show();
 
-	pc.Draw(wnd->Gfx());
-	hero.Draw();
-
-	phEngine->Draw(wnd->Gfx());
+	layers.Draw(wnd->Gfx());
 
 	//test collision
 	/*auto collisionState = pc.CheckCollision(hero.GetHitBox());
@@ -75,6 +73,7 @@ void Scene::Render(float dt)
 		collisionState.second->ActivateEffect();
 	}*/
 	
+	phEngine->Draw(wnd->Gfx());
 	wnd->Gfx().EndFrame();		// Конец кадра
 
 	/*************/

@@ -17,7 +17,7 @@ public:
 public:
 	/* Главные методы для отрисовки персонажа */
 	
-	void Draw(Graphics& gfx);					// Отрисовать персонажа
+	void Draw(Graphics& gfx) override;			// Отрисовать персонажа
 	void SetDirection(DirectX::XMFLOAT2 dir);	// Установить направление положения 
 	void Update(float dt);						// Обновить состояние персонажа
 	void ActivateEffect();						// Активировать эффект

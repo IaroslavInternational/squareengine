@@ -27,7 +27,7 @@ MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, s
 
 /* √лавные методы дл€ отрисовки главного персонажа */
 
-void MainPerson::Draw()
+void MainPerson::Draw(Graphics& gfx)
 {
 	if (effect.Active)
 	{
@@ -40,7 +40,7 @@ void MainPerson::Draw()
 
 	if (hitbox_visability)
 	{
-		wnd->Gfx().DrawHitBox(hitbox - DirectX::XMFLOAT2(dx, dy));
+		gfx.DrawHitBox(hitbox - DirectX::XMFLOAT2(dx, dy));
 	}
 }
 

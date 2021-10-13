@@ -9,13 +9,15 @@ public:
 	SceneDataReader(std::string path);
 	~SceneDataReader();
 public:
-	std::string GetPersonContainerPath() const;	// Путь к файлу с данными о контейнере объектов
-	std::string GetMainPersonDataPath() const;	// Путь к файлу с данными о главном персонаже
-	std::string GetPhysicsDataPath() const;		// Путь к файлу с данными о физике сцены
+	std::string GetPersonContainerPath() const;				// Путь к файлу с данными о контейнере объектов
+	std::string GetMainPersonDataPath() const;				// Путь к файлу с данными о главном персонаже
+	std::string GetPhysicsDataPath() const;					// Путь к файлу с данными о физике сцены
+	std::string GetInteractableObjectsDataPath() const;		// Путь к файлу с данными о 
 private:
 	// 0 - Путь к персонажам
 	// 1 - Путь к главному герою
 	// 2 - Путь к физике
+	// 3 - Путь к 
 	std::vector<std::string>& GetPaths();	
 private:
 	std::vector<std::string> paths;

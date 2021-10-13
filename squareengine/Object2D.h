@@ -5,6 +5,7 @@
 
 #include "HitBox.h"
 #include "Surface2D.h"
+#include "Graphics.h"
 
 // Базовый класс для всех объектов на сцене. 
 // От этого класса наследуются остальные производные объекты.
@@ -15,9 +16,11 @@ public:
 	// name - имя объекта
 	// position - позиция объекта
 	Object2D(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite);
+	virtual ~Object2D() {};
 public:
 	/* Главные методы для описания объекта */
-	
+
+	virtual void	  Draw(Graphics& gfx) {};
 	void			  Translate(DirectX::XMFLOAT2 delta);		//
 	void			  SetName(std::string name);				// Установить имя объекта
 	void			  SetPosition(DirectX::XMFLOAT2 position);	// Установить позицию объекта

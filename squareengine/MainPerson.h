@@ -15,7 +15,7 @@ public:
 public:
 	/* Главные методы для отрисовки главного персонажа */
 
-	void Draw();								// Отрисовать главного персонажа
+	void Draw(Graphics& gfx) override;			// Отрисовать главного персонажа
 	void ProcessMoving(float dt);
 	void SetDirection(DirectX::XMFLOAT2 dir);	// Установить направление положения 
 	void Update(float dt);						// Обновить состояние главного персонажа

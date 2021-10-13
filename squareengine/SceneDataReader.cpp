@@ -46,6 +46,12 @@ SceneDataReader::SceneDataReader(std::string path)
 
 			/*******************************/
 
+			/* Запись пути моделей */
+			
+			paths.emplace_back(obj.at("interactableObjectsPath"));
+
+			/***********************/
+
 			/* Запись пути триггеров */
 
 			//paths.emplace_back(obj.at("pLightsPath"));
@@ -78,6 +84,11 @@ std::string SceneDataReader::GetMainPersonDataPath() const
 std::string SceneDataReader::GetPhysicsDataPath() const
 {
 	return paths[2];
+}
+
+std::string SceneDataReader::GetInteractableObjectsDataPath() const
+{
+	return paths[3];
 }
 
 std::vector<std::string>& SceneDataReader::GetPaths()

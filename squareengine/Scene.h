@@ -3,8 +3,7 @@
 #include "Window.h"
 
 #include "SceneDataReader.h"
-#include "PersonContainer.h"
-#include "MainPerson.h"
+#include "Layers.h"
 #include "PhysicsEngine.h"
 #include "Camera.h"
 
@@ -53,6 +52,8 @@ private:
 	
 	PersonContainer pc;
 	MainPerson		hero;
+	InteractableObject2DContainer Iobj;
+	Layers			layers;
 
 	/***********/
 };
