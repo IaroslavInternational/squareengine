@@ -22,3 +22,19 @@ void Layers::Draw(Graphics& gfx)
 		obj->Draw(gfx);
 	}
 }
+
+void Layers::MoveDown(size_t k)
+{
+	if (k != 0)
+	{
+		std::swap(objects[k], objects[k - 1]);
+	}
+}
+
+void Layers::MoveUp(size_t k)
+{
+	if (k + 1 <= objects.size())
+	{
+		std::swap(objects[k], objects[k + 1]);
+	}
+}

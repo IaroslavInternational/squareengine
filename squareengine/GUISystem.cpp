@@ -8,12 +8,14 @@
 GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 					 PersonContainer*						 persons,
 					 MainPerson*							 mPersPtr,
+					 Layers*								 layers,
 					 std::shared_ptr<Physics::PhysicsEngine> phEngPtr)
 	:
 	wnd(wnd),
 	phEngPtr(phEngPtr),
 	persConPtr(persons),
-	mPersPtr(mPersPtr)
+	mPersPtr(mPersPtr),
+	layersPtr(layers)
 {
 	SetGUIColors();
 
@@ -26,7 +28,10 @@ GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 
 	for (auto& d : GPU_Data)
 	{
-		gpu_desc.emplace(std::wstring(d.desc.Description), round(static_cast<double>(d.desc.DedicatedVideoMemory) / 1073741824));
+		if (d.desc.DedicatedVideoMemory != 0)
+		{
+			gpu_desc.emplace(std::wstring(d.desc.Description), round(static_cast<double>(d.desc.DedicatedVideoMemory) / 1073741824));
+		}
 	}
 }
 
@@ -407,6 +412,11 @@ void GUISystem::ShowOptionalPanel()
 	if (ShowFPSGraph)
 	{
 		ShowFPS();
+	}
+
+	if (ShowLayersSettings)
+	{
+		ShowLayersControl();
 	}
 
 	if (mouseHelpInfo == "")
@@ -2192,6 +2202,51 @@ void GUISystem::ShowPhysicsEngineObjControl()
 						ImGui::EndChild();
 					}
 				}
+			}
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowLayersControl()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 DispSize = io.DisplaySize;
+
+	ImVec2 PanelSize = ImVec2(
+		round(DispSize.x * 0.2f),
+		DispSize.y * 0.6f
+	);
+
+	ImGui::SetNextWindowSize(PanelSize);
+	if (ImGui::Begin("Слои", &ShowLayersSettings))
+	{
+		for (size_t i = 0; i < layersPtr->objects.size(); i++)
+		{
+			char label[128];
+			sprintf_s(label, layersPtr->objects[i]->GetName().c_str(), objectSelected);
+
+			std::string contextMenuId = "Context Menu for " + layersPtr->objects[i]->GetName();
+
+			ImGui::Bullet();
+			if (ImGui::Selectable(label, objectSelected == layersPtr->objects[i]->GetName().c_str()))
+			{
+				objectSelected = layersPtr->objects[i]->GetName();
+			}
+			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
+			{
+				if (ImGui::Button("На задний план"))
+				{
+					layersPtr->MoveDown(i);
+				}
+
+				if (ImGui::Button("На передний план"))
+				{
+					layersPtr->MoveUp(i);
+				}
+
+				ImGui::EndPopup();
 			}
 		}
 	}

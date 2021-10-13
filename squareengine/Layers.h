@@ -7,14 +7,14 @@
 class Layers
 {
 public:
+	friend class GUISystem;
+public:
 	Layers(MainPerson* mp, PersonContainer* pc, InteractableObject2DContainer* obj);
 public:
 	void Draw(Graphics& gfx);
 public:
 	void MoveDown(size_t k);
-	void MoveDown(std::vector<Object2D>::iterator it);
 	void MoveUp(size_t k);
-	void MoveUp(std::vector<Object2D>::iterator it);
 private:
 	std::vector<Object2D*> objects;
 };
