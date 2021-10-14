@@ -1,11 +1,11 @@
 #include "Person.h"
 
-Person::Person(std::string name,		 DirectX::XMFLOAT2 position,
+Person::Person(std::string name,		 DirectX::XMFLOAT2 position, size_t layer,
 			   std::string pathToSprite, HitBox			   hitbox,
 			   float	   speed,		 float			   effectDuration,
 			   float	   effectTime,	 bool			   effectActive)
 	:
-	Object2D(name, position, pathToSprite),
+	Object2D(name, position, layer, pathToSprite),
 	speed(speed),
 	hitbox(hitbox)
 {

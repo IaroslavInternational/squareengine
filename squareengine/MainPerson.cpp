@@ -2,7 +2,7 @@
 
 MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera)
 	:
-	Object2D(data.name, data.position, data.pathToSprite),
+	Object2D(data.name, data.position, data.layer, data.pathToSprite),
 	dataPath(data.dataPath),
 	speed(data.speed),
 	hitbox(data.name + std::string(" hitbox"), data.hb_coord),

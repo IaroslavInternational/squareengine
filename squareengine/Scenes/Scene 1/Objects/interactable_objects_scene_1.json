@@ -4,7 +4,8 @@
     {
       "path": "Images\\zabor.bmp",
       "pos-x": 300.0,
-      "pos-y": 200.0
+      "pos-y": 200.0,
+      "layer": 0
     }
   ],
   "obj 1": 
@@ -12,7 +13,8 @@
     {
       "path": "Images\\zabor.bmp",
       "pos-x": 400.0,
-      "pos-y": 200.0
+      "pos-y": 200.0,
+      "layer": 1
     }
   ]
 }

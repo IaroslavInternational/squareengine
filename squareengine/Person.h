@@ -7,8 +7,10 @@ class Person : public Object2D
 {
 public:
 	friend class GUISystem;
+	friend class ObjectsQueue;
 public:
 	Person(std::string name,		 DirectX::XMFLOAT2 position,
+		   size_t      layer,
 		   std::string pathToSprite, HitBox			   hitbox,
 		   float	   speed 		  =	1.0f, 
 		   float	   effectDuration = 0.045f, 

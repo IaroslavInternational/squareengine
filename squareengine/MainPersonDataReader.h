@@ -18,4 +18,5 @@ public:
 	float			  eff_t;
 	float			  eff_a;
 	float			  speed;
+	size_t			  layer;
 };

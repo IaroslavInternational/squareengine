@@ -10,6 +10,7 @@ class MainPerson : public Object2D
 {
 public:
 	friend class GUISystem;
+	friend class ObjectsQueue;
 public:
 	MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera);
 public:

@@ -5,7 +5,10 @@
 class InteractableObject2D : public Object2D
 {
 public:
-	InteractableObject2D(std::string name, DirectX::XMFLOAT2 position, std::string pathToSprite);
+	friend class GUISystem;
+	friend class ObjectsQueue;
+public:
+	InteractableObject2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite);
 public:
 	void Draw(Graphics &gfx) override;
 	void DrawTransparent(float deep);

@@ -6,6 +6,7 @@
 class InteractableObject2DContainer
 {
 public:
+	friend class GUISystem;
 	friend class ObjectsQueue;
 public:
 	InteractableObject2DContainer(std::string dataPath);

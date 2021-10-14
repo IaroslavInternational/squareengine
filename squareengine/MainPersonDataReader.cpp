@@ -65,6 +65,12 @@ MainPersonDataReader::MainPersonDataReader(std::string dataPath)
 			speed = obj.at("speed");
 
 			/********************************/
+
+			/* Получение настройки слоя */
+
+			layer = obj.at("layer");
+
+			/****************************/
 		}
 	}
 }

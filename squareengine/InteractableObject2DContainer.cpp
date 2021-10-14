@@ -43,9 +43,15 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 			/********************************/
 
+			/* Получение настройки слоя */
+
+			size_t layer = obj.at("layer");
+
+			/****************************/
+
 			/* Инициализация объекта */
 
-			objects.emplace_back(InteractableObject2D(name, position, pathToSprite));
+			objects.emplace_back(InteractableObject2D(name, position, layer, pathToSprite));
 
 			/*************************/
 		}
