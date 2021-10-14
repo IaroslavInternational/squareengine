@@ -1,20 +1,21 @@
 #include "Scene.h"
 
 Scene::Scene(std::string							 name,
-			 std::shared_ptr<Window>				 wnd,	   std::string scData,
+			 std::shared_ptr<Window>				 wnd,	
+			 std::string							 scData,
 			 std::shared_ptr<Physics::PhysicsEngine> phEngine)
 	:
 	name(name),
+	phEngine(phEngine),
 	wnd(wnd),
-	camera(std::make_shared<Camera>(phEngine, &pc)),
-	gui(wnd, &pc, &hero, &layers, phEngine),
+	camera(std::make_shared<Camera>(&hero, &persCon, &Iobj, phEngine)),
+	gui(wnd, &hero, &persCon, &Iobj, &objQueue, phEngine),
 	sdr(scData),
 	mdr(sdr.GetMainPersonDataPath()),
-	pc( sdr.GetPersonContainerPath()),
-	Iobj(sdr.GetInteractableObjectsDataPath()),
 	hero(mdr, wnd, camera),
-	layers(&hero, &pc, &Iobj),
-	phEngine(phEngine)
+	persCon(sdr.GetPersonContainerPath()),
+	Iobj(sdr.GetInteractableObjectsDataPath()),
+	objQueue(&hero, &persCon, &Iobj)
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
 }
@@ -61,19 +62,13 @@ void Scene::Render(float dt)
 	/* Отрисовка */
 
 	wnd->Gfx().BeginFrame();	// Начало кадра
+	
 	gui.Show();
 
-	layers.Draw(wnd->Gfx());
-
-	//test collision
-	/*auto collisionState = pc.CheckCollision(hero.GetHitBox());
-
-	if (collisionState.first)
-	{
-		collisionState.second->ActivateEffect();
-	}*/
+	objQueue.Draw(wnd->Gfx());
 	
 	phEngine->Draw(wnd->Gfx());
+	
 	wnd->Gfx().EndFrame();		// Конец кадра
 
 	/*************/

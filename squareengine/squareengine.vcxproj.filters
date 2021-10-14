@@ -300,7 +300,7 @@
     <ClCompile Include="InteractableObject2DContainer.cpp">
       <Filter>Исходные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
     </ClCompile>
-    <ClCompile Include="Layers.cpp">
+    <ClCompile Include="ObjectsQueue.cpp">
       <Filter>Исходные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
     </ClCompile>
   </ItemGroup>
@@ -488,9 +488,6 @@
     <ClInclude Include="PersonContainer.h">
       <Filter>Заголовочные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
     </ClInclude>
-    <ClInclude Include="Layers.h">
-      <Filter>Заголовочные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
-    </ClInclude>
     <ClInclude Include="InteractableObject2D.h">
       <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
     </ClInclude>
@@ -502,6 +499,9 @@
     </ClInclude>
     <ClInclude Include="Vec2.h">
       <Filter>Заголовочные файлы\Система\Утилиты</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectsQueue.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

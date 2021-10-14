@@ -3,7 +3,7 @@
 #include "Window.h"
 
 #include "SceneDataReader.h"
-#include "Layers.h"
+#include "ObjectsQueue.h"
 #include "PhysicsEngine.h"
 #include "Camera.h"
 
@@ -13,7 +13,8 @@ class Scene
 {
 public:
 	Scene(std::string							  name,	
-		  std::shared_ptr<Window>				  wnd,		std::string scData, 
+		  std::shared_ptr<Window>				  wnd,		
+		  std::string							  scData, 
 		  std::shared_ptr<Physics::PhysicsEngine> phEngine);
 	~Scene();
 public:
@@ -32,6 +33,12 @@ private:
 
 	/*****************************/
 private:
+	/* Модули движка */
+
+	std::shared_ptr<Physics::PhysicsEngine> phEngine;
+
+	/*****************/
+private:
 	/* Вспомогательные переменные */
 	
 	std::shared_ptr<Window> wnd;	// Указатель на главное окно 
@@ -42,18 +49,12 @@ private:
 
 	/******************************/
 private:
-	/* Модули движка */
-
-	std::shared_ptr<Physics::PhysicsEngine> phEngine;
-
-	/*****************/
-private:
 	/* Объекты */
-	
-	PersonContainer pc;
-	MainPerson		hero;
+
+	MainPerson					  hero;
+	PersonContainer				  persCon;
 	InteractableObject2DContainer Iobj;
-	Layers			layers;
+	ObjectsQueue				  objQueue;
 
 	/***********/
 };

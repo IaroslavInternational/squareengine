@@ -6,9 +6,11 @@
 class InteractableObject2DContainer
 {
 public:
-	friend class Layers;
+	friend class ObjectsQueue;
 public:
 	InteractableObject2DContainer(std::string dataPath);
+public:
+	void Translate(DirectX::XMFLOAT2 delta);
 private:
 	std::vector<InteractableObject2D> objects;
 };

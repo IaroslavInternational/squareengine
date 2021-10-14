@@ -4,7 +4,7 @@
 #include "imgui/imgui.h"
 #include "AdapterData.h"
 #include "AppLog.h"
-#include "Layers.h"
+#include "ObjectsQueue.h"
 #include "PhysicsEngine.h"
 #include "Window.h"
 
@@ -16,9 +16,10 @@ class GUISystem
 {
 public:
 	GUISystem(std::shared_ptr<Window>				  wnd,
-			  PersonContainer*						  persons, 
-			  MainPerson*							  mPersPtr,
-			  Layers*								  layers,
+			  MainPerson*							  hero,
+			  PersonContainer*						  persCon,
+			  InteractableObject2DContainer*		  Iobj,
+			  ObjectsQueue*							  objectsPtr,
 			  std::shared_ptr<Physics::PhysicsEngine> phEngPtr);
 public:
 	/* Главные методы для отрисовки интерфейса */
@@ -60,7 +61,7 @@ private:
 	void ShowPhysicsEngineObjList();	// Показать список объектов в физическом движке
 	void ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
 	void ShowCameraControl();			// Показать настройки для камеры
-	void ShowLayersControl();			// Показать панель настроек слоёв
+	void ShowObjectsControl();			// Показать панель настроек слоёв
 
 	/*******************************************/
 private:
@@ -79,7 +80,7 @@ private:
 	bool ShowLogs 					  =	true;	// Лог
 	bool ShowTriggersList 			  =	false;	// Левая панель триггеров на сцене
 	bool ShowTriggersSettings		  =	false;	// Правая панель триггеров на сцене
-	bool ShowLayersSettings		      = true;	// Показать панель настроек слоёв
+	bool ShowObjectsSettings		  = true;	// Показать панель настроек слоёв
 
 	/********************************/
 private:
@@ -94,11 +95,12 @@ private:
 private:
 	/* Указатели на объекты */
 
-	PersonContainer* persConPtr;	// Указатель на контейнер персонажей
-	MainPerson*		 mPersPtr;		// Указатель на главного персонажа
-	Layers*			 layersPtr;		// Указатель на контейнер управления слоями всех объектов на сцене
+	MainPerson* hero;
+	PersonContainer* persCon;
+	InteractableObject2DContainer* Iobj;
+	ObjectsQueue* objectsPtr;	// Указатель на контейнер управления слоями всех объектов на сцене
 
-	/***************************/
+	/************************/
 private:
 	/* Общие переменные для работы с интерфейсом */
 
@@ -130,7 +132,7 @@ private:
 	/**********************************************/
 
 	/**************************************************************/
-
+private:
 	/* Вспомагательные переменные для отображения FPS */
 
 	double sum     = 0.0;						// Сумма всех элементов массива

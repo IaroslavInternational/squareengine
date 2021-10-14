@@ -6,16 +6,18 @@
 #include "Line.h"
 
 GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
-					 PersonContainer*						 persons,
-					 MainPerson*							 mPersPtr,
-					 Layers*								 layers,
+					 MainPerson*							 hero,
+					 PersonContainer*						 persCon,
+					 InteractableObject2DContainer*			 Iobj,
+					 ObjectsQueue*							 objectsPtr,
 					 std::shared_ptr<Physics::PhysicsEngine> phEngPtr)
 	:
 	wnd(wnd),
-	phEngPtr(phEngPtr),
-	persConPtr(persons),
-	mPersPtr(mPersPtr),
-	layersPtr(layers)
+	hero(hero),
+	persCon(persCon),
+	Iobj(Iobj),
+	objectsPtr(objectsPtr),
+	phEngPtr(phEngPtr)
 {
 	SetGUIColors();
 
@@ -414,9 +416,9 @@ void GUISystem::ShowOptionalPanel()
 		ShowFPS();
 	}
 
-	if (ShowLayersSettings)
+	if (ShowObjectsSettings)
 	{
-		ShowLayersControl();
+		ShowObjectsControl();
 	}
 
 	if (mouseHelpInfo == "")
@@ -741,17 +743,17 @@ void GUISystem::ShowPersonList()
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		for (auto p = persConPtr->persons.begin(); p != persConPtr->persons.end(); p++)
+		for (auto p = persCon->persons.begin(); p != persCon->persons.end(); p++)
 		{
 			char label[128];
-			sprintf_s(label, p->get()->GetName().c_str(), personSelected);
+			sprintf_s(label, p->get()->name.c_str(), personSelected);
 
 			std::string contextMenuId = "Context Menu for " + p->get()->name;
 
 			ImGui::Bullet();
-			if (ImGui::Selectable(label, personSelected == p->get()->GetName().c_str()))
+			if (ImGui::Selectable(label, personSelected == p->get()->name.c_str()))
 			{
-				personSelected = p->get()->GetName();
+				personSelected = p->get()->name;
 			}
 			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
 			{
@@ -762,8 +764,8 @@ void GUISystem::ShowPersonList()
 					AddLog(deletedPersonName.c_str());
 					AddLog("...\n");
 
-					persConPtr->DeletePersonAt(p);
-					EngineFunctions::DeleteJsonObject(deletedPersonName, persConPtr->dataPath);
+					persCon->DeletePersonAt(p);
+					EngineFunctions::DeleteJsonObject(deletedPersonName, persCon->dataPath);
 
 					AddLog("Персонаж ");
 					AddLog(deletedPersonName.c_str());
@@ -796,10 +798,10 @@ void GUISystem::ShowPersonControl()
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		// Цикл по персонажам
-		for (int k = 0; k < persConPtr->persons.size(); k++)
+		for (int k = 0; k < persCon->persons.size(); k++)
 		{
 			// Поиск выбранного персонажа
-			if (persConPtr->persons.at(k)->name == personSelected)
+			if (persCon->persons.at(k)->name == personSelected)
 			{				
 				if (ImGui::BeginChild(""))
 				{
@@ -818,11 +820,11 @@ void GUISystem::ShowPersonControl()
 					if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 					{
 						ImGui::Text("Позиция:");
-						dcheck(ImGui::SliderFloat("X", &persConPtr->persons.at(k)->position.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
-						dcheck(ImGui::SliderFloat("Y", &persConPtr->persons.at(k)->position.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
+						dcheck(ImGui::SliderFloat("X", &persCon->persons.at(k)->position.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
+						dcheck(ImGui::SliderFloat("Y", &persCon->persons.at(k)->position.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
 
 						ImGui::Text("Скорость:");
-						dcheck(ImGui::SliderFloat("", &persConPtr->persons.at(k)->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
+						dcheck(ImGui::SliderFloat("", &persCon->persons.at(k)->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
 					
 						ImGui::Separator(); // Разделитель
 					}
@@ -833,10 +835,10 @@ void GUISystem::ShowPersonControl()
 
 					if (ImGui::CollapsingHeader("Эффекты"))
 					{						
-						dcheck(ImGui::SliderFloat("Продолжитель.", &persConPtr->persons.at(k)->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
-						dcheck(ImGui::SliderFloat("Время", &persConPtr->persons.at(k)->effect.Time, 0.0f, 100.0f, "%.3f"), effDirty);
+						dcheck(ImGui::SliderFloat("Продолжитель.", &persCon->persons.at(k)->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
+						dcheck(ImGui::SliderFloat("Время", &persCon->persons.at(k)->effect.Time, 0.0f, 100.0f, "%.3f"), effDirty);
 
-						ImGui::Checkbox("Активен", &persConPtr->persons.at(k)->effect.Active);
+						ImGui::Checkbox("Активен", &persCon->persons.at(k)->effect.Active);
 
 						ImGui::Separator();	// Разделитель
 					}
@@ -847,7 +849,7 @@ void GUISystem::ShowPersonControl()
 
 					if (ImGui::CollapsingHeader("Hit-box"))
 					{
-						ImGui::Checkbox("Показать", &persConPtr->persons.at(k)->hitbox_visability);
+						ImGui::Checkbox("Показать", &persCon->persons.at(k)->hitbox_visability);
 
 						/* Если нажата кнопка изменить HitBox */
 						{
@@ -858,7 +860,7 @@ void GUISystem::ShowPersonControl()
 								AddLog("\n");
 
 								DrawingHitBox = true;
-								persConPtr->persons.at(k)->hitbox_visability = false;
+								persCon->persons.at(k)->hitbox_visability = false;
 
 								ImGui::GetStyle().Alpha = 0.1f;
 							}
@@ -898,9 +900,9 @@ void GUISystem::ShowPersonControl()
 										auto pos = wnd->mouse.GetPos();
 										secondPoint = { (float)pos.first, (float)pos.second };
 
-										HitBox hb_new(persConPtr->persons.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-										persConPtr->persons.at(k)->SetHitBox(hb);
-										persConPtr->persons.at(k)->hitbox_visability = true;
+										HitBox hb_new(persCon->persons.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+										persCon->persons.at(k)->SetHitBox(hb);
+										persCon->persons.at(k)->hitbox_visability = true;
 
 										std::ostringstream oss;
 										oss << "Поставлена вторая точка:\n" <<
@@ -911,33 +913,33 @@ void GUISystem::ShowPersonControl()
 
 										AddLog("Сохранение Hit-box:\n");
 
-										auto actual_hb = persConPtr->persons.at(k)->hitbox;
+										auto actual_hb = persCon->persons.at(k)->hitbox;
 
 										EngineFunctions::SetNewValue<float>(
 											personSelected,
 											"hb-ltx", actual_hb.GetCoordinates().x,
-											persConPtr->dataPath,
+											persCon->dataPath,
 											&applog
 											);
 
 										EngineFunctions::SetNewValue<float>(
 											personSelected,
 											"hb-lty", actual_hb.GetCoordinates().y,
-											persConPtr->dataPath,
+											persCon->dataPath,
 											&applog
 											);
 
 										EngineFunctions::SetNewValue<float>(
 											personSelected,
 											"hb-rbx", actual_hb.GetCoordinates().z,
-											persConPtr->dataPath,
+											persCon->dataPath,
 											&applog
 											);
 
 										EngineFunctions::SetNewValue<float>(
 											personSelected,
 											"hb-rby", actual_hb.GetCoordinates().w,
-											persConPtr->dataPath,
+											persCon->dataPath,
 											&applog
 											);
 
@@ -981,22 +983,22 @@ void GUISystem::ShowPersonControl()
 							
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"pos-x", persConPtr->persons.at(k)->position.x,
-								persConPtr->dataPath,
+								"pos-x", persCon->persons.at(k)->position.x,
+								persCon->dataPath,
 								&applog
 								);
 
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"pos-y", persConPtr->persons.at(k)->position.y,
-								persConPtr->dataPath,
+								"pos-y", persCon->persons.at(k)->position.y,
+								persCon->dataPath,
 								&applog
 								);
 
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"speed", persConPtr->persons.at(k)->speed,
-								persConPtr->dataPath,
+								"speed", persCon->persons.at(k)->speed,
+								persCon->dataPath,
 								&applog
 								);
 
@@ -1006,22 +1008,22 @@ void GUISystem::ShowPersonControl()
 							
 							EngineFunctions::SetNewValue<bool>(
 								personSelected,
-								"eff-a", persConPtr->persons.at(k)->effect.Active,
-								persConPtr->dataPath,
+								"eff-a", persCon->persons.at(k)->effect.Active,
+								persCon->dataPath,
 								&applog
 								);
 
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"eff-d", persConPtr->persons.at(k)->effect.Duration,
-								persConPtr->dataPath,
+								"eff-d", persCon->persons.at(k)->effect.Duration,
+								persCon->dataPath,
 								&applog
 								);
 
 							EngineFunctions::SetNewValue<float>(
 								personSelected,
-								"eff-t", persConPtr->persons.at(k)->effect.Time,
-								persConPtr->dataPath,
+								"eff-t", persCon->persons.at(k)->effect.Time,
+								persCon->dataPath,
 								&applog
 								);
 
@@ -1038,16 +1040,16 @@ void GUISystem::ShowPersonControl()
 					{
 						if (ImGui::Button("Удалить", ImVec2(100, 20)))
 						{
-							for (auto i = persConPtr->persons.begin(); i != persConPtr->persons.end(); i++)
+							for (auto i = persCon->persons.begin(); i != persCon->persons.end(); i++)
 							{
-								if (i->get()->GetName() == personSelected)
+								if (i->get()->name == personSelected)
 								{
-									persConPtr->persons.erase(i);
+									persCon->persons.erase(i);
 									break;
 								}
 							}
 							
-							EngineFunctions::DeleteJsonObject(personSelected, persConPtr->dataPath);
+							EngineFunctions::DeleteJsonObject(personSelected, persCon->dataPath);
 						}
 					}
 					/****************************************/
@@ -1069,7 +1071,7 @@ void GUISystem::ShowMainPersonList()
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImGui::Text(mPersPtr->name.c_str());
+		ImGui::Text(hero->name.c_str());
 	}
 
 	ImGui::End();
@@ -1098,11 +1100,11 @@ void GUISystem::ShowMainPersonControl()
 			if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				ImGui::Text("Позиция:");
-				dcheck(ImGui::SliderFloat("X", &mPersPtr->position.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
-				dcheck(ImGui::SliderFloat("Y", &mPersPtr->position.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
+				dcheck(ImGui::SliderFloat("X", &hero->position.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
+				dcheck(ImGui::SliderFloat("Y", &hero->position.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
 
 				ImGui::Text("Скорость:");
-				dcheck(ImGui::SliderFloat("", &mPersPtr->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
+				dcheck(ImGui::SliderFloat("", &hero->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
 
 				ImGui::Separator();	// Разделитель
 			}
@@ -1113,10 +1115,10 @@ void GUISystem::ShowMainPersonControl()
 
 			if (ImGui::CollapsingHeader("Эффекты"))
 			{
-				dcheck(ImGui::SliderFloat("Продолжитель.", &mPersPtr->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
-				dcheck(ImGui::SliderFloat("Время", &mPersPtr->effect.Time, 0.0f, 100.0f, "%.3f"), effDirty);
+				dcheck(ImGui::SliderFloat("Продолжитель.", &hero->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
+				dcheck(ImGui::SliderFloat("Время", &hero->effect.Time, 0.0f, 100.0f, "%.3f"), effDirty);
 
-				ImGui::Checkbox("Активен", &mPersPtr->effect.Active);
+				ImGui::Checkbox("Активен", &hero->effect.Active);
 
 				ImGui::Separator();	// Разделитель
 			}
@@ -1127,18 +1129,18 @@ void GUISystem::ShowMainPersonControl()
 			
 			if (ImGui::CollapsingHeader("Hit-box"))
 			{
-				ImGui::Checkbox("Показать", &mPersPtr->hitbox_visability);
+				ImGui::Checkbox("Показать", &hero->hitbox_visability);
 
 				/* Если нажата кнопка изменить HitBox */
 				{
 					if (ImGui::Button("Изменить", ImVec2(100, 20)))
 					{
 						AddLog("Изменение Hit-box для: ");
-						AddLog(mPersPtr->name.c_str());
+						AddLog(hero->name.c_str());
 						AddLog("\n");
 
 						DrawingHitBox = true;
-						mPersPtr->hitbox_visability = false;
+						hero->hitbox_visability = false;
 
 						ImGui::GetStyle().Alpha = 0.1f;
 					}
@@ -1178,9 +1180,9 @@ void GUISystem::ShowMainPersonControl()
 								auto pos = wnd->mouse.GetPos();
 								secondPoint = { (float)pos.first, (float)pos.second };
 
-								HitBox hb_new(mPersPtr->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-								mPersPtr->SetHitBox(hb);
-								mPersPtr->hitbox_visability = true;
+								HitBox hb_new(hero->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+								hero->SetHitBox(hb);
+								hero->hitbox_visability = true;
 
 								std::ostringstream oss;
 								oss << "Поставлена вторая точка:\n" <<
@@ -1191,33 +1193,33 @@ void GUISystem::ShowMainPersonControl()
 
 								AddLog("Сохранение Hit-box:\n");
 
-								auto actual_hb = mPersPtr->hitbox;
+								auto actual_hb = hero->hitbox;
 
 								EngineFunctions::SetNewValue<float>(
-									mPersPtr->name,
+									hero->name,
 									"hb-ltx", actual_hb.GetCoordinates().x,
-									mPersPtr->dataPath,
+									hero->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
-									mPersPtr->name,
+									hero->name,
 									"hb-lty", actual_hb.GetCoordinates().y,
-									mPersPtr->dataPath,
+									hero->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
-									mPersPtr->name,
+									hero->name,
 									"hb-rbx", actual_hb.GetCoordinates().z,
-									mPersPtr->dataPath,
+									hero->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
-									mPersPtr->name,
+									hero->name,
 									"hb-rby", actual_hb.GetCoordinates().w,
-									mPersPtr->dataPath,
+									hero->dataPath,
 									&applog
 									);
 
@@ -1256,7 +1258,7 @@ void GUISystem::ShowMainPersonControl()
 				if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 				{
 					AddLog("Сохранение настроек для: ");
-					AddLog(mPersPtr->name.c_str());
+					AddLog(hero->name.c_str());
 					AddLog("\n");
 
 					SavingSettings = true;
@@ -1267,23 +1269,23 @@ void GUISystem::ShowMainPersonControl()
 					/* Сохранение позиции и скорости */
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
-						"pos-x", mPersPtr->position.x,
-						mPersPtr->dataPath,
+						hero->name,
+						"pos-x", hero->position.x,
+						hero->dataPath,
 						&applog
 						);
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
-						"pos-y", mPersPtr->position.y,
-						mPersPtr->dataPath,
+						hero->name,
+						"pos-y", hero->position.y,
+						hero->dataPath,
 						&applog
 						);
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
-						"speed", mPersPtr->speed,
-						mPersPtr->dataPath,
+						hero->name,
+						"speed", hero->speed,
+						hero->dataPath,
 						&applog
 						);
 
@@ -1292,23 +1294,23 @@ void GUISystem::ShowMainPersonControl()
 					/* Сохранение настроек эффекта */
 
 					EngineFunctions::SetNewValue<bool>(
-						mPersPtr->name,
-						"eff-a", mPersPtr->effect.Active,
-						mPersPtr->dataPath,
+						hero->name,
+						"eff-a", hero->effect.Active,
+						hero->dataPath,
 						&applog
 						);
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
-						"eff-d", mPersPtr->effect.Duration,
-						mPersPtr->dataPath,
+						hero->name,
+						"eff-d", hero->effect.Duration,
+						hero->dataPath,
 						&applog
 						);
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
-						"eff-t", mPersPtr->effect.Time,
-						mPersPtr->dataPath,
+						hero->name,
+						"eff-t", hero->effect.Time,
+						hero->dataPath,
 						&applog
 						);
 
@@ -1316,33 +1318,33 @@ void GUISystem::ShowMainPersonControl()
 
 					/* Пересохранение hitbox */
 
-					auto actual_hb = mPersPtr->hitbox;
+					auto actual_hb = hero->hitbox;
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
+						hero->name,
 						"hb-ltx", actual_hb.GetCoordinates().x,
-						mPersPtr->dataPath,
+						hero->dataPath,
 						&applog
 						);
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
+						hero->name,
 						"hb-lty", actual_hb.GetCoordinates().y,
-						mPersPtr->dataPath,
+						hero->dataPath,
 						&applog
 						);
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
+						hero->name,
 						"hb-rbx", actual_hb.GetCoordinates().z,
-						mPersPtr->dataPath,
+						hero->dataPath,
 						&applog
 						);
 
 					EngineFunctions::SetNewValue<float>(
-						mPersPtr->name,
+						hero->name,
 						"hb-rby", actual_hb.GetCoordinates().w,
-						mPersPtr->dataPath,
+						hero->dataPath,
 						&applog
 						);
 
@@ -2209,7 +2211,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 	ImGui::End();
 }
 
-void GUISystem::ShowLayersControl()
+void GUISystem::ShowObjectsControl()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 DispSize = io.DisplaySize;
@@ -2220,30 +2222,30 @@ void GUISystem::ShowLayersControl()
 	);
 
 	ImGui::SetNextWindowSize(PanelSize);
-	if (ImGui::Begin("Слои", &ShowLayersSettings))
+	if (ImGui::Begin("Слои", &ShowObjectsSettings))
 	{
-		for (size_t i = 0; i < layersPtr->objects.size(); i++)
+		for (size_t i = 0; i < objectsPtr->queue.size(); i++)
 		{
 			char label[128];
-			sprintf_s(label, layersPtr->objects[i]->GetName().c_str(), objectSelected);
+			sprintf_s(label, objectsPtr->queue[i]->GetName().c_str(), objectSelected);
 
-			std::string contextMenuId = "Context Menu for " + layersPtr->objects[i]->GetName();
+			std::string contextMenuId = "Context Menu for " + objectsPtr->queue[i]->GetName();
 
 			ImGui::Bullet();
-			if (ImGui::Selectable(label, objectSelected == layersPtr->objects[i]->GetName().c_str()))
+			if (ImGui::Selectable(label, objectSelected == objectsPtr->queue[i]->GetName().c_str()))
 			{
-				objectSelected = layersPtr->objects[i]->GetName();
+				objectSelected = objectsPtr->queue[i]->GetName();
 			}
 			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
 			{
 				if (ImGui::Button("На задний план"))
 				{
-					layersPtr->MoveDown(i);
+					objectsPtr->MoveDown(i);
 				}
 
 				if (ImGui::Button("На передний план"))
 				{
-					layersPtr->MoveUp(i);
+					objectsPtr->MoveUp(i);
 				}
 
 				ImGui::EndPopup();
@@ -2258,12 +2260,12 @@ void GUISystem::ShowCameraControl()
 {
 	if (ImGui::Button("Фиксировать мир"))
 	{
-		mPersPtr->cameraMode = MainPerson::CameraMode::SteadyWorld;
+		hero->cameraMode = MainPerson::CameraMode::SteadyWorld;
 	}
 
 	if (ImGui::Button("Фиксировать игрока"))
 	{
-		mPersPtr->cameraMode = MainPerson::CameraMode::SteadyPerson;
+		hero->cameraMode = MainPerson::CameraMode::SteadyPerson;
 	}
 }
 

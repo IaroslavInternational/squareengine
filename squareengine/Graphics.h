@@ -95,9 +95,9 @@ public:
 	void DrawSpriteSubstitute(int x, int y, Color substitute, const RectI& srcRect, const Surface2D& s, Color chroma = Colors::Magenta);
 	void DrawSpriteSubstitute(int x, int y, Color substitute, RectI srcRect, const RectI& clip, const Surface2D& s, Color chroma = Colors::Magenta);
 	// this version of drawsprite has 50% transparency
-	void DrawSpriteGhost(int x, int y, const Surface2D& s, Color chroma = Colors::Magenta);
-	void DrawSpriteGhost(int x, int y, const RectI& srcRect, const Surface2D& s, Color chroma = Colors::Magenta);
-	void DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, Color chroma = Colors::Magenta);
+	void DrawSpriteGhost(int x, int y, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
+	void DrawSpriteGhost(int x, int y, const RectI& srcRect, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
+	void DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
 
 	~Graphics();
 	

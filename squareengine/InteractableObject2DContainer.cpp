@@ -53,3 +53,11 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 	objects.shrink_to_fit();
 }
+
+void InteractableObject2DContainer::Translate(DirectX::XMFLOAT2 delta)
+{
+	for (auto& obj : objects)
+	{
+		obj.Translate(delta);
+	}
+}

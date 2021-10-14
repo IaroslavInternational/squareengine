@@ -1,13 +1,20 @@
 #include "Camera.h"
 
-Camera::Camera(std::shared_ptr<Physics::PhysicsEngine> phEngPtr, PersonContainer* pcPtr)
+#include "MainPerson.h"
+#include "PersonContainer.h"
+#include "InteractableObject2DContainer.h"
+
+Camera::Camera(MainPerson* hero, PersonContainer* pc, InteractableObject2DContainer* Iobj, std::shared_ptr<Physics::PhysicsEngine> phEngPtr)
 	:
-	phEngPtr(phEngPtr),
-	pcPtr(pcPtr)
+	hero(hero),
+	pc(pc),
+	Iobj(Iobj),
+	phEngPtr(phEngPtr)
 {}
 
 void Camera::Translate(DirectX::XMFLOAT2 delta)
 {
 	phEngPtr->TranslateObjects(delta);
-	pcPtr->Translate(delta);
+	Iobj->Translate(delta);
+	pc->Translate(delta);
 }

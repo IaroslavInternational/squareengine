@@ -696,17 +696,17 @@ void Graphics::DrawSpriteSubstitute(int x, int y, Color substitute, RectI srcRec
 	}
 }
 
-void Graphics::DrawSpriteGhost(int x, int y, const Surface2D& s, Color chroma)
+void Graphics::DrawSpriteGhost(int x, int y, const Surface2D& s, float deep, Color chroma)
 {
-	DrawSpriteGhost(x, y, s.GetRect(), s, chroma);
+	DrawSpriteGhost(x, y, s.GetRect(), s, deep, chroma);
 }
 
-void Graphics::DrawSpriteGhost(int x, int y, const RectI& srcRect, const Surface2D& s, Color chroma)
+void Graphics::DrawSpriteGhost(int x, int y, const RectI& srcRect, const Surface2D& s, float deep, Color chroma)
 {
-	DrawSpriteGhost(x, y, srcRect, GetScreenRect(), s, chroma);
+	DrawSpriteGhost(x, y, srcRect, GetScreenRect(), s, deep, chroma);
 }
 
-void Graphics::DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, Color chroma)
+void Graphics::DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, float deep, Color chroma)
 {
 	assert(srcRect.left >= 0);
 	assert(srcRect.right <= s.GetWidth());
@@ -742,9 +742,9 @@ void Graphics::DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, c
 				const Color dstPixel = GetPixel(xDest, yDest);
 
 				const Color blendedPixel = {
-					unsigned char((dstPixel.GetR() + srcPixel.GetR()) / 2),
-					unsigned char((dstPixel.GetG() + srcPixel.GetG()) / 2),
-					unsigned char((dstPixel.GetB() + srcPixel.GetB()) / 2)
+					unsigned char((dstPixel.GetR() + srcPixel.GetR()) / deep),
+					unsigned char((dstPixel.GetG() + srcPixel.GetG()) / deep),
+					unsigned char((dstPixel.GetB() + srcPixel.GetB()) / deep)
 				};
 				PutPixel(x + sx - srcRect.left, y + sy - srcRect.top, blendedPixel);
 			}

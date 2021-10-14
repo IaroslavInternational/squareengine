@@ -6,7 +6,7 @@ class PersonContainer
 {
 public:
 	friend class GUISystem;
-	friend class Layers;
+	friend class ObjectsQueue;
 public:
 	PersonContainer(std::string dataPath);
 public:
