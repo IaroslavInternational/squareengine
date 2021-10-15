@@ -55,8 +55,8 @@ void ObjectsQueue::MoveDown(size_t k)
 	{
 		std::swap(queue[k], queue[k - 1]);
 		
-		queue[k]->LayerDown();
-		queue[k - 1]->LayerUp();
+		queue[k]->LayerUp();
+		queue[k - 1]->LayerDown();
 	}
 }
 
@@ -66,7 +66,7 @@ void ObjectsQueue::MoveUp(size_t k)
 	{
 		std::swap(queue[k], queue[k + 1]);
 
-		queue[k]->LayerUp();
-		queue[k + 1]->LayerDown();
+		queue[k]->LayerDown();
+		queue[k + 1]->LayerUp();
 	}
 }

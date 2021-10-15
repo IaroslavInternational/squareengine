@@ -61,7 +61,9 @@ private:
 	void ShowPhysicsEngineObjList();	// Показать список объектов в физическом движке
 	void ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
 	void ShowCameraControl();			// Показать настройки для камеры
-	void ShowObjectsControl();			// Показать панель настроек слоёв
+	void ShowLayersControl();			// Показать панель настроек слоёв
+	void ShowIobjList();
+	void ShowIobjControl();
 
 	/*******************************************/
 private:
@@ -71,8 +73,8 @@ private:
 	bool ShowPersonSettings			  =	false;	// Правая панель управления настройками персонажей	
 	bool ShowMainPersonEnum 		  =	false;	// Левая панель главного персонажа на сцене
 	bool ShowMainPersonSettings		  =	false;	// Правая панель управления настройками главного персонажа
-	bool ShowPhysicsEngineObjEnum	  = true;	// Левая панель физических объектов на сцене
-	bool ShowPhysicsEngineObjSettings = true;	// Правая панель управления настройками выбранного объекта
+	bool ShowPhysicsEngineObjEnum	  = false;	// Левая панель физических объектов на сцене
+	bool ShowPhysicsEngineObjSettings = false;	// Правая панель управления настройками выбранного объекта
 	bool ShowPhysicsEngineObjInfo	  = true;	// Подпись имени объекта физического движка  
 	bool ShowPhysicsSettings		  = false;	// Панель настроек физического движка
 	bool ShowHardwareInfo 			  =	true;	// FPS и информация о графическом адаптере
@@ -80,7 +82,9 @@ private:
 	bool ShowLogs 					  =	true;	// Лог
 	bool ShowTriggersList 			  =	false;	// Левая панель триггеров на сцене
 	bool ShowTriggersSettings		  =	false;	// Правая панель триггеров на сцене
-	bool ShowObjectsSettings		  = true;	// Показать панель настроек слоёв
+	bool ShowLayersSettings			  = false;	// Показать панель настроек слоёв
+	bool ShowIobjEnum				  = true;	//
+	bool ShowIobjSettings			  = true;	//
 
 	/********************************/
 private:
@@ -95,10 +99,10 @@ private:
 private:
 	/* Указатели на объекты */
 
-	MainPerson* hero;
-	PersonContainer* persCon;
-	InteractableObject2DContainer* Iobj;
-	ObjectsQueue* objectsPtr;	// Указатель на контейнер управления слоями всех объектов на сцене
+	MainPerson*					   hero;
+	PersonContainer*			   persCon;
+	InteractableObject2DContainer* IobjCon;
+	ObjectsQueue*				   objectsPtr;
 
 	/************************/
 private:
@@ -124,14 +128,15 @@ private:
 
 	std::string objectSelected = "";	// Имя выбранного объекта из физического движка
 	bool		AddingObject   = false;	// Идёт добавление объекта
-
-	/* Переменные для настроек физического движка */
-	
-	float sq_l = 0.0f;	// Сторона квадрата для hitbox
-
-	/**********************************************/
+	float		sq_l		   = 0.0f;	// Сторона квадрата для hitbox
 
 	/**************************************************************/
+
+	/* Вспомагательные переменные для работы с контейнером объектов */
+
+	std::string IobjSelected = "";	// Имя выбранного объекта
+
+	/****************************************************************/
 private:
 	/* Вспомагательные переменные для отображения FPS */
 

@@ -15,7 +15,7 @@ GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 	wnd(wnd),
 	hero(hero),
 	persCon(persCon),
-	Iobj(Iobj),
+	IobjCon(Iobj),
 	objectsPtr(objectsPtr),
 	phEngPtr(phEngPtr)
 {
@@ -294,6 +294,10 @@ void GUISystem::ShowLeftSide()
 	{
 		ShowPhysicsEngineObjList();
 	}
+	else if (ShowIobjEnum)
+	{
+		ShowIobjList();
+	}
 	else if (ShowTriggersList)
 	{
 		//objects.triggers.ShowLeftPanel();
@@ -416,9 +420,9 @@ void GUISystem::ShowOptionalPanel()
 		ShowFPS();
 	}
 
-	if (ShowObjectsSettings)
+	if (ShowLayersSettings)
 	{
-		ShowObjectsControl();
+		ShowLayersControl();
 	}
 
 	if (mouseHelpInfo == "")
@@ -2211,7 +2215,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 	ImGui::End();
 }
 
-void GUISystem::ShowObjectsControl()
+void GUISystem::ShowLayersControl()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 DispSize = io.DisplaySize;
@@ -2222,19 +2226,22 @@ void GUISystem::ShowObjectsControl()
 	);
 
 	ImGui::SetNextWindowSize(PanelSize);
-	if (ImGui::Begin("Слои", &ShowObjectsSettings))
+	if (ImGui::Begin("Настройки слоёв", &ShowLayersSettings, ImGuiWindowFlags_NoResize))
 	{
 		for (size_t i = 0; i < objectsPtr->queue.size(); i++)
 		{
-			char label[128];
-			sprintf_s(label, objectsPtr->queue[i]->GetName().c_str(), objectSelected);
+			std::ostringstream objName;
+			objName << "Слой " << objectsPtr->queue[i]->GetLayer() << ": " << objectsPtr->queue[i]->GetName();
 
-			std::string contextMenuId = "Context Menu for " + objectsPtr->queue[i]->GetName();
+			char label[128];
+			sprintf_s(label, objName.str().c_str(), objectSelected);
+
+			std::string contextMenuId = "Context Menu for " + objName.str();
 
 			ImGui::Bullet();
-			if (ImGui::Selectable(label, objectSelected == objectsPtr->queue[i]->GetName().c_str()))
+			if (ImGui::Selectable(label, objectSelected == objName.str().c_str()))
 			{
-				objectSelected = objectsPtr->queue[i]->GetName();
+				objectSelected = objName.str();
 			}
 			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
 			{
@@ -2251,9 +2258,59 @@ void GUISystem::ShowObjectsControl()
 				ImGui::EndPopup();
 			}
 		}
+
+		ImGui::Separator();
+
+		if (ImGui::Button("Сохранить"))
+		{
+		}
 	}
 
 	ImGui::End();
+}
+
+void GUISystem::ShowIobjList()
+{
+	if (ImGui::Begin("Объекты", NULL,
+		ImGuiWindowFlags_NoMove   | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
+		for (auto o = IobjCon->objects.begin(); o != IobjCon->objects.end(); o++)
+		{
+			char label[128];
+			sprintf_s(label, o->name.c_str(), IobjSelected);
+
+			std::string contextMenuId = "Context Menu for " + o->name;
+
+			ImGui::Bullet();
+			if (ImGui::Selectable(label, IobjSelected == o->name.c_str()))
+			{
+				IobjSelected = o->name;
+			}
+			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
+			{
+				if (ImGui::Button("Удалить"))
+				{
+				}
+
+				ImGui::EndPopup();
+			}
+		}
+
+		ImGui::NewLine();
+
+		if (ImGui::Button("Добавить"))
+		{
+
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowIobjControl()
+{
+
 }
 
 void GUISystem::ShowCameraControl()
