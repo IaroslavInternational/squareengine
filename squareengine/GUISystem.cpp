@@ -226,6 +226,24 @@ void GUISystem::ShowMenu()
 					}
 				}
 
+				if (ImGui::MenuItem("Интерактивные объекты"))
+				{
+					if (ShowIobjEnum && ShowIobjSettings)
+					{
+						DisableSides();
+
+						ShowIobjEnum = false;
+						ShowIobjSettings = false;
+					}
+					else
+					{
+						DisableSides();
+
+						ShowIobjEnum = true;
+						ShowIobjSettings = true;
+					}
+				}
+
 				if (ImGui::MenuItem("Триггеры"))
 				{
 					if (ShowTriggersList && ShowTriggersSettings)
@@ -245,6 +263,11 @@ void GUISystem::ShowMenu()
 				}
 
 				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem("Слои"))
+			{
+				ShowLayersSettings ? ShowLayersSettings = false : ShowLayersSettings = true;
 			}
 
 			if (ImGui::MenuItem("GPU"))
@@ -479,6 +502,8 @@ void GUISystem::DisableSides()
 	ShowTriggersSettings = false;
 	ShowPhysicsSettings = false;
 	ShowFPSGraph = false;
+	ShowIobjEnum = false;
+	ShowIobjSettings = false;
 }
 
 /****************************************/
@@ -779,7 +804,7 @@ void GUISystem::ShowPersonList()
 					AddLog(deletedPersonName.c_str());
 					AddLog(" удалён\n");
 
-					ImGui::EndPopup();
+					ImGui::EndPopup(); 
 
 					break;
 				}
@@ -2263,6 +2288,36 @@ void GUISystem::ShowLayersControl()
 
 		if (ImGui::Button("Сохранить"))
 		{
+			SavingLayersSettings = true;
+		}
+
+		if (SavingLayersSettings)
+		{
+			for (size_t i = 0; i < objQueue->queue.size(); i++)
+			{
+				std::string pathToFile = "";
+
+				if (objQueue->queue[i]->name.find("obj") != objQueue->queue[i]->name.npos)
+				{
+					pathToFile = IobjCon->dataPath;
+				}
+				else if (objQueue->queue[i]->name.find("mainperson") != objQueue->queue[i]->name.npos)
+				{
+					pathToFile = hero->dataPath;
+				}
+				else
+				{
+					pathToFile = persCon->dataPath;
+				}
+
+				EngineFunctions::SetNewValue<size_t>(
+					objQueue->queue[i]->name,
+					"layer", objQueue->queue[i]->layer,
+					pathToFile,
+					&applog);
+			}
+
+			SavingLayersSettings = false;
 		}
 	}
 
@@ -2606,13 +2661,14 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		if (imagePath != "")
 		{
 			obj->SetSurface(Surface2D(imagePath));
-			LoadingSprite = false;
-
+			
 			AddLog("Загружен спрайт ");
 			AddLog(imagePath.c_str());
 			AddLog(" для:");
 			AddLog(obj->name.c_str());
 			AddLog("\n");
+
+			LoadingSprite = false;
 		}
 	}
 
@@ -2673,7 +2729,7 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 {
 	std::string chosenSprite = "";
 
-	SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);
+	SetPanelSizeAndPosition(0, 0.60f, 0.70f, 0.2f, 0.15f);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
 	if (ImGui::Begin("Загрузить изображение", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
@@ -2684,25 +2740,26 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 		fs::path dir = "Images/";
 		size_t col_counter = 1;
 
-		if (ImGui::BeginTable("table1", 4))
+		if (ImGui::BeginTable("table1", 5))
 		{
 			for (fs::directory_iterator it(dir), end; it != end; ++it)
-			{				
-				if (col_counter == 1)
-				{
-					ImGui::TableNextRow();
-				}
-
-				if (col_counter == 4)
-				{
-					ImGui::TableNextRow();
-					col_counter = 1;
-				}
-
-				ImGui::TableNextColumn();
-
+			{
 				if (it->path().extension() == ".bmp")
 				{
+					if (col_counter == 1)
+					{
+						ImGui::TableNextRow();
+					}
+
+					if (col_counter == 6)
+					{
+						ImGui::TableNextRow();
+						col_counter = 1;
+					}
+
+					ImGui::TableNextColumn();
+
+
 					int my_image_width = 0;
 					int my_image_height = 0;
 					ID3D11ShaderResourceView* my_texture = NULL;
@@ -2710,7 +2767,7 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 					IM_ASSERT(ret);
 
 					ImGui::Image((void*)my_texture, ImVec2(my_image_width, my_image_height));
-					
+
 					if (ImGui::IsItemClicked())
 					{
 						chosenSprite = it->path().generic_string();
@@ -2724,6 +2781,15 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 		}
 
 		ImGui::EndTable();
+
+		ImGui::NewLine();
+
+		if (ImGui::Button("Отмена"))
+		{
+			ChosingIobj = false;
+			LoadingSprite = false;
+			AddingIobj = false;
+		}
 	}
 
 	ImGui::End();
@@ -2736,7 +2802,7 @@ std::optional<IobjData> GUISystem::ShowAddingIobjDialog()
 {
 	IobjData data;
 
-	SetPanelSizeAndPosition(0, 0.3f, 0.8f, 0.35f, 0.05f);
+	SetPanelSizeAndPosition(0, 0.3f, 0.2f, 0.35f, 0.4f);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
 	if (ImGui::Begin("Добавление объекта", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
@@ -2776,6 +2842,15 @@ std::optional<IobjData> GUISystem::ShowAddingIobjDialog()
 				
 				ChosingIobj = false;
 			}
+		}
+
+		ImGui::NewLine();
+
+		if (ImGui::Button("Отмена"))
+		{
+			ChosingIobj = false;
+			LoadingSprite = false;
+			AddingIobj = false;
 		}
 	}
 

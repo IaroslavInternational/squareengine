@@ -24,9 +24,9 @@ ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persCon, Interacta
 		queue.at(idx[i]) = Iobj->objects[i].get();
 	}
 
-	for (size_t i = Iobj->objects.size(); i < persCon->persons.size(); i++)
+	for (size_t i = 0; i < persCon->persons.size(); i++)
 	{
-		queue.at(idx[i]) = persCon->persons[i].get();
+		queue.at(idx[i + Iobj->objects.size()]) = persCon->persons[i].get();
 	}
 
 	queue.at(idx.back()) = hero;

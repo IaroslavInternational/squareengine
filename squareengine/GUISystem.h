@@ -75,7 +75,7 @@ private:
 	void					SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath);
 	std::string				ShowLoadingSpriteDilaog();
 	std::optional<IobjData> ShowAddingIobjDialog();
-
+	
 	/*******************************************/
 private:
 	/* Переменные видимости панелей */
@@ -151,6 +151,12 @@ private:
 	std::string IobjPath	 = "";		//
 
 	/****************************************************************/
+
+	/* Вспомагательные переменные для работы со слоями */
+
+	bool SavingLayersSettings = false;
+
+	/***************************************************/
 
 	/* Вспомагательные переменные для работы с объектом (база) */
 	
