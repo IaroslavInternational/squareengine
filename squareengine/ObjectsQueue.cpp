@@ -6,8 +6,8 @@ ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persCon, Interacta
 
 	for (size_t i = 0; i < Iobj->objects.size(); i++)
 	{
-		queue.push_back(&Iobj->objects[i]);
-		idx.push_back(Iobj->objects[i].layer);
+		queue.push_back(Iobj->objects[i].get());
+		idx.push_back(Iobj->objects[i].get()->layer);
 	}
 
 	for (size_t i = 0; i < persCon->persons.size(); i++)
@@ -21,7 +21,7 @@ ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persCon, Interacta
 
 	for (size_t i = 0; i < Iobj->objects.size(); i++)
 	{
-		queue.at(idx[i]) = &Iobj->objects[i];
+		queue.at(idx[i]) = Iobj->objects[i].get();
 	}
 
 	for (size_t i = Iobj->objects.size(); i < persCon->persons.size(); i++)
@@ -68,5 +68,24 @@ void ObjectsQueue::MoveUp(size_t k)
 
 		queue[k]->LayerDown();
 		queue[k + 1]->LayerUp();
+	}
+}
+
+void ObjectsQueue::DeleteObjectAt(std::string name)
+{
+	size_t k;
+	for (k = 0; k < queue.size(); k++)
+	{
+		if (queue[k]->GetName() == name)
+		{
+			queue.erase(queue.begin() + k);
+			
+			break;
+		}
+	}
+
+	for (size_t i = k; i < queue.size(); i++)
+	{
+		queue[i]->layer -= 1;
 	}
 }

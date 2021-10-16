@@ -9,14 +9,14 @@ GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 					 MainPerson*							 hero,
 					 PersonContainer*						 persCon,
 					 InteractableObject2DContainer*			 Iobj,
-					 ObjectsQueue*							 objectsPtr,
+					 ObjectsQueue*							 objQueue,
 					 std::shared_ptr<Physics::PhysicsEngine> phEngPtr)
 	:
 	wnd(wnd),
 	hero(hero),
 	persCon(persCon),
 	IobjCon(Iobj),
-	objectsPtr(objectsPtr),
+	objQueue(objQueue),
 	phEngPtr(phEngPtr)
 {
 	SetGUIColors();
@@ -771,6 +771,7 @@ void GUISystem::ShowPersonList()
 					AddLog(deletedPersonName.c_str());
 					AddLog("...\n");
 
+					objQueue->DeleteObjectAt(p->get()->name);
 					persCon->DeletePersonAt(p);
 					EngineFunctions::DeleteJsonObject(deletedPersonName, persCon->dataPath);
 
@@ -2227,10 +2228,10 @@ void GUISystem::ShowLayersControl()
 	ImGui::SetNextWindowSize(PanelSize);
 	if (ImGui::Begin("Настройки слоёв", &ShowLayersSettings, ImGuiWindowFlags_NoResize))
 	{
-		for (size_t i = 0; i < objectsPtr->queue.size(); i++)
+		for (size_t i = 0; i < objQueue->queue.size(); i++)
 		{
 			std::ostringstream objName;
-			objName << "Слой " << objectsPtr->queue[i]->GetLayer() << ": " << objectsPtr->queue[i]->GetName();
+			objName << "Слой " << objQueue->queue[i]->GetLayer() << ": " << objQueue->queue[i]->GetName();
 
 			char label[128];
 			sprintf_s(label, objName.str().c_str(), objectSelected);
@@ -2246,12 +2247,12 @@ void GUISystem::ShowLayersControl()
 			{
 				if (ImGui::Button("На задний план"))
 				{
-					objectsPtr->MoveDown(i);
+					objQueue->MoveDown(i);
 				}
 
 				if (ImGui::Button("На передний план"))
 				{
-					objectsPtr->MoveUp(i);
+					objQueue->MoveUp(i);
 				}
 
 				ImGui::EndPopup();
@@ -2277,19 +2278,36 @@ void GUISystem::ShowIobjList()
 		for (auto o = IobjCon->objects.begin(); o != IobjCon->objects.end(); o++)
 		{
 			char label[128];
-			sprintf_s(label, o->name.c_str(), IobjSelected);
+			sprintf_s(label, o->get()->name.c_str(), IobjSelected);
 
-			std::string contextMenuId = "Context Menu for " + o->name;
+			std::string contextMenuId = "Context Menu for " + o->get()->name;
 
 			ImGui::Bullet();
-			if (ImGui::Selectable(label, IobjSelected == o->name.c_str()))
+			if (ImGui::Selectable(label, IobjSelected == o->get()->name.c_str()))
 			{
-				IobjSelected = o->name;
+				IobjSelected = o->get()->name;
 			}
 			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
 			{
 				if (ImGui::Button("Удалить"))
 				{
+					std::string deletedObjName = o->get()->name;
+					AddLog("Удаление ");
+					AddLog(deletedObjName.c_str());
+					AddLog("...\n");
+
+					objQueue->DeleteObjectAt(o->get()->name);
+					IobjCon->DeleteObjectAt(o);
+
+					EngineFunctions::DeleteJsonObject(deletedObjName, IobjCon->dataPath);
+
+					AddLog("Объект ");
+					AddLog(deletedObjName.c_str());
+					AddLog(" удалён\n");
+
+					ImGui::EndPopup();
+
+					break;
 				}
 
 				ImGui::EndPopup();
@@ -2300,7 +2318,65 @@ void GUISystem::ShowIobjList()
 
 		if (ImGui::Button("Добавить"))
 		{
+			AddingIobj = true;
+		}
 
+		if (AddingIobj)
+		{
+			auto d = ShowAddingIobjDialog();
+
+			if (d.value().name != "")
+			{
+				IobjCon->objects.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite));
+				objQueue->queue.push_back(IobjCon->objects.back().get());
+
+				using std::to_string;
+
+				// Открытие файла с данными о физике сцены
+				std::ifstream dataFile(IobjCon->dataPath);
+				if (!dataFile.is_open())
+				{
+					throw ("Не удаётся открыть файл с данными о физике сцены");
+				}
+
+				// Чтение файла
+				json j;
+				dataFile >> j;
+
+				// Закрытие файла
+				dataFile.close();
+
+				// Новый объект
+				std::ostringstream newLine;
+				newLine << "\"" << d.value().name << "\":[{";
+
+				newLine << "\"pos-x\": "  << d.value().position.x << ",";
+				newLine << "\"pos-y\" : " << d.value().position.y << ",";
+				newLine << "\"layer\" : " << d.value().layer << ",";
+				newLine << "\"path\" : \""  << d.value().pathToSprite << "\"}]";
+
+				// Подготовка к вставке в файл
+				std::string json_str = j.dump();
+				size_t pos_of_par = json_str.find_last_of('}');
+				size_t pos_of_par2 = json_str.find_last_of(']');
+
+				json_str.at(pos_of_par) = ' ';
+				json_str.at(pos_of_par2 + 1) = ',';
+
+				// Запись в файл данных новой линии
+				std::ofstream ostream(IobjCon->dataPath);
+				ostream << json_str + newLine.str() + '}';
+
+				// Закрытие файла
+				ostream.close();
+
+				std::ostringstream oss_l;
+				oss_l << "Добавлено [" << d.value().name << "]\n";
+
+				AddLog(oss_l.str().c_str());
+
+				AddingIobj = false;
+			}
 		}
 	}
 
@@ -2317,7 +2393,7 @@ void GUISystem::ShowIobjControl()
 		for (int k = 0; k < IobjCon->objects.size(); k++)
 		{
 			// Поиск выбранного персонажа
-			if (IobjCon->objects.at(k).name == IobjSelected)
+			if (IobjCon->objects.at(k)->name == IobjSelected)
 			{				
 				if (ImGui::BeginChild(""))
 				{
@@ -2325,7 +2401,7 @@ void GUISystem::ShowIobjControl()
 					{
 						if (ImGui::BeginTabItem("Объект"))
 						{
-							SpawnDefaultObject2DControl(&IobjCon->objects.at(k), IobjCon->dataPath);
+							SpawnDefaultObject2DControl(IobjCon->objects.at(k).get(), IobjCon->dataPath);
 
 							ImGui::EndTabItem();
 						}
@@ -2342,7 +2418,7 @@ void GUISystem::ShowIobjControl()
 
 					//if (ImGui::CollapsingHeader("Hit-box"))
 					//{
-					//	ImGui::Checkbox("Показать", &IobjCon->objects.at(k).hitbox_visability);
+					//	ImGui::Checkbox("Показать", &IobjCon->objects.at(k)->hitbox_visability);
 
 					//	/* Если нажата кнопка изменить HitBox */
 					//	{
@@ -2353,7 +2429,7 @@ void GUISystem::ShowIobjControl()
 					//			AddLog("\n");
 
 					//			DrawingHitBox = true;
-					//			IobjCon->objects.at(k).hitbox_visability = false;
+					//			IobjCon->objects.at(k)->hitbox_visability = false;
 
 					//			ImGui::GetStyle().Alpha = 0.1f;
 					//		}
@@ -2393,9 +2469,9 @@ void GUISystem::ShowIobjControl()
 					//					auto pos = wnd->mouse.GetPos();
 					//					secondPoint = { (float)pos.first, (float)pos.second };
 
-					//					HitBox hb_new(IobjCon->objects.at(k).name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-					//					IobjCon->objects.at(k).SetHitBox(hb);
-					//					IobjCon->objects.at(k).hitbox_visability = true;
+					//					HitBox hb_new(IobjCon->objects.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+					//					IobjCon->objects.at(k)->SetHitBox(hb);
+					//					IobjCon->objects.at(k)->hitbox_visability = true;
 
 					//					std::ostringstream oss;
 					//					oss << "Поставлена вторая точка:\n" <<
@@ -2406,7 +2482,7 @@ void GUISystem::ShowIobjControl()
 
 					//					AddLog("Сохранение Hit-box:\n");
 
-					//					auto actual_hb = IobjCon->objects.at(k).hitbox;
+					//					auto actual_hb = IobjCon->objects.at(k)->hitbox;
 
 					//					EngineFunctions::SetNewValue<float>(
 					//						IobjSelected,
@@ -2486,6 +2562,12 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		dcheck(ImGui::SliderFloat("X", &obj->position.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
 		dcheck(ImGui::SliderFloat("Y", &obj->position.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
 
+		ImGui::NewLine();
+
+		std::ostringstream t;
+		t << "Слой: " << obj->layer;
+		ImGui::Text(t.str().c_str());
+
 		ImGui::Separator();	// Разделитель
 	}
 
@@ -2506,6 +2588,32 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		ImGui::Image((void*)my_texture, ImVec2(my_image_width * scaleObj, my_image_height * scaleObj));
 
 		ImGui::Separator();	// Разделитель
+
+		if (ImGui::Button("Загрузить", ImVec2(100, 20)))
+		{
+			AddLog("Загрузка спрайта для: ");
+			AddLog(obj->name.c_str());
+			AddLog("\n");
+
+			LoadingSprite = true;
+		}
+	}
+
+	if (LoadingSprite)
+	{
+		std::string imagePath = ShowLoadingSpriteDilaog();
+
+		if (imagePath != "")
+		{
+			obj->SetSurface(Surface2D(imagePath));
+			LoadingSprite = false;
+
+			AddLog("Загружен спрайт ");
+			AddLog(imagePath.c_str());
+			AddLog(" для:");
+			AddLog(obj->name.c_str());
+			AddLog("\n");
+		}
 	}
 
 	/**************************************************************/
@@ -2526,7 +2634,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 		if (SavingSettings)
 		{
-			/* Сохранение позиции и скорости */
+			/* Сохранение позиции */
 
 			EngineFunctions::SetNewValue<float>(
 				obj->name,
@@ -2544,10 +2652,137 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 			/**********************/
 
+			/* Сохранение изображения */
+			
+			EngineFunctions::SetNewValue<std::string>(
+				obj->name,
+				"path", obj->image.GetFileName(),
+				dataPath,
+				&applog
+				);
+			
+			/**************************/
+
 			SavingSettings = false;
 		}
 	}
 	/*********************************************************************/
+}
+
+std::string GUISystem::ShowLoadingSpriteDilaog()
+{
+	std::string chosenSprite = "";
+
+	SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
+	if (ImGui::Begin("Загрузить изображение", NULL,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize))
+	{
+		namespace fs = std::filesystem;
+
+		fs::path dir = "Images/";
+		size_t col_counter = 1;
+
+		if (ImGui::BeginTable("table1", 4))
+		{
+			for (fs::directory_iterator it(dir), end; it != end; ++it)
+			{				
+				if (col_counter == 1)
+				{
+					ImGui::TableNextRow();
+				}
+
+				if (col_counter == 4)
+				{
+					ImGui::TableNextRow();
+					col_counter = 1;
+				}
+
+				ImGui::TableNextColumn();
+
+				if (it->path().extension() == ".bmp")
+				{
+					int my_image_width = 0;
+					int my_image_height = 0;
+					ID3D11ShaderResourceView* my_texture = NULL;
+					bool ret = wnd->Gfx().LoadTextureFromFile("Icons/bmp_icon.bmp", &my_texture, &my_image_width, &my_image_height);
+					IM_ASSERT(ret);
+
+					ImGui::Image((void*)my_texture, ImVec2(my_image_width, my_image_height));
+					
+					if (ImGui::IsItemClicked())
+					{
+						chosenSprite = it->path().generic_string();
+					}
+
+					ImGui::Text(it->path().filename().string().c_str());
+				}
+
+				col_counter++;
+			}
+		}
+
+		ImGui::EndTable();
+	}
+
+	ImGui::End();
+	ImGui::PopStyleColor();
+
+	return chosenSprite;
+}
+
+std::optional<IobjData> GUISystem::ShowAddingIobjDialog()
+{
+	IobjData data;
+
+	SetPanelSizeAndPosition(0, 0.3f, 0.8f, 0.35f, 0.05f);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
+	if (ImGui::Begin("Добавление объекта", NULL,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize))
+	{
+		ImGui::Text("Путь к спрайту: ");
+		
+		if (IobjPath == "")
+		{
+			ImGui::Text("...");
+		}
+		else
+		{
+			ImGui::Text(IobjPath.c_str());
+		}
+		
+		ImGui::SameLine();
+		
+		if (ImGui::Button("Выбрать"))
+		{
+			ChosingIobj = true;
+		}
+
+		if (ChosingIobj)
+		{
+			IobjPath = ShowLoadingSpriteDilaog();
+
+			if (IobjPath != "")
+			{
+				std::ostringstream n;
+				n << "obj " << IobjCon->objects.size();
+				
+				data.name = n.str();
+				data.pathToSprite = IobjPath;
+				data.position = DirectX::XMFLOAT2(0.0f, 0.0f);
+				data.layer = objQueue->queue.size();
+				
+				ChosingIobj = false;
+			}
+		}
+	}
+
+	ImGui::End();
+	ImGui::PopStyleColor();
+
+	return data;
 }
 
 void GUISystem::ShowCameraControl()

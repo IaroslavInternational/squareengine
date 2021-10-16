@@ -13,6 +13,7 @@ class Object2D
 {
 public:
 	friend class GUISystem;
+	friend class ObjectsQueue;
 public:
 	// Конструктор объекта требует следующие поля:
 	// name - имя объекта

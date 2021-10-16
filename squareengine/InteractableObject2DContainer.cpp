@@ -53,7 +53,7 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 			/* Инициализация объекта */
 
-			objects.emplace_back(InteractableObject2D(name, position, layer, pathToSprite));
+			objects.emplace_back(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite));
 
 			/*************************/
 		}
@@ -66,6 +66,16 @@ void InteractableObject2DContainer::Translate(DirectX::XMFLOAT2 delta)
 {
 	for (auto& obj : objects)
 	{
-		obj.Translate(delta);
+		obj->Translate(delta);
 	}
+}
+
+void InteractableObject2DContainer::DeleteObjectAt(size_t k)
+{
+	DeleteObjectAt(objects.begin() + k);
+}
+
+void InteractableObject2DContainer::DeleteObjectAt(std::vector<std::unique_ptr<InteractableObject2D>>::iterator it)
+{
+	objects.erase(it);
 }

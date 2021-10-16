@@ -42,7 +42,7 @@ namespace EngineFunctions
 
 #if IS_ENGINE_MODE
 		std::ostringstream ostrlog;
-		ostrlog << "Установка [" << param << " : " << std::to_string(val) << "] " << "для [" << objectName << "]\n";
+		ostrlog << "Установка [" << param << " : " << val << "] " << "для [" << objectName << "]\n";
 
 		applog->AddLog(SYSTEM_LOG, ostrlog.str().c_str());
 #endif // IS_ENGINE_MODE

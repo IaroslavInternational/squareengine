@@ -8,7 +8,7 @@ InteractableObject2D::InteractableObject2D(std::string name, DirectX::XMFLOAT2 p
 
 void InteractableObject2D::Draw(Graphics& gfx)
 {
-	gfx.DrawSprite((int)position.x, (int)position.y, image);
+	gfx.DrawSprite((int)position.x, (int)position.y, image, Color(0, 0, 0));
 }
 
 void InteractableObject2D::DrawTransparent(float deep)

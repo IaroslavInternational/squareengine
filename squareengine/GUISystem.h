@@ -12,6 +12,14 @@
 
 #define N_POINTS 100	// Максимальное кол-во точек на графике
 
+struct IobjData
+{
+	std::string name;
+	DirectX::XMFLOAT2 position;
+	size_t layer;
+	std::string pathToSprite;
+};
+
 class GUISystem
 {
 public:
@@ -19,7 +27,7 @@ public:
 			  MainPerson*							  hero,
 			  PersonContainer*						  persCon,
 			  InteractableObject2DContainer*		  Iobj,
-			  ObjectsQueue*							  objectsPtr,
+			  ObjectsQueue*							  objQueue,
 			  std::shared_ptr<Physics::PhysicsEngine> phEngPtr);
 public:
 	/* Главные методы для отрисовки интерфейса */
@@ -49,22 +57,24 @@ private:
 private: 
 	/* Методы отрисовки конкретных интерфейсов */
 	
-	void ShowLog();						// Показать панель лога
-	void ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
-	void ShowFPS();						// Показать панель с графиком изменения FPS
-	void ShowPhysicsEngineObjHelp();	// Показать подписи имён объектов физического движка
-	void ShowPhysicsEngineSettings();	// Показать панель настроек физического движка
-	void ShowPersonList();				// Показать список персонажей 
-	void ShowPersonControl();			// Показать настройки для выбранного персонажа
-	void ShowMainPersonList();			// Показать главного персонажа в списке
-	void ShowMainPersonControl();		// Показать настройки для главного персонажа
-	void ShowPhysicsEngineObjList();	// Показать список объектов в физическом движке
-	void ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
-	void ShowCameraControl();			// Показать настройки для камеры
-	void ShowLayersControl();			// Показать панель настроек слоёв
-	void ShowIobjList();
-	void ShowIobjControl();
-	void SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath);
+	void					ShowLog();						// Показать панель лога
+	void					ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
+	void					ShowFPS();						// Показать панель с графиком изменения FPS
+	void					ShowPhysicsEngineObjHelp();		// Показать подписи имён объектов физического движка
+	void					ShowPhysicsEngineSettings();	// Показать панель настроек физического движка
+	void					ShowPersonList();				// Показать список персонажей 
+	void					ShowPersonControl();			// Показать настройки для выбранного персонажа
+	void					ShowMainPersonList();			// Показать главного персонажа в списке
+	void					ShowMainPersonControl();		// Показать настройки для главного персонажа
+	void					ShowPhysicsEngineObjList();		// Показать список объектов в физическом движке
+	void					ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
+	void					ShowCameraControl();			// Показать настройки для камеры
+	void					ShowLayersControl();			// Показать панель настроек слоёв
+	void					ShowIobjList();
+	void					ShowIobjControl();
+	void					SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath);
+	std::string				ShowLoadingSpriteDilaog();
+	std::optional<IobjData> ShowAddingIobjDialog();
 
 	/*******************************************/
 private:
@@ -83,10 +93,10 @@ private:
 	bool ShowLogs 					  =	true;	// Лог
 	bool ShowTriggersList 			  =	false;	// Левая панель триггеров на сцене
 	bool ShowTriggersSettings		  =	false;	// Правая панель триггеров на сцене
-	bool ShowLayersSettings			  = false;	// Показать панель настроек слоёв
+	bool ShowLayersSettings			  = true;	// Показать панель настроек слоёв
 	bool ShowIobjEnum				  = true;	//
 	bool ShowIobjSettings			  = true;	//
-
+	
 	/********************************/
 private:
 	/* Системные переменные */
@@ -103,7 +113,7 @@ private:
 	MainPerson*					   hero;
 	PersonContainer*			   persCon;
 	InteractableObject2DContainer* IobjCon;
-	ObjectsQueue*				   objectsPtr;
+	ObjectsQueue*				   objQueue;
 
 	/************************/
 private:
@@ -135,12 +145,19 @@ private:
 
 	/* Вспомагательные переменные для работы с контейнером объектов */
 
-	std::string IobjSelected = "";	// Имя выбранного объекта
+	std::string IobjSelected = "";		// Имя выбранного объекта
+	bool        AddingIobj   = false;	//
+	bool        ChosingIobj  = false;	//
+	std::string IobjPath	 = "";		//
 
 	/****************************************************************/
 
-	float scaleObj = 1.0f;
-
+	/* Вспомагательные переменные для работы с объектом (база) */
+	
+	float scaleObj      = 1.0f;	// Множитель размера превью спрайта
+	bool  LoadingSprite = false;
+	
+	/***********************************************************/
 private:
 	/* Вспомагательные переменные для отображения FPS */
 

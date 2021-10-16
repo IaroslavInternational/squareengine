@@ -16,6 +16,7 @@ public:
 public:
 	void MoveDown(size_t k);
 	void MoveUp(size_t k);
+	void DeleteObjectAt(std::string name);
 private:
 	std::vector<Object2D*> queue;
 };
