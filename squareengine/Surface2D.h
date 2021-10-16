@@ -7,7 +7,7 @@
 class Surface2D
 {
 public:
-	Surface2D( const std::string& filename );
+	Surface2D( std::string filename );
 	Surface2D( int width,int height );
 	Surface2D( const Surface2D& );
 	~Surface2D();
@@ -17,8 +17,10 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 	RectI GetRect() const;
+	std::string GetFileName();
 private:
 	Color* pPixels = nullptr;
 	int width;
 	int height;
+	std::string filename;
 };

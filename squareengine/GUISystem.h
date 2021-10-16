@@ -64,6 +64,7 @@ private:
 	void ShowLayersControl();			// Показать панель настроек слоёв
 	void ShowIobjList();
 	void ShowIobjControl();
+	void SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath);
 
 	/*******************************************/
 private:
@@ -137,6 +138,9 @@ private:
 	std::string IobjSelected = "";	// Имя выбранного объекта
 
 	/****************************************************************/
+
+	float scaleObj = 1.0f;
+
 private:
 	/* Вспомагательные переменные для отображения FPS */
 

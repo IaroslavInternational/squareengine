@@ -503,6 +503,9 @@
     <ClInclude Include="ObjectsQueue.h">
       <Filter>Заголовочные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
     </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="squareengine.rc">

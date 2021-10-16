@@ -3,7 +3,9 @@
 #include <cassert>
 #include <fstream>
 
-Surface2D::Surface2D( const std::string& filename )
+Surface2D::Surface2D( std::string filename )
+	:
+	filename(filename)
 {
 	std::ifstream file( filename,std::ios::binary );
 	assert( file );
@@ -81,6 +83,8 @@ Surface2D::Surface2D( const Surface2D& rhs )
 	{
 		pPixels[i] = rhs.pPixels[i];
 	}
+
+	filename = rhs.filename;
 }
 
 Surface2D::~Surface2D()
@@ -93,6 +97,7 @@ Surface2D& Surface2D::operator=( const Surface2D& rhs )
 {
 	width = rhs.width;
 	height = rhs.height;
+	filename = rhs.filename;
 
 	delete [] pPixels;
 	pPixels = new Color[width*height];
@@ -136,4 +141,9 @@ int Surface2D::GetHeight() const
 RectI Surface2D::GetRect() const
 {
 	return{ 0,width,0,height };
+}
+
+std::string Surface2D::GetFileName()
+{
+	return filename;
 }

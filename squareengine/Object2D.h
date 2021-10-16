@@ -12,6 +12,8 @@
 class Object2D
 {
 public:
+	friend class GUISystem;
+public:
 	// Конструктор объекта требует следующие поля:
 	// name - имя объекта
 	// position - позиция объекта

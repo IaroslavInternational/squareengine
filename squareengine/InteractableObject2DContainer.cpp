@@ -3,6 +3,8 @@
 #include "EngineFunctions.hpp"
 
 InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPath)
+	:
+	dataPath(dataPath)
 {
 	std::ifstream dataFile(dataPath);
 	if (!dataFile.is_open())

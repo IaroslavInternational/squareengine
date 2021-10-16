@@ -13,6 +13,8 @@ public:
 public:
 	void Translate(DirectX::XMFLOAT2 delta);
 private:
+	std::string dataPath;
+private:
 	std::vector<InteractableObject2D> objects;
 };
 
