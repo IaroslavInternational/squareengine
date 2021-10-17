@@ -2280,11 +2280,45 @@ void GUISystem::ShowLayersControl()
 				if (ImGui::Button("На задний план"))
 				{
 					objQueue->MoveDown(i);
+
+					for (size_t k = i; k < objQueue->queue.size(); k++)
+					{
+						if (objQueue->queue[k]->name.find("obj") != objQueue->queue[k]->name.npos)
+						{
+							for (auto& io : IobjCon->objects)
+							{
+								if (io->name == objQueue->queue[k]->name)
+								{
+									if (hero->layer < io->layer)
+									{
+										io->drawGhostable = true;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				if (ImGui::Button("На передний план"))
 				{
 					objQueue->MoveUp(i);
+
+					for (size_t k = i; k < objQueue->queue.size(); k++)
+					{
+						if (objQueue->queue[k]->name.find("obj") != objQueue->queue[k]->name.npos)
+						{
+							for (auto& io : IobjCon->objects)
+							{
+								if (io->name == objQueue->queue[k]->name)
+								{
+									if (hero->layer < io->layer)
+									{
+										io->drawGhostable = true;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				ImGui::EndPopup();
@@ -2426,6 +2460,8 @@ void GUISystem::ShowIobjList()
 				newLine << "\"hb-lty\" : "  << hb_coord.y << ",";
 				newLine << "\"hb-rbx\" : "  << hb_coord.z << ",";
 				newLine << "\"hb-rby\" : "  << hb_coord.w << ",";
+				newLine << "\"g-deep\" : "  << 2.0f  << ",";
+				newLine << "\"g-able\" : "  << false << ",";
 				newLine << "\"layer\" : "   << d.value().layer << ",";
 				newLine << "\"path\" : \""  << d.value().pathToSprite << "\"}]";
 
@@ -2489,6 +2525,33 @@ void GUISystem::ShowIobjControl()
 
 						if (ImGui::BeginTabItem("Дополнительно"))
 						{
+							/* Переменные управления сбросом интерфейса */
+
+							bool deepDirty = false; // Контроль позиции
+
+							const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+							/********************************************/
+
+							/* Элементы управления параметрами коллизий объекта */
+							
+							if (ImGui::CollapsingHeader("Параметры коллизий", ImGuiTreeNodeFlags_DefaultOpen))
+							{
+								ImGui::Text("Степень прозрачности:");
+								dcheck(ImGui::SliderFloat("Глубина", &IobjCon->objects.at(k)->deep, 1.0f, 100.0f, "%.3f"), deepDirty);
+
+								ImGui::Checkbox("Прозрачность", &IobjCon->objects.at(k)->drawGhostable);
+
+								ImGui::Separator();
+							}
+
+							/****************************************************/
+							
+							if (ImGui::CollapsingHeader("Hit-Box"))
+							{
+								ImGui::Separator();
+							}
+							
 							ImGui::EndTabItem();
 						}
 

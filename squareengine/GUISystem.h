@@ -93,7 +93,7 @@ private:
 	bool ShowLogs 					  =	true;	// Лог
 	bool ShowTriggersList 			  =	false;	// Левая панель триггеров на сцене
 	bool ShowTriggersSettings		  =	false;	// Правая панель триггеров на сцене
-	bool ShowLayersSettings			  = true;	// Показать панель настроек слоёв
+	bool ShowLayersSettings			  = false;	// Показать панель настроек слоёв
 	bool ShowIobjEnum				  = true;	//
 	bool ShowIobjSettings			  = true;	//
 	

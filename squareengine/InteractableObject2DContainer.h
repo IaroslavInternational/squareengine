@@ -3,6 +3,8 @@
 #include "InteractableObject2D.h"
 #include <vector>
 
+class MainPerson;
+
 class InteractableObject2DContainer
 {
 public:
@@ -14,7 +16,7 @@ public:
 	void Translate(DirectX::XMFLOAT2 delta);
 	void DeleteObjectAt(size_t k);
 	void DeleteObjectAt(std::vector<std::unique_ptr<InteractableObject2D>>::iterator it);
-	void CheckCollision(HitBox hb);
+	void CheckCollision(MainPerson* hero);
 private:
 	std::string dataPath;
 private:

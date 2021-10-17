@@ -8,7 +8,9 @@
       "layer": 0,
       "path": "Images\\zabor.bmp",
       "pos-x": 300.0,
-      "pos-y": 200.0
+      "pos-y": 200.0,
+      "g-deep": 2.0,
+      "g-able": false
     }
   ],
   "obj 1": [
@@ -20,7 +22,9 @@
       "layer": 1,
       "path": "Images\\box.bmp",
       "pos-x": 400.0,
-      "pos-y": 200.0
+      "pos-y": 200.0,
+      "g-deep": 2.0,
+      "g-able": false
     }
   ]
 }

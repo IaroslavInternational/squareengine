@@ -42,13 +42,6 @@ void ObjectsQueue::Draw(Graphics& gfx)
 	}
 }
 
-void ObjectsQueue::DrawTransparent(Graphics& gfx, float deep)
-{
-	for (auto& obj : queue)
-	{
-	}
-}
-
 void ObjectsQueue::MoveDown(size_t k)
 {
 	if (k != 0)

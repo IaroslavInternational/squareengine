@@ -1,4 +1,5 @@
 #include "InteractableObject2DContainer.h"
+#include "MainPerson.h"
 
 #include "EngineFunctions.hpp"
 
@@ -61,9 +62,16 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 			/********************************/
 
+			/* Получение настроек коллизий */
+
+			float gDeep = obj.at("g-deep");
+			float gAble = obj.at("g-able");
+
+			/*******************************/
+
 			/* Инициализация объекта */
 
-			objects.emplace_back(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord)));
+			objects.emplace_back(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
 
 			/*************************/
 		}
@@ -90,10 +98,13 @@ void InteractableObject2DContainer::DeleteObjectAt(std::vector<std::unique_ptr<I
 	objects.erase(it);
 }
 
-void InteractableObject2DContainer::CheckCollision(HitBox hb)
+void InteractableObject2DContainer::CheckCollision(MainPerson* hero)
 {
 	for (auto& obj : objects)
 	{
-		obj->SetGhostState(hb.IsCollide(obj->GetHitBox()));
+		if (hero->GetLayer() < obj->GetLayer() && obj->IsGhostable())
+		{
+			obj->SetGhostState(hero->GetHitBox().IsCollide(obj->GetHitBox()));
+		}
 	}
 }

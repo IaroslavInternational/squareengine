@@ -12,7 +12,6 @@ public:
 	ObjectsQueue(MainPerson* hero, PersonContainer* persCon, InteractableObject2DContainer* Iobj);
 public:
 	void Draw(Graphics& gfx);
-	void DrawTransparent(Graphics& gfx, float deep);
 public:
 	void MoveDown(size_t k);
 	void MoveUp(size_t k);
