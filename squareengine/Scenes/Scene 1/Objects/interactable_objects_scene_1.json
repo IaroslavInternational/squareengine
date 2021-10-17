@@ -22,17 +22,5 @@
       "pos-x": 400.0,
       "pos-y": 200.0
     }
-  ],
-  "obj 2": [
-    {
-      "pos-x": 0,
-      "pos-y": 0,
-      "hb-ltx": 0,
-      "hb-lty": 0,
-      "hb-rbx": 140,
-      "hb-rby": 140,
-      "layer": 5,
-      "path": "Images/box.bmp"
-    }
   ]
 }

@@ -54,6 +54,7 @@ void Scene::ProcessInput(float dt)
 	}
 
 	phEngine->CheckMainPersonCollision(&hero);
+	Iobj.CheckCollision(hero.GetHitBox()); // test
 	hero.ProcessMoving(dt);
 }
 

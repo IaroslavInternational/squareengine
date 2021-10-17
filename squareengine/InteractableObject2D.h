@@ -14,9 +14,12 @@ public:
 	void Draw(Graphics &gfx) override;
 	void DrawTransparent(Graphics& gfx);
 public:
-	void Translate(DirectX::XMFLOAT2 delta);
+	void   Translate(DirectX::XMFLOAT2 delta);
+	void   SetGhostState(bool state);
+	HitBox GetHitBox();
 private:
 	float  deep = 2.0f;
 	bool   hitbox_visability = true;
+	bool   drawGhost = false;
 	HitBox hitbox;
 };

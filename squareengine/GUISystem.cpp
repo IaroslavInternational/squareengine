@@ -831,7 +831,7 @@ void GUISystem::ShowPersonControl()
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		// Цикл по персонажам
-		for (int k = 0; k < persCon->persons.size(); k++)
+		for (size_t k = 0; k < persCon->persons.size(); k++)
 		{
 			// Поиск выбранного персонажа
 			if (persCon->persons.at(k)->name == personSelected)
@@ -843,6 +843,13 @@ void GUISystem::ShowPersonControl()
 						if (ImGui::BeginTabItem("Объект"))
 						{
 							SpawnDefaultObject2DControl(persCon->persons.at(k).get(), persCon->dataPath);
+
+							// КОСТЫЛЬ \\ !
+							DirectX::XMFLOAT2 delta;
+							delta.x = persCon->persons.at(k)->position.x - persCon->persons.at(k)->hitbox.coordinates.x + persCon->persons.at(k)->dx;
+							delta.y = persCon->persons.at(k)->position.y - persCon->persons.at(k)->hitbox.coordinates.y + persCon->persons.at(k)->dy;
+
+							persCon->persons.at(k)->hitbox.Translate(delta);
 
 							ImGui::EndTabItem();
 						}
@@ -2470,6 +2477,13 @@ void GUISystem::ShowIobjControl()
 						{
 							SpawnDefaultObject2DControl(IobjCon->objects.at(k).get(), IobjCon->dataPath);
 
+							// КОСТЫЛЬ \\ !
+							DirectX::XMFLOAT2 delta;
+							delta.x = IobjCon->objects.at(k)->position.x - IobjCon->objects.at(k)->hitbox.coordinates.x;
+							delta.y = IobjCon->objects.at(k)->position.y - IobjCon->objects.at(k)->hitbox.coordinates.y;
+
+							IobjCon->objects.at(k)->hitbox.Translate(delta);
+							
 							ImGui::EndTabItem();
 						}
 
@@ -2642,7 +2656,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 	/* Элементы управления позицией и скорости главного персонажа */
 
-	if (ImGui::CollapsingHeader("Изображение", ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::CollapsingHeader("Изображение"))
 	{
 		int my_image_width = 0;
 		int my_image_height = 0;

@@ -89,3 +89,11 @@ void InteractableObject2DContainer::DeleteObjectAt(std::vector<std::unique_ptr<I
 {
 	objects.erase(it);
 }
+
+void InteractableObject2DContainer::CheckCollision(HitBox hb)
+{
+	for (auto& obj : objects)
+	{
+		obj->SetGhostState(hb.IsCollide(obj->GetHitBox()));
+	}
+}

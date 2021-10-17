@@ -9,7 +9,14 @@ InteractableObject2D::InteractableObject2D(std::string name, DirectX::XMFLOAT2 p
 
 void InteractableObject2D::Draw(Graphics& gfx)
 {
-	gfx.DrawSprite((int)position.x, (int)position.y, image, Color(0, 0, 0));
+	if (!drawGhost)
+	{
+		gfx.DrawSprite((int)position.x, (int)position.y, image, Color(0, 0, 0));
+	}
+	else
+	{
+		DrawTransparent(gfx);
+	}
 
 	if (hitbox_visability)
 	{
@@ -20,11 +27,6 @@ void InteractableObject2D::Draw(Graphics& gfx)
 void InteractableObject2D::DrawTransparent(Graphics& gfx)
 {
 	gfx.DrawSpriteGhost((int)position.x, (int)position.y, image, deep, Color(0, 0, 0));
-
-	if (hitbox_visability)
-	{
-		gfx.DrawHitBox(hitbox);
-	}
 }
 
 void InteractableObject2D::Translate(DirectX::XMFLOAT2 delta)
@@ -33,4 +35,14 @@ void InteractableObject2D::Translate(DirectX::XMFLOAT2 delta)
 	position.y += delta.y;
 
 	hitbox.Translate(delta);
+}
+
+void InteractableObject2D::SetGhostState(bool state)
+{
+	drawGhost = state;
+}
+
+HitBox InteractableObject2D::GetHitBox()
+{
+	return hitbox;
 }
