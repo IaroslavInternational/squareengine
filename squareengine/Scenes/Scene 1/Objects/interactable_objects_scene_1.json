@@ -1,1 +1,38 @@
-{"obj 0":[{"layer":0,"path":"Images\\zabor.bmp","pos-x":300.0,"pos-y":200.0}],"obj 1":[{"layer":1,"path":"Images\\box.bmp","pos-x":400.0,"pos-y":200.0}]}
+{
+  "obj 0": [
+    {
+      "hb-ltx": 300.0,
+      "hb-lty": 200.0,
+      "hb-rbx": 428.0,
+      "hb-rby": 328.0,
+      "layer": 0,
+      "path": "Images\\zabor.bmp",
+      "pos-x": 300.0,
+      "pos-y": 200.0
+    }
+  ],
+  "obj 1": [
+    {
+      "hb-ltx": 400.0,
+      "hb-lty": 200.0,
+      "hb-rbx": 540.0,
+      "hb-rby": 340.0,
+      "layer": 1,
+      "path": "Images\\box.bmp",
+      "pos-x": 400.0,
+      "pos-y": 200.0
+    }
+  ],
+  "obj 2": [
+    {
+      "pos-x": 0,
+      "pos-y": 0,
+      "hb-ltx": 0,
+      "hb-lty": 0,
+      "hb-rbx": 140,
+      "hb-rby": 140,
+      "layer": 5,
+      "path": "Images/box.bmp"
+    }
+  ]
+}

@@ -2382,7 +2382,15 @@ void GUISystem::ShowIobjList()
 
 			if (d.value().name != "")
 			{
-				IobjCon->objects.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite));
+				Surface2D im(d.value().pathToSprite);
+
+				DirectX::XMFLOAT4 hb_coord;
+				hb_coord.x = d.value().position.x;
+				hb_coord.y = d.value().position.y;
+				hb_coord.z = d.value().position.x + im.GetWidth();
+				hb_coord.w = d.value().position.y + im.GetHeight();
+			
+				IobjCon->objects.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
 				objQueue->queue.push_back(IobjCon->objects.back().get());
 
 				using std::to_string;
@@ -2405,9 +2413,13 @@ void GUISystem::ShowIobjList()
 				std::ostringstream newLine;
 				newLine << "\"" << d.value().name << "\":[{";
 
-				newLine << "\"pos-x\": "  << d.value().position.x << ",";
-				newLine << "\"pos-y\" : " << d.value().position.y << ",";
-				newLine << "\"layer\" : " << d.value().layer << ",";
+				newLine << "\"pos-x\": "    << d.value().position.x << ",";
+				newLine << "\"pos-y\" : "   << d.value().position.y << ",";
+				newLine << "\"hb-ltx\" : "  << hb_coord.x << ",";
+				newLine << "\"hb-lty\" : "  << hb_coord.y << ",";
+				newLine << "\"hb-rbx\" : "  << hb_coord.z << ",";
+				newLine << "\"hb-rby\" : "  << hb_coord.w << ",";
+				newLine << "\"layer\" : "   << d.value().layer << ",";
 				newLine << "\"path\" : \""  << d.value().pathToSprite << "\"}]";
 
 				// Подготовка к вставке в файл

@@ -51,9 +51,19 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 			/****************************/
 
+			/* Получение настроек хит-бокса */
+
+			DirectX::XMFLOAT4 hb_coord;
+			hb_coord.x = obj.at("hb-ltx");
+			hb_coord.y = obj.at("hb-lty");
+			hb_coord.z = obj.at("hb-rbx");
+			hb_coord.w = obj.at("hb-rby");
+
+			/********************************/
+
 			/* Инициализация объекта */
 
-			objects.emplace_back(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite));
+			objects.emplace_back(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord)));
 
 			/*************************/
 		}
