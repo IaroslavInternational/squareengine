@@ -786,6 +786,7 @@ void GUISystem::ShowPersonList()
 			if (ImGui::Selectable(label, personSelected == p->get()->name.c_str()))
 			{
 				personSelected = p->get()->name;
+				LoadedPreview = false;
 			}
 			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
 			{
@@ -842,7 +843,7 @@ void GUISystem::ShowPersonControl()
 					{
 						if (ImGui::BeginTabItem("Объект"))
 						{
-							SpawnDefaultObject2DControl(persCon->persons.at(k).get(), persCon->dataPath);
+							SpawnDefaultObject2DControl(persCon->persons.at(k).get(), persCon->dataPath);							
 
 							// КОСТЫЛЬ \\ !
 							DirectX::XMFLOAT2 delta;
@@ -1109,7 +1110,12 @@ void GUISystem::ShowMainPersonList()
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImGui::Text(hero->name.c_str());
+		ImGui::Bullet();
+		if (ImGui::Selectable(hero->name.c_str(), heroSelected == hero->name))
+		{
+			heroSelected = hero->name;
+			LoadedPreview = false;
+		}
 	}
 
 	ImGui::End();
@@ -1127,7 +1133,7 @@ void GUISystem::ShowMainPersonControl()
 			{
 				if (ImGui::BeginTabItem("Объект"))
 				{
-					SpawnDefaultObject2DControl(hero, hero->dataPath);
+					SpawnDefaultObject2DControl(hero, hero->dataPath);					
 
 					ImGui::EndTabItem();
 				}
@@ -2382,6 +2388,7 @@ void GUISystem::ShowIobjList()
 			if (ImGui::Selectable(label, IobjSelected == o->get()->name.c_str()))
 			{
 				IobjSelected = o->get()->name;
+				LoadedPreview = false;
 			}
 			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
 			{
@@ -2499,20 +2506,20 @@ void GUISystem::ShowIobjControl()
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		// Цикл по персонажам
+		// Цикл по интерактивным объектам
 		for (int k = 0; k < IobjCon->objects.size(); k++)
 		{
-			// Поиск выбранного персонажа
+			// Поиск выбранного интерактивного объекта
 			if (IobjCon->objects.at(k)->name == IobjSelected)
 			{				
 				if (ImGui::BeginChild(""))
 				{
-					if (ImGui::BeginTabBar("mpSet", ImGuiTabBarFlags_None))
+					if (ImGui::BeginTabBar("ioSet", ImGuiTabBarFlags_None))
 					{
 						if (ImGui::BeginTabItem("Объект"))
 						{
 							SpawnDefaultObject2DControl(IobjCon->objects.at(k).get(), IobjCon->dataPath);
-
+							
 							// КОСТЫЛЬ \\ !
 							DirectX::XMFLOAT2 delta;
 							delta.x = IobjCon->objects.at(k)->position.x - IobjCon->objects.at(k)->hitbox.coordinates.x;
@@ -2551,6 +2558,25 @@ void GUISystem::ShowIobjControl()
 							{
 								ImGui::Separator();
 							}
+
+							/* Если нажата кнопка сохранить текущие настройки объекта */							
+							{
+								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
+								{
+									AddLog("Сохранение настроек для: ");
+									AddLog(IobjSelected.c_str());
+									AddLog("\n");
+
+									SavingSettings = true;
+								}
+
+								if (SavingSettings)
+								{
+
+									SavingSettings = false;
+								}
+							}
+							/**********************************************************/
 							
 							ImGui::EndTabItem();
 						}
@@ -2721,15 +2747,17 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 	if (ImGui::CollapsingHeader("Изображение"))
 	{
-		int my_image_width = 0;
-		int my_image_height = 0;
-		ID3D11ShaderResourceView* my_texture = NULL;
-		bool ret = wnd->Gfx().LoadTextureFromFile(obj->image.GetFileName().c_str(), &my_texture, &my_image_width, &my_image_height);
-		IM_ASSERT(ret);
+		if (!LoadedPreview)
+		{
+			bool ret = wnd->Gfx().LoadTextureFromFile(obj->image.GetFileName().c_str(), my_texture.GetAddressOf(), &my_image_width, &my_image_height);
+			IM_ASSERT(ret);
+
+			LoadedPreview = true;
+		}
 
 		dcheck(ImGui::SliderFloat("Размер", &scaleObj, 0.1f, 20.0f, "%.4f"), scaleDirty);
 		
-		ImGui::Image((void*)my_texture, ImVec2(my_image_width * scaleObj, my_image_height * scaleObj));
+		ImGui::Image((void*)my_texture.Get(), ImVec2(my_image_width * scaleObj, my_image_height * scaleObj));
 
 		ImGui::Separator();	// Разделитель
 
@@ -2740,6 +2768,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 			AddLog("\n");
 
 			LoadingSprite = true;
+			LoadedPreview = false;
 		}
 	}
 
@@ -2749,8 +2778,33 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 		if (imagePath != "")
 		{
-			obj->SetSurface(Surface2D(imagePath));
+			Surface2D im(imagePath);
+			obj->SetSurface(im);
 			
+			if (obj->name.find("obj") != obj->name.npos)
+			{
+				for (auto& io : IobjCon->objects)
+				{
+					if (io->name == obj->name)
+					{
+						DirectX::XMFLOAT4 hb_coord;
+						hb_coord.x = obj->position.x;
+						hb_coord.y = obj->position.y;
+						hb_coord.z = obj->position.x + im.GetWidth();
+						hb_coord.w = obj->position.y + im.GetHeight();
+
+						io->hitbox = HitBox(io->name + std::string("hitbox"), hb_coord);
+
+						AddLog("Обновлён Hit-Box ");
+						AddLog(" для:");
+						AddLog(obj->name.c_str());
+						AddLog("\n");
+
+						break;
+					}
+				}
+			}
+
 			AddLog("Загружен спрайт ");
 			AddLog(imagePath.c_str());
 			AddLog(" для:");
