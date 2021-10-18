@@ -21,7 +21,7 @@ void InteractableObject2D::Draw(Graphics& gfx)
 		DrawTransparent(gfx);
 	}
 
-	if (hitbox_visability)
+	if (hitbox.IsVisible())
 	{
 		gfx.DrawHitBox(hitbox);
 	}
@@ -53,6 +53,11 @@ void InteractableObject2D::SetGhostAble(bool state)
 bool InteractableObject2D::IsGhostable()
 {
 	return drawGhostable;
+}
+
+void InteractableObject2D::SetHitBox(HitBox hb)
+{
+	hitbox = hb;
 }
 
 HitBox InteractableObject2D::GetHitBox()

@@ -19,10 +19,10 @@ public:
 	void   SetGhostState(bool state);
 	void   SetGhostAble(bool state);
 	bool   IsGhostable();
+	void   SetHitBox(HitBox hb);	// Установить hitbox
 	HitBox GetHitBox();
 private:
 	float  deep;
-	bool   hitbox_visability = true;
 	bool   drawGhost = false;
 	bool   drawGhostable = false;
 	HitBox hitbox;

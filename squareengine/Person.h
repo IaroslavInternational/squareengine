@@ -76,7 +76,6 @@ private:
 	/* Переменные описания работы с hitbox */
 
 	HitBox hitbox;						// Hitbox
-	bool   hitbox_visability = true;	// Видимость hitbox
 	float  dx;							// Корректирующий отступ hitbox от блока спрайта по оси x
 	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
 

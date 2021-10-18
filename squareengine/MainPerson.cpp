@@ -38,7 +38,7 @@ void MainPerson::Draw(Graphics& gfx)
 		animations[(int)iCurSequence].Draw(DirectX::XMFLOAT2({ position.x - dx, position.y - dy }), wnd->Gfx());
 	}
 
-	if (hitbox_visability)
+	if (hitbox.IsVisible())
 	{
 		gfx.DrawHitBox(hitbox - DirectX::XMFLOAT2(dx, dy));
 	}

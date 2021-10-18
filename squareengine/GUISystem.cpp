@@ -896,7 +896,7 @@ void GUISystem::ShowPersonControl()
 
 							if (ImGui::CollapsingHeader("Hit-box"))
 							{
-								ImGui::Checkbox("Показать", &persCon->persons.at(k)->hitbox_visability);
+								ImGui::Checkbox("Показать", &persCon->persons.at(k)->hitbox.visability);
 
 								/* Если нажата кнопка изменить HitBox */
 								{
@@ -907,7 +907,7 @@ void GUISystem::ShowPersonControl()
 										AddLog("\n");
 
 										DrawingHitBox = true;
-										persCon->persons.at(k)->hitbox_visability = false;
+										persCon->persons.at(k)->hitbox.visability = false;
 
 										ImGui::GetStyle().Alpha = 0.1f;
 									}
@@ -949,7 +949,7 @@ void GUISystem::ShowPersonControl()
 
 												HitBox hb_new(persCon->persons.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
 												persCon->persons.at(k)->SetHitBox(hb);
-												persCon->persons.at(k)->hitbox_visability = true;
+												persCon->persons.at(k)->hitbox.visability = true;
 
 												std::ostringstream oss;
 												oss << "Поставлена вторая точка:\n" <<
@@ -1179,7 +1179,7 @@ void GUISystem::ShowMainPersonControl()
 
 					if (ImGui::CollapsingHeader("Hit-box"))
 					{
-						ImGui::Checkbox("Показать", &hero->hitbox_visability);
+						ImGui::Checkbox("Показать", &hero->hitbox.visability);
 
 						/* Если нажата кнопка изменить HitBox */
 						{
@@ -1190,7 +1190,7 @@ void GUISystem::ShowMainPersonControl()
 								AddLog("\n");
 
 								DrawingHitBox = true;
-								hero->hitbox_visability = false;
+								hero->hitbox.visability = false;
 
 								ImGui::GetStyle().Alpha = 0.1f;
 							}
@@ -1232,7 +1232,7 @@ void GUISystem::ShowMainPersonControl()
 
 										HitBox hb_new(hero->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
 										hero->SetHitBox(hb);
-										hero->hitbox_visability = true;
+										hero->hitbox.visability = true;
 
 										std::ostringstream oss;
 										oss << "Поставлена вторая точка:\n" <<
@@ -2389,6 +2389,7 @@ void GUISystem::ShowIobjList()
 			{
 				IobjSelected = o->get()->name;
 				LoadedPreview = false;
+				isCaclulatedDeltas = false;
 			}
 			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
 			{
@@ -2520,10 +2521,18 @@ void GUISystem::ShowIobjControl()
 						{
 							SpawnDefaultObject2DControl(IobjCon->objects.at(k).get(), IobjCon->dataPath);
 							
-							// КОСТЫЛЬ \\ !
+							// КОСТЫЛЬ \\ !		
+							if (!isCaclulatedDeltas)
+							{					
+								hb_delta.x = IobjCon->objects.at(k)->hitbox.coordinates.x - IobjCon->objects.at(k)->position.x;
+								hb_delta.y = IobjCon->objects.at(k)->hitbox.coordinates.y - IobjCon->objects.at(k)->position.y;
+
+								isCaclulatedDeltas = true;
+							}
+
 							DirectX::XMFLOAT2 delta;
-							delta.x = IobjCon->objects.at(k)->position.x - IobjCon->objects.at(k)->hitbox.coordinates.x;
-							delta.y = IobjCon->objects.at(k)->position.y - IobjCon->objects.at(k)->hitbox.coordinates.y;
+							delta.x = IobjCon->objects.at(k)->position.x - IobjCon->objects.at(k)->hitbox.coordinates.x + hb_delta.x;
+							delta.y = IobjCon->objects.at(k)->position.y - IobjCon->objects.at(k)->hitbox.coordinates.y + hb_delta.y;
 
 							IobjCon->objects.at(k)->hitbox.Translate(delta);
 							
@@ -2554,10 +2563,123 @@ void GUISystem::ShowIobjControl()
 
 							/****************************************************/
 							
-							if (ImGui::CollapsingHeader("Hit-Box"))
+							/* Элементы управления хитбоксом интерактивного объекта */
+
+							if (ImGui::CollapsingHeader("Hit-box"))
 							{
-								ImGui::Separator();
+								ImGui::Checkbox("Показать", &IobjCon->objects.at(k)->hitbox.visability);
+
+								/* Если нажата кнопка изменить HitBox */
+								{
+									if (ImGui::Button("Изменить", ImVec2(100, 20)))
+									{
+										AddLog("Изменение Hit-box для:");
+										AddLog(IobjSelected.c_str());
+										AddLog("\n");
+
+										DrawingHitBox = true;
+										IobjCon->objects.at(k)->hitbox.visability = false;
+
+										ImGui::GetStyle().Alpha = 0.1f;
+									}
+
+									if (DrawingHitBox)
+									{
+										if (!SettedFirstPoint)
+										{
+											mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+											if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+											{
+												auto pos = wnd->mouse.GetPos();
+												firstPoint = { (float)pos.first, (float)pos.second };
+
+												SettedFirstPoint = true;
+												std::ostringstream oss;
+												oss << "Поставлена первая точка:\n" <<
+													"[x: " << firstPoint.x <<
+													"; y: " << firstPoint.y << "]\n";
+
+												AddLog(oss.str().c_str());
+											}
+										}
+										else if (!SettedSecondPoint)
+										{
+											mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+											int ms_posX = wnd->mouse.GetPosX();
+											int ms_posY = wnd->mouse.GetPosY();
+
+											HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+											wnd->Gfx().DrawHitBox(hb);
+
+											if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+											{
+												auto pos = wnd->mouse.GetPos();
+												secondPoint = { (float)pos.first, (float)pos.second };
+
+												HitBox hb_new(IobjCon->objects.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+												IobjCon->objects.at(k)->SetHitBox(hb);
+												IobjCon->objects.at(k)->hitbox.visability = true;
+
+												std::ostringstream oss;
+												oss << "Поставлена вторая точка:\n" <<
+													"[x: " << secondPoint.x <<
+													"; y: " << secondPoint.y << "]\n";
+
+												AddLog(oss.str().c_str());
+
+												AddLog("Сохранение Hit-box:\n");
+
+												auto actual_hb = IobjCon->objects.at(k)->hitbox;
+
+												EngineFunctions::SetNewValue<float>(
+													IobjSelected,
+													"hb-ltx", IobjCon->objects.at(k)->hitbox.coordinates.x,
+													IobjCon->dataPath,
+													&applog
+													);
+
+												EngineFunctions::SetNewValue<float>(
+													IobjSelected,
+													"hb-lty", IobjCon->objects.at(k)->hitbox.coordinates.y,
+													IobjCon->dataPath,
+													&applog
+													);
+
+												EngineFunctions::SetNewValue<float>(
+													IobjSelected,
+													"hb-rbx", IobjCon->objects.at(k)->hitbox.coordinates.z,
+													IobjCon->dataPath,
+													&applog
+													);
+
+												EngineFunctions::SetNewValue<float>(
+													IobjSelected,
+													"hb-rby", IobjCon->objects.at(k)->hitbox.coordinates.w,
+													IobjCon->dataPath,
+													&applog
+													);
+
+												mouseHelpInfo = "";
+												SettedSecondPoint = true;
+											}
+										}
+										else if (SettedFirstPoint && SettedSecondPoint)
+										{
+											DrawingHitBox = false;
+											SettedFirstPoint = false;
+											SettedSecondPoint = false;
+
+											ImGui::GetStyle().Alpha = 1.0f;
+										}
+									}
+								}
+								/**************************************/
+
+								ImGui::Separator(); // Разделитель
 							}
+							/*******************************************/
 
 							/* Если нажата кнопка сохранить текущие настройки объекта */							
 							{
@@ -2572,6 +2694,47 @@ void GUISystem::ShowIobjControl()
 
 								if (SavingSettings)
 								{
+									EngineFunctions::SetNewValue<float>(
+										IobjSelected,
+										"g-deep", IobjCon->objects.at(k)->deep,
+										IobjCon->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<bool>(
+										IobjSelected,
+										"g-able", IobjCon->objects.at(k)->drawGhostable,
+										IobjCon->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<float>(
+										IobjSelected,
+										"hb-ltx", IobjCon->objects.at(k)->hitbox.coordinates.x,
+										IobjCon->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<float>(
+										IobjSelected,
+										"hb-lty", IobjCon->objects.at(k)->hitbox.coordinates.y,
+										IobjCon->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<float>(
+										IobjSelected,
+										"hb-rbx", IobjCon->objects.at(k)->hitbox.coordinates.z,
+										IobjCon->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<float>(
+										IobjSelected,
+										"hb-rby", IobjCon->objects.at(k)->hitbox.coordinates.w,
+										IobjCon->dataPath,
+										&applog
+										);
 
 									SavingSettings = false;
 								}
@@ -2583,124 +2746,6 @@ void GUISystem::ShowIobjControl()
 
 						ImGui::EndTabBar();
 					}
-
-					/* Элементы управления хитбоксом персонажа */
-
-					//if (ImGui::CollapsingHeader("Hit-box"))
-					//{
-					//	ImGui::Checkbox("Показать", &IobjCon->objects.at(k)->hitbox_visability);
-
-					//	/* Если нажата кнопка изменить HitBox */
-					//	{
-					//		if (ImGui::Button("Изменить", ImVec2(100, 20)))
-					//		{
-					//			AddLog("Изменение Hit-box для:");
-					//			AddLog(IobjSelected.c_str());
-					//			AddLog("\n");
-
-					//			DrawingHitBox = true;
-					//			IobjCon->objects.at(k)->hitbox_visability = false;
-
-					//			ImGui::GetStyle().Alpha = 0.1f;
-					//		}
-
-					//		if (DrawingHitBox)
-					//		{
-					//			if (!SettedFirstPoint)
-					//			{
-					//				mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
-
-					//				if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-					//				{
-					//					auto pos = wnd->mouse.GetPos();
-					//					firstPoint = { (float)pos.first, (float)pos.second };
-
-					//					SettedFirstPoint = true;
-					//					std::ostringstream oss;
-					//					oss << "Поставлена первая точка:\n" <<
-					//						"[x: " << firstPoint.x <<
-					//						"; y: " << firstPoint.y << "]\n";
-
-					//					AddLog(oss.str().c_str());
-					//				}
-					//			}
-					//			else if (!SettedSecondPoint)
-					//			{
-					//				mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
-
-					//				int ms_posX = wnd->mouse.GetPosX();
-					//				int ms_posY = wnd->mouse.GetPosY();
-
-					//				HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-					//				wnd->Gfx().DrawHitBox(hb);
-
-					//				if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-					//				{
-					//					auto pos = wnd->mouse.GetPos();
-					//					secondPoint = { (float)pos.first, (float)pos.second };
-
-					//					HitBox hb_new(IobjCon->objects.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-					//					IobjCon->objects.at(k)->SetHitBox(hb);
-					//					IobjCon->objects.at(k)->hitbox_visability = true;
-
-					//					std::ostringstream oss;
-					//					oss << "Поставлена вторая точка:\n" <<
-					//						"[x: " << secondPoint.x <<
-					//						"; y: " << secondPoint.y << "]\n";
-
-					//					AddLog(oss.str().c_str());
-
-					//					AddLog("Сохранение Hit-box:\n");
-
-					//					auto actual_hb = IobjCon->objects.at(k)->hitbox;
-
-					//					EngineFunctions::SetNewValue<float>(
-					//						IobjSelected,
-					//						"hb-ltx", actual_hb.GetCoordinates().x,
-					//						persCon->dataPath,
-					//						&applog
-					//						);
-
-					//					EngineFunctions::SetNewValue<float>(
-					//						IobjSelected,
-					//						"hb-lty", actual_hb.GetCoordinates().y,
-					//						persCon->dataPath,
-					//						&applog
-					//						);
-
-					//					EngineFunctions::SetNewValue<float>(
-					//						IobjSelected,
-					//						"hb-rbx", actual_hb.GetCoordinates().z,
-					//						persCon->dataPath,
-					//						&applog
-					//						);
-
-					//					EngineFunctions::SetNewValue<float>(
-					//						IobjSelected,
-					//						"hb-rby", actual_hb.GetCoordinates().w,
-					//						persCon->dataPath,
-					//						&applog
-					//						);
-
-					//					mouseHelpInfo = "";
-					//					SettedSecondPoint = true;
-					//				}
-					//			}
-					//			else if (SettedFirstPoint && SettedSecondPoint)
-					//			{
-					//				DrawingHitBox = false;
-					//				SettedFirstPoint = false;
-					//				SettedSecondPoint = false;
-
-					//				ImGui::GetStyle().Alpha = 1.0f;
-					//			}
-					//		}
-					//	}
-					//	/**************************************/
-
-					//	ImGui::Separator(); // Разделитель
-					//}
-					/*******************************************/
 
 					ImGui::EndChild();
 				}
@@ -2902,14 +2947,10 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 
 					ImGui::TableNextColumn();
 
-
-					int my_image_width = 0;
-					int my_image_height = 0;
-					ID3D11ShaderResourceView* my_texture = NULL;
-					bool ret = wnd->Gfx().LoadTextureFromFile("Icons/bmp_icon.bmp", &my_texture, &my_image_width, &my_image_height);
+					bool ret = wnd->Gfx().LoadTextureFromFile("Icons/bmp_icon.bmp", my_texture.GetAddressOf(), &my_image_width, &my_image_height);
 					IM_ASSERT(ret);
 
-					ImGui::Image((void*)my_texture, ImVec2(my_image_width, my_image_height));
+					ImGui::Image((void*)my_texture.Get(), ImVec2(my_image_width, my_image_height));
 
 					if (ImGui::IsItemClicked())
 					{

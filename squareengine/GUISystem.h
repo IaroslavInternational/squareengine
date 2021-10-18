@@ -14,10 +14,10 @@
 
 struct IobjData
 {
-	std::string name;
+	std::string		  name;
 	DirectX::XMFLOAT2 position;
-	size_t layer;
-	std::string pathToSprite;
+	size_t			  layer;
+	std::string		  pathToSprite;
 };
 
 class GUISystem
@@ -151,10 +151,12 @@ private:
 
 	/* Вспомагательные переменные для работы с контейнером объектов */
 
-	std::string IobjSelected = "";		// Имя выбранного объекта
-	bool        AddingIobj   = false;	//
-	bool        ChosingIobj  = false;	//
-	std::string IobjPath	 = "";		//
+	std::string		  IobjSelected		 = "";		// Имя выбранного объекта
+	std::string		  IobjPath			 = "";		//
+	bool			  AddingIobj		 = false;	//
+	bool			  ChosingIobj		 = false;	//
+	bool			  isCaclulatedDeltas = false;
+	DirectX::XMFLOAT2 hb_delta			 = { 0.0f, 0.0f };
 
 	/****************************************************************/
 
@@ -166,12 +168,14 @@ private:
 
 	/* Вспомагательные переменные для работы с объектом (база) */
 	
-	float scaleObj      = 1.0f;	// Множитель размера превью спрайта
-	bool  LoadingSprite = false;
-	bool  LoadedPreview = false;
-	int my_image_width = 0;
-	int my_image_height = 0;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> my_texture = NULL;
+	typedef Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ImageResource;
+
+	float         scaleObj        = 1.0f;	// Множитель размера превью спрайта
+	bool          LoadingSprite   = false;
+	bool          LoadedPreview   = false;
+	int           my_image_width  = 0;
+	int           my_image_height = 0;
+	ImageResource my_texture = NULL;
 
 	/***********************************************************/
 private:
