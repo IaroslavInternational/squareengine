@@ -1,10 +1,7 @@
 #pragma once
 
-#include "EngineConverter.h"
-
-#if IS_ENGINE_MODE
+#include "HitBox.h"
 #include "AppLog.h"
-#endif // IS_ENGINE_MODE
 
 #include <sstream>
 #include <fstream>
@@ -17,7 +14,6 @@ using namespace std::string_literals;
 // Специальные функции для движка
 namespace EngineFunctions
 {
-#if IS_ENGINE_MODE
 	/* 
 	Установить новое значение для параметра в файле .json
 	objectName - имя изменяемого объекта
@@ -28,10 +24,6 @@ namespace EngineFunctions
 	*/
 	template<typename T>
 	void static SetNewValue(std::string objectName, std::string param, T val, std::string path, AppLog* applog)
-#else
-	template<typename T>
-	void static SetNewValue(std::string objectName, std::string param, T val, std::string path)
-#endif // IS_ENGINE_MODE
 	{
 		// Открытие файла
 		std::ifstream dataFile(path);
@@ -40,12 +32,10 @@ namespace EngineFunctions
 			throw ("Не удаётся открыть файл с данными");
 		}
 
-#if IS_ENGINE_MODE
 		std::ostringstream ostrlog;
 		ostrlog << "Установка [" << param << " : " << val << "] " << "для [" << objectName << "]\n";
 
 		applog->AddLog(SYSTEM_LOG, ostrlog.str().c_str());
-#endif // IS_ENGINE_MODE
 
 		// Чтение файла
 		json j;
@@ -68,6 +58,37 @@ namespace EngineFunctions
 
 		// Закрытие файла
 		ostr.close();
+	}
+
+	void static SaveHitBoxData(std::string objectName, HitBox hitbox, std::string path, AppLog* applog)
+	{
+		EngineFunctions::SetNewValue<float>(
+			objectName,
+			"hb-ltx", hitbox.GetCoordinates().x,
+			path,
+			applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			objectName,
+			"hb-lty", hitbox.GetCoordinates().y,
+			path,
+			applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			objectName,
+			"hb-rbx", hitbox.GetCoordinates().z,
+			path,
+			applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			objectName,
+			"hb-rby", hitbox.GetCoordinates().w,
+			path,
+			applog
+			);
 	}
 
 	// Соеденить два объекта в одну строку через пробел

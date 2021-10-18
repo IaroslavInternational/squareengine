@@ -914,93 +914,15 @@ void GUISystem::ShowPersonControl()
 
 									if (DrawingHitBox)
 									{
-										if (!SettedFirstPoint)
+										auto new_hb = CreateNewHitBox();
+
+										if (new_hb.name != "empty")
 										{
-											mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+											persCon->persons.at(k)->SetHitBox(new_hb);
+											persCon->persons.at(k)->hitbox.visability = true;
 
-											if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-											{
-												auto pos = wnd->mouse.GetPos();
-												firstPoint = { (float)pos.first, (float)pos.second };
-
-												SettedFirstPoint = true;
-												std::ostringstream oss;
-												oss << "Поставлена первая точка:\n" <<
-													"[x: "  << firstPoint.x <<
-													"; y: " << firstPoint.y << "]\n";
-
-												AddLog(oss.str().c_str());
-											}
-										}
-										else if (!SettedSecondPoint)
-										{
-											mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
-
-											int ms_posX = wnd->mouse.GetPosX();
-											int ms_posY = wnd->mouse.GetPosY();
-
-											HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-											wnd->Gfx().DrawHitBox(hb);
-
-											if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-											{
-												auto pos = wnd->mouse.GetPos();
-												secondPoint = { (float)pos.first, (float)pos.second };
-
-												HitBox hb_new(persCon->persons.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-												persCon->persons.at(k)->SetHitBox(hb);
-												persCon->persons.at(k)->hitbox.visability = true;
-
-												std::ostringstream oss;
-												oss << "Поставлена вторая точка:\n" <<
-													"[x: "  << secondPoint.x <<
-													"; y: " << secondPoint.y << "]\n";
-
-												AddLog(oss.str().c_str());
-
-												AddLog("Сохранение Hit-box:\n");
-
-												auto actual_hb = persCon->persons.at(k)->hitbox;
-
-												EngineFunctions::SetNewValue<float>(
-													personSelected,
-													"hb-ltx", actual_hb.GetCoordinates().x,
-													persCon->dataPath,
-													&applog
-													);
-
-												EngineFunctions::SetNewValue<float>(
-													personSelected,
-													"hb-lty", actual_hb.GetCoordinates().y,
-													persCon->dataPath,
-													&applog
-													);
-
-												EngineFunctions::SetNewValue<float>(
-													personSelected,
-													"hb-rbx", actual_hb.GetCoordinates().z,
-													persCon->dataPath,
-													&applog
-													);
-
-												EngineFunctions::SetNewValue<float>(
-													personSelected,
-													"hb-rby", actual_hb.GetCoordinates().w,
-													persCon->dataPath,
-													&applog
-													);
-
-												mouseHelpInfo = "";
-												SettedSecondPoint = true;
-											}
-										}
-										else if (SettedFirstPoint && SettedSecondPoint)
-										{
-											DrawingHitBox = false;
-											SettedFirstPoint = false;
-											SettedSecondPoint = false;
-
-											ImGui::GetStyle().Alpha = 1.0f;
+											AddLog("Сохранение Hit-box:\n");
+											EngineFunctions::SaveHitBoxData(personSelected, persCon->persons.at(k)->hitbox, persCon->dataPath, &applog);
 										}
 									}
 								}
@@ -1061,6 +983,12 @@ void GUISystem::ShowPersonControl()
 										);
 
 									/*******************************/
+
+									/* Пересохранение hitbox */
+									
+									EngineFunctions::SaveHitBoxData(personSelected, persCon->persons.at(k)->hitbox, persCon->dataPath, &applog);
+
+									/*************************/
 
 									SavingSettings = false;
 								}
@@ -1197,93 +1125,15 @@ void GUISystem::ShowMainPersonControl()
 
 							if (DrawingHitBox)
 							{
-								if (!SettedFirstPoint)
+								auto new_hb = CreateNewHitBox();
+
+								if (new_hb.name != "empty")
 								{
-									mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+									hero->SetHitBox(new_hb);
+									hero->hitbox.visability = true;
 
-									if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-									{
-										auto pos = wnd->mouse.GetPos();
-										firstPoint = { (float)pos.first, (float)pos.second };
-
-										SettedFirstPoint = true;
-										std::ostringstream oss;
-										oss << "Поставлена первая точка:\n" <<
-											"[x: " << firstPoint.x <<
-											"; y: " << firstPoint.y << "]\n";
-
-										AddLog(oss.str().c_str());
-									}
-								}
-								else if (!SettedSecondPoint)
-								{
-									mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
-
-									int ms_posX = wnd->mouse.GetPosX();
-									int ms_posY = wnd->mouse.GetPosY();
-
-									HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-									wnd->Gfx().DrawHitBox(hb);
-
-									if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-									{
-										auto pos = wnd->mouse.GetPos();
-										secondPoint = { (float)pos.first, (float)pos.second };
-
-										HitBox hb_new(hero->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-										hero->SetHitBox(hb);
-										hero->hitbox.visability = true;
-
-										std::ostringstream oss;
-										oss << "Поставлена вторая точка:\n" <<
-											"[x: " << secondPoint.x <<
-											"; y: " << secondPoint.y << "]\n";
-
-										AddLog(oss.str().c_str());
-
-										AddLog("Сохранение Hit-box:\n");
-
-										auto actual_hb = hero->hitbox;
-
-										EngineFunctions::SetNewValue<float>(
-											hero->name,
-											"hb-ltx", actual_hb.GetCoordinates().x,
-											hero->dataPath,
-											&applog
-											);
-
-										EngineFunctions::SetNewValue<float>(
-											hero->name,
-											"hb-lty", actual_hb.GetCoordinates().y,
-											hero->dataPath,
-											&applog
-											);
-
-										EngineFunctions::SetNewValue<float>(
-											hero->name,
-											"hb-rbx", actual_hb.GetCoordinates().z,
-											hero->dataPath,
-											&applog
-											);
-
-										EngineFunctions::SetNewValue<float>(
-											hero->name,
-											"hb-rby", actual_hb.GetCoordinates().w,
-											hero->dataPath,
-											&applog
-											);
-
-										mouseHelpInfo = "";
-										SettedSecondPoint = true;
-									}
-								}
-								else if (SettedFirstPoint && SettedSecondPoint)
-								{
-									DrawingHitBox = false;
-									SettedFirstPoint = false;
-									SettedSecondPoint = false;
-
-									ImGui::GetStyle().Alpha = 1.0f;
+									AddLog("Сохранение Hit-box:\n");
+									EngineFunctions::SaveHitBoxData(heroSelected, hero->hitbox, hero->dataPath, &applog);
 								}
 							}
 						}
@@ -1356,33 +1206,7 @@ void GUISystem::ShowMainPersonControl()
 
 							auto actual_hb = hero->hitbox;
 
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"hb-ltx", actual_hb.GetCoordinates().x,
-								hero->dataPath,
-								&applog
-								);
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"hb-lty", actual_hb.GetCoordinates().y,
-								hero->dataPath,
-								&applog
-								);
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"hb-rbx", actual_hb.GetCoordinates().z,
-								hero->dataPath,
-								&applog
-								);
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"hb-rby", actual_hb.GetCoordinates().w,
-								hero->dataPath,
-								&applog
-								);
+							EngineFunctions::SaveHitBoxData(heroSelected, actual_hb, hero->dataPath, &applog);
 
 							/*************************/
 
@@ -2585,93 +2409,17 @@ void GUISystem::ShowIobjControl()
 
 									if (DrawingHitBox)
 									{
-										if (!SettedFirstPoint)
+										auto new_hb = CreateNewHitBox();
+
+										if (new_hb.name != "empty")
 										{
-											mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+											IobjCon->objects.at(k)->SetHitBox(new_hb);
+											IobjCon->objects.at(k)->hitbox.visability = true;
 
-											if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-											{
-												auto pos = wnd->mouse.GetPos();
-												firstPoint = { (float)pos.first, (float)pos.second };
-
-												SettedFirstPoint = true;
-												std::ostringstream oss;
-												oss << "Поставлена первая точка:\n" <<
-													"[x: " << firstPoint.x <<
-													"; y: " << firstPoint.y << "]\n";
-
-												AddLog(oss.str().c_str());
-											}
-										}
-										else if (!SettedSecondPoint)
-										{
-											mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
-
-											int ms_posX = wnd->mouse.GetPosX();
-											int ms_posY = wnd->mouse.GetPosY();
-
-											HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-											wnd->Gfx().DrawHitBox(hb);
-
-											if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-											{
-												auto pos = wnd->mouse.GetPos();
-												secondPoint = { (float)pos.first, (float)pos.second };
-
-												HitBox hb_new(IobjCon->objects.at(k)->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-												IobjCon->objects.at(k)->SetHitBox(hb);
-												IobjCon->objects.at(k)->hitbox.visability = true;
-
-												std::ostringstream oss;
-												oss << "Поставлена вторая точка:\n" <<
-													"[x: " << secondPoint.x <<
-													"; y: " << secondPoint.y << "]\n";
-
-												AddLog(oss.str().c_str());
-
-												AddLog("Сохранение Hit-box:\n");
-
-												auto actual_hb = IobjCon->objects.at(k)->hitbox;
-
-												EngineFunctions::SetNewValue<float>(
-													IobjSelected,
-													"hb-ltx", IobjCon->objects.at(k)->hitbox.coordinates.x,
-													IobjCon->dataPath,
-													&applog
-													);
-
-												EngineFunctions::SetNewValue<float>(
-													IobjSelected,
-													"hb-lty", IobjCon->objects.at(k)->hitbox.coordinates.y,
-													IobjCon->dataPath,
-													&applog
-													);
-
-												EngineFunctions::SetNewValue<float>(
-													IobjSelected,
-													"hb-rbx", IobjCon->objects.at(k)->hitbox.coordinates.z,
-													IobjCon->dataPath,
-													&applog
-													);
-
-												EngineFunctions::SetNewValue<float>(
-													IobjSelected,
-													"hb-rby", IobjCon->objects.at(k)->hitbox.coordinates.w,
-													IobjCon->dataPath,
-													&applog
-													);
-
-												mouseHelpInfo = "";
-												SettedSecondPoint = true;
-											}
-										}
-										else if (SettedFirstPoint && SettedSecondPoint)
-										{
-											DrawingHitBox = false;
-											SettedFirstPoint = false;
-											SettedSecondPoint = false;
-
-											ImGui::GetStyle().Alpha = 1.0f;
+											AddLog("Сохранение Hit-box:\n");
+											EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
+										
+											isCaclulatedDeltas = false;
 										}
 									}
 								}
@@ -2708,33 +2456,7 @@ void GUISystem::ShowIobjControl()
 										&applog
 										);
 
-									EngineFunctions::SetNewValue<float>(
-										IobjSelected,
-										"hb-ltx", IobjCon->objects.at(k)->hitbox.coordinates.x,
-										IobjCon->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<float>(
-										IobjSelected,
-										"hb-lty", IobjCon->objects.at(k)->hitbox.coordinates.y,
-										IobjCon->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<float>(
-										IobjSelected,
-										"hb-rbx", IobjCon->objects.at(k)->hitbox.coordinates.z,
-										IobjCon->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<float>(
-										IobjSelected,
-										"hb-rby", IobjCon->objects.at(k)->hitbox.coordinates.w,
-										IobjCon->dataPath,
-										&applog
-										);
+									EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
 
 									SavingSettings = false;
 								}
@@ -3042,6 +2764,68 @@ std::optional<IobjData> GUISystem::ShowAddingIobjDialog()
 	ImGui::PopStyleColor();
 
 	return data;
+}
+
+HitBox GUISystem::CreateNewHitBox()
+{
+	HitBox hb_new("empty", 0.0f, 0.0f, 0.0f, 0.0f);
+
+	if (!SettedFirstPoint)
+	{
+		mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			auto pos = wnd->mouse.GetPos();
+			firstPoint = { (float)pos.first, (float)pos.second };
+
+			SettedFirstPoint = true;
+			std::ostringstream oss;
+			oss << "Поставлена первая точка:\n" <<
+				"[x: " << firstPoint.x <<
+				"; y: " << firstPoint.y << "]\n";
+
+			AddLog(oss.str().c_str());
+		}
+	}
+	else if (!SettedSecondPoint)
+	{
+		mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+		int ms_posX = wnd->mouse.GetPosX();
+		int ms_posY = wnd->mouse.GetPosY();
+
+		HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+		wnd->Gfx().DrawHitBox(hb);
+
+		if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+		{
+			auto pos = wnd->mouse.GetPos();
+			secondPoint = { (float)pos.first, (float)pos.second };
+
+			hb_new = HitBox(hero->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+
+			std::ostringstream oss;
+			oss << "Поставлена вторая точка:\n" <<
+				"[x: " << secondPoint.x <<
+				"; y: " << secondPoint.y << "]\n";
+
+			AddLog(oss.str().c_str());
+
+			mouseHelpInfo = "";
+			SettedSecondPoint = true;
+		}
+	}
+	else if (SettedFirstPoint && SettedSecondPoint)
+	{
+		SettedFirstPoint = false;
+		SettedSecondPoint = false;
+		DrawingHitBox = false;
+
+		ImGui::GetStyle().Alpha = 1.0f;
+	}
+
+	return hb_new;
 }
 
 void GUISystem::ShowCameraControl()

@@ -75,7 +75,8 @@ private:
 	void					SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath);
 	std::string				ShowLoadingSpriteDilaog();
 	std::optional<IobjData> ShowAddingIobjDialog();
-	
+	HitBox CreateNewHitBox();
+
 	/*******************************************/
 private:
 	/* Переменные видимости панелей */
