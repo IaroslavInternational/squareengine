@@ -1074,6 +1074,7 @@ void GUISystem::ShowMainPersonControl()
 					bool speedDirty = false;	// Котнроль скорости
 					bool a_hdDirty = false;		// Котнроль скорости анимации
 					bool a_sDirty = false;		// Котнроль анимации
+					bool a_sizeDirty = false;		// Котнроль анимации
 
 					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
 
@@ -1170,16 +1171,39 @@ void GUISystem::ShowMainPersonControl()
 
 						if (animSelected != "")
 						{
-							ImGui::SliderInt("Кадр", &hero->animations[animSelectedId].iCurFrame, 0, hero->animations[animSelectedId].frames.size());
-							dcheck(ImGui::SliderFloat("Размер кадра", &scaleFrame, 1.0f, 20.0f, "%.4f"), a_sDirty);
 
+							ImGui::SliderInt("Кадр", &hero->animations[animSelectedId].iCurFrame, 0, hero->animations[animSelectedId].frames.size());							
+							dcheck(ImGui::SliderFloat("Превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
+
+							currentFrameIdx = hero->animations[animSelectedId].iCurFrame;
+
+							curAnimW = (float)hero->animations[animSelectedId].width;
+							curAnimH = (float)hero->animations[animSelectedId].height;
+
+							previewSize = ImVec2(
+								curAnimW * scaleFrame,
+								curAnimH * scaleFrame
+							);
+
+							ltNormPixel = ImVec2(
+								curAnimW + curAnimW * currentFrameIdx,
+								curAnimH * animSelectedId
+								);
+						
+							rtNormPixel = ImVec2(
+								2.0f * curAnimW + curAnimW * currentFrameIdx,
+									   curAnimH + curAnimH * animSelectedId
+							);
+
+							ltNormPixel.x /= my_image_width;
+							ltNormPixel.y /= my_image_height;	
+							rtNormPixel.x /= my_image_width;
+							rtNormPixel.y /= my_image_height;
 
 							ImGui::Image((void*)my_texture.Get(),
-								ImVec2(90.0f * scaleFrame, 90.0f * scaleFrame),
-								ImVec2(90.0f  / my_image_width + 90.0f * hero->animations[animSelectedId].iCurFrame / my_image_width,
-									   0.0f),
-								ImVec2(180.0f / my_image_width + 90.0f * hero->animations[animSelectedId].iCurFrame / my_image_width,
-									   90.0f  / my_image_height));
+								previewSize,
+								ltNormPixel,
+								rtNormPixel);
 						}
 
 						ImGui::NewLine();

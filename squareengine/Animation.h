@@ -26,4 +26,6 @@ private:
 	float holdTime;
 	float curFrameTime = 0.0f;
 	std::string name;
+	int width;
+	int height;
 };

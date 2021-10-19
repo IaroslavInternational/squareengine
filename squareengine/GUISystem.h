@@ -183,10 +183,17 @@ private:
 	
 	/* ¬спомагательные переменные дл€ работы с анимацией */
 	
-	float       scaleFrame     = 1.0f;	// ћножитель размера превью спрайта
-	std::string animSelected   = "";
-	size_t		animSelectedId = 0;
-	int			curFrame	   = 0;
+	float       scaleFrame      = 1.0f;	// ћножитель размера превью спрайта
+	std::string animSelected    = "";
+	size_t		animSelectedId  = 0;
+	int			curFrame	    = 0;
+	int			animFrameSize[2];
+	int currentFrameIdx = 0;
+	float curAnimW = 0.0f;
+	float curAnimH = 0.0f;
+	ImVec2 previewSize;
+	ImVec2 ltNormPixel;
+	ImVec2 rtNormPixel;
 
 	/*****************************************************/
 private:

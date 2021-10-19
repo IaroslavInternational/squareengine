@@ -6,7 +6,9 @@ Animation::Animation( int x,int y,int width,int height,int count,
 	sprite( sprite ),
 	holdTime( holdTime ),
 	chroma( chroma ),
-	name(name)
+	name(name),
+	width(width),
+    height(height)
 {
 	for( int i = 0; i < count; i++ )
 	{

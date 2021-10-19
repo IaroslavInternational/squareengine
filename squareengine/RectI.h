@@ -5,6 +5,8 @@
 class RectI
 {
 public:
+	friend class GUISystem;
+public:
 	RectI() = default;
 	RectI( int left_in,int right_in,int top_in,int bottom_in );
 	RectI( const Vei2& topLeft,const Vei2& bottomRight );
