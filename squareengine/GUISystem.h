@@ -75,7 +75,8 @@ private:
 	void					SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath);
 	std::string				ShowLoadingSpriteDilaog();
 	std::optional<IobjData> ShowAddingIobjDialog();
-	HitBox CreateNewHitBox();
+	HitBox					CreateNewHitBox();
+	void					ShowPersonAnimWindow();
 
 	/*******************************************/
 private:
@@ -179,6 +180,15 @@ private:
 	ImageResource my_texture = NULL;
 
 	/***********************************************************/
+	
+	/* ¬спомагательные переменные дл€ работы с анимацией */
+	
+	float       scaleFrame     = 1.0f;	// ћножитель размера превью спрайта
+	std::string animSelected   = "";
+	size_t		animSelectedId = 0;
+	int			curFrame	   = 0;
+
+	/*****************************************************/
 private:
 	/* ¬спомагательные переменные дл€ отображени€ FPS */
 

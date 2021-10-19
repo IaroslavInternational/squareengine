@@ -1,11 +1,12 @@
 #include "Animation.h"
 
 Animation::Animation( int x,int y,int width,int height,int count,
-					  const Surface2D& sprite,float holdTime,Color chroma )
+					  const Surface2D& sprite, float holdTime, std::string name, Color chroma )
 	:
 	sprite( sprite ),
 	holdTime( holdTime ),
-	chroma( chroma )
+	chroma( chroma ),
+	name(name)
 {
 	for( int i = 0; i < count; i++ )
 	{

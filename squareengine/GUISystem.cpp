@@ -547,7 +547,7 @@ void GUISystem::ShowGPU()
 
 			if (ImGui::TreeNode(name_gpu))
 			{
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(133.0f / 255.0f, 219.0f / 255.0f, 15.0f / 255, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.52f, 0.85f, 0.059, 1.0f));
 				ImGui::Text("Память: ~%.1f ГБ", d.second);
 				ImGui::PopStyleColor();
 				ImGui::TreePop();
@@ -1072,6 +1072,8 @@ void GUISystem::ShowMainPersonControl()
 
 					bool effDirty = false;		// Котнроль эффекта
 					bool speedDirty = false;	// Котнроль скорости
+					bool a_hdDirty = false;		// Котнроль скорости анимации
+					bool a_sDirty = false;		// Котнроль анимации
 
 					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
 
@@ -1137,18 +1139,68 @@ void GUISystem::ShowMainPersonControl()
 								}
 							}
 						}
+						/**************************************/
 
 						ImGui::Separator(); // Разделитель
 					}
 
-					/**************************************/
+					/****************************************************/
+
+					/* Элементы управления анимацией главного персонажа */
+					
+					if (ImGui::CollapsingHeader("Анимации"))
+					{
+						std::ostringstream str;
+						str << "Кол-во анимаций: " << hero->animations.size();						
+						ImGui::Text(str.str().c_str());
+						
+						if (ImGui::BeginCombo("Анимация", animSelected.c_str()))
+						{
+							for (size_t i = 0; i < hero->animations.size(); i++)
+							{
+								if (ImGui::Selectable(hero->animations[i].name.c_str(), animSelected == hero->animations[i].name))
+								{
+									animSelected = hero->animations[i].name;
+									animSelectedId = i;
+								}
+							}
+
+							ImGui::EndCombo();
+						}
+
+						if (animSelected != "")
+						{
+							ImGui::SliderInt("Кадр", &hero->animations[animSelectedId].iCurFrame, 0, hero->animations[animSelectedId].frames.size());
+							dcheck(ImGui::SliderFloat("Размер кадра", &scaleFrame, 1.0f, 20.0f, "%.4f"), a_sDirty);
+
+
+							ImGui::Image((void*)my_texture.Get(),
+								ImVec2(90.0f * scaleFrame, 90.0f * scaleFrame),
+								ImVec2(90.0f  / my_image_width + 90.0f * hero->animations[animSelectedId].iCurFrame / my_image_width,
+									   0.0f),
+								ImVec2(180.0f / my_image_width + 90.0f * hero->animations[animSelectedId].iCurFrame / my_image_width,
+									   90.0f  / my_image_height));
+						}
+
+						ImGui::NewLine();
+
+						dcheck(ImGui::SliderFloat("Задержка", &hero->animations[animSelectedId].holdTime, 0.01f, 1.0f), a_hdDirty);
+						
+						ImGui::Separator();
+					}
 
 					/****************************************************/
 
+					/* Элементы управления камерой главного персонажа */
+					
 					if (ImGui::CollapsingHeader("Камера"))
 					{
 						ShowCameraControl();
+
+						ImGui::Separator();
 					}
+
+					/**************************************************/
 
 					ImGui::NewLine();
 					ImGui::NewLine();
@@ -2672,7 +2724,7 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 					bool ret = wnd->Gfx().LoadTextureFromFile("Icons/bmp_icon.bmp", my_texture.GetAddressOf(), &my_image_width, &my_image_height);
 					IM_ASSERT(ret);
 
-					ImGui::Image((void*)my_texture.Get(), ImVec2(my_image_width, my_image_height));
+					ImGui::Image((void*)my_texture.Get(), ImVec2((float)my_image_width, (float)my_image_height));
 
 					if (ImGui::IsItemClicked())
 					{

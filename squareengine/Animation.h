@@ -8,7 +8,9 @@
 class Animation
 {
 public:
-	Animation( int x,int y,int width,int height,int count,const Surface2D& sprite,float holdTime,Color chroma = Colors::Magenta );
+	friend class GUISystem;
+public:
+	Animation( int x,int y,int width,int height,int count,const Surface2D& sprite,float holdTime, std::string name, Color chroma = Colors::Magenta);
 	void Draw(DirectX::XMFLOAT2 coordinates,Graphics& gfx ) const;
 	void Draw(DirectX::XMFLOAT2 coordinates,Graphics& gfx,const RectI& clip ) const;
 	// this version of draw replaces all opaque pixels with specified color
@@ -23,4 +25,5 @@ private:
 	int iCurFrame = 0;
 	float holdTime;
 	float curFrameTime = 0.0f;
+	std::string name;
 };

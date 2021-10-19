@@ -87,7 +87,7 @@ void Physics::PhysicsEngine::Draw(Graphics& gfx)
 		{
 			if (l.IsVisible())
 			{
-				gfx.DrawLine(l.GetStartPoint(), l.GetEndPoint(), Color(lineColor[0] * 255.0f, lineColor[1] * 255.0f, lineColor[2] * 255.0f));
+				gfx.DrawLine(l.GetStartPoint(), l.GetEndPoint(), Color(char(lineColor[0] * 255.0f), char(lineColor[1] * 255.0f), char(lineColor[2] * 255.0f)));
 			}
 		}
 
@@ -95,7 +95,7 @@ void Physics::PhysicsEngine::Draw(Graphics& gfx)
 		{
 			if (hb.IsVisible())
 			{
-				gfx.DrawHitBox(hb, Color(hbColor[0] * 255.0f, hbColor[1] * 255.0f, hbColor[2] * 255.0f));
+				gfx.DrawHitBox(hb, Color(char(hbColor[0] * 255.0f), char(hbColor[1] * 255.0f), char(hbColor[2] * 255.0f)));
 			}
 		}
 	}

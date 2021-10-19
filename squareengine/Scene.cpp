@@ -63,13 +63,13 @@ void Scene::Render(float dt)
 	/* Отрисовка */
 
 	wnd->Gfx().BeginFrame();	// Начало кадра
-	
-	gui.Show();
 
 	objQueue.Draw(wnd->Gfx());
 	
 	phEngine->Draw(wnd->Gfx());
 	
+	gui.Show();
+
 	wnd->Gfx().EndFrame();		// Конец кадра
 
 	/*************/

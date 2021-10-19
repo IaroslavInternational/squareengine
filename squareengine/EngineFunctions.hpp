@@ -23,7 +23,7 @@ namespace EngineFunctions
 	Applog - указатель на лог
 	*/
 	template<typename T>
-	void static SetNewValue(std::string objectName, std::string param, T val, std::string path, AppLog* applog)
+	inline void static SetNewValue(std::string objectName, std::string param, T val, std::string path, AppLog* applog)
 	{
 		// Открытие файла
 		std::ifstream dataFile(path);
@@ -60,7 +60,7 @@ namespace EngineFunctions
 		ostr.close();
 	}
 
-	void static SaveHitBoxData(std::string objectName, HitBox hitbox, std::string path, AppLog* applog)
+	inline void static SaveHitBoxData(std::string objectName, HitBox hitbox, std::string path, AppLog* applog)
 	{
 		EngineFunctions::SetNewValue<float>(
 			objectName,
@@ -93,7 +93,7 @@ namespace EngineFunctions
 
 	// Соеденить два объекта в одну строку через пробел
 	template <typename T>
-	std::string static AttachStrings(T str1, T str2) 
+	inline std::string static AttachStrings(T str1, T str2)
 	{
 		std::ostringstream oss;
 		oss << str1 << " " << str2;
@@ -102,7 +102,7 @@ namespace EngineFunctions
 	}
 
 	// Удаление объекта из файла json
-	void static DeleteJsonObject(std::string objectName, std::string path)
+	inline void static DeleteJsonObject(std::string objectName, std::string path)
 	{
 		// Открытие файла
 		std::ifstream dataFile(path);
