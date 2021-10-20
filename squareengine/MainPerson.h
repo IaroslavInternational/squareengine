@@ -26,6 +26,7 @@ public:
 public:
 	/* Главные методы для взаимодействия с главным персонажем */
 	
+	void   Translate(DirectX::XMFLOAT2 delta);
 	void   AllowMoveUp();
 	void   AllowMoveDown();
 	void   AllowMoveLeft();

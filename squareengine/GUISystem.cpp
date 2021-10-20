@@ -10,14 +10,16 @@ GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 					 PersonContainer*						 persCon,
 					 InteractableObject2DContainer*			 Iobj,
 					 ObjectsQueue*							 objQueue,
-					 std::shared_ptr<Physics::PhysicsEngine> phEngPtr)
+					 std::shared_ptr<Physics::PhysicsEngine> phEngPtr,
+					 std::shared_ptr<Camera>				 camera)
 	:
 	wnd(wnd),
 	hero(hero),
 	persCon(persCon),
 	IobjCon(Iobj),
 	objQueue(objQueue),
-	phEngPtr(phEngPtr)
+	phEngPtr(phEngPtr),
+	camera(camera)
 {
 	SetGUIColors();
 
@@ -449,6 +451,11 @@ void GUISystem::ShowOptionalPanel()
 	if (ShowLayersSettings)
 	{
 		ShowLayersControl();
+	}
+
+	if (ShowCameraSettings)
+	{
+		ShowCameraControl();
 	}
 
 	if (mouseHelpInfo == "")
@@ -1175,7 +1182,9 @@ void GUISystem::ShowMainPersonControl()
 							ImGui::SliderInt("Кадр", &hero->animations[animSelectedId].iCurFrame, 0, hero->animations[animSelectedId].frames.size());							
 							dcheck(ImGui::SliderFloat("Превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
 
-							currentFrameIdx = hero->animations[animSelectedId].iCurFrame;
+							ImGui::NewLine();
+
+							curFrame = hero->animations[animSelectedId].iCurFrame;
 
 							curAnimW = (float)hero->animations[animSelectedId].width;
 							curAnimH = (float)hero->animations[animSelectedId].height;
@@ -1186,21 +1195,23 @@ void GUISystem::ShowMainPersonControl()
 							);
 
 							ltNormPixel = ImVec2(
-								curAnimW + curAnimW * currentFrameIdx,
+								curAnimW + curAnimW * curFrame,
 								curAnimH * animSelectedId
 								);
 						
 							rtNormPixel = ImVec2(
-								2.0f * curAnimW + curAnimW * currentFrameIdx,
+								2.0f * curAnimW + curAnimW * curFrame,
 									   curAnimH + curAnimH * animSelectedId
 							);
 
-							ltNormPixel.x /= my_image_width;
-							ltNormPixel.y /= my_image_height;	
-							rtNormPixel.x /= my_image_width;
-							rtNormPixel.y /= my_image_height;
+							ltNormPixel.x /= sprite_width;
+							ltNormPixel.y /= sprite_height;	
+							rtNormPixel.x /= sprite_width;
+							rtNormPixel.y /= sprite_height;
 
-							ImGui::Image((void*)my_texture.Get(),
+							ImGui::Text("Превью:");
+
+							ImGui::Image((void*)loadedSprite.Get(),
 								previewSize,
 								ltNormPixel,
 								rtNormPixel);
@@ -1219,7 +1230,7 @@ void GUISystem::ShowMainPersonControl()
 					
 					if (ImGui::CollapsingHeader("Камера"))
 					{
-						ShowCameraControl();
+						SpawnCameraToHeroControl();
 
 						ImGui::Separator();
 					}
@@ -2592,7 +2603,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 	{
 		if (!LoadedPreview)
 		{
-			bool ret = wnd->Gfx().LoadTextureFromFile(obj->image.GetFileName().c_str(), my_texture.GetAddressOf(), &my_image_width, &my_image_height);
+			bool ret = wnd->Gfx().LoadTextureFromFile(obj->image.GetFileName().c_str(), loadedSprite.GetAddressOf(), &sprite_width, &sprite_height);
 			IM_ASSERT(ret);
 
 			LoadedPreview = true;
@@ -2600,7 +2611,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 		dcheck(ImGui::SliderFloat("Размер", &scaleObj, 0.1f, 20.0f, "%.4f"), scaleDirty);
 		
-		ImGui::Image((void*)my_texture.Get(), ImVec2(my_image_width * scaleObj, my_image_height * scaleObj));
+		ImGui::Image((void*)loadedSprite.Get(), ImVec2(sprite_width * scaleObj, sprite_height * scaleObj));
 
 		ImGui::Separator();	// Разделитель
 
@@ -2745,10 +2756,10 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 
 					ImGui::TableNextColumn();
 
-					bool ret = wnd->Gfx().LoadTextureFromFile("Icons/bmp_icon.bmp", my_texture.GetAddressOf(), &my_image_width, &my_image_height);
+					bool ret = wnd->Gfx().LoadTextureFromFile("Icons/bmp_icon.bmp", loadedSprite.GetAddressOf(), &sprite_width, &sprite_height);
 					IM_ASSERT(ret);
 
-					ImGui::Image((void*)my_texture.Get(), ImVec2((float)my_image_width, (float)my_image_height));
+					ImGui::Image((void*)loadedSprite.Get(), ImVec2((float)sprite_width, (float)sprite_height));
 
 					if (ImGui::IsItemClicked())
 					{
@@ -2905,6 +2916,83 @@ HitBox GUISystem::CreateNewHitBox()
 }
 
 void GUISystem::ShowCameraControl()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 DispSize = io.DisplaySize;
+
+	ImVec2 PanelSize = ImVec2(
+		round(DispSize.x * 0.3f),
+			  DispSize.y * 0.5f
+	);
+
+	ImGui::SetNextWindowSize(PanelSize);
+	if (ImGui::Begin("Камера", &ShowCameraSettings, ImGuiWindowFlags_NoResize))
+	{
+		/* Переменные управления сбросом интерфейса */
+
+		bool posDirty = false;	 // Контроль позиции
+		bool speedDirty = false; // Контроль скорости
+
+		const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+		/********************************************/
+
+		if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text("Текущая позиция:");
+			std::ostringstream cPos;
+			cPos << "X: " << camera->position.x << " Y: " << camera->position.y;
+			ImGui::Text(cPos.str().c_str());
+
+			ImGui::Text("Исходная позиция:");
+			dcheck(ImGui::SliderFloat("X", &camera->initPosition.x, -1000.0f, 1000.0f), posDirty);
+			dcheck(ImGui::SliderFloat("Y", &camera->initPosition.y, -1000.0f, 1000.0f), posDirty);
+
+			if (ImGui::Button("Вернуть на исходную позицию"))
+			{
+				AddLog("Возвращение камеры на исходную позицию...\n");
+				camera->SetPosition(camera->initPosition);
+
+				std::ostringstream str;
+				str << "Камера установлена по кординатам: " << "X: " << camera->position.x << " Y: " << camera->position.y << "\n";
+				AddLog(str.str().c_str());
+			}					   
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::CollapsingHeader("Перемещение"))
+		{
+			ImGui::Checkbox("No-clip", &camera->noclip);
+			dcheck(ImGui::SliderFloat("Скорость No-clip", &camera->noclipSpeed, 1.0f, 1000.0f), speedDirty);
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::CollapsingHeader("Взаимодействие с игроком"))
+		{
+			SpawnCameraToHeroControl();
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::Button("Сохранить"))
+		{
+			SavingLayersSettings = true;
+		}
+
+		if (SavingLayersSettings)
+		{
+			
+
+			SavingLayersSettings = false;
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::SpawnCameraToHeroControl()
 {
 	if (ImGui::Button("Фиксировать мир"))
 	{

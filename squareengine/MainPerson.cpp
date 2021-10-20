@@ -209,6 +209,14 @@ void MainPerson::ActivateEffect()
 
 /* Главные методы для взаимодействия с главным персонажем */
 
+void MainPerson::Translate(DirectX::XMFLOAT2 delta)
+{
+	position.x += delta.x;
+	position.y += delta.y;
+
+	hitbox.Translate(delta);
+}
+
 void MainPerson::AllowMoveUp()
 {
 	AllowedMovingUp = true;

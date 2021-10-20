@@ -28,7 +28,8 @@ public:
 			  PersonContainer*						  persCon,
 			  InteractableObject2DContainer*		  Iobj,
 			  ObjectsQueue*							  objQueue,
-			  std::shared_ptr<Physics::PhysicsEngine> phEngPtr);
+			  std::shared_ptr<Physics::PhysicsEngine> phEngPtr,
+			  std::shared_ptr<Camera>);
 public:
 	/* Главные методы для отрисовки интерфейса */
 	
@@ -68,7 +69,7 @@ private:
 	void					ShowMainPersonControl();		// Показать настройки для главного персонажа
 	void					ShowPhysicsEngineObjList();		// Показать список объектов в физическом движке
 	void					ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
-	void					ShowCameraControl();			// Показать настройки для камеры
+	void					SpawnCameraToHeroControl();			// Показать настройки для камеры
 	void					ShowLayersControl();			// Показать панель настроек слоёв
 	void					ShowIobjList();
 	void					ShowIobjControl();
@@ -76,7 +77,7 @@ private:
 	std::string				ShowLoadingSpriteDilaog();
 	std::optional<IobjData> ShowAddingIobjDialog();
 	HitBox					CreateNewHitBox();
-	void					ShowPersonAnimWindow();
+	void					ShowCameraControl();
 
 	/*******************************************/
 private:
@@ -98,13 +99,15 @@ private:
 	bool ShowLayersSettings			  = false;	// Показать панель настроек слоёв
 	bool ShowIobjEnum				  = true;	//
 	bool ShowIobjSettings			  = true;	//
-	
+	bool ShowCameraSettings			  = true;
+
 	/********************************/
 private:
 	/* Системные переменные */
 	
 	std::shared_ptr<Window>					wnd;		// Указатель на окно отрисовки
 	std::shared_ptr<Physics::PhysicsEngine> phEngPtr;	// Указатель на физический движок
+	std::shared_ptr<Camera>					camera;
 	std::map<std::wstring, double>			gpu_desc;	// Описание графических адаптеров [first - имя, second - объём памяти]
 	AppLog									applog;		// Лог
 
@@ -130,19 +133,19 @@ private:
 	DirectX::XMFLOAT2 secondPoint;					// Координаты второй точки изменяемого объекта
 
 	/*********************************************/
-
+private:
 	/* Вспомагательные переменные для работы с главным персонажем */
 
 	std::string heroSelected = "";	// Имя выбранного главного персонажа
 
 	/**************************************************************/
-
+private:
 	/* Вспомагательные переменные для работы с контейнером персонажей */
 	
 	std::string personSelected = "";	// Имя выбранного персонажа
 
 	/******************************************************************/
-
+private:
 	/* Вспомагательные переменные для работы с физическим движком */
 
 	std::string objectSelected = "";	// Имя выбранного объекта из физического движка
@@ -150,7 +153,7 @@ private:
 	float		sq_l		   = 0.0f;	// Сторона квадрата для hitbox
 
 	/**************************************************************/
-
+private:
 	/* Вспомагательные переменные для работы с контейнером объектов */
 
 	std::string		  IobjSelected		 = "";		// Имя выбранного объекта
@@ -161,13 +164,13 @@ private:
 	DirectX::XMFLOAT2 hb_delta			 = { 0.0f, 0.0f };
 
 	/****************************************************************/
-
+private:
 	/* Вспомагательные переменные для работы со слоями */
 
 	bool SavingLayersSettings = false;
 
 	/***************************************************/
-
+private:
 	/* Вспомагательные переменные для работы с объектом (база) */
 	
 	typedef Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ImageResource;
@@ -175,12 +178,12 @@ private:
 	float         scaleObj        = 1.0f;	// Множитель размера превью спрайта
 	bool          LoadingSprite   = false;
 	bool          LoadedPreview   = false;
-	int           my_image_width  = 0;
-	int           my_image_height = 0;
-	ImageResource my_texture = NULL;
+	int           sprite_width  = 0;
+	int           sprite_height = 0;
+	ImageResource loadedSprite = NULL;
 
 	/***********************************************************/
-	
+private:
 	/* Вспомагательные переменные для работы с анимацией */
 	
 	float       scaleFrame      = 1.0f;	// Множитель размера превью спрайта
@@ -188,14 +191,19 @@ private:
 	size_t		animSelectedId  = 0;
 	int			curFrame	    = 0;
 	int			animFrameSize[2];
-	int currentFrameIdx = 0;
-	float curAnimW = 0.0f;
-	float curAnimH = 0.0f;
-	ImVec2 previewSize;
-	ImVec2 ltNormPixel;
-	ImVec2 rtNormPixel;
+	float		curAnimW		= 0.0f;
+	float		curAnimH		= 0.0f;
+	ImVec2		previewSize		= {0.0f, 0.0f};
+	ImVec2		ltNormPixel		= {0.0f, 0.0f};
+	ImVec2		rtNormPixel		= {0.0f, 0.0f};
 
 	/*****************************************************/
+private:
+	/**/
+	
+
+	
+	/**/
 private:
 	/* Вспомагательные переменные для отображения FPS */
 

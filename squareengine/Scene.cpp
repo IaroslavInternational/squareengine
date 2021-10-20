@@ -8,8 +8,8 @@ Scene::Scene(std::string							 name,
 	name(name),
 	phEngine(phEngine),
 	wnd(wnd),
-	camera(std::make_shared<Camera>(&persCon, &Iobj, phEngine)),
-	gui(wnd, &hero, &persCon, &Iobj, &objQueue, phEngine),
+	camera(std::make_shared<Camera>(&hero, &persCon, &Iobj, phEngine)),
+	gui(wnd, &hero, &persCon, &Iobj, &objQueue, phEngine, camera),
 	sdr(scData),
 	mdr(sdr.GetMainPersonDataPath()),
 	hero(mdr, wnd, camera),
@@ -18,6 +18,7 @@ Scene::Scene(std::string							 name,
 	objQueue(&hero, &persCon, &Iobj)
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
+	camera->Init();
 }
 
 Scene::~Scene()
@@ -53,9 +54,36 @@ void Scene::ProcessInput(float dt)
 		}
 	}
 
+	if (camera->GetNoClipState())
+	{
+		if (!wnd->CursorEnabled())
+		{
+			if (wnd->kbd.KeyIsPressed('W'))
+			{
+				camera->TranslateAll({ 0.0f, dt});
+			}
+			if (wnd->kbd.KeyIsPressed('A'))
+			{
+				camera->TranslateAll({ dt, 0.0f });
+			}
+			if (wnd->kbd.KeyIsPressed('S'))
+			{
+				camera->TranslateAll({ 0.0f, -dt});
+			}
+			if (wnd->kbd.KeyIsPressed('D'))
+			{
+				camera->TranslateAll({ -dt, 0.0f });
+			}
+		}
+	}
+
 	phEngine->CheckMainPersonCollision(&hero);
-	Iobj.CheckCollision(&hero); // test
-	hero.ProcessMoving(dt);
+	Iobj.CheckCollision(&hero);
+
+	if (!camera->GetNoClipState())
+	{
+		hero.ProcessMoving(dt);
+	}
 }
 
 void Scene::Render(float dt)
