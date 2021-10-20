@@ -800,3 +800,8 @@ bool Graphics::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceVie
 
 	return true;
 }
+
+void Graphics::SetViewPort(D3D11_VIEWPORT& vp)
+{
+	pImmediateContext->RSSetViewports(1u, &vp);
+}

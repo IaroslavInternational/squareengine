@@ -49,6 +49,31 @@ void GUISystem::Show()
 	ShowLeftBottomSide();
 	ShowBottomPanel();
 	ShowOptionalPanel();
+
+	if(ImGui::Begin("   ", NULL))
+	{
+		bool dirty = false;
+
+		const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+		dcheck(ImGui::SliderInt("Width viewport", &vpW, 100, 4500), dirty);
+		dcheck(ImGui::SliderInt("Height viewport", &vpH, 100, 2500), dirty);
+
+		if(ImGui::Button("btn"))
+		{
+			D3D11_VIEWPORT vp;
+			vp.Width = (float)vpW;
+			vp.Height = (float)vpH;
+			vp.MinDepth = 0.0f;
+			vp.MaxDepth = 1.0f;
+			vp.TopLeftX = 0.0f;
+			vp.TopLeftY = 0.0f;
+
+			wnd->Gfx().SetViewPort(vp);
+		}
+
+		ImGui::End();
+	}
 }
 
 void GUISystem::Hide()

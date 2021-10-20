@@ -101,6 +101,8 @@ public:
 	// Simple helper function to load an image into a DX11 texture with common settings
 	bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);
 
+	void SetViewPort(D3D11_VIEWPORT& vp);
+
 	~Graphics();
 	
 	void EndFrame();

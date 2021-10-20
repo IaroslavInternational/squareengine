@@ -201,7 +201,8 @@ private:
 private:
 	/**/
 	
-
+	int vpW = 800;
+	int vpH = 600;
 	
 	/**/
 private:
