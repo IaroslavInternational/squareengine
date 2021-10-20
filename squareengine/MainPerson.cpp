@@ -7,7 +7,8 @@ MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, s
 	speed(data.speed),
 	hitbox(data.name + std::string(" hitbox"), data.hb_coord),
 	wnd(wnd),
-	camera(camera)
+	camera(camera),
+	cameraMode(static_cast<CameraMode>(data.camMode))
 {
 	CalculateDeltas();
 

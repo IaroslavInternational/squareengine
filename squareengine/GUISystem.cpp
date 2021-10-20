@@ -187,6 +187,11 @@ void GUISystem::ShowMenu()
 				{
 				}
 
+				if (ImGui::MenuItem("Камера"))
+				{
+					ShowCameraSettings ? ShowCameraSettings = false : ShowCameraSettings = true;
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -1296,6 +1301,17 @@ void GUISystem::ShowMainPersonControl()
 							EngineFunctions::SaveHitBoxData(heroSelected, actual_hb, hero->dataPath, &applog);
 
 							/*************************/
+
+							/* Сохранение настроек камеры */
+							
+							EngineFunctions::SetNewValue<size_t>(
+								hero->name,
+								"camera-mode", static_cast<size_t>(hero->cameraMode),
+								hero->dataPath,
+								&applog
+								);
+							
+							/******************************/
 
 							SavingSettings = false;
 						}
@@ -2921,7 +2937,7 @@ void GUISystem::ShowCameraControl()
 	ImVec2 DispSize = io.DisplaySize;
 
 	ImVec2 PanelSize = ImVec2(
-		round(DispSize.x * 0.3f),
+		round(DispSize.x * 0.25f),
 			  DispSize.y * 0.5f
 	);
 
@@ -2937,6 +2953,8 @@ void GUISystem::ShowCameraControl()
 
 		/********************************************/
 
+		/* Элементы управления позицией камеры */
+		
 		if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Text("Текущая позиция:");
@@ -2960,7 +2978,11 @@ void GUISystem::ShowCameraControl()
 
 			ImGui::Separator();
 		}
+		
+		/***************************************/
 
+		/* Элементы управления no-clip камеры */
+		
 		if (ImGui::CollapsingHeader("Перемещение"))
 		{
 			ImGui::Checkbox("No-clip", &camera->noclip);
@@ -2969,6 +2991,10 @@ void GUISystem::ShowCameraControl()
 			ImGui::Separator();
 		}
 
+		/**************************************/
+
+		/* Элементы управления взаимодействия камеры с игроком */
+		
 		if (ImGui::CollapsingHeader("Взаимодействие с игроком"))
 		{
 			SpawnCameraToHeroControl();
@@ -2976,16 +3002,51 @@ void GUISystem::ShowCameraControl()
 			ImGui::Separator();
 		}
 
+		/*******************************************************/
+
 		if (ImGui::Button("Сохранить"))
 		{
-			SavingLayersSettings = true;
+			SavingSettings = true;
 		}
 
-		if (SavingLayersSettings)
+		if (SavingSettings)
 		{
+			EngineFunctions::SetNewValue<float>(
+				"camera",
+				"pos-x", camera->initPosition.x,
+				camera->dataPath,
+				&applog
+				);	
 			
+			EngineFunctions::SetNewValue<float>(
+				"camera",
+				"pos-y", camera->initPosition.y,
+				camera->dataPath,
+				&applog
+				);
 
-			SavingLayersSettings = false;
+			EngineFunctions::SetNewValue<float>(
+				"camera",
+				"nc-speed", camera->noclipSpeed,
+				camera->dataPath,
+				&applog
+				);
+
+			EngineFunctions::SetNewValue<bool>(
+				"camera",
+				"nc-able", camera->noclip,
+				camera->dataPath,
+				&applog
+				);
+
+			EngineFunctions::SetNewValue<size_t>(
+				hero->name,
+				"camera-mode", static_cast<size_t>(hero->cameraMode),
+				hero->dataPath,
+				&applog
+				);
+
+			SavingSettings = false;
 		}
 	}
 

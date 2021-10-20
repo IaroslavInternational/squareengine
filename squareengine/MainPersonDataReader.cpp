@@ -70,7 +70,13 @@ MainPersonDataReader::MainPersonDataReader(std::string dataPath)
 
 			layer = obj.at("layer");
 
-			/****************************/
+			/****************************/		
+			
+			/* Получение настройки режима камеры */
+
+			camMode = obj.at("camera-mode");
+
+			/*************************************/
 		}
 	}
 }

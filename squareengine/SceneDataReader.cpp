@@ -28,47 +28,37 @@ SceneDataReader::SceneDataReader(std::string path)
 
 		for (const auto& obj : j.at(d))
 		{
-			/* Запись пути моделей */
+			/* Запись пути к даннам персонажей */
 			
 			paths.emplace_back(obj.at("objectsPath"));
 
 			/***********************/
 
-			/* Запись пути главного героя */
+			/* Запись пути к даннам главного героя */
 
 			paths.emplace_back(obj.at("mainPersonPath"));
 
 			/******************************/	
 			
-			/* Запись пути данных о физике */
+			/* Запись пути данных к даннам о физике */
 
 			paths.emplace_back(obj.at("physicsPath"));
 
 			/*******************************/
 
-			/* Запись пути моделей */
+			/* Запись пути к даннам интерактивных объектов */
 			
 			paths.emplace_back(obj.at("interactableObjectsPath"));
 
+			/***********************/	
+			
+			/* Запись пути к даннам камеры */
+			
+			paths.emplace_back(obj.at("cameraPath"));
+
 			/***********************/
-
-			/* Запись пути триггеров */
-
-			//paths.emplace_back(obj.at("pLightsPath"));
-
-			/*************************/
-
-			/* Запись пути камер */
-
-			//paths.emplace_back(obj.at("camerasPath"));
-
-			/*************************/
 		}
 	}
-}
-
-SceneDataReader::~SceneDataReader()
-{
 }
 
 std::string SceneDataReader::GetPersonContainerPath() const
@@ -89,6 +79,11 @@ std::string SceneDataReader::GetPhysicsDataPath() const
 std::string SceneDataReader::GetInteractableObjectsDataPath() const
 {
 	return paths[3];
+}
+
+std::string SceneDataReader::GetCameraDataPath() const
+{
+	return paths[4];
 }
 
 std::vector<std::string>& SceneDataReader::GetPaths()

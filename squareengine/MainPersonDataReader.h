@@ -19,4 +19,5 @@ public:
 	float			  eff_a;
 	float			  speed;
 	size_t			  layer;
+	size_t			  camMode;
 };

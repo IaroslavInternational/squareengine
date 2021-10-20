@@ -41,10 +41,10 @@ private:
 private:
 	/* Вспомогательные переменные */
 	
+	SceneDataReader			sdr;	// Ридер данных сцены
 	std::shared_ptr<Window> wnd;	// Указатель на главное окно 
 	std::shared_ptr<Camera> camera;	// Указатель на камеру 
 	GUISystem				gui;	// Интерфейс двжика
-	SceneDataReader			sdr;	// Ридер данных сцены
 	MainPersonDataReader	mdr;	// Ридер данных главного персонажа
 
 	/******************************/
