@@ -96,7 +96,7 @@ void Scene::Render(float dt)
 	
 	phEngine->Draw(wnd->Gfx());
 	
-	gui.Show();
+	gui.Show(dt);
 
 	wnd->Gfx().EndFrame();		// Конец кадра
 

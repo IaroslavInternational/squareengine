@@ -33,7 +33,7 @@ public:
 public:
 	/* Главные методы для отрисовки интерфейса */
 	
-	void Show();					// Показать интерфейс
+	void Show(float dt);			// Показать интерфейс
 	void Hide();					// Скрыть интерфейс
 	void AddLog(const char* text);	// Добавить лог
 
@@ -47,7 +47,7 @@ private:
 								 float y_offset = 0.0f); 	
 	void ShowMenu(); 															// Верхняя панель меню
 	void ShowLeftSide();														// Левая панель	
-	void ShowRightSide();														// Правая панель
+	void ShowRightSide(float dt);												// Правая панель
 	void ShowLeftBottomSide();													// Левая нижняя панель
 	void ShowBottomPanel();														// Нижняя панель
 	void ShowOptionalPanel();													// Дополнительная панель
@@ -66,7 +66,7 @@ private:
 	void					ShowPersonList();				// Показать список персонажей 
 	void					ShowPersonControl();			// Показать настройки для выбранного персонажа
 	void					ShowMainPersonList();			// Показать главного персонажа в списке
-	void					ShowMainPersonControl();		// Показать настройки для главного персонажа
+	void					ShowMainPersonControl(float dt);// Показать настройки для главного персонажа
 	void					ShowPhysicsEngineObjList();		// Показать список объектов в физическом движке
 	void					ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
 	void					SpawnCameraToHeroControl();			// Показать настройки для камеры
@@ -78,15 +78,16 @@ private:
 	std::optional<IobjData> ShowAddingIobjDialog();
 	HitBox					CreateNewHitBox();
 	void					ShowCameraControl();
-
+	std::vector<Animation>	ShowAnimationCreatingDialog(float dt);
+	
 	/*******************************************/
 private:
 	/* Переменные видимости панелей */
 	
 	bool ShowPersonEnum 			  =	false;	// Левая панель персонажей на сцене
 	bool ShowPersonSettings			  =	false;	// Правая панель управления настройками персонажей	
-	bool ShowMainPersonEnum 		  =	false;	// Левая панель главного персонажа на сцене
-	bool ShowMainPersonSettings		  =	false;	// Правая панель управления настройками главного персонажа
+	bool ShowMainPersonEnum 		  =	true;	// Левая панель главного персонажа на сцене
+	bool ShowMainPersonSettings		  =	true;	// Правая панель управления настройками главного персонажа
 	bool ShowPhysicsEngineObjEnum	  = false;	// Левая панель физических объектов на сцене
 	bool ShowPhysicsEngineObjSettings = false;	// Правая панель управления настройками выбранного объекта
 	bool ShowPhysicsEngineObjInfo	  = true;	// Подпись имени объекта физического движка  
@@ -97,8 +98,8 @@ private:
 	bool ShowTriggersList 			  =	false;	// Левая панель триггеров на сцене
 	bool ShowTriggersSettings		  =	false;	// Правая панель триггеров на сцене
 	bool ShowLayersSettings			  = false;	// Показать панель настроек слоёв
-	bool ShowIobjEnum				  = true;	//
-	bool ShowIobjSettings			  = true;	//
+	bool ShowIobjEnum				  = false;	//
+	bool ShowIobjSettings			  = false;	//
 	bool ShowCameraSettings			  = true;
 
 	/********************************/
@@ -186,25 +187,29 @@ private:
 private:
 	/* Вспомагательные переменные для работы с анимацией */
 	
-	float       scaleFrame      = 1.0f;	// Множитель размера превью спрайта
-	std::string animSelected    = "";
-	size_t		animSelectedId  = 0;
-	int			curFrame	    = 0;
+	float       scaleFrame				= 1.0f;	// Множитель размера превью спрайта
+	std::string animSelected			= "";
+	size_t		animSelectedId			= 0;
+	int			curFrame				= 0;
 	int			animFrameSize[2];
-	float		curAnimW		= 0.0f;
-	float		curAnimH		= 0.0f;
-	ImVec2		previewSize		= {0.0f, 0.0f};
-	ImVec2		ltNormPixel		= {0.0f, 0.0f};
-	ImVec2		rtNormPixel		= {0.0f, 0.0f};
+	float		curAnimW				= 0.0f;
+	float		curAnimH				= 0.0f;
+	ImVec2		previewSize				= {0.0f, 0.0f};
+	ImVec2		ltNormPixel				= {0.0f, 0.0f};
+	ImVec2		rtNormPixel				= {0.0f, 0.0f};
+	std::string animPath				= "";
+	bool        CreatingAnimation	    = false;
+	bool        ChoosingAnimation	    = false;
+	bool        CreatingAnimtionLoaded  = false;
+	float		newFrameWidth		    = 90.0f;
+	float		newFrameHeight		    = 90.0f;
+	int			maxFrames				= 4;
+	size_t		animPlayingId			= 0;
+	std::string newAnimNameSelected		= "";
+	std::vector<std::string> animationNames;
+	std::vector<Animation>   animationsPreview;
 
 	/*****************************************************/
-private:
-	/**/
-	
-	int vpW = 800;
-	int vpH = 600;
-	
-	/**/
 private:
 	/* Вспомагательные переменные для отображения FPS */
 

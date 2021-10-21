@@ -37,43 +37,27 @@ GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 			gpu_desc.emplace(std::wstring(d.desc.Description), round(static_cast<double>(d.desc.DedicatedVideoMemory) / 1073741824));
 		}
 	}
+
+	animationNames.push_back("Ходьба влево");
+	animationNames.push_back("Ходьба вправо");
+	animationNames.push_back("Ходьба вверх");
+	animationNames.push_back("Ходьба вниз");
+	animationNames.push_back("Покой влево");
+	animationNames.push_back("Покой вправо");
+	animationNames.push_back("Покой вверх");
+	animationNames.push_back("Покой вниз");
 }
 
 /* Главные методы для отрисовки интерфейса */
 
-void GUISystem::Show()
+void GUISystem::Show(float dt)
 {
 	ShowMenu();
 	ShowLeftSide();
-	ShowRightSide();
+	ShowRightSide(dt);
 	ShowLeftBottomSide();
 	ShowBottomPanel();
 	ShowOptionalPanel();
-
-	if(ImGui::Begin("   ", NULL))
-	{
-		bool dirty = false;
-
-		const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
-
-		dcheck(ImGui::SliderInt("Width viewport", &vpW, 100, 4500), dirty);
-		dcheck(ImGui::SliderInt("Height viewport", &vpH, 100, 2500), dirty);
-
-		if(ImGui::Button("btn"))
-		{
-			D3D11_VIEWPORT vp;
-			vp.Width = (float)vpW;
-			vp.Height = (float)vpH;
-			vp.MinDepth = 0.0f;
-			vp.MaxDepth = 1.0f;
-			vp.TopLeftX = 0.0f;
-			vp.TopLeftY = 0.0f;
-
-			wnd->Gfx().SetViewPort(vp);
-		}
-
-		ImGui::End();
-	}
 }
 
 void GUISystem::Hide()
@@ -366,7 +350,7 @@ void GUISystem::ShowLeftSide()
 	/* Конец левой стороны */
 }
 
-void GUISystem::ShowRightSide()
+void GUISystem::ShowRightSide(float dt)
 {
 	/* Правая сторона */
 
@@ -395,7 +379,7 @@ void GUISystem::ShowRightSide()
 	}
 	else if (ShowMainPersonSettings)
 	{
-		ShowMainPersonControl();
+		ShowMainPersonControl(dt);
 
 		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
 		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
@@ -1086,7 +1070,7 @@ void GUISystem::ShowMainPersonList()
 	ImGui::End();
 }
 
-void GUISystem::ShowMainPersonControl()
+void GUISystem::ShowMainPersonControl(float dt)
 {
 	if (ImGui::Begin("Опции", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
@@ -1251,6 +1235,21 @@ void GUISystem::ShowMainPersonControl()
 
 						dcheck(ImGui::SliderFloat("Задержка", &hero->animations[animSelectedId].holdTime, 0.01f, 1.0f), a_hdDirty);
 						
+						if(ImGui::Button("Создать анимацию"))
+						{
+							CreatingAnimation = true;
+						}
+						
+						if (CreatingAnimation)
+						{
+							auto animations = ShowAnimationCreatingDialog(dt);
+
+							if (!animations.empty())
+							{
+								CreatingAnimation = false;
+							}
+						}
+
 						ImGui::Separator();
 					}
 
@@ -3076,6 +3075,231 @@ void GUISystem::ShowCameraControl()
 	}
 
 	ImGui::End();
+}
+
+std::vector<Animation> GUISystem::ShowAnimationCreatingDialog(float dt)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 DispSize = io.DisplaySize;
+
+	ImVec2 PanelSize = ImVec2(
+		round(DispSize.x * 0.6f),
+		DispSize.y * 0.7f
+	);
+
+	SetPanelSizeAndPosition(0, 0.60f, 0.70f, 0.2f, 0.1f);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
+	if (ImGui::Begin("Создание/Изменение анимации", NULL,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize))
+	{
+		if (ImGui::CollapsingHeader("Загрузка", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text("Путь к спрайту: ");
+
+			if (animPath == "")
+			{
+				ImGui::Text("...");
+			}
+			else
+			{
+				ImGui::Text(animPath.c_str());
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Выбрать"))
+			{
+				ChoosingAnimation = true;
+				CreatingAnimtionLoaded = false;
+				animPath = "";
+			}
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::CollapsingHeader("Спрайт", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			if (ChoosingAnimation)
+			{
+				if (animPath != "")
+				{
+					//
+					ImGui::BeginChild("Превью спрайта", { PanelSize.x / 2 - 2, PanelSize.y  });
+					
+					if (!CreatingAnimtionLoaded)
+					{
+						bool ret = wnd->Gfx().LoadTextureFromFile(animPath.c_str(), loadedSprite.GetAddressOf(), &sprite_width, &sprite_height);
+						IM_ASSERT(ret);
+
+						CreatingAnimtionLoaded = true;
+					}
+
+					bool sizesDirty = false;
+					bool scaleDirty = false; // Контроль размера
+					bool a_sDirty = false; // Контроль размера
+					bool a_fDirty = false; // Контроль размера
+
+					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+					dcheck(ImGui::SliderFloat("Размер", &scaleObj, 0.1f, 20.0f, "%.4f"), scaleDirty);
+					ImGui::Image((void*)loadedSprite.Get(), ImVec2(sprite_width * scaleObj, sprite_height * scaleObj));
+					
+					ImGui::EndChild();
+
+					ImGui::SameLine();
+					
+					//
+					ImGui::BeginChild("Настройки анимации", { PanelSize.x / 2 - 2, PanelSize.y });
+					
+					if (ImGui::BeginCombo("Тип анимации", newAnimNameSelected.c_str()))
+					{
+						for (size_t i = 0; i < animationNames.size(); i++)
+						{
+							if (ImGui::Selectable(animationNames[i].c_str()))
+							{
+								newAnimNameSelected = animationNames[i];
+								animSelectedId = i;
+							}
+						}
+
+						ImGui::EndCombo();
+					}
+
+					curAnimW = newFrameWidth;
+					curAnimH = newFrameHeight;
+
+					previewSize = ImVec2(
+						curAnimW * scaleFrame,
+						curAnimH * scaleFrame
+					);
+
+					ltNormPixel = ImVec2(
+						curAnimW + curAnimW * curFrame,
+						curAnimH * animSelectedId
+					);
+
+					rtNormPixel = ImVec2(
+						2.0f * curAnimW + curAnimW * curFrame,
+						curAnimH + curAnimH * animSelectedId
+					);
+
+					ltNormPixel.x /= sprite_width;
+					ltNormPixel.y /= sprite_height;
+					rtNormPixel.x /= sprite_width;
+					rtNormPixel.y /= sprite_height;
+
+
+					ImGui::SetCursorPosX((PanelSize.x / 2 - 2 - curAnimW * scaleFrame) / 2);
+					ImGui::Image((void*)loadedSprite.Get(),
+						previewSize,
+						ltNormPixel,
+						rtNormPixel);
+					ImGui::SetCursorPosX((PanelSize.x / 2 - 2 - ImGui::CalcTextSize("Превью кадра").x) / 2);
+					ImGui::Text("Превью кадра");
+
+					dcheck(ImGui::SliderFloat("Ширина", &newFrameWidth, 0.1f, 500.0f, "%.4f"), sizesDirty);
+					dcheck(ImGui::SliderFloat("Высота", &newFrameHeight, 0.1f, 500.0f, "%.4f"), sizesDirty);
+					dcheck(ImGui::SliderFloat("Размер превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
+					dcheck(ImGui::SliderInt("Кол-во кадров", &maxFrames, 0, 16), a_fDirty);
+					dcheck(ImGui::SliderInt("Кадр", &curFrame, 0, maxFrames), a_fDirty);
+
+					if (ImGui::Button("Создать анимацию"))
+					{
+						animationsPreview.emplace_back(Animation((int)newFrameWidth, (int)newFrameHeight * animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, Surface2D(animPath), 0.16f, animationNames[animSelectedId]));
+					}
+
+					if (!animationsPreview.empty())
+					{
+						ImGui::Separator();
+
+						std::ostringstream amAnim;
+						amAnim << "Создано " << animationsPreview.size() << " анимаций:";
+						ImGui::Text(amAnim.str().c_str());
+
+						for (auto& a : animationsPreview)
+						{
+							ImGui::Text(a.name.c_str());
+
+							if (a.name == "Ходьба влево")
+							{
+								animPlayingId = 0;
+							}
+							else if (a.name == "Ходьба вправо")
+							{
+								animPlayingId = 1;
+							}
+							else if (a.name == "Ходьба вверх")
+							{
+								animPlayingId = 2;
+							}
+							else if (a.name == "Ходьба вниз")
+							{
+								animPlayingId = 3;
+							}
+
+							previewSize = ImVec2(
+								a.width * scaleFrame,
+								a.height * scaleFrame
+							);
+
+							ltNormPixel = ImVec2(
+								a.width + a.width * a.iCurFrame,
+								a.height * animPlayingId
+							);
+
+							rtNormPixel = ImVec2(
+								2.0f * a.width + a.width * a.iCurFrame,
+								a.height + a.height * animPlayingId
+							);
+
+							ltNormPixel.x /= sprite_width;
+							ltNormPixel.y /= sprite_height;
+							rtNormPixel.x /= sprite_width;
+							rtNormPixel.y /= sprite_height;
+
+							ImGui::Image((void*)loadedSprite.Get(),
+								previewSize,
+								ltNormPixel,
+								rtNormPixel);
+
+							a.Update(dt);
+
+							ImGui::Separator();
+						}
+
+						if (ImGui::Button("Очистить"))
+						{
+							animationsPreview.clear();
+						}
+					}
+
+					ImGui::EndChild();
+					
+					//ChoosingAnimation = false;
+				}
+				else
+				{
+					animPath = ShowLoadingSpriteDilaog();
+				}
+			}
+
+			ImGui::Separator();
+		}
+
+		ImGui::NewLine();
+
+		if (ImGui::Button("Отмена"))
+		{
+			LoadingSprite = false;
+			CreatingAnimation = false;
+		}
+
+		ImGui::End();
+	}
+	ImGui::PopStyleColor();
+
+	return std::vector<Animation>();
 }
 
 void GUISystem::SpawnCameraToHeroControl()
