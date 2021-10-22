@@ -1235,7 +1235,13 @@ void GUISystem::ShowMainPersonControl(float dt)
 						ImGui::NewLine();
 
 						dcheck(ImGui::SliderFloat("Задержка", &hero->animations[animSelectedId].holdTime, 0.01f, 1.0f), a_hdDirty);
-						
+						hero->holdTime = hero->animations[animSelectedId].holdTime;
+
+						for (auto& a : hero->animations)
+						{
+							a.holdTime = hero->holdTime;
+						}
+
 						if(ImGui::Button("Создать анимацию"))
 						{
 							CreatingAnimation = true;
@@ -1256,6 +1262,12 @@ void GUISystem::ShowMainPersonControl(float dt)
 								}
 
 								hero->SetAnimation(newAnim);
+
+								EngineFunctions::SaveAnimationData(
+									hero->name, 
+									AnimationData(animations[0].pStart, animations[0].pEnd, animations[0].width, animations[0].height, animations[0].frames, animations[0].ft, animations[0].name), 
+									hero->dataPath,
+									&applog);
 
 								CreatingAnimation = false;
 							}
@@ -1333,7 +1345,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 							auto actual_hb = hero->hitbox;
 
-							EngineFunctions::SaveHitBoxData(heroSelected, actual_hb, hero->dataPath, &applog);
+							EngineFunctions::SaveHitBoxData(hero->name, actual_hb, hero->dataPath, &applog);
 
 							/*************************/
 
@@ -1347,6 +1359,17 @@ void GUISystem::ShowMainPersonControl(float dt)
 								);
 							
 							/******************************/
+
+							/* Сохранение настроек анимаций */
+							
+							EngineFunctions::SetNewValue<float>(
+								hero->name,
+								"a-ft", hero->holdTime,
+								hero->dataPath,
+								&applog
+								);
+
+							/********************************/
 
 							SavingSettings = false;
 						}
@@ -3214,11 +3237,12 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 					dcheck(ImGui::SliderFloat("Размер превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
 					dcheck(ImGui::SliderInt("Кол-во кадров", &maxFrames, 0, 16), a_fDirty);
 					dcheck(ImGui::SliderInt("Кадр", &curFrame, 0, maxFrames), a_fDirty);
+					dcheck(ImGui::SliderFloat("Задержка", &framesHoldTime, 0.0f, 1.0f, "%.2f"), a_fDirty);
 				
 					if (ImGui::Button("Создать анимацию"))
 					{
-						animationsPreview.emplace_back(Animation((int)newFrameWidth, (int)newFrameHeight * animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, animSpritePreview, 0.16f, animationNames[animSelectedId]));
-						animationsData.emplace_back(AnimationData((int)newFrameWidth, (int)newFrameHeight * (int)animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, 0.16f, animationNames[animSelectedId]));
+						animationsPreview.emplace_back(Animation((int)newFrameWidth, (int)newFrameHeight * animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, animSpritePreview, framesHoldTime, animationNames[animSelectedId]));
+						animationsData.emplace_back(AnimationData((int)newFrameWidth, (int)newFrameHeight * (int)animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, framesHoldTime, animationNames[animSelectedId]));
 					}
 
 					if (ImGui::Button("Завершить"))
@@ -3235,8 +3259,8 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 
 						for (size_t i = n; i < animationNames.size(); i++)
 						{
-							animationsPreview.emplace_back(Animation(0, (int)newFrameHeight * (i - n), (int)newFrameWidth, (int)newFrameHeight, 1, animSpritePreview, 0.16f, animationNames[i]));
-							animationsData.emplace_back(AnimationData(0, (int)newFrameHeight * (i - n), (int)newFrameWidth, (int)newFrameHeight, 1, 0.16f, animationNames[i]));
+							animationsPreview.emplace_back(Animation(0, (int)newFrameHeight * (i - n), (int)newFrameWidth, (int)newFrameHeight, 1, animSpritePreview, framesHoldTime, animationNames[i]));
+							animationsData.emplace_back(AnimationData(0, (int)newFrameHeight * (i - n), (int)newFrameWidth, (int)newFrameHeight, 1, framesHoldTime, animationNames[i]));
 						}
 
 						ChoosingAnimation = false;

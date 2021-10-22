@@ -6,6 +6,7 @@
 #include "AppLog.h"
 #include "ObjectsQueue.h"
 #include "PhysicsEngine.h"
+#include "AnimationData.h"
 #include "Window.h"
 
 #include <map>
@@ -18,28 +19,6 @@ struct IobjData
 	DirectX::XMFLOAT2 position;
 	size_t			  layer;
 	std::string		  pathToSprite;
-};
-
-struct AnimationData
-{
-	AnimationData(int pStart, int pEnd, int width, int height, int frames, float ft, std::string name)
-	{
-		this->pStart = pStart;
-		this->pEnd = pEnd;
-		this->width = width;
-		this->height = height;
-		this->frames =frames;
-		this->ft = ft;
-		this->name = name;
-	}
-
-	int pStart;
-	int pEnd;
-	int width;
-	int height;
-	int frames;
-	float ft;
-	std::string name;
 };
 
 class GUISystem
@@ -226,6 +205,7 @@ private:
 	float		newFrameWidth		    = 90.0f;
 	float		newFrameHeight		    = 90.0f;
 	int			maxFrames				= 4;
+	float		framesHoldTime			= 0.2f;
 	size_t		animPlayingId			= 0;
 	std::string newAnimNameSelected		= "";
 	Surface2D   animSpritePreview;

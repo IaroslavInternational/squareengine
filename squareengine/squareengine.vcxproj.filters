@@ -506,6 +506,9 @@
     <ClInclude Include="stb_image.h">
       <Filter>Заголовочные файлы\Система\Графика</Filter>
     </ClInclude>
+    <ClInclude Include="AnimationData.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="squareengine.rc">

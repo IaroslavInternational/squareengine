@@ -5,6 +5,7 @@ MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, s
 	Object2D(data.name, data.position, data.layer, data.pathToSprite),
 	dataPath(data.dataPath),
 	speed(data.speed),
+	holdTime(data.anim_ft),
 	hitbox(data.name + std::string(" hitbox"), data.hb_coord),
 	wnd(wnd),
 	camera(camera),
@@ -30,11 +31,11 @@ MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, s
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
-		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, image, 0.16f, animationNames[i]));
+		animations.emplace_back(Animation(data.anim_ps, data.anim_pe * i, data.anim_fw, data.anim_fh, data.anim_fa, image, data.anim_ft, animationNames[i]));
 	}
 	for (int i = (int)Sequence::StandingLeft; i < (int)Sequence::Count; i++)
 	{
-		animations.emplace_back(Animation(0, 90 * (i - (int)Sequence::StandingLeft), 90, 90, 1, image, 0.16f, animationNames[i]));
+		animations.emplace_back(Animation(0, data.anim_pe * (i - (int)Sequence::StandingLeft), data.anim_fw, data.anim_fh, 1, image, data.anim_ft, animationNames[i]));
 	}
 }
 

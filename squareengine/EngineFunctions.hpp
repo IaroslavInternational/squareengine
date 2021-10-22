@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HitBox.h"
+#include "AnimationData.h"
 #include "AppLog.h"
 
 #include <sstream>
@@ -86,6 +87,51 @@ namespace EngineFunctions
 		EngineFunctions::SetNewValue<float>(
 			objectName,
 			"hb-rby", hitbox.GetCoordinates().w,
+			path,
+			applog
+			);
+	}
+
+	inline void static SaveAnimationData(std::string objectName, AnimationData data, std::string path, AppLog* applog)
+	{
+		EngineFunctions::SetNewValue<int>(
+			objectName,
+			"a-ps", data.pStart,
+			path,
+			applog
+			);
+
+		EngineFunctions::SetNewValue<int>(
+			objectName,
+			"a-pe", data.pEnd,
+			path,
+			applog
+			);
+
+		EngineFunctions::SetNewValue<int>(
+			objectName,
+			"a-fw", data.width,
+			path,
+			applog
+			);
+
+		EngineFunctions::SetNewValue<int>(
+			objectName,
+			"a-fh", data.height,
+			path,
+			applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			objectName,
+			"a-ft", data.ft,
+			path,
+			applog
+			);
+
+		EngineFunctions::SetNewValue<int>(
+			objectName,
+			"a-fa", data.frames,
 			path,
 			applog
 			);

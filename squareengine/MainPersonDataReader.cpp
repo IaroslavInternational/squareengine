@@ -77,6 +77,17 @@ MainPersonDataReader::MainPersonDataReader(std::string dataPath)
 			camMode = obj.at("camera-mode");
 
 			/*************************************/
+
+			/* Получение настройки анимаций */
+
+			anim_ps = obj.at("a-ps");
+			anim_pe = obj.at("a-pe");
+			anim_fw = obj.at("a-fw");
+			anim_fh = obj.at("a-fh");
+			anim_fa = obj.at("a-fa");
+			anim_ft = obj.at("a-ft");
+
+			/********************************/
 		}
 	}
 }

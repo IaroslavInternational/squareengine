@@ -20,4 +20,10 @@ public:
 	float			  speed;
 	size_t			  layer;
 	size_t			  camMode;
+	int anim_ps;
+	int anim_pe;
+	int anim_fw;
+	int anim_fh;
+	int anim_fa;
+	float anim_ft;
 };
