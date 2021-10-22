@@ -1,9 +1,12 @@
 {
-  "Scene 2": [
+  "Scene 1":
+  [
     {
       "objectsPath": "Scenes\\Scene 2\\Objects\\objects_scene_2.json",
+      "interactableObjectsPath": "Scenes\\Scene 2\\Objects\\interactable_objects_scene_2.json",
       "mainPersonPath": "Scenes\\main_person.json",
-      "physicsPath": "Scenes\\Scene 2\\physics.json"
+      "physicsPath": "Scenes\\Scene 2\\physics.json",
+      "cameraPath": "Scenes\\camera.json"
     }
   ]
 }

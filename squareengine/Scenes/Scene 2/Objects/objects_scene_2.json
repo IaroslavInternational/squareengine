@@ -1,34 +1,36 @@
 {
-  "person 1": [
+  "clark": [
     {
-      "name": "Raymond",
-      "path": "C:\\Users\\Yaros\\source\\projects\\squareengine\\squareengine\\Images\\link90x90.bmp",
-      "pos-x": 500.0,
-      "pos-y": 100.0,
-      "hb-ltx": 500,
-      "hb-lty": 100,
-      "hb-rbx": 510,
-      "hb-rby": 110,
-      "speed": 100.0,
-      "eff-d": 0.045,
+      "eff-a": false,
+      "eff-d": 0.04500000178813934,
       "eff-t": 0.0,
-      "eff-a": false
+      "hb-ltx": 728.0,
+      "hb-lty": 163.00999450683594,
+      "hb-rbx": 759.0,
+      "hb-rby": 225.00999450683594,
+      "layer": 2,
+      "name": "clark",
+      "path": "Images\\link90x90.bmp",
+      "pos-x": 700.0,
+      "pos-y": 150.3300018310547,
+      "speed": 183.00999450683594
     }
   ],
-  "person 2": [
+  "raymond": [
     {
-      "name": "Clark",
-      "path": "C:\\Users\\Yaros\\source\\projects\\squareengine\\squareengine\\Images\\link90x90.bmp",
-      "pos-x": 700.0,
-      "pos-y": 100.0,
-      "hb-ltx": 700,
-      "hb-lty": 100,
-      "hb-rbx": 710,
-      "hb-rby": 110,
-      "speed": 100.0,
-      "eff-d": 0.045,
+      "eff-a": false,
+      "eff-d": 0.04500000178813934,
       "eff-t": 0.0,
-      "eff-a": false
+      "hb-ltx": 524.0,
+      "hb-lty": 114.0,
+      "hb-rbx": 564.0,
+      "hb-rby": 177.0,
+      "layer": 3,
+      "name": "raymond",
+      "path": "Images\\link90x90.bmp",
+      "pos-x": 500.0,
+      "pos-y": 100.0,
+      "speed": 100.0
     }
   ]
 }

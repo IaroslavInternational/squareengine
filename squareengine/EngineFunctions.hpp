@@ -137,6 +137,21 @@ namespace EngineFunctions
 			);
 	}
 
+	inline std::string static StrReplace(const std::string& inputStr, const std::string& src, const std::string& dst)
+	{
+		std::string result(inputStr);
+
+		size_t pos = result.find(src);
+
+		while (pos != std::string::npos)
+		{
+			result.replace(pos, src.size(), dst);
+			pos = result.find(src, pos);
+		}
+
+		return result;
+	}
+
 	// Соеденить два объекта в одну строку через пробел
 	template <typename T>
 	inline std::string static AttachStrings(T str1, T str2)

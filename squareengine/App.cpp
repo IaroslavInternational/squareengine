@@ -2,6 +2,7 @@
 
 #include "imgui\imgui.h"
 #include "EngineUtil.h"
+#include "EngineFunctions.hpp"
 
 namespace dx = DirectX;
 
@@ -12,60 +13,10 @@ App::App(const std::string& commandLine)
 	phEngine(std::make_shared<Physics::PhysicsEngine>()),
 	scriptCommander(TokenizeQuoted(commandLine))
 {
-	scenes.emplace(std::make_unique<Scene>("Scene 1", wnd, "Scenes\\Scene 1\\scene_1.json", phEngine), true);
-	//scenes.emplace(std::make_unique<Scene>("Scene 2", wnd, "Scenes\\Scene 2\\scene_2.json", phEngine), false);
-}
+	scenes.emplace("Scene 1", true);
+	scenes.emplace("Scene 2", false);
 
-void App::HandleInput(float dt)
-{
-	for (auto& s : scenes)
-	{
-		if (s.second)
-		{
-			s.first->ProcessInput(dt);
-		}
-	}
-}
-
-void App::DoFrame(float dt)
-{
-	for (auto& s : scenes)
-	{
-		if (s.second)
-		{
-			s.first->Render(dt);
-
-			// Имя активной сцены
-			auto activeSceneName = s.first->GetName();
-
-			// Данные о триггере
-			auto t = s.first->IsOnTheSceneTrigger();
-
-			if (t.second)
-			{
-				// Делаем новую сцену активной
-				for (auto it = scenes.begin(); it != scenes.end(); ++it)
-				{
-					if (it->first->GetName() == t.first)
-					{						
-						it->second = true;
-						//it->first->ResetPos();						
-						break;
-					}
-				}
-
-				// Делаем старую сцену неактивной
-				for (auto it = scenes.begin(); it != scenes.end(); ++it)
-				{
-					if (it->first->GetName() == activeSceneName)
-					{						
-						it->second = false;
-						break;
-					}
-				}
-			}
-		}
-	}
+	scene = std::make_unique<Scene>("Scene 1", wnd, "Scenes\\Scene 1\\scene_1.json", phEngine);
 }
 
 App::~App()
@@ -87,5 +38,61 @@ int App::Go()
 		
 		HandleInput(dt);
 		DoFrame(dt);
+	}
+}
+
+void App::HandleInput(float dt)
+{
+	for (auto& s : scenes)
+	{
+		if (s.second)
+		{
+			scene->ProcessInput(dt);
+		}
+	}
+}
+
+void App::DoFrame(float dt)
+{
+	for (auto& s : scenes)
+	{
+		if (s.second)
+		{
+			scene->Render(dt);
+
+			// Имя активной сцены
+			auto activeSceneName = scene->GetName();
+
+			// Данные о триггере
+			auto t = scene->IsOnTheSceneTrigger();
+
+			if (t.second)
+			{
+				// Делаем новую сцену активной
+				for (auto it = scenes.begin(); it != scenes.end(); ++it)
+				{
+					if (it->first == t.first)
+					{
+						it->second = true;
+						
+						std::ostringstream oss;
+						oss << "Scenes\\" << it->first << "\\scene_" << EngineFunctions::StrReplace(it->first, "Scene ", "") << ".json";
+
+						scene = std::make_unique<Scene>(it->first, wnd, oss.str().c_str(), phEngine);
+						break;
+					}
+				}
+
+				// Делаем старую сцену неактивной
+				for (auto it = scenes.begin(); it != scenes.end(); ++it)
+				{
+					if (it->first == activeSceneName)
+					{
+						it->second = false;
+						break;
+					}
+				}
+			}
+		}
 	}
 }

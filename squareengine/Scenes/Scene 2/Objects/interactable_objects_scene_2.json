@@ -1,0 +1,30 @@
+{
+  "obj 0": [
+    {
+      "g-able": false,
+      "g-deep": 2.0,
+      "hb-ltx": 301.0,
+      "hb-lty": 229.0,
+      "hb-rbx": 425.0,
+      "hb-rby": 297.0,
+      "layer": 0,
+      "path": "Images\\zabor.bmp",
+      "pos-x": 300.0,
+      "pos-y": 200.0
+    }
+  ],
+  "obj 1": [
+    {
+      "g-able": false,
+      "g-deep": 2.0,
+      "hb-ltx": 301.0,
+      "hb-lty": 229.0,
+      "hb-rbx": 425.0,
+      "hb-rby": 297.0,
+      "layer": 1,
+      "path": "Images\\box.bmp",
+      "pos-x": 300.0,
+      "pos-y": 300.0
+    }
+  ]
+}
