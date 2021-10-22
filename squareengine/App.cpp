@@ -4,8 +4,6 @@
 #include "EngineUtil.h"
 #include "EngineFunctions.hpp"
 
-namespace dx = DirectX;
-
 App::App(const std::string& commandLine, const std::string& projectName)
 	:
 	commandLine(commandLine),
@@ -14,7 +12,6 @@ App::App(const std::string& commandLine, const std::string& projectName)
 	phEngine(std::make_shared<Physics::PhysicsEngine>()),
 	scriptCommander(TokenizeQuoted(commandLine))
 {
-
 	{
 		std::ostringstream dataPath;
 		dataPath << "Projects\\" << projectName << "\\project_settings.json";
@@ -76,7 +73,10 @@ App::App(const std::string& commandLine, const std::string& projectName)
 		}
 	}
 
-	scene = std::make_unique<Scene>("Scene 1", wnd, "Scenes\\Scene 1\\scene_1.json", phEngine);
+	std::ostringstream dir;
+	dir << "Projects\\" << projectName << "\\Scenes\\Scene 1\\scene_1.json";
+
+	scene = std::make_unique<Scene>("Scene 1", wnd, dir.str(), phEngine);
 	gui = std::make_shared<GUISystem>(scene.get());
 }
 
@@ -139,11 +139,12 @@ void App::DoFrame(float dt)
 						it->second = true;
 						
 						std::ostringstream oss;
-						oss << "Scenes\\" << it->first << "\\scene_" << EngineFunctions::StrReplace(it->first, "Scene ", "") << ".json";
+						oss << "Projects\\"<< projectName << "\\Scenes\\" << it->first << "\\scene_" 
+							<< EngineFunctions::StrReplace(it->first, "Scene ", "") << ".json";
 
-						scene = std::make_unique<Scene>(it->first, wnd, oss.str().c_str(), phEngine);
+						scene = std::make_unique<Scene>(it->first, wnd, oss.str(), phEngine);						
 						gui->LoadScene(scene.get());
-
+						
 						break;
 					}
 				}

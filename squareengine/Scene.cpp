@@ -96,6 +96,7 @@ void Scene::Render(float dt)
 
 std::pair<std::string, bool> Scene::IsOnTheSceneTrigger()
 {
+	// test
 	if(hero.GetPosition().x >= 400.0f && hero.GetPosition().y >= 400.0f)
 		return std::pair{ "Scene 2", true };
 

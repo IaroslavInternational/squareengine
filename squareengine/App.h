@@ -22,7 +22,7 @@ public:
 private:
 	void HandleInput(float dt);							// Обработка данных переферии
 	void DoFrame(float dt);								// Отрисовка кадра
-private:	
+private:
 	std::string commandLine;							// Коммандная строка
 	std::string projectName;							// 
 	ImguiManager imgui;									//

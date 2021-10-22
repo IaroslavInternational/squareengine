@@ -1,12 +1,12 @@
 {
-  "Scene 1":
+  "Scene 2":
   [
     {
-      "objectsPath": "Scenes\\Scene 2\\Objects\\objects_scene_2.json",
-      "interactableObjectsPath": "Scenes\\Scene 2\\Objects\\interactable_objects_scene_2.json",
-      "mainPersonPath": "Scenes\\main_person.json",
-      "physicsPath": "Scenes\\Scene 2\\physics.json",
-      "cameraPath": "Scenes\\camera.json"
+      "objectsPath": "Projects\\Hello World\\Scenes\\Scene 2\\Objects\\objects_scene_2.json",
+      "interactableObjectsPath": "Projects\\Hello World\\Scenes\\Scene 2\\Objects\\interactable_objects_scene_2.json",
+      "mainPersonPath": "Projects\\Hello World\\Scenes\\main_person.json",
+      "physicsPath": "Projects\\Hello World\\Scenes\\Scene 2\\physics.json",
+      "cameraPath": "Projects\\Hello World\\Scenes\\camera.json"
     }
   ]
 }
