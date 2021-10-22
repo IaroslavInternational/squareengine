@@ -19,7 +19,8 @@ GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
 	IobjCon(Iobj),
 	objQueue(objQueue),
 	phEngPtr(phEngPtr),
-	camera(camera)
+	camera(camera),
+	animSpritePreview(1, 1)
 {
 	SetGUIColors();
 
@@ -1246,6 +1247,16 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 							if (!animations.empty())
 							{
+								hero->image = Surface2D(animPath);
+								std::vector<Animation> newAnim;
+
+								for (auto& a : animations)
+								{
+									newAnim.emplace_back(Animation(a.pStart, a.pEnd, a.width, a.height, a.frames, hero->image, a.ft, a.name));
+								}
+
+								hero->SetAnimation(newAnim);
+
 								CreatingAnimation = false;
 							}
 						}
@@ -3077,7 +3088,7 @@ void GUISystem::ShowCameraControl()
 	ImGui::End();
 }
 
-std::vector<Animation> GUISystem::ShowAnimationCreatingDialog(float dt)
+std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 DispSize = io.DisplaySize;
@@ -3203,10 +3214,32 @@ std::vector<Animation> GUISystem::ShowAnimationCreatingDialog(float dt)
 					dcheck(ImGui::SliderFloat("Размер превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
 					dcheck(ImGui::SliderInt("Кол-во кадров", &maxFrames, 0, 16), a_fDirty);
 					dcheck(ImGui::SliderInt("Кадр", &curFrame, 0, maxFrames), a_fDirty);
-
+				
 					if (ImGui::Button("Создать анимацию"))
 					{
-						animationsPreview.emplace_back(Animation((int)newFrameWidth, (int)newFrameHeight * animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, Surface2D(animPath), 0.16f, animationNames[animSelectedId]));
+						animationsPreview.emplace_back(Animation((int)newFrameWidth, (int)newFrameHeight * animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, animSpritePreview, 0.16f, animationNames[animSelectedId]));
+						animationsData.emplace_back(AnimationData((int)newFrameWidth, (int)newFrameHeight * (int)animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, 0.16f, animationNames[animSelectedId]));
+					}
+
+					if (ImGui::Button("Завершить"))
+					{
+						size_t n;
+
+						for (n = 0; n < animationNames.size(); n++)
+						{
+							if (animationNames[n] == "Покой влево")
+							{
+								break;
+							}
+						}
+
+						for (size_t i = n; i < animationNames.size(); i++)
+						{
+							animationsPreview.emplace_back(Animation(0, (int)newFrameHeight * (i - n), (int)newFrameWidth, (int)newFrameHeight, 1, animSpritePreview, 0.16f, animationNames[i]));
+							animationsData.emplace_back(AnimationData(0, (int)newFrameHeight * (i - n), (int)newFrameWidth, (int)newFrameHeight, 1, 0.16f, animationNames[i]));
+						}
+
+						ChoosingAnimation = false;
 					}
 
 					if (!animationsPreview.empty())
@@ -3221,21 +3254,12 @@ std::vector<Animation> GUISystem::ShowAnimationCreatingDialog(float dt)
 						{
 							ImGui::Text(a.name.c_str());
 
-							if (a.name == "Ходьба влево")
+							for (size_t i = 0; i < animationNames.size(); i++)
 							{
-								animPlayingId = 0;
-							}
-							else if (a.name == "Ходьба вправо")
-							{
-								animPlayingId = 1;
-							}
-							else if (a.name == "Ходьба вверх")
-							{
-								animPlayingId = 2;
-							}
-							else if (a.name == "Ходьба вниз")
-							{
-								animPlayingId = 3;
+								if (a.name == animationNames[i])
+								{
+									animPlayingId = i;
+								}
 							}
 
 							previewSize = ImVec2(
@@ -3271,16 +3295,20 @@ std::vector<Animation> GUISystem::ShowAnimationCreatingDialog(float dt)
 						if (ImGui::Button("Очистить"))
 						{
 							animationsPreview.clear();
+							animationsData.clear();
 						}
 					}
 
 					ImGui::EndChild();
-					
-					//ChoosingAnimation = false;
 				}
 				else
 				{
 					animPath = ShowLoadingSpriteDilaog();
+
+					if (animPath != "")
+					{
+						animSpritePreview = Surface2D(animPath);
+					}
 				}
 			}
 
@@ -3299,7 +3327,14 @@ std::vector<Animation> GUISystem::ShowAnimationCreatingDialog(float dt)
 	}
 	ImGui::PopStyleColor();
 
-	return std::vector<Animation>();
+	if (ChoosingAnimation)
+	{
+		return std::vector<AnimationData>();
+	}
+	else
+	{
+		return animationsData;
+	}
 }
 
 void GUISystem::SpawnCameraToHeroControl()

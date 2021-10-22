@@ -1,7 +1,7 @@
 #include "Animation.h"
 
 Animation::Animation( int x,int y,int width,int height,int count,
-					  const Surface2D& sprite, float holdTime, std::string name, Color chroma )
+					  Surface2D& sprite, float holdTime, std::string name, Color chroma )
 	:
 	sprite( sprite ),
 	holdTime( holdTime ),

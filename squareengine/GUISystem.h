@@ -20,6 +20,28 @@ struct IobjData
 	std::string		  pathToSprite;
 };
 
+struct AnimationData
+{
+	AnimationData(int pStart, int pEnd, int width, int height, int frames, float ft, std::string name)
+	{
+		this->pStart = pStart;
+		this->pEnd = pEnd;
+		this->width = width;
+		this->height = height;
+		this->frames =frames;
+		this->ft = ft;
+		this->name = name;
+	}
+
+	int pStart;
+	int pEnd;
+	int width;
+	int height;
+	int frames;
+	float ft;
+	std::string name;
+};
+
 class GUISystem
 {
 public:
@@ -78,7 +100,7 @@ private:
 	std::optional<IobjData> ShowAddingIobjDialog();
 	HitBox					CreateNewHitBox();
 	void					ShowCameraControl();
-	std::vector<Animation>	ShowAnimationCreatingDialog(float dt);
+	std::vector<AnimationData>	ShowAnimationCreatingDialog(float dt);
 	
 	/*******************************************/
 private:
@@ -206,8 +228,10 @@ private:
 	int			maxFrames				= 4;
 	size_t		animPlayingId			= 0;
 	std::string newAnimNameSelected		= "";
+	Surface2D   animSpritePreview;
 	std::vector<std::string> animationNames;
 	std::vector<Animation>   animationsPreview;
+	std::vector<AnimationData>  animationsData;
 
 	/*****************************************************/
 private:

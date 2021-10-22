@@ -37,6 +37,7 @@ public:
 	void   DisAllowMoveRight();
 	void   SetHitBox(HitBox hb);	// Установить hitbox
 	HitBox GetHitBox();				// Получить hitbox
+	void   SetAnimation(std::vector<Animation> anim);
 
 	/**********************************************************/
 private:

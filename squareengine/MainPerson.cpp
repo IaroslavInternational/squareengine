@@ -269,6 +269,16 @@ HitBox MainPerson::GetHitBox()
 	return hitbox - DirectX::XMFLOAT2(dx, dy);
 }
 
+void MainPerson::SetAnimation(std::vector<Animation> anim)
+{
+	animations.clear();
+
+	for (auto& a : anim)
+	{
+		animations.emplace_back(a);
+	}
+}
+
 /**********************************************************/
 
 /* Внутренние методы */
