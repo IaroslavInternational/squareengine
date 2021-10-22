@@ -5,21 +5,15 @@
 #include "HitBox.h"
 #include "Line.h"
 
-GUISystem::GUISystem(std::shared_ptr<Window>				 wnd,
-					 MainPerson*							 hero,
-					 PersonContainer*						 persCon,
-					 InteractableObject2DContainer*			 Iobj,
-					 ObjectsQueue*							 objQueue,
-					 std::shared_ptr<Physics::PhysicsEngine> phEngPtr,
-					 std::shared_ptr<Camera>				 camera)
+GUISystem::GUISystem(Scene* scene)
 	:
-	wnd(wnd),
-	hero(hero),
-	persCon(persCon),
-	IobjCon(Iobj),
-	objQueue(objQueue),
-	phEngPtr(phEngPtr),
-	camera(camera),
+	wnd(scene->wnd),
+	hero(&scene->hero),
+	persCon(&scene->persCon),
+	IobjCon(&scene->Iobj),
+	objQueue(&scene->objQueue),
+	phEngPtr(scene->phEngine),
+	camera(scene->camera),
 	animSpritePreview(1, 1)
 {
 	SetGUIColors();
@@ -72,6 +66,17 @@ void GUISystem::Hide()
 void GUISystem::AddLog(const char* text)
 {
 	applog.AddLog(text);
+}
+
+void GUISystem::LoadScene(Scene* scene)
+{
+	wnd      = scene->wnd;
+	hero     = &scene->hero;
+	persCon  = &scene->persCon;
+	IobjCon  = &scene->Iobj;
+	objQueue = &scene->objQueue;
+	phEngPtr = scene->phEngine;
+	camera   = scene->camera;
 }
 
 /*******************************************/
@@ -600,8 +605,8 @@ void GUISystem::ShowFPS()
 			average = sum / N_POINTS;
 			sum = 0.0;
 
-			pYMin = average - 1.0;
-			pYMax = average + 1.0;
+			pYMin = average - 20.0;
+			pYMax = average + 20.0;
 		}
 
 		ImPlot::LinkNextPlotLimits(&pXMin, &pXMax, &pYMin, &pYMax);

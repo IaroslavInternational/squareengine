@@ -1,0 +1,9 @@
+{
+  "name": "Hello World",
+  "scenes": [
+    {
+      "scene 1": true,
+      "scene 2": false
+    }
+  ]
+}

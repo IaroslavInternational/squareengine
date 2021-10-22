@@ -10,7 +10,6 @@ Scene::Scene(std::string							 name,
 	wnd(wnd),
 	sdr(scData),
 	camera(std::make_shared<Camera>(&hero, &persCon, &Iobj, phEngine, sdr.GetCameraDataPath())),
-	gui(wnd, &hero, &persCon, &Iobj, &objQueue, phEngine, camera),	
 	mdr(sdr.GetMainPersonDataPath()),
 	hero(mdr, wnd, camera),
 	persCon(sdr.GetPersonContainerPath()),
@@ -90,16 +89,8 @@ void Scene::Render(float dt)
 {
 	/* Отрисовка */
 
-	wnd->Gfx().BeginFrame();	// Начало кадра
-
-	objQueue.Draw(wnd->Gfx());
+	objQueue.Draw(wnd->Gfx());	
 	
-	phEngine->Draw(wnd->Gfx());
-	
-	gui.Show(dt);
-
-	wnd->Gfx().EndFrame();		// Конец кадра
-
 	/*************/
 }
 

@@ -7,10 +7,10 @@
 #include "PhysicsEngine.h"
 #include "Camera.h"
 
-#include "GUISystem.h"
-
 class Scene
 {
+public:
+	friend class GUISystem;
 public:
 	Scene(std::string							  name,	
 		  std::shared_ptr<Window>				  wnd,		
@@ -44,7 +44,6 @@ private:
 	SceneDataReader			sdr;	// –идер данных сцены
 	std::shared_ptr<Window> wnd;	// ”казатель на главное окно 
 	std::shared_ptr<Camera> camera;	// ”казатель на камеру 
-	GUISystem				gui;	// »нтерфейс двжика
 	MainPersonDataReader	mdr;	// –идер данных главного персонажа
 
 	/******************************/

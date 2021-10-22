@@ -4,7 +4,7 @@
 #include "imgui/imgui.h"
 #include "AdapterData.h"
 #include "AppLog.h"
-#include "ObjectsQueue.h"
+#include "Scene.h"
 #include "PhysicsEngine.h"
 #include "AnimationData.h"
 #include "Window.h"
@@ -24,19 +24,14 @@ struct IobjData
 class GUISystem
 {
 public:
-	GUISystem(std::shared_ptr<Window>				  wnd,
-			  MainPerson*							  hero,
-			  PersonContainer*						  persCon,
-			  InteractableObject2DContainer*		  Iobj,
-			  ObjectsQueue*							  objQueue,
-			  std::shared_ptr<Physics::PhysicsEngine> phEngPtr,
-			  std::shared_ptr<Camera>);
+	GUISystem(Scene* scene);
 public:
 	/* Главные методы для отрисовки интерфейса */
 	
 	void Show(float dt);			// Показать интерфейс
 	void Hide();					// Скрыть интерфейс
 	void AddLog(const char* text);	// Добавить лог
+	void LoadScene(Scene* scene);
 
 	/*******************************************/
 private: 
@@ -70,7 +65,7 @@ private:
 	void					ShowMainPersonControl(float dt);// Показать настройки для главного персонажа
 	void					ShowPhysicsEngineObjList();		// Показать список объектов в физическом движке
 	void					ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
-	void					SpawnCameraToHeroControl();			// Показать настройки для камеры
+	void					SpawnCameraToHeroControl();		// Показать настройки для камеры
 	void					ShowLayersControl();			// Показать панель настроек слоёв
 	void					ShowIobjList();
 	void					ShowIobjControl();
