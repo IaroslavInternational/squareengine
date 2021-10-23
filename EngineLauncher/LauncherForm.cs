@@ -22,6 +22,8 @@ namespace EngineLauncher
             InitializeComponent();
 
             random = new Random();
+
+            btnMain_Click(btnMain, new EventArgs());
         }
 
         private Color SelectThemeColor()
@@ -54,8 +56,11 @@ namespace EngineLauncher
                     currentButton.BackColor = color;
                     currentButton.ForeColor = Color.White;
                     currentButton.Font = new System.Drawing.Font("Segoe UI Light", 16.0F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                   
                     panelNav.BackColor = color;
-                    lblTitle.Text = currentButton.Text;
+                    closeBtn.BackColor = color;
+                    
+                    lblTitle.Text = currentButton.Text.Trim();
                 }
             }
         }
@@ -97,6 +102,28 @@ namespace EngineLauncher
         private void btnMain_Click(object sender, EventArgs e)
         {
             ActivateButton(sender);
+
+            OpenChildForm(new MainForm(), sender);
+        }
+
+        private void createBtn_Click(object sender, EventArgs e)
+        {
+            ActivateButton(sender);
+
+            //OpenChildForm(new MainForm(), sender);
+        }
+
+        private void settingsBtn_Click(object sender, EventArgs e)
+        {
+            ActivateButton(sender);
+
+            //OpenChildForm(new MainForm(), sender);
+        }
+
+        private void closeBtn_Click(object sender, EventArgs e)
+        {
+            currentForm.Close();
+            this.Close();
         }
     }
 }
