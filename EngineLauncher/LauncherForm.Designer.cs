@@ -1,7 +1,7 @@
 ﻿
 namespace EngineLauncher
 {
-    partial class Launcher
+    partial class LauncherForm
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -30,15 +30,15 @@ namespace EngineLauncher
         private void InitializeComponent()
         {
             this.panelMenu = new System.Windows.Forms.Panel();
-            this.panelLogo = new System.Windows.Forms.Panel();
-            this.panelNav = new System.Windows.Forms.Panel();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.panelDesktop = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.closeBtn = new System.Windows.Forms.Button();
             this.settingsBtn = new System.Windows.Forms.Button();
             this.createBtn = new System.Windows.Forms.Button();
             this.btnMain = new System.Windows.Forms.Button();
+            this.panelLogo = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.panelNav = new System.Windows.Forms.Panel();
+            this.closeBtn = new System.Windows.Forms.Button();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.panelDesktop = new System.Windows.Forms.Panel();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             this.panelNav.SuspendLayout();
@@ -56,78 +56,6 @@ namespace EngineLauncher
             this.panelMenu.Name = "panelMenu";
             this.panelMenu.Size = new System.Drawing.Size(239, 500);
             this.panelMenu.TabIndex = 0;
-            // 
-            // panelLogo
-            // 
-            this.panelLogo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(2)))), ((int)(((byte)(110)))));
-            this.panelLogo.Controls.Add(this.label1);
-            this.panelLogo.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelLogo.Location = new System.Drawing.Point(0, 0);
-            this.panelLogo.Name = "panelLogo";
-            this.panelLogo.Size = new System.Drawing.Size(239, 159);
-            this.panelLogo.TabIndex = 0;
-            // 
-            // panelNav
-            // 
-            this.panelNav.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(0)))), ((int)(((byte)(63)))));
-            this.panelNav.Controls.Add(this.closeBtn);
-            this.panelNav.Controls.Add(this.lblTitle);
-            this.panelNav.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelNav.Location = new System.Drawing.Point(239, 0);
-            this.panelNav.Name = "panelNav";
-            this.panelNav.Size = new System.Drawing.Size(661, 45);
-            this.panelNav.TabIndex = 1;
-            // 
-            // lblTitle
-            // 
-            this.lblTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblTitle.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblTitle.Location = new System.Drawing.Point(3, 7);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(84, 30);
-            this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "Главная";
-            // 
-            // panelDesktop
-            // 
-            this.panelDesktop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(6)))), ((int)(((byte)(169)))));
-            this.panelDesktop.Location = new System.Drawing.Point(245, 51);
-            this.panelDesktop.Name = "panelDesktop";
-            this.panelDesktop.Size = new System.Drawing.Size(649, 443);
-            this.panelDesktop.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.label1.Location = new System.Drawing.Point(38, 64);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(165, 30);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "SQUARE ENGNIE";
-            // 
-            // closeBtn
-            // 
-            this.closeBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.closeBtn.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.closeBtn.Dock = System.Windows.Forms.DockStyle.Right;
-            this.closeBtn.FlatAppearance.BorderSize = 0;
-            this.closeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.closeBtn.Font = new System.Drawing.Font("Segoe UI Light", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.closeBtn.ForeColor = System.Drawing.Color.Gainsboro;
-            this.closeBtn.Image = global::EngineLauncher.Properties.Resources.close;
-            this.closeBtn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.closeBtn.Location = new System.Drawing.Point(596, 0);
-            this.closeBtn.Name = "closeBtn";
-            this.closeBtn.Padding = new System.Windows.Forms.Padding(12, 0, 0, 0);
-            this.closeBtn.Size = new System.Drawing.Size(65, 45);
-            this.closeBtn.TabIndex = 2;
-            this.closeBtn.UseVisualStyleBackColor = true;
-            this.closeBtn.Click += new System.EventHandler(this.closeBtn_Click);
             // 
             // settingsBtn
             // 
@@ -193,7 +121,79 @@ namespace EngineLauncher
             this.btnMain.UseVisualStyleBackColor = true;
             this.btnMain.Click += new System.EventHandler(this.btnMain_Click);
             // 
-            // Launcher
+            // panelLogo
+            // 
+            this.panelLogo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(2)))), ((int)(((byte)(110)))));
+            this.panelLogo.Controls.Add(this.label1);
+            this.panelLogo.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelLogo.Location = new System.Drawing.Point(0, 0);
+            this.panelLogo.Name = "panelLogo";
+            this.panelLogo.Size = new System.Drawing.Size(239, 159);
+            this.panelLogo.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.label1.Location = new System.Drawing.Point(38, 64);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(165, 30);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "SQUARE ENGNIE";
+            // 
+            // panelNav
+            // 
+            this.panelNav.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(0)))), ((int)(((byte)(63)))));
+            this.panelNav.Controls.Add(this.closeBtn);
+            this.panelNav.Controls.Add(this.lblTitle);
+            this.panelNav.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelNav.Location = new System.Drawing.Point(239, 0);
+            this.panelNav.Name = "panelNav";
+            this.panelNav.Size = new System.Drawing.Size(661, 45);
+            this.panelNav.TabIndex = 1;
+            // 
+            // closeBtn
+            // 
+            this.closeBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.closeBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.closeBtn.Dock = System.Windows.Forms.DockStyle.Right;
+            this.closeBtn.FlatAppearance.BorderSize = 0;
+            this.closeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.closeBtn.Font = new System.Drawing.Font("Segoe UI Light", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.closeBtn.ForeColor = System.Drawing.Color.Gainsboro;
+            this.closeBtn.Image = global::EngineLauncher.Properties.Resources.close;
+            this.closeBtn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.closeBtn.Location = new System.Drawing.Point(596, 0);
+            this.closeBtn.Name = "closeBtn";
+            this.closeBtn.Padding = new System.Windows.Forms.Padding(12, 0, 0, 0);
+            this.closeBtn.Size = new System.Drawing.Size(65, 45);
+            this.closeBtn.TabIndex = 2;
+            this.closeBtn.UseVisualStyleBackColor = true;
+            this.closeBtn.Click += new System.EventHandler(this.closeBtn_Click);
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lblTitle.Location = new System.Drawing.Point(3, 7);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(84, 30);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "Главная";
+            // 
+            // panelDesktop
+            // 
+            this.panelDesktop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(6)))), ((int)(((byte)(169)))));
+            this.panelDesktop.Location = new System.Drawing.Point(245, 51);
+            this.panelDesktop.Name = "panelDesktop";
+            this.panelDesktop.Size = new System.Drawing.Size(649, 443);
+            this.panelDesktop.TabIndex = 2;
+            // 
+            // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -203,7 +203,7 @@ namespace EngineLauncher
             this.Controls.Add(this.panelNav);
             this.Controls.Add(this.panelMenu);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "Launcher";
+            this.Name = "LauncherForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Square Engine";
             this.panelMenu.ResumeLayout(false);

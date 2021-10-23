@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace EngineLauncher
 {
-    public partial class Launcher : Form
+    public partial class LauncherForm : Form
     {
         private Button currentButton;
         private Form currentForm;
         private Random random;
         private int tempIndex;
 
-        public Launcher()
+        public LauncherForm()
         {
             InitializeComponent();
 
@@ -110,7 +110,7 @@ namespace EngineLauncher
         {
             ActivateButton(sender);
 
-            //OpenChildForm(new MainForm(), sender);
+            OpenChildForm(new AddProject(), sender);
         }
 
         private void settingsBtn_Click(object sender, EventArgs e)
