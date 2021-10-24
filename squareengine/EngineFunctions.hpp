@@ -209,4 +209,38 @@ namespace EngineFunctions
 		// Закрытие файла
 		ostr.close();
 	}
+
+	inline const static std::string& GetProjectName()
+	{
+		std::ifstream dataFile("current_project_setup.json");
+		if (!dataFile.is_open())
+		{
+			throw ("Не удаётся открыть файл с данными о проекте");
+		}
+
+		json j;
+		dataFile >> j;
+
+		dataFile.close();
+
+		static std::string name = "";
+
+		for (json::iterator m = j.begin(); m != j.end(); ++m)
+		{
+			auto d = m.key();
+
+			for (const auto& obj : j.at(d))
+			{
+				/* Получение имени объекта */
+
+				name = obj.at("name");
+				
+				break;
+
+				/***************************/
+			}
+		}
+
+		return name;
+	}
 }

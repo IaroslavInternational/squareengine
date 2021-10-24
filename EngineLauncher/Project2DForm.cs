@@ -71,6 +71,11 @@ namespace EngineLauncher
             public List<SortedDictionary<string, string>> Scene;
         };
 
+        private struct ProjectSetupInfo
+        {
+            public List<SortedDictionary<string, string>> project;
+        }
+
         public Project2DForm()
         {
             InitializeComponent();
@@ -262,6 +267,25 @@ namespace EngineLauncher
             }
 
             /**********************************/
+
+            /* Создание настроек проекта */
+
+            ProjectSetupInfo setupInfo = new ProjectSetupInfo();
+            setupInfo.project = new List<SortedDictionary<string, string>>();
+
+            SortedDictionary<string, string> nameMap = new SortedDictionary<string, string>();
+            nameMap.Add("name", projectName.Text);
+
+            setupInfo.project.Add(nameMap);
+
+            string setupSettingsStr = JsonConvert.SerializeObject(setupInfo);
+
+            string pathToSetupSettings = @"C:\Users\Yaros\source\projects\squareengine\squareengine\current_project_setup.json";
+
+            CreateAndSaveJson(pathToSetupSettings, setupSettingsStr);
+
+
+            /*****************************/
         }
 
         private void projectName_MouseClick(object sender, MouseEventArgs e)

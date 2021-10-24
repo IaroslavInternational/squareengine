@@ -213,9 +213,6 @@
     <ClCompile Include="Window.cpp">
       <Filter>Исходные файлы\Окна</Filter>
     </ClCompile>
-    <ClCompile Include="WinMain.cpp">
-      <Filter>Исходные файлы\Окна</Filter>
-    </ClCompile>
     <ClCompile Include="AdapterData.cpp">
       <Filter>Исходные файлы\Интерфейс</Filter>
     </ClCompile>
@@ -302,6 +299,9 @@
     </ClCompile>
     <ClCompile Include="ObjectsQueue.cpp">
       <Filter>Исходные файлы\Сцена\Объекты\Контейнеры объектов</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMain.cpp">
+      <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

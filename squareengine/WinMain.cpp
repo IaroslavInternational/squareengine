@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include "EngineFunctions.hpp"
+
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -8,7 +10,7 @@ int CALLBACK WinMain(
 {
 	try
 	{
-		return App{ lpCmdLine , "Hello World"}.Go();
+		return App{ lpCmdLine , EngineFunctions::GetProjectName()}.Go();
 	}
 	catch( const EngineException& e )
 	{
@@ -16,11 +18,11 @@ int CALLBACK WinMain(
 	}
 	catch( const std::exception& e )
 	{
-		MessageBox( nullptr,e.what(),"Стандартная ошибка",MB_OK | MB_ICONEXCLAMATION );
+		MessageBox( nullptr,e.what(),"Standart error",MB_OK | MB_ICONEXCLAMATION );
 	}
 	catch( ... )
 	{
-		MessageBox( nullptr,"Детали ошибки не ясны","Неизвестная ошибка",MB_OK | MB_ICONEXCLAMATION );
+		MessageBox( nullptr,"Unknown error","Unknown error",MB_OK | MB_ICONEXCLAMATION );
 	}
 	return -1;
 }
