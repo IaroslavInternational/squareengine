@@ -3,14 +3,13 @@
 #include "imgui\imgui.h"
 #include "EngineUtil.h"
 #include "EngineFunctions.hpp"
-#include <thread>
 
 App::App(const std::string& commandLine, const std::string& projectName)
 	:
-	commandLine(commandLine),
-	projectName(projectName),
 	wnd(std::make_shared<Window>("SquareEngine 1.0")),
 	phEngine(std::make_shared<Physics::PhysicsEngine>()),
+	commandLine(commandLine),
+	projectName(projectName),
 	scriptCommander(TokenizeQuoted(commandLine))
 {
 	{
@@ -81,11 +80,9 @@ App::App(const std::string& commandLine, const std::string& projectName)
 	gui = std::make_shared<GUISystem>(scene.get());
 }
 
-App::~App()
-{}
-
 int App::Go()
 {
+	// Игровой цикл
 	while( true )
 	{
 		// Обработка всех сообщений
@@ -105,13 +102,7 @@ int App::Go()
 
 void App::HandleInput(float dt)
 {
-	for (auto& s : scenes)
-	{
-		if (s.second)
-		{
-			scene->ProcessInput(dt);
-		}
-	}
+	scene->ProcessInput(dt);
 }
 
 void App::DoFrame(float dt)
@@ -123,14 +114,16 @@ void App::DoFrame(float dt)
 		if (s.second)
 		{			
 			// Имя активной сцены
-			auto activeSceneName = scene->GetName();
+			std::string activeSceneName = scene->GetName();
 
+			// Если переход на другую сцену вызван из интерфейса
 			if (gui->UpdatingScene().first)
 			{
 				std::ostringstream oss;
 				oss << "Projects\\" << projectName << "\\Scenes\\" << gui->UpdatingScene().second << "\\scene_"
 					<< EngineFunctions::StrReplace(gui->UpdatingScene().second, "Scene ", "") << ".json";
 				
+				// Делаем новую сцену активной
 				for (auto it = scenes.begin(); it != scenes.end(); ++it)
 				{
 					if (it->first == gui->UpdatingScene().second)
@@ -139,6 +132,7 @@ void App::DoFrame(float dt)
 					}
 				}
 
+				// Делаем старую сцену неактивной
 				for (auto it = scenes.begin(); it != scenes.end(); ++it)
 				{
 					if (it->first == activeSceneName)
@@ -152,7 +146,7 @@ void App::DoFrame(float dt)
 				gui->LoadScene(scene.get());
 			}
 
-			scene->Render(dt);
+			scene->Render(dt);	// Отрисовка содержания сцены
 
 			// Данные о триггере
 			auto t = scene->IsOnTheSceneTrigger();
@@ -190,9 +184,9 @@ void App::DoFrame(float dt)
 		}
 	}
 
-	phEngine->Draw(wnd->Gfx());
+	phEngine->Draw(wnd->Gfx());	// Отрисовка объектов физического движка
 
-	gui->Show(dt);
+	gui->Show(dt);	// Отрисовка интерфейса
 
-	wnd->Gfx().EndFrame();		// Конец кадра
+	wnd->Gfx().EndFrame();	// Конец кадра
 }

@@ -29,6 +29,7 @@ namespace EngineLauncher
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.introLbl = new System.Windows.Forms.RichTextBox();
             this.projectName = new System.Windows.Forms.TextBox();
             this.lblTitle = new System.Windows.Forms.Label();
@@ -36,7 +37,7 @@ namespace EngineLauncher
             this.scenesAmount = new System.Windows.Forms.TextBox();
             this.cbIncludeStartPackage = new System.Windows.Forms.CheckBox();
             this.createBtn = new System.Windows.Forms.Button();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.mainTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // introLbl
@@ -134,15 +135,9 @@ namespace EngineLauncher
             this.createBtn.UseVisualStyleBackColor = false;
             this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
             // 
-            // progressBar
+            // mainTimer
             // 
-            this.progressBar.ForeColor = System.Drawing.SystemColors.Desktop;
-            this.progressBar.Location = new System.Drawing.Point(17, 408);
-            this.progressBar.MarqueeAnimationSpeed = 50;
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(339, 23);
-            this.progressBar.TabIndex = 11;
-            this.progressBar.Visible = false;
+            this.mainTimer.Tick += new System.EventHandler(this.mainTimer_Tick);
             // 
             // Project2DForm
             // 
@@ -150,7 +145,6 @@ namespace EngineLauncher
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(6)))), ((int)(((byte)(169)))));
             this.ClientSize = new System.Drawing.Size(649, 443);
-            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.createBtn);
             this.Controls.Add(this.cbIncludeStartPackage);
             this.Controls.Add(this.label1);
@@ -178,6 +172,6 @@ namespace EngineLauncher
         private System.Windows.Forms.TextBox scenesAmount;
         private System.Windows.Forms.CheckBox cbIncludeStartPackage;
         private System.Windows.Forms.Button createBtn;
-        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Timer mainTimer;
     }
 }

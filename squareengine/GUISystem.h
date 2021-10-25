@@ -27,11 +27,13 @@ public:
 public:
 	/* Главные методы для отрисовки интерфейса */
 	
-	void						 Show(float dt);			// Показать интерфейс (принимает время одного кадра)
-	void						 Hide();					// Скрыть интерфейс
-	void						 AddLog(const char* text);	// Добавить лог
-	void						 LoadScene(Scene* scene);	// Загрузить сцену
-	std::pair<bool, std::string> UpdatingScene();			// Идёт обновление сцены
+	void						 Show(float dt);						// Показать интерфейс (принимает время одного кадра)
+	void						 Hide();								// Скрыть интерфейс
+	void						 AddLog(const std::ostringstream& oss);	// Добавить лог
+	void						 AddLog(std::string str);				// Добавить лог
+	void						 AddLog(const char* text);				// Добавить лог
+	void						 LoadScene(Scene* scene);				// Загрузить сцену
+	std::pair<bool, std::string> UpdatingScene();						// Идёт обновление сцены
 
 	/*******************************************/
 private: 

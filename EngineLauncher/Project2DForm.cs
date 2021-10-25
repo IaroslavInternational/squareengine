@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft;
@@ -76,6 +77,9 @@ namespace EngineLauncher
             public List<SortedDictionary<string, string>> project;
         }
 
+        private Thread thread;
+        Form popup;
+
         public Project2DForm()
         {
             InitializeComponent();
@@ -90,10 +94,21 @@ namespace EngineLauncher
                 return;
             }
 
+            popup = new PopupForm("", "");
+            popup.Show();
+
+            mainTimer.Start();
+
+            thread = new Thread(new ThreadStart(CreateProject));
+            thread.Start();
+        }
+
+        private void CreateProject()
+        {
             string path = @"C:\Users\Yaros\source\projects\squareengine\squareengine\Projects\" + projectName.Text;
 
             DirectoryInfo dirInfo = new DirectoryInfo(path);
-            
+
             if (!dirInfo.Exists)
             {
                 dirInfo.Create();
@@ -105,9 +120,6 @@ namespace EngineLauncher
                 return;
             }
 
-            progressBar.Visible = true;
-            createBtn.Enabled = false;
-
             dirInfo.CreateSubdirectory(@"Scenes");
 
             for (int i = 1; i <= Convert.ToInt32(scenesAmount.Text); i++)
@@ -115,8 +127,6 @@ namespace EngineLauncher
                 dirInfo.CreateSubdirectory(@"Scenes\Scene " + i);
                 dirInfo.CreateSubdirectory(@"Scenes\Scene " + i + @"\Objects");
             }
-
-            progressBar.Value += 10;
 
             /* Создание настроек проекта */
 
@@ -143,8 +153,6 @@ namespace EngineLauncher
                 serializer.Serialize(writer, projectSettings);
             }
 
-            progressBar.Value += 10;
-
             /*****************************/
 
             /* Создание настроек камеры */
@@ -166,8 +174,6 @@ namespace EngineLauncher
             string pathToCameraSettings = path + @"\Scenes\camera.json";
 
             CreateAndSaveJson(pathToCameraSettings, cameraSettingsStr);
-
-            progressBar.Value += 10;
 
             /***************************/
 
@@ -207,8 +213,6 @@ namespace EngineLauncher
 
             CreateAndSaveJson(pathToHeroSettings, heroSettingsStr);
 
-            progressBar.Value += 15;
-
             /****************************************/
 
             /* Создание настроек сцен */
@@ -219,11 +223,11 @@ namespace EngineLauncher
                 sceneSettings.Scene = new List<SortedDictionary<string, string>>();
 
                 SortedDictionary<string, string> SceneMap = new SortedDictionary<string, string>();
-                SceneMap.Add("objectsPath",             @"Projects\" + projectName.Text + @"\Scenes\Scene " + i + @"\Objects\objects_scene_" + i + ".json");
+                SceneMap.Add("objectsPath", @"Projects\" + projectName.Text + @"\Scenes\Scene " + i + @"\Objects\objects_scene_" + i + ".json");
                 SceneMap.Add("interactableObjectsPath", @"Projects\" + projectName.Text + @"\Scenes\Scene " + i + @"\Objects\interactable_objects_scene_" + i + ".json");
-                SceneMap.Add("mainPersonPath",          @"Projects\" + projectName.Text + @"\Scenes\main_person.json");
-                SceneMap.Add("physicsPath",             @"Projects\" + projectName.Text + @"\Scenes\Scene " + i + @"\physics.json");
-                SceneMap.Add("cameraPath",              @"Projects\" + projectName.Text + @"\Scenes\camera.json");
+                SceneMap.Add("mainPersonPath", @"Projects\" + projectName.Text + @"\Scenes\main_person.json");
+                SceneMap.Add("physicsPath", @"Projects\" + projectName.Text + @"\Scenes\Scene " + i + @"\physics.json");
+                SceneMap.Add("cameraPath", @"Projects\" + projectName.Text + @"\Scenes\camera.json");
 
                 sceneSettings.Scene.Add(SceneMap);
 
@@ -234,8 +238,6 @@ namespace EngineLauncher
 
                 CreateAndSaveJson(pathToSceneSettings, sceneSettingsStr);
             }
-
-            progressBar.Value += 20;
 
             /**************************/
 
@@ -256,8 +258,6 @@ namespace EngineLauncher
                     File.Copy(file.FullName, secondPath + result, true);
                 }
             }
-
-            progressBar.Value += 15;
 
             /***************************************************************/
 
@@ -281,8 +281,6 @@ namespace EngineLauncher
                 }
             }
 
-            progressBar.Value += 10;
-
             /**********************************/
 
             /* Создание настроек проекта */
@@ -301,13 +299,7 @@ namespace EngineLauncher
 
             CreateAndSaveJson(pathToSetupSettings, setupSettingsStr);
 
-            progressBar.Value += 10;
-
             /*****************************/
-
-            progressBar.Value = progressBar.Minimum;
-            progressBar.Visible = false;
-            createBtn.Enabled = true;
         }
 
         private void projectName_MouseClick(object sender, MouseEventArgs e)
@@ -328,6 +320,15 @@ namespace EngineLauncher
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, JsonConvert.DeserializeObject(json));
+            }
+        }
+
+        private void mainTimer_Tick(object sender, EventArgs e)
+        {
+            if(!thread.IsAlive)
+            {
+                popup.Close();
+                mainTimer.Stop();
             }
         }
     }

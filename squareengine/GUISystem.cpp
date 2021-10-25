@@ -64,6 +64,16 @@ void GUISystem::Hide()
 	ShowLogs = false;
 }
 
+void GUISystem::AddLog(const std::ostringstream& oss)
+{
+	AddLog(oss.str());
+}
+
+void GUISystem::AddLog(std::string str)
+{
+	AddLog(str.c_str());
+}
+
 void GUISystem::AddLog(const char* text)
 {
 	applog.AddLog(text);
@@ -592,7 +602,7 @@ void GUISystem::ShowPersonList()
 				{
 					std::string deletedPersonName = p->get()->name;
 					AddLog("Удаление ");
-					AddLog(deletedPersonName.c_str());
+					AddLog(deletedPersonName);
 					AddLog("...\n");
 
 					objQueue->DeleteObjectAt(p->get()->name);
@@ -600,7 +610,7 @@ void GUISystem::ShowPersonList()
 					EngineFunctions::DeleteJsonObject(deletedPersonName, persCon->dataPath);
 
 					AddLog("Персонаж ");
-					AddLog(deletedPersonName.c_str());
+					AddLog(deletedPersonName);
 					AddLog(" удалён\n");
 
 					ImGui::EndPopup();
@@ -649,7 +659,7 @@ void GUISystem::ShowIobjList()
 				{
 					std::string deletedObjName = o->get()->name;
 					AddLog("Удаление ");
-					AddLog(deletedObjName.c_str());
+					AddLog(deletedObjName);
 					AddLog("...\n");
 
 					objQueue->DeleteObjectAt(o->get()->name);
@@ -658,7 +668,7 @@ void GUISystem::ShowIobjList()
 					EngineFunctions::DeleteJsonObject(deletedObjName, IobjCon->dataPath);
 
 					AddLog("Объект ");
-					AddLog(deletedObjName.c_str());
+					AddLog(deletedObjName);
 					AddLog(" удалён\n");
 
 					ImGui::EndPopup();
@@ -743,7 +753,7 @@ void GUISystem::ShowIobjList()
 				std::ostringstream oss_l;
 				oss_l << "Добавлено [" << d.value().name << "]\n";
 
-				AddLog(oss_l.str().c_str());
+				AddLog(oss_l);
 
 				AddingIobj = false;
 			}
@@ -783,14 +793,14 @@ void GUISystem::ShowPhysicsEngineObjList()
 						{
 							std::string deletedLineName = l->name;
 							AddLog("Удаление ");
-							AddLog(deletedLineName.c_str());
+							AddLog(deletedLineName);
 							AddLog("...\n");
 
 							phEngPtr->DeleteLineAt(l);
 							EngineFunctions::DeleteJsonObject(deletedLineName, phEngPtr->dataPath);
 
 							AddLog("Линия ");
-							AddLog(deletedLineName.c_str());
+							AddLog(deletedLineName);
 							AddLog(" удалена\n");
 
 							ImGui::EndPopup();
@@ -834,7 +844,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 									"[x: " << firstPoint.x <<
 									"; y: " << firstPoint.y << "]\n";
 
-								AddLog(oss.str().c_str());
+								AddLog(oss);
 							}
 						}
 						else if (!SettedSecondPoint)
@@ -863,7 +873,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 									"[x: " << secondPoint.x <<
 									"; y: " << secondPoint.y << "]\n";
 
-								AddLog(oss.str().c_str());
+								AddLog(oss);
 
 								AddLog("Сохранение линии:\n");
 
@@ -910,7 +920,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 								std::ostringstream oss_l;
 								oss_l << "Добавлено [" << line_name.str() << "]\n";
 
-								AddLog(oss_l.str().c_str());
+								AddLog(oss_l);
 
 								mouseHelpInfo = "";
 								SettedSecondPoint = true;
@@ -951,14 +961,14 @@ void GUISystem::ShowPhysicsEngineObjList()
 						{
 							std::string deletedHitBoxName = hb->name;
 							AddLog("Удаление ");
-							AddLog(deletedHitBoxName.c_str());
+							AddLog(deletedHitBoxName);
 							AddLog("...\n");
 
 							phEngPtr->DeleteHitBoxAt(hb);
 							EngineFunctions::DeleteJsonObject(deletedHitBoxName, phEngPtr->dataPath);
 
 							AddLog("Hit-Box ");
-							AddLog(deletedHitBoxName.c_str());
+							AddLog(deletedHitBoxName);
 							AddLog(" удалён\n");
 
 							ImGui::EndPopup();
@@ -1002,7 +1012,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 									"[x: " << firstPoint.x <<
 									"; y: " << firstPoint.y << "]\n";
 
-								AddLog(oss.str().c_str());
+								AddLog(oss);
 							}
 						}
 						else if (!SettedSecondPoint)
@@ -1031,7 +1041,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 									"[x: " << secondPoint.x <<
 									"; y: " << secondPoint.y << "]\n";
 
-								AddLog(oss.str().c_str());
+								AddLog(oss);
 
 								AddLog("Сохранение Hit-Box'а:\n");
 
@@ -1078,7 +1088,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 								std::ostringstream oss_l;
 								oss_l << "Добавлено [" << hb_name.str() << "]\n";
 
-								AddLog(oss_l.str().c_str());
+								AddLog(oss_l);
 
 								mouseHelpInfo = "";
 								SettedSecondPoint = true;
@@ -1174,7 +1184,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 							if (ImGui::Button("Изменить", ImVec2(100, 20)))
 							{
 								AddLog("Изменение Hit-box для: ");
-								AddLog(hero->name.c_str());
+								AddLog(hero->name);
 								AddLog("\n");
 
 								DrawingHitBox = true;
@@ -1332,7 +1342,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 						if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 						{
 							AddLog("Сохранение настроек для: ");
-							AddLog(hero->name.c_str());
+							AddLog(hero->name);
 							AddLog("\n");
 
 							SavingSettings = true;
@@ -1502,7 +1512,7 @@ void GUISystem::ShowPersonControl()
 									if (ImGui::Button("Изменить", ImVec2(100, 20)))
 									{
 										AddLog("Изменение Hit-box для:");
-										AddLog(personSelected.c_str());
+										AddLog(personSelected);
 										AddLog("\n");
 
 										DrawingHitBox = true;
@@ -1539,7 +1549,7 @@ void GUISystem::ShowPersonControl()
 								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 								{
 									AddLog("Сохранение настроек для: ");
-									AddLog(personSelected.c_str());
+									AddLog(personSelected);
 									AddLog("\n");
 
 									SavingSettings = true;
@@ -1704,7 +1714,7 @@ void GUISystem::ShowIobjControl()
 									if (ImGui::Button("Изменить", ImVec2(100, 20)))
 									{
 										AddLog("Изменение Hit-box для:");
-										AddLog(IobjSelected.c_str());
+										AddLog(IobjSelected);
 										AddLog("\n");
 
 										DrawingHitBox = true;
@@ -1740,7 +1750,7 @@ void GUISystem::ShowIobjControl()
 								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 								{
 									AddLog("Сохранение настроек для: ");
-									AddLog(IobjSelected.c_str());
+									AddLog(IobjSelected);
 									AddLog("\n");
 
 									SavingSettings = true;
@@ -1826,7 +1836,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 							if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
 							{
 								AddLog("Нормирование по Xs для: ");
-								AddLog(objectSelected.c_str());
+								AddLog(objectSelected);
 								AddLog("\n");
 
 								phEngPtr->lines.at(k).end.x = phEngPtr->lines.at(k).start.x;
@@ -1851,7 +1861,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 							if (ImGui::Button("Нормировать Y", ImVec2(100, 20)))
 							{
 								AddLog("Нормирование по Ys для: ");
-								AddLog(objectSelected.c_str());
+								AddLog(objectSelected);
 								AddLog("\n");
 
 								phEngPtr->lines.at(k).end.y = phEngPtr->lines.at(k).start.y;
@@ -1883,7 +1893,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 								if (ImGui::Button("Перерисовать", ImVec2(100, 20)))
 								{
 									AddLog("Изменение линии: ");
-									AddLog(objectSelected.c_str());
+									AddLog(objectSelected);
 									AddLog("\n");
 
 									DrawingLine = true;
@@ -1909,7 +1919,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 												"[x: " << firstPoint.x <<
 												"; y: " << firstPoint.y << "]\n";
 
-											AddLog(oss.str().c_str());
+											AddLog(oss);
 										}
 									}
 									else if (!SettedSecondPoint)
@@ -1935,7 +1945,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 												"[x: " << secondPoint.x <<
 												"; y: " << secondPoint.y << "]\n";
 
-											AddLog(oss.str().c_str());
+											AddLog(oss);
 
 											AddLog("Сохранение линии:\n");
 
@@ -1995,7 +2005,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 							if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 							{
 								AddLog("Сохранение настроек для: ");
-								AddLog(objectSelected.c_str());
+								AddLog(objectSelected);
 								AddLog("\n");
 
 								SavingSettings = true;
@@ -2082,7 +2092,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 							if (ImGui::Button("Сделать квадрат", ImVec2(100, 21)))
 							{
 								AddLog("Создание квадрата из: ");
-								AddLog(objectSelected.c_str());
+								AddLog(objectSelected);
 								AddLog("\n");
 
 								phEngPtr->hitboxes.at(k).coordinates.z = phEngPtr->hitboxes.at(k).coordinates.x + sq_l;
@@ -2115,7 +2125,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 								if (ImGui::Button("Перерисовать", ImVec2(100, 20)))
 								{
 									AddLog("Изменение Hit-Box'а: ");
-									AddLog(objectSelected.c_str());
+									AddLog(objectSelected);
 									AddLog("\n");
 
 									DrawingHitBox = true;
@@ -2141,7 +2151,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 												"[x: "  << firstPoint.x <<
 												"; y: " << firstPoint.y << "]\n";
 
-											AddLog(oss.str().c_str());
+											AddLog(oss);
 										}
 									}
 									else if (!SettedSecondPoint)
@@ -2167,7 +2177,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 												"[x: "  << secondPoint.x <<
 												"; y: " << secondPoint.y << "]\n";
 
-											AddLog(oss.str().c_str());
+											AddLog(oss);
 
 											AddLog("Сохранение Hit-Box'а:\n");
 
@@ -2227,7 +2237,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 							if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 							{
 								AddLog("Сохранение настроек для: ");
-								AddLog(objectSelected.c_str());
+								AddLog(objectSelected);
 								AddLog("\n");
 
 								SavingSettings = true;
@@ -2442,7 +2452,7 @@ void GUISystem::ShowCameraControl()
 
 				std::ostringstream str;
 				str << "Камера установлена по кординатам: " << "X: " << camera->position.x << " Y: " << camera->position.y << "\n";
-				AddLog(str.str().c_str());
+				AddLog(str);
 			}
 
 			ImGui::Separator();
@@ -2635,7 +2645,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		if (ImGui::Button("Загрузить", ImVec2(100, 20)))
 		{
 			AddLog("Загрузка спрайта для: ");
-			AddLog(obj->name.c_str());
+			AddLog(obj->name);
 			AddLog("\n");
 
 			LoadingSprite = true;
@@ -2668,7 +2678,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 						AddLog("Обновлён Hit-Box ");
 						AddLog(" для:");
-						AddLog(obj->name.c_str());
+						AddLog(obj->name);
 						AddLog("\n");
 
 						break;
@@ -2677,9 +2687,9 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 			}
 
 			AddLog("Загружен спрайт ");
-			AddLog(imagePath.c_str());
+			AddLog(imagePath);
 			AddLog(" для:");
-			AddLog(obj->name.c_str());
+			AddLog(obj->name);
 			AddLog("\n");
 
 			LoadingSprite = false;
@@ -2696,7 +2706,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 		{
 			AddLog("Сохранение настроек для: ");
-			AddLog(obj->name.c_str());
+			AddLog(obj->name);
 			AddLog("\n");
 
 			SavingSettings = true;
@@ -3021,7 +3031,7 @@ HitBox GUISystem::CreateNewHitBox()
 				"[x: " << firstPoint.x <<
 				"; y: " << firstPoint.y << "]\n";
 
-			AddLog(oss.str().c_str());
+			AddLog(oss);
 		}
 	}
 	else if (!SettedSecondPoint)
@@ -3046,7 +3056,7 @@ HitBox GUISystem::CreateNewHitBox()
 				"[x: " << secondPoint.x <<
 				"; y: " << secondPoint.y << "]\n";
 
-			AddLog(oss.str().c_str());
+			AddLog(oss);
 
 			mouseHelpInfo = "";
 			SettedSecondPoint = true;
