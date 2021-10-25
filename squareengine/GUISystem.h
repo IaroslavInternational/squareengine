@@ -1,38 +1,37 @@
 #pragma once
 
-#include "ImguiManager.h"
 #include "imgui/imgui.h"
 #include "AdapterData.h"
 #include "AppLog.h"
 #include "Scene.h"
-#include "PhysicsEngine.h"
 #include "AnimationData.h"
 #include "Window.h"
 
 #include <map>
 
-#define N_POINTS 100	// Максимальное кол-во точек на графике
+#define N_POINTS   100						// Максимальное кол-во точек на графике
+#define MAX_POINTS (double)N_POINTS - 1.0;	// Максимальное кол-во точек на графике для корректного отображения	
 
 struct IobjData
 {
-	std::string		  name;
-	DirectX::XMFLOAT2 position;
 	size_t			  layer;
+	std::string		  name;
 	std::string		  pathToSprite;
+	DirectX::XMFLOAT2 position;
 };
 
 class GUISystem
 {
 public:
-	GUISystem(Scene* scene);
+	GUISystem(Scene* scene);	// Конструктор (принимает указатель на сцену)
 public:
 	/* Главные методы для отрисовки интерфейса */
 	
-	void Show(float dt);			// Показать интерфейс
-	void Hide();					// Скрыть интерфейс
-	void AddLog(const char* text);	// Добавить лог
-	void LoadScene(Scene* scene);
-	std::pair<bool, std::string> UpdatingScene();
+	void						 Show(float dt);			// Показать интерфейс (принимает время одного кадра)
+	void						 Hide();					// Скрыть интерфейс
+	void						 AddLog(const char* text);	// Добавить лог
+	void						 LoadScene(Scene* scene);	// Загрузить сцену
+	std::pair<bool, std::string> UpdatingScene();			// Идёт обновление сцены
 
 	/*******************************************/
 private: 
@@ -54,94 +53,108 @@ private:
 	/****************************************/
 private: 
 	/* Методы отрисовки конкретных интерфейсов */
-	
-	void					ShowLog();						// Показать панель лога
-	void					ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
-	void					ShowFPS();						// Показать панель с графиком изменения FPS
-	void					ShowPhysicsEngineObjHelp();		// Показать подписи имён объектов физического движка
-	void					ShowPhysicsEngineSettings();	// Показать панель настроек физического движка
-	void					ShowPersonList();				// Показать список персонажей 
-	void					ShowPersonControl();			// Показать настройки для выбранного персонажа
-	void					ShowMainPersonList();			// Показать главного персонажа в списке
-	void					ShowMainPersonControl(float dt);// Показать настройки для главного персонажа
-	void					ShowPhysicsEngineObjList();		// Показать список объектов в физическом движке
-	void					ShowPhysicsEngineObjControl();	// Показать настройки для выбранного объекта в физическом движке
-	void					SpawnCameraToHeroControl();		// Показать настройки для камеры
-	void					ShowLayersControl();			// Показать панель настроек слоёв
-	void					ShowIobjList();
-	void					ShowIobjControl();
-	void					SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath);
-	std::string				ShowLoadingSpriteDilaog();
-	std::optional<IobjData> ShowAddingIobjDialog();
-	HitBox					CreateNewHitBox();
-	void					ShowCameraControl();
-	std::vector<AnimationData>	ShowAnimationCreatingDialog(float dt);
-	void					ShowScenesData();
-	void					ShowProjectSettings();
+
+	void   ShowMainPersonList();			// Показать левую панель главного персонажа в списке
+	void   ShowPersonList();				// Показать левую панель списка персонажей 
+	void   ShowIobjList();					// Показать	левую панель списка интерактивных объектов
+	void   ShowPhysicsEngineObjList();		// Показать левую панель списка объектов в физическом движке		   
+
+	void   ShowMainPersonControl(float dt); // Показать правую панель настроек для главного персонажа
+	void   ShowPersonControl();				// Показать правую панель настроек для выбранного персонажа
+	void   ShowIobjControl();				// Показать правую панель настроек для выбранного интерактивного объекта
+	void   ShowPhysicsEngineObjControl();	// Показать правую панель настроек для выбранного объекта в физическом движке		   
+
+	void   ShowLayersControl();				// Показать панель настроек слоёв
+	void   ShowCameraControl();				// Показать панель настроек камеры
+	void   ShowScenesControl();		   		// Показать панель настроек сцен
+	void   SpawnCameraToHeroControl();		// Показать модуль настроек для взаимодейтсвия камеры и героя
+	void   SpawnDefaultObject2DControl(
+		   Object2D* obj, 
+		   std::string dataPath);			// Показать модуль настроек для объекта на базе Object2D
+
+	void   ShowLog();						// Показать панель лога
+	void   ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
+	void   ShowFPS();						// Показать панель с графиком изменения FPS		   
+	void   ShowPhysicsEngineObjHelp();		// Показать подписи имён объектов физического движка
+	void   ShowPhysicsEngineSettings();		// Показать панель настроек физического движка
+	void   ShowProjectSettings();			// Показать панель настроек проекта
+	HitBox CreateNewHitBox();				// Создать HitBox с помощью интерфейса
+
+	std::string					ShowLoadingSpriteDilaog();				// Показать диалоговое окно для загрузки спрайта
+	std::optional<IobjData>		ShowAddingIobjDialog();					// Показать диалоговое окно для добавления интерактивного объекта
+	std::vector<AnimationData>	ShowAnimationCreatingDialog(float dt);	// Показать диалоговое окно для создания анимации
 
 	/*******************************************/
 private:
 	/* Переменные видимости панелей */
 	
-	bool ShowPersonEnum 			  =	false;	// Левая панель персонажей на сцене
-	bool ShowPersonSettings			  =	false;	// Правая панель управления настройками персонажей	
-	bool ShowMainPersonEnum 		  =	true;	// Левая панель главного персонажа на сцене
-	bool ShowMainPersonSettings		  =	true;	// Правая панель управления настройками главного персонажа
-	bool ShowPhysicsEngineObjEnum	  = false;	// Левая панель физических объектов на сцене
-	bool ShowPhysicsEngineObjSettings = false;	// Правая панель управления настройками выбранного объекта
-	bool ShowPhysicsEngineObjInfo	  = true;	// Подпись имени объекта физического движка  
-	bool ShowPhysicsSettings		  = false;	// Панель настроек физического движка
-	bool ShowHardwareInfo 			  =	true;	// FPS и информация о графическом адаптере
-	bool ShowFPSGraph 				  =	false;	// График изменения FPS
-	bool ShowLogs 					  =	true;	// Лог
-	bool ShowTriggersList 			  =	false;	// Левая панель триггеров на сцене
-	bool ShowTriggersSettings		  =	false;	// Правая панель триггеров на сцене
-	bool ShowLayersSettings			  = false;	// Показать панель настроек слоёв
-	bool ShowIobjEnum				  = false;	//
-	bool ShowIobjSettings			  = false;	//
-	bool ShowCameraSettings			  = true;	//
-	bool ShowScenesSettings			  = true;	//
+	bool ShowMainPersonEnum			  = true;	// Видимость левой панели списка главного персонажа
+	bool ShowPersonEnum				  = false;	// Видимость левой панели списка персонажей
+	bool ShowIobjEnum				  = false;	// Видимость левой панели списка интерактивных объектов
+	bool ShowPhysicsEngineObjEnum	  = false;	// Видимость левой панели списка физических объектов
+	bool ShowTriggersEnum			  = false;	// Видимость левой панели списка триггеров на сцене
+
+	bool ShowMainPersonSettings		  = true;	// Видимость правой панели настроек главного персонажа
+	bool ShowPersonSettings			  = false;	// Видимость правой панели настроек выбранного персонажа	
+	bool ShowIobjSettings			  = false;	// Видимость правой панели настроек интерактивного объекта
+	bool ShowPhysicsEngineObjSettings = false;	// Видимость правой панели настроек выбранного объекта в физическом движке
+	bool ShowTriggersSettings		  = false;	// Видимость правой панели настроек выбранного триггера
+
+	bool ShowLayersSettings			  = false;	// Видимость панели настроек слоёв
+	bool ShowCameraSettings			  = true;	// Видимость панели настроек камеры
+	bool ShowScenesSettings			  = true;	// Видимость панели настроек сцен
+
+	bool ShowPhysicsEngineObjInfo	  = true;	// Видимость подписей имён объектов физического движка  
+	bool ShowPhysicsSettings		  = false;	// Видимость панели настроек физического движка
 	
+	bool ShowLogs					  = true;	// Видимость лога
+	bool ShowHardwareInfo 			  =	true;	// Видимость FPS и информации о графическом адаптере
+	bool ShowFPSChart 				  =	false;	// Видимость графика изменения FPS
+
 	/********************************/
 private:
-	std::string curSceneName;
-	bool SavingScenesSettings = false;
-	bool IsUpdatingScene = false;
+	/* Переменные для работы с настройками сцен */
+	
+	bool		SavingScenesSettings = false;	// Статус сохранения настроек сцен
+	bool		IsUpdatingScene		 = false;	// Статус изменения сцены на другую
+	std::string curSceneName;					// Имя текущей сцены
+
+	/********************************************/
 private:
 	/* Системные переменные */
-	
-	std::shared_ptr<Window>					wnd;		// Указатель на окно отрисовки
-	std::shared_ptr<Physics::PhysicsEngine> phEngPtr;	// Указатель на физический движок
-	std::shared_ptr<Camera>					camera;		//
-	std::map<std::wstring, double>			gpu_desc;	// Описание графических адаптеров [first - имя, second - объём памяти]
+
 	AppLog									applog;		// Лог
+	std::shared_ptr<Window>					wnd;		// Указатель на окно отрисовки
+	std::shared_ptr<Camera>					camera;		// Указатель на камеру
+	std::map<std::wstring, double>			gpu_desc;	// Контейнер описаний графических адаптеров [first - имя, second - объём памяти]
+	std::shared_ptr<Physics::PhysicsEngine> phEngPtr;	// Указатель на физический движок
 
 	/************************/
 private:
 	/* Указатели на объекты */
 
-	MainPerson*					   hero;		//
-	PersonContainer*			   persCon;		//
-	InteractableObject2DContainer* IobjCon;		//
-	ObjectsQueue*				   objQueue;	//
+	MainPerson*					   hero;		// Указатель на главного персонажа
+	ObjectsQueue*				   objQueue;	// Указатель на	контейнер, определяющий очередь (слои) отрисовки
+	PersonContainer*			   persCon;		// Указатель на	контейнер персонажей
+	InteractableObject2DContainer* IobjCon;		// Указатель на	контейнер интерактивных объектов
 
 	/************************/
 private:
 	/* Общие переменные для работы с интерфейсом */
 
-	bool			  DrawingHitBox		= false;	// Идёт отрисовка хитбокса
-	bool			  DrawingLine		= false;	// Идёт отрисовка линии
-	bool			  SavingSettings    = false;	// Идёт сохранение настроек
-	bool			  SettedFirstPoint  = false;	// Поставлена первая точка изменяемого объекта
-	bool			  SettedSecondPoint = false;	// Поставлена вторая точка изменяемого объекта
-	DirectX::XMFLOAT2 firstPoint;					// Координаты первой точки изменяемого объекта
-	DirectX::XMFLOAT2 secondPoint;					// Координаты второй точки изменяемого объекта
+	bool			  DrawingHitBox		= false;	// Статус отрисовки хитбокса
+	bool			  DrawingLine		= false;	// Статус отрисовки линии
+	bool			  SavingSettings    = false;	// Статус сохранения настроек
+	bool			  SettedFirstPoint  = false;	// Статус установки первой точки изменяемого объекта
+	bool			  SettedSecondPoint = false;	// Статус установки второй точки изменяемого объекта
+	DirectX::XMFLOAT2 firstPoint  = {0.0f, 0.0f};	// Координаты первой точки изменяемого объекта
+	DirectX::XMFLOAT2 secondPoint = {0.0f, 0.0f};	// Координаты второй точки изменяемого объекта
 
 	/*********************************************/
 private:
 	/* Вспомагательные переменные для работы с главным персонажем */
 
-	std::string heroSelected = "";	// Имя выбранного главного персонажа
+	std::string heroSelected = "mainperson";	// Имя выбранного главного персонажа
 
 	/**************************************************************/
 private:
@@ -153,68 +166,62 @@ private:
 private:
 	/* Вспомагательные переменные для работы с физическим движком */
 
+	bool		AddingObject   = false;	// Статус добавления объекта в физический движок
+	float		sq_l		   = 0.0f;	// Сторона квадрата для нормирования выбранного hitbox в физическом движке
 	std::string objectSelected = "";	// Имя выбранного объекта из физического движка
-	bool		AddingObject   = false;	// Идёт добавление объекта
-	float		sq_l		   = 0.0f;	// Сторона квадрата для hitbox
 
 	/**************************************************************/
 private:
-	/* Вспомагательные переменные для работы с контейнером объектов */
+	/* Вспомагательные переменные для работы с контейнером интерактивных объектов */
 
-	std::string		  IobjSelected		 = "";		// Имя выбранного объекта
-	std::string		  IobjPath			 = "";		//
-	bool			  AddingIobj		 = false;	//
-	bool			  ChosingIobj		 = false;	//
-	bool			  isCaclulatedDeltas = false;
-	DirectX::XMFLOAT2 hb_delta			 = { 0.0f, 0.0f };
+	bool			  AddingIobj		 = false;			// Статус добавления интерактивного объекта
+	bool			  ChosingIobj		 = false;			// Статус выбора интерактивного объекта
+	bool			  IsCaclulatedDeltas = false;			// Статус перерасчёта корректирующих отступов для hitbox интерактивного объекта
+	std::string		  IobjSelected		 = "";				// Имя выбранного интерактивного объекта
+	std::string		  IobjPath			 = "";				// Путь при добавлении интерактивного объекта
+	DirectX::XMFLOAT2 hb_delta			 = { 0.0f, 0.0f };	// Корректирующий отступ для hitbox интерактивного объекта при перемещении с помощью интерфейса
 
-	/****************************************************************/
+	/******************************************************************************/
 private:
-	/* Вспомагательные переменные для работы со слоями */
-
-	bool SavingLayersSettings = false;
-
-	/***************************************************/
-private:
-	/* Вспомагательные переменные для работы с объектом (база) */
+	/* Вспомагательные переменные для работы с объектом (база - Object2D) */
 	
-	typedef Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ImageResource;
+	typedef Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ImageResource;	// Объявления нового типа для простоты применения
 
-	float         scaleObj        = 1.0f;	// Множитель размера превью спрайта
-	bool          LoadingSprite   = false;
-	bool          LoadedPreview   = false;
-	int           sprite_width  = 0;
-	int           sprite_height = 0;
-	ImageResource loadedSprite = NULL;
+	int           sprite_width  = 0;		// Ширина спрайта
+	int           sprite_height = 0;		// Высота спрайта
+	bool          LoadingSprite = false;	// Статус загрузки спрайта
+	bool          LoadedPreview = false;	// Статус загрузки превью спрайта
+	float         scaleObj      = 1.0f;		// Множитель размера превью спрайта
+	ImageResource loadedSprite  = NULL;		// Спрайт для внутренних операций в интерфейсе
 
 	/***********************************************************/
 private:
 	/* Вспомагательные переменные для работы с анимацией */
 	
-	float       scaleFrame				= 1.0f;	// Множитель размера превью спрайта
-	std::string animSelected			= "";
-	size_t		animSelectedId			= 0;
-	int			curFrame				= 0;
-	int			animFrameSize[2];
-	float		curAnimW				= 0.0f;
-	float		curAnimH				= 0.0f;
-	ImVec2		previewSize				= {0.0f, 0.0f};
-	ImVec2		ltNormPixel				= {0.0f, 0.0f};
-	ImVec2		rtNormPixel				= {0.0f, 0.0f};
-	std::string animPath				= "";
-	bool        CreatingAnimation	    = false;
-	bool        ChoosingAnimation	    = false;
-	bool        CreatingAnimtionLoaded  = false;
-	float		newFrameWidth		    = 90.0f;
-	float		newFrameHeight		    = 90.0f;
-	int			maxFrames				= 4;
-	float		framesHoldTime			= 0.2f;
-	size_t		animPlayingId			= 0;
-	std::string newAnimNameSelected		= "";
-	Surface2D   animSpritePreview;
-	std::vector<std::string> animationNames;
-	std::vector<Animation>   animationsPreview;
-	std::vector<AnimationData>  animationsData;
+	int			curFrame			   = 0;					// Текущий кадр анимации во всех превью
+	int			maxFrames			   = 4;					// Максимальное число кадров в анимации при создании анимации
+	bool        CreatingAnimation	   = false;				// Статус создания анимации
+	bool        ChoosingAnimation	   = false;				// Статус редактирования анимации
+	bool        CreatingAnimtionLoaded = false;				// Статус загрузки нового спрайта анимации
+	float       scaleFrame			   = 1.0f;				// Множитель размера превью спрайта
+	float		newFrameWidth		   = 90.0f;				// Ширина кадра новой анимации
+	float		newFrameHeight		   = 90.0f;				// Высота кадра новой анимации
+	float		curAnimW			   = 0.0f;				// Ширина кадра превью
+	float		curAnimH			   = 0.0f;				// Высота кадра превью
+	float		framesHoldTime		   = 0.2f;				// Задержка проигрывания анимаций 
+	size_t		animSelectedId		   = 0;					// Номер выбранного типа анимации
+	size_t		animPlayingId		   = 0;					// Номер выбранного типа анимации при создании анимации
+	ImVec2		previewSize			   = { 0.0f, 0.0f };	// Размер превью анимации
+	ImVec2		ltNormPixel			   = { 0.0f, 0.0f };	// Нормированый пиксель (левый верхний) для масштабирования кадра
+	ImVec2		rtNormPixel			   = { 0.0f, 0.0f };	// Нормированый пиксель (правый нижний) для масштабирования кадра
+	Surface2D   animSpritePreview;							// Временный реусрс для созданных анимаций
+	std::string animPath			   = "";				// Путь к спрайту при создании анимации
+	std::string animSelected		   = "";				// Имя выбранной анимации
+	std::string newAnimNameSelected	   = "";				// Имя выбранной анимации при создании
+
+	std::vector<std::string>   animationNames;		//
+	std::vector<Animation>     animationsPreview;	//
+	std::vector<AnimationData> animationsData;		//
 
 	/*****************************************************/
 private:
@@ -223,7 +230,7 @@ private:
 	double sum     = 0.0;						// Сумма всех элементов массива
 	double average = 0.0;						// Среднее значение FPS
 	double pXMin   = 0.0;						// Минимальное значение для масштабирования графика по оси X
-	double pXMax   = (double)N_POINTS - 1.0;	// Максимальное значение для масштабирования графика по оси X
+	double pXMax   = MAX_POINTS					// Максимальное значение для масштабирования графика по оси X
 	double pYMin   = 0.0;						// Минимальное значение для масштабирования графика по оси Y
 	double pYMax   = 0.0;						// Максимальное значение для масштабирования графика по оси Y
 	float  arr[N_POINTS];						// Массив значений fps
@@ -231,6 +238,7 @@ private:
 	size_t counter = 0;							// Счётчик итерации
 
 	/**************************************************/
-
+private:
 	std::string mouseHelpInfo = "";	// Подпись под курсором
 };
+

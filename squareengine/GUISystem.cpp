@@ -82,6 +82,11 @@ void GUISystem::LoadScene(Scene* scene)
 	camera   = scene->camera;
 }
 
+std::pair<bool, std::string> GUISystem::UpdatingScene()
+{
+	return std::pair<bool, std::string>(IsUpdatingScene, curSceneName);
+}
+
 /*******************************************/
 
 /* Методы настройки и отрисовки панелей */
@@ -271,18 +276,18 @@ void GUISystem::ShowMenu()
 
 				if (ImGui::MenuItem("Триггеры"))
 				{
-					if (ShowTriggersList && ShowTriggersSettings)
+					if (ShowTriggersEnum && ShowTriggersSettings)
 					{
 						DisableSides();
 
-						ShowTriggersList = false;
+						ShowTriggersEnum = false;
 						ShowTriggersSettings = false;
 					}
 					else
 					{
 						DisableSides();
 
-						ShowTriggersList = true;
+						ShowTriggersEnum = true;
 						ShowTriggersSettings = true;
 					}
 				}
@@ -302,7 +307,7 @@ void GUISystem::ShowMenu()
 
 			if (ImGui::MenuItem("График FPS"))
 			{
-				ShowFPSGraph ? ShowFPSGraph = false : ShowFPSGraph = true;
+				ShowFPSChart ? ShowFPSChart = false : ShowFPSChart = true;
 			}
 
 			if (ImGui::MenuItem("Лог"))
@@ -346,7 +351,7 @@ void GUISystem::ShowLeftSide()
 	{
 		ShowIobjList();
 	}
-	else if (ShowTriggersList)
+	else if (ShowTriggersEnum)
 	{
 		//objects.triggers.ShowLeftPanel();
 	}
@@ -466,7 +471,7 @@ void GUISystem::ShowOptionalPanel()
 		ShowPhysicsEngineObjHelp();
 	}
 
-	if (ShowFPSGraph)
+	if (ShowFPSChart)
 	{
 		ShowFPS();
 	}
@@ -483,7 +488,7 @@ void GUISystem::ShowOptionalPanel()
 
 	if (ShowScenesSettings)
 	{
-		ShowScenesData();
+		ShowScenesControl();
 	}
 
 	if (mouseHelpInfo == "")
@@ -533,10 +538,10 @@ void GUISystem::DisableSides()
 	ShowMainPersonSettings = false;
 	ShowPhysicsEngineObjEnum = false;
 	ShowPhysicsEngineObjSettings = false;
-	ShowTriggersList = false;
+	ShowTriggersEnum = false;
 	ShowTriggersSettings = false;
 	ShowPhysicsSettings = false;
-	ShowFPSGraph = false;
+	ShowFPSChart = false;
 	ShowIobjEnum = false;
 	ShowIobjSettings = false;
 }
@@ -545,263 +550,21 @@ void GUISystem::DisableSides()
 
 /* Методы отрисовки конкретных интерфейсов */
 
-void GUISystem::ShowLog()
+void GUISystem::ShowMainPersonList()
 {
-	ImGui::Begin("Лог", NULL, 
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus);
-
-	applog.Draw("Лог", NULL);
-	ImGui::End();
-}
-
-void GUISystem::ShowGPU()
-{
-	if (ImGui::Begin("Представление", NULL,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus))
-	{
-		ImGui::Text("%.3f мс/кадр (%.2f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		
-		std::ostringstream s;
-		s << sizeof(*this);
-
-		ImGui::Text("Вес GUI: %s байт", s.str().c_str());
-
-		ImGui::Separator();
-
-		ImGui::Text("Графическое оборудование:");
-		for (auto& d : gpu_desc)
-		{
-			char name_gpu[256];
-			sprintf_s(name_gpu, "%ws", reinterpret_cast<const char*>(d.first.c_str()));
-
-			if (ImGui::TreeNode(name_gpu))
-			{
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.52f, 0.85f, 0.059, 1.0f));
-				ImGui::Text("Память: ~%.1f ГБ", d.second);
-				ImGui::PopStyleColor();
-				ImGui::TreePop();
-			}
-		}
-	}
-
-	ImGui::End();
-}
-
-void GUISystem::ShowFPS()
-{
-	if (ImGui::Begin("График FPS", &ShowFPSGraph))
-	{
-		if (counter != N_POINTS)
-		{
-			arr[counter] = ImGui::GetIO().Framerate;
-			counter++;
-		}
-		else
-		{
-			counter = 0;
-			for (size_t i = 0; i < N_POINTS; i++)
-			{
-				sum += (double)arr[i];
-			}
-
-			average = sum / N_POINTS;
-			sum = 0.0;
-
-			pYMin = average - 20.0;
-			pYMax = average + 20.0;
-		}
-
-		ImPlot::LinkNextPlotLimits(&pXMin, &pXMax, &pYMin, &pYMax);
-		if (ImPlot::BeginPlot("FPS", "", "FPS"))
-		{
-			ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
-			ImPlot::PlotShaded("FPS", counters, arr, N_POINTS);
-			ImPlot::PopStyleVar();
-			ImPlot::PlotLine("", counters, arr, N_POINTS);
-
-			ImPlot::EndPlot();
-		}
-	}
-
-	ImGui::End();
-}
-
-void GUISystem::ShowPhysicsEngineObjHelp()
-{
-	std::string objName;
-	ImVec2 pos;
-
-	for (auto& l : phEngPtr->lines)
-	{
-		std::ostringstream oss;
-		oss << "Physics engine info for " << l.name;
-
-		float offset = -30.0f;
-
-		if (l.start.y == l.end.y)
-		{
-			pos = { (l.start.x + l.end.x) / 2.0f, l.start.y + offset };
-		}
-		else if (l.start.y != l.end.y)
-		{
-			pos = { (l.start.x + l.end.x) / 2.0f, (l.start.y + l.end.y) / 2.0f + offset };
-		}
-
-		ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
-		if (ImGui::Begin(oss.str().c_str(), (bool*)0,
-			ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
-			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
-			| ImGuiWindowFlags_NoBackground))
-		{
-			ImGui::Text(l.name.c_str());
-			ImGui::End();
-		}
-	}
-
-	for (auto& hb : phEngPtr->hitboxes)
-	{
-		std::ostringstream oss;
-		oss << "Physics engine info for " << hb.name;
-
-		float offset = 7.0f;
-		ImVec2 pos;
-
-		pos = { hb.coordinates.x + offset, hb.coordinates.y + offset };
-
-		ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
-		if (ImGui::Begin(oss.str().c_str(), (bool*)0,
-			ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
-			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
-			| ImGuiWindowFlags_NoBackground))
-		{
-			ImGui::Text(hb.name.c_str());
-			ImGui::End();
-		}
-	}
-}
-
-void GUISystem::ShowPhysicsEngineSettings()
-{
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
-	if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings,
+	if (ImGui::Begin("Персонажи", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize))
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		using namespace Physics;
-
-		if (ImGui::CollapsingHeader("Общая информация", ImGuiTreeNodeFlags_DefaultOpen))
+		ImGui::Bullet();
+		if (ImGui::Selectable(hero->name.c_str(), heroSelected == hero->name))
 		{
-
-			ImGui::TextWrapped(
-				"Физический движок позволяет настраивать коллизию объектов и их физические параметры. "
-				"Основными примитивами для создания объектов являтся линии и прямоугольники (Hit-Box).\n");
-			ImGui::Text("Занимаемый объём памяти данными о линиях %d байт (%.1f килобайт).\n", sizeof(phEngPtr->lines) + sizeof(Line) * phEngPtr->lines.size(), float(sizeof(phEngPtr->lines) + sizeof(Line) * phEngPtr->lines.size()) / (1024.0f));
-			ImGui::Text("Занимаемый объём памяти данными о прямоугольниках %d байт (%.1f килобайт).\n", sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size(), float(sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size()) / (1024.0f));
-
-			ImGui::Separator();
-		}
-
-		if (ImGui::CollapsingHeader("Цвета"))
-		{
-			ImGui::ColorEdit3("Цвет линий", phEngPtr->lineColor);
-			ImGui::ColorEdit3("Цвет прямоугольников", phEngPtr->hbColor);
-
-			if (ImGui::Button("Сохранить"))
-			{
-				EngineFunctions::SetNewValue<float>(
-					"settings",
-					"l-clr-r",
-					phEngPtr->lineColor[0],
-					phEngPtr->dataPath,
-					&applog
-					);
-
-				EngineFunctions::SetNewValue<float>(
-					"settings",
-					"l-clr-g",
-					phEngPtr->lineColor[1],
-					phEngPtr->dataPath,
-					&applog
-					);
-
-				EngineFunctions::SetNewValue<float>(
-					"settings",
-					"l-clr-b",
-					phEngPtr->lineColor[2],
-					phEngPtr->dataPath,
-					&applog
-					);
-
-				EngineFunctions::SetNewValue<float>(
-					"settings",
-					"h-clr-r",
-					phEngPtr->hbColor[0],
-					phEngPtr->dataPath,
-					&applog
-					);
-
-				EngineFunctions::SetNewValue<float>(
-					"settings",
-					"h-clr-g",
-					phEngPtr->hbColor[1],
-					phEngPtr->dataPath,
-					&applog
-					);
-
-				EngineFunctions::SetNewValue<float>(
-					"settings",
-					"h-clr-b",
-					phEngPtr->hbColor[2],
-					phEngPtr->dataPath,
-					&applog
-					);
-			}
-
-			ImGui::Separator();
-		}
-
-		if (ImGui::CollapsingHeader("Параметры объектов и коллизий"))
-		{
-			ImGui::SliderFloat("Отступ между коллизиями объектов", &phEngPtr->deltaCollision, -20.0f, 20.0f);
-			ImGui::SliderFloat("Сторона квадрата", &sq_l, 0.0f, 100.0f);
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetTooltip("Длина стороны квадрата, созданного из Hit-Box");
-			}
-
-			ImGui::Checkbox("Показать все объекты", &phEngPtr->objVisability);
-			ImGui::Checkbox("Показать подписи объектов", &ShowPhysicsEngineObjInfo);
-			if (ImGui::Button("Сохранить"))
-			{
-				EngineFunctions::SetNewValue<float>(
-					"settings",
-					"delta-collision",
-					phEngPtr->deltaCollision,
-					phEngPtr->dataPath,
-					&applog
-					);
-
-				EngineFunctions::SetNewValue<bool>(
-					"settings",
-					"obj-vis",
-					phEngPtr->objVisability,
-					phEngPtr->dataPath,
-					&applog
-					);
-			}
-
-			ImGui::Separator();
+			heroSelected = hero->name;
+			LoadedPreview = false;
 		}
 	}
 
 	ImGui::End();
-	ImGui::PopStyleColor();
 }
 
 void GUISystem::ShowPersonList()
@@ -840,7 +603,7 @@ void GUISystem::ShowPersonList()
 					AddLog(deletedPersonName.c_str());
 					AddLog(" удалён\n");
 
-					ImGui::EndPopup(); 
+					ImGui::EndPopup();
 
 					break;
 				}
@@ -854,6 +617,807 @@ void GUISystem::ShowPersonList()
 		if (ImGui::Button("Добавить"))
 		{
 
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowIobjList()
+{
+	if (ImGui::Begin("Объекты", NULL,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
+		for (auto o = IobjCon->objects.begin(); o != IobjCon->objects.end(); o++)
+		{
+			char label[128];
+			sprintf_s(label, o->get()->name.c_str(), IobjSelected);
+
+			std::string contextMenuId = "Context Menu for " + o->get()->name;
+
+			ImGui::Bullet();
+			if (ImGui::Selectable(label, IobjSelected == o->get()->name.c_str()))
+			{
+				IobjSelected = o->get()->name;
+				LoadedPreview = false;
+				IsCaclulatedDeltas = false;
+			}
+			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
+			{
+				if (ImGui::Button("Удалить"))
+				{
+					std::string deletedObjName = o->get()->name;
+					AddLog("Удаление ");
+					AddLog(deletedObjName.c_str());
+					AddLog("...\n");
+
+					objQueue->DeleteObjectAt(o->get()->name);
+					IobjCon->DeleteObjectAt(o);
+
+					EngineFunctions::DeleteJsonObject(deletedObjName, IobjCon->dataPath);
+
+					AddLog("Объект ");
+					AddLog(deletedObjName.c_str());
+					AddLog(" удалён\n");
+
+					ImGui::EndPopup();
+
+					break;
+				}
+
+				ImGui::EndPopup();
+			}
+		}
+
+		ImGui::NewLine();
+
+		if (ImGui::Button("Добавить"))
+		{
+			AddingIobj = true;
+		}
+
+		if (AddingIobj)
+		{
+			auto d = ShowAddingIobjDialog();
+
+			if (d.value().name != "")
+			{
+				Surface2D im(d.value().pathToSprite);
+
+				DirectX::XMFLOAT4 hb_coord;
+				hb_coord.x = d.value().position.x;
+				hb_coord.y = d.value().position.y;
+				hb_coord.z = d.value().position.x + im.GetWidth();
+				hb_coord.w = d.value().position.y + im.GetHeight();
+
+				IobjCon->objects.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
+				objQueue->queue.push_back(IobjCon->objects.back().get());
+
+				using std::to_string;
+
+				// Открытие файла с данными о физике сцены
+				std::ifstream dataFile(IobjCon->dataPath);
+				if (!dataFile.is_open())
+				{
+					throw ("Не удаётся открыть файл с данными о физике сцены");
+				}
+
+				// Чтение файла
+				json j;
+				dataFile >> j;
+
+				// Закрытие файла
+				dataFile.close();
+
+				// Новый объект
+				std::ostringstream newLine;
+				newLine << "\"" << d.value().name << "\":[{";
+
+				newLine << "\"pos-x\": " << d.value().position.x << ",";
+				newLine << "\"pos-y\" : " << d.value().position.y << ",";
+				newLine << "\"hb-ltx\" : " << hb_coord.x << ",";
+				newLine << "\"hb-lty\" : " << hb_coord.y << ",";
+				newLine << "\"hb-rbx\" : " << hb_coord.z << ",";
+				newLine << "\"hb-rby\" : " << hb_coord.w << ",";
+				newLine << "\"g-deep\" : " << 2.0f << ",";
+				newLine << "\"g-able\" : " << false << ",";
+				newLine << "\"layer\" : " << d.value().layer << ",";
+				newLine << "\"path\" : \"" << d.value().pathToSprite << "\"}]";
+
+				// Подготовка к вставке в файл
+				std::string json_str = j.dump();
+				size_t pos_of_par = json_str.find_last_of('}');
+				size_t pos_of_par2 = json_str.find_last_of(']');
+
+				json_str.at(pos_of_par) = ' ';
+				json_str.at(pos_of_par2 + 1) = ',';
+
+				// Запись в файл данных новой линии
+				std::ofstream ostream(IobjCon->dataPath);
+				ostream << json_str + newLine.str() + '}';
+
+				// Закрытие файла
+				ostream.close();
+
+				std::ostringstream oss_l;
+				oss_l << "Добавлено [" << d.value().name << "]\n";
+
+				AddLog(oss_l.str().c_str());
+
+				AddingIobj = false;
+			}
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowPhysicsEngineObjList()
+{
+	using namespace Physics;
+
+	if (ImGui::Begin("Объекты", NULL,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
+		if (ImGui::BeginTabBar("PhEngTabs", ImGuiTabBarFlags_None))
+		{
+			if (ImGui::BeginTabItem("Линии"))
+			{
+				for (auto l = phEngPtr->lines.begin(); l != phEngPtr->lines.end(); l++)
+				{
+					char label[128];
+					sprintf_s(label, l->GetName().c_str(), objectSelected);
+
+					std::string contextMenuId = "Context Menu for " + l->name;
+
+					ImGui::Bullet();
+					if (ImGui::Selectable(label, objectSelected == l->GetName().c_str()))
+					{
+						objectSelected = l->GetName();
+					}
+					if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
+					{
+						if (ImGui::Button("Удалить"))
+						{
+							std::string deletedLineName = l->name;
+							AddLog("Удаление ");
+							AddLog(deletedLineName.c_str());
+							AddLog("...\n");
+
+							phEngPtr->DeleteLineAt(l);
+							EngineFunctions::DeleteJsonObject(deletedLineName, phEngPtr->dataPath);
+
+							AddLog("Линия ");
+							AddLog(deletedLineName.c_str());
+							AddLog(" удалена\n");
+
+							ImGui::EndPopup();
+
+							break;
+						}
+
+						ImGui::EndPopup();
+					}
+				}
+
+				ImGui::NewLine();
+
+				// Если нажата кнопка добавить линию
+				if (ImGui::Button("Добавить"))
+				{
+					AddLog("Добавление линии...");
+					AddLog("\n");
+
+					AddingObject = true;
+
+					ImGui::GetStyle().Alpha = 0.1f;
+				}
+
+				/* Если идёт добавление линии */
+				{
+					if (AddingObject)
+					{
+						if (!SettedFirstPoint)
+						{
+							mouseHelpInfo = "Идёт добавление линии.\nНажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+							if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+							{
+								auto pos = wnd->mouse.GetPos();
+								firstPoint = { (float)pos.first, (float)pos.second };
+
+								SettedFirstPoint = true;
+								std::ostringstream oss;
+								oss << "Поставлена первая точка:\n" <<
+									"[x: " << firstPoint.x <<
+									"; y: " << firstPoint.y << "]\n";
+
+								AddLog(oss.str().c_str());
+							}
+						}
+						else if (!SettedSecondPoint)
+						{
+							mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+							int ms_posX = wnd->mouse.GetPosX();
+							int ms_posY = wnd->mouse.GetPosY();
+
+							Line line(std::string("Drown line"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+							wnd->Gfx().DrawLine(line.start, line.end);
+
+							if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+							{
+								auto pos = wnd->mouse.GetPos();
+								secondPoint = { (float)pos.first, (float)pos.second };
+
+								std::ostringstream line_name;
+								line_name << "line " << phEngPtr->GetLinesAmount();
+
+								Line line_new(line_name.str(), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+								phEngPtr->AddLine(line_new);
+
+								std::ostringstream oss;
+								oss << "Поставлена вторая точка:\n" <<
+									"[x: " << secondPoint.x <<
+									"; y: " << secondPoint.y << "]\n";
+
+								AddLog(oss.str().c_str());
+
+								AddLog("Сохранение линии:\n");
+
+								using std::to_string;
+
+								// Открытие файла с данными о физике сцены
+								std::ifstream dataFile(phEngPtr->dataPath);
+								if (!dataFile.is_open())
+								{
+									throw ("Не удаётся открыть файл с данными о физике сцены");
+								}
+
+								// Чтение файла
+								json j;
+								dataFile >> j;
+
+								// Закрытие файла
+								dataFile.close();
+
+								// Новая линия
+								std::ostringstream newLine;
+								newLine << "\"" << line_name.str() << "\":[{";
+
+								newLine << "\"start-x\": " << firstPoint.x << ",";
+								newLine << "\"start-y\" : " << firstPoint.y << ",";
+								newLine << "\"end-x\" : " << secondPoint.x << ",";
+								newLine << "\"end-y\" : " << secondPoint.y << "}]";
+
+								// Подготовка к вставке в файл
+								std::string json_str = j.dump();
+								size_t pos_of_par = json_str.find_last_of('}');
+								size_t pos_of_par2 = json_str.find_last_of(']');
+
+								json_str.at(pos_of_par) = ' ';
+								json_str.at(pos_of_par2 + 1) = ',';
+
+								// Запись в файл данных новой линии
+								std::ofstream ostream(phEngPtr->dataPath);
+								ostream << json_str + newLine.str() + '}';
+
+								// Закрытие файла
+								ostream.close();
+
+								std::ostringstream oss_l;
+								oss_l << "Добавлено [" << line_name.str() << "]\n";
+
+								AddLog(oss_l.str().c_str());
+
+								mouseHelpInfo = "";
+								SettedSecondPoint = true;
+							}
+						}
+						else if (SettedFirstPoint && SettedSecondPoint)
+						{
+							AddingObject = false;
+							SettedFirstPoint = false;
+							SettedSecondPoint = false;
+
+							ImGui::GetStyle().Alpha = 1.0f;
+						}
+					}
+				}
+				/******************************/
+
+				ImGui::EndTabItem();
+			}
+
+			if (ImGui::BeginTabItem("Hit-Box'ы"))
+			{
+				for (auto hb = phEngPtr->hitboxes.begin(); hb != phEngPtr->hitboxes.end(); hb++)
+				{
+					char label[128];
+					sprintf_s(label, hb->GetName().c_str(), objectSelected);
+
+					std::string contextMenuId = "Context Menu for " + hb->name;
+
+					ImGui::Bullet();
+					if (ImGui::Selectable(label, objectSelected == hb->GetName().c_str()))
+					{
+						objectSelected = hb->GetName();
+					}
+					if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
+					{
+						if (ImGui::Button("Удалить"))
+						{
+							std::string deletedHitBoxName = hb->name;
+							AddLog("Удаление ");
+							AddLog(deletedHitBoxName.c_str());
+							AddLog("...\n");
+
+							phEngPtr->DeleteHitBoxAt(hb);
+							EngineFunctions::DeleteJsonObject(deletedHitBoxName, phEngPtr->dataPath);
+
+							AddLog("Hit-Box ");
+							AddLog(deletedHitBoxName.c_str());
+							AddLog(" удалён\n");
+
+							ImGui::EndPopup();
+
+							break;
+						}
+
+						ImGui::EndPopup();
+					}
+				}
+
+				ImGui::NewLine();
+
+				// Если нажата кнопка добавить hitbox
+				if (ImGui::Button("Добавить"))
+				{
+					AddLog("Добавление Hit-Box'а...");
+					AddLog("\n");
+
+					AddingObject = true;
+
+					ImGui::GetStyle().Alpha = 0.1f;
+				}
+
+				/* Если идёт добавление hitbox */
+				{
+					if (AddingObject)
+					{
+						if (!SettedFirstPoint)
+						{
+							mouseHelpInfo = "Идёт добавление Hit-Box'а.\nНажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+							if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+							{
+								auto pos = wnd->mouse.GetPos();
+								firstPoint = { (float)pos.first, (float)pos.second };
+
+								SettedFirstPoint = true;
+								std::ostringstream oss;
+								oss << "Поставлена первая точка:\n" <<
+									"[x: " << firstPoint.x <<
+									"; y: " << firstPoint.y << "]\n";
+
+								AddLog(oss.str().c_str());
+							}
+						}
+						else if (!SettedSecondPoint)
+						{
+							mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+							int ms_posX = wnd->mouse.GetPosX();
+							int ms_posY = wnd->mouse.GetPosY();
+
+							HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+							wnd->Gfx().DrawHitBox(hb);
+
+							if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+							{
+								auto pos = wnd->mouse.GetPos();
+								secondPoint = { (float)pos.first, (float)pos.second };
+
+								std::ostringstream hb_name;
+								hb_name << "hb " << phEngPtr->GetHitBoxAmount();
+
+								HitBox hb_new(hb_name.str(), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+								phEngPtr->AddHitBox(hb_new);
+
+								std::ostringstream oss;
+								oss << "Поставлена вторая точка:\n" <<
+									"[x: " << secondPoint.x <<
+									"; y: " << secondPoint.y << "]\n";
+
+								AddLog(oss.str().c_str());
+
+								AddLog("Сохранение Hit-Box'а:\n");
+
+								using std::to_string;
+
+								// Открытие файла с данными о физике сцены
+								std::ifstream dataFile(phEngPtr->dataPath);
+								if (!dataFile.is_open())
+								{
+									throw ("Не удаётся открыть файл с данными о физике сцены");
+								}
+
+								// Чтение файла
+								json j;
+								dataFile >> j;
+
+								// Закрытие файла
+								dataFile.close();
+
+								// Новый hitbox
+								std::ostringstream newLine;
+								newLine << "\"" << hb_name.str() << "\":[{";
+
+								newLine << "\"lt-x\": " << firstPoint.x << ",";
+								newLine << "\"lt-y\" : " << firstPoint.y << ",";
+								newLine << "\"rb-x\" : " << secondPoint.x << ",";
+								newLine << "\"rb-y\" : " << secondPoint.y << "}]";
+
+								// Подготовка к вставке в файл
+								std::string json_str = j.dump();
+								size_t pos_of_par = json_str.find_last_of('}');
+								size_t pos_of_par2 = json_str.find_last_of(']');
+
+								json_str.at(pos_of_par) = ' ';
+								json_str.at(pos_of_par2 + 1) = ',';
+
+								// Запись в файл данных нового hitbox
+								std::ofstream ostream(phEngPtr->dataPath);
+								ostream << json_str + newLine.str() + '}';
+
+								// Закрытие файла
+								ostream.close();
+
+								std::ostringstream oss_l;
+								oss_l << "Добавлено [" << hb_name.str() << "]\n";
+
+								AddLog(oss_l.str().c_str());
+
+								mouseHelpInfo = "";
+								SettedSecondPoint = true;
+							}
+						}
+						else if (SettedFirstPoint && SettedSecondPoint)
+						{
+							AddingObject = false;
+							SettedFirstPoint = false;
+							SettedSecondPoint = false;
+
+							ImGui::GetStyle().Alpha = 1.0f;
+						}
+					}
+				}
+				/******************************/
+
+				ImGui::EndTabItem();
+			}
+
+			ImGui::EndTabBar();
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowMainPersonControl(float dt)
+{
+	if (ImGui::Begin("Опции", NULL,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
+		if (ImGui::BeginChild(""))
+		{
+			if (ImGui::BeginTabBar("mpSet", ImGuiTabBarFlags_None))
+			{
+				if (ImGui::BeginTabItem("Объект"))
+				{
+					SpawnDefaultObject2DControl(hero, hero->dataPath);
+
+					ImGui::EndTabItem();
+				}
+
+				if (ImGui::BeginTabItem("Дополнительно"))
+				{
+					/* Переменные управления сбросом интерфейса */
+
+					bool effDirty = false;		// Котнроль эффекта
+					bool speedDirty = false;	// Котнроль скорости
+					bool a_hdDirty = false;		// Котнроль скорости анимации
+					bool a_sDirty = false;		// Котнроль анимации
+					bool a_sizeDirty = false;		// Котнроль анимации
+
+					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+					/********************************************/
+
+					/* Элементы управления позицией и скорости главного персонажа */
+
+					if (ImGui::CollapsingHeader("Физика", ImGuiTreeNodeFlags_DefaultOpen))
+					{
+						ImGui::Text("Скорость:");
+						dcheck(ImGui::SliderFloat(" ", &hero->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
+
+						ImGui::Separator();	// Разделитель
+					}
+
+					/**************************************************************/
+
+					/* Элементы управления эффектом главного персонажа */
+
+					if (ImGui::CollapsingHeader("Эффекты"))
+					{
+						dcheck(ImGui::SliderFloat("Продолжитель.", &hero->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
+						dcheck(ImGui::SliderFloat("Время", &hero->effect.Time, 0.0f, 100.0f, "%.3f"), effDirty);
+
+						ImGui::Checkbox("Активен", &hero->effect.Active);
+
+						ImGui::Separator();	// Разделитель
+					}
+
+					/***************************************************/
+
+					/* Элементы управления хитбоксом главного персонажа */
+
+					if (ImGui::CollapsingHeader("Hit-box"))
+					{
+						ImGui::Checkbox("Показать", &hero->hitbox.visability);
+
+						/* Если нажата кнопка изменить HitBox */
+						{
+							if (ImGui::Button("Изменить", ImVec2(100, 20)))
+							{
+								AddLog("Изменение Hit-box для: ");
+								AddLog(hero->name.c_str());
+								AddLog("\n");
+
+								DrawingHitBox = true;
+								hero->hitbox.visability = false;
+
+								ImGui::GetStyle().Alpha = 0.1f;
+							}
+
+							if (DrawingHitBox)
+							{
+								auto new_hb = CreateNewHitBox();
+
+								if (new_hb.name != "empty")
+								{
+									hero->SetHitBox(new_hb);
+									hero->hitbox.visability = true;
+
+									AddLog("Сохранение Hit-box:\n");
+									EngineFunctions::SaveHitBoxData(heroSelected, hero->hitbox, hero->dataPath, &applog);
+								}
+							}
+						}
+						/**************************************/
+
+						ImGui::Separator(); // Разделитель
+					}
+
+					/****************************************************/
+
+					/* Элементы управления анимацией главного персонажа */
+
+					if (ImGui::CollapsingHeader("Анимации"))
+					{
+						std::ostringstream str;
+						str << "Кол-во анимаций: " << hero->animations.size();
+						ImGui::Text(str.str().c_str());
+
+						if (ImGui::BeginCombo("Анимация", animSelected.c_str()))
+						{
+							for (size_t i = 0; i < hero->animations.size(); i++)
+							{
+								if (ImGui::Selectable(hero->animations[i].name.c_str(), animSelected == hero->animations[i].name))
+								{
+									animSelected = hero->animations[i].name;
+									animSelectedId = i;
+								}
+							}
+
+							ImGui::EndCombo();
+						}
+
+						if (animSelected != "")
+						{
+
+							ImGui::SliderInt("Кадр", &hero->animations[animSelectedId].iCurFrame, 0, (int)hero->animations[animSelectedId].frames.size());
+							dcheck(ImGui::SliderFloat("Превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
+
+							ImGui::NewLine();
+
+							curFrame = hero->animations[animSelectedId].iCurFrame;
+
+							curAnimW = (float)hero->animations[animSelectedId].width;
+							curAnimH = (float)hero->animations[animSelectedId].height;
+
+							previewSize = ImVec2(
+								curAnimW * scaleFrame,
+								curAnimH * scaleFrame
+							);
+
+							ltNormPixel = ImVec2(
+								curAnimW + curAnimW * curFrame,
+								curAnimH * animSelectedId
+							);
+
+							rtNormPixel = ImVec2(
+								2.0f * curAnimW + curAnimW * curFrame,
+								curAnimH + curAnimH * animSelectedId
+							);
+
+							ltNormPixel.x /= sprite_width;
+							ltNormPixel.y /= sprite_height;
+							rtNormPixel.x /= sprite_width;
+							rtNormPixel.y /= sprite_height;
+
+							ImGui::Text("Превью:");
+
+							ImGui::Image((void*)loadedSprite.Get(),
+								previewSize,
+								ltNormPixel,
+								rtNormPixel);
+						}
+
+						ImGui::NewLine();
+
+						dcheck(ImGui::SliderFloat("Задержка", &hero->animations[animSelectedId].holdTime, 0.01f, 1.0f), a_hdDirty);
+						hero->holdTime = hero->animations[animSelectedId].holdTime;
+
+						for (auto& a : hero->animations)
+						{
+							a.holdTime = hero->holdTime;
+						}
+
+						if (ImGui::Button("Создать анимацию"))
+						{
+							CreatingAnimation = true;
+						}
+
+						if (CreatingAnimation)
+						{
+							auto animations = ShowAnimationCreatingDialog(dt);
+
+							if (!animations.empty())
+							{
+								hero->image = Surface2D(animPath);
+								std::vector<Animation> newAnim;
+
+								for (auto& a : animations)
+								{
+									newAnim.emplace_back(Animation(a.pStart, a.pEnd, a.width, a.height, a.frames, hero->image, a.ft, a.name));
+								}
+
+								hero->SetAnimation(newAnim);
+
+								EngineFunctions::SaveAnimationData(
+									hero->name,
+									AnimationData(animations[0].pStart, animations[0].pEnd, animations[0].width, animations[0].height, animations[0].frames, animations[0].ft, animations[0].name),
+									hero->dataPath,
+									&applog);
+
+								CreatingAnimation = false;
+							}
+						}
+
+						ImGui::Separator();
+					}
+
+					/****************************************************/
+
+					/* Элементы управления камерой главного персонажа */
+
+					if (ImGui::CollapsingHeader("Камера"))
+					{
+						SpawnCameraToHeroControl();
+
+						ImGui::Separator();
+					}
+
+					/**************************************************/
+
+					ImGui::NewLine();
+					ImGui::NewLine();
+
+					/* Если нажата кнопка сохранить текущие настройки главного персонажа */
+					{
+						if (ImGui::Button("Сохранить", ImVec2(100, 20)))
+						{
+							AddLog("Сохранение настроек для: ");
+							AddLog(hero->name.c_str());
+							AddLog("\n");
+
+							SavingSettings = true;
+						}
+
+						if (SavingSettings)
+						{
+							/* Сохранение скорости */
+
+							EngineFunctions::SetNewValue<float>(
+								hero->name,
+								"speed", hero->speed,
+								hero->dataPath,
+								&applog
+								);
+
+							/**********************/
+
+							/* Сохранение настроек эффекта */
+
+							EngineFunctions::SetNewValue<bool>(
+								hero->name,
+								"eff-a", hero->effect.Active,
+								hero->dataPath,
+								&applog
+								);
+
+							EngineFunctions::SetNewValue<float>(
+								hero->name,
+								"eff-d", hero->effect.Duration,
+								hero->dataPath,
+								&applog
+								);
+
+							EngineFunctions::SetNewValue<float>(
+								hero->name,
+								"eff-t", hero->effect.Time,
+								hero->dataPath,
+								&applog
+								);
+
+							/*******************************/
+
+							/* Пересохранение hitbox */
+
+							auto actual_hb = hero->hitbox;
+
+							EngineFunctions::SaveHitBoxData(hero->name, actual_hb, hero->dataPath, &applog);
+
+							/*************************/
+
+							/* Сохранение настроек камеры */
+
+							EngineFunctions::SetNewValue<size_t>(
+								hero->name,
+								"camera-mode", static_cast<size_t>(hero->cameraMode),
+								hero->dataPath,
+								&applog
+								);
+
+							/******************************/
+
+							/* Сохранение настроек анимаций */
+
+							EngineFunctions::SetNewValue<float>(
+								hero->name,
+								"a-ft", hero->holdTime,
+								hero->dataPath,
+								&applog
+								);
+
+							/********************************/
+
+							SavingSettings = false;
+						}
+					}
+					/*********************************************************************/
+
+					ImGui::EndTabItem();
+				}
+
+				ImGui::EndTabBar();
+			}
+
+			ImGui::EndChild();
 		}
 	}
 
@@ -1067,688 +1631,155 @@ void GUISystem::ShowPersonControl()
 	ImGui::End();
 }
 
-void GUISystem::ShowMainPersonList()
-{
-	if (ImGui::Begin("Персонажи", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
-	{
-		ImGui::Bullet();
-		if (ImGui::Selectable(hero->name.c_str(), heroSelected == hero->name))
-		{
-			heroSelected = hero->name;
-			LoadedPreview = false;
-		}
-	}
-
-	ImGui::End();
-}
-
-void GUISystem::ShowMainPersonControl(float dt)
+void GUISystem::ShowIobjControl()
 {
 	if (ImGui::Begin("Опции", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		if (ImGui::BeginChild(""))
+		// Цикл по интерактивным объектам
+		for (int k = 0; k < IobjCon->objects.size(); k++)
 		{
-			if (ImGui::BeginTabBar("mpSet", ImGuiTabBarFlags_None))
+			// Поиск выбранного интерактивного объекта
+			if (IobjCon->objects.at(k)->name == IobjSelected)
 			{
-				if (ImGui::BeginTabItem("Объект"))
+				if (ImGui::BeginChild(""))
 				{
-					SpawnDefaultObject2DControl(hero, hero->dataPath);					
-
-					ImGui::EndTabItem();
-				}
-				
-				if (ImGui::BeginTabItem("Дополнительно"))
-				{
-					/* Переменные управления сбросом интерфейса */
-
-					bool effDirty = false;		// Котнроль эффекта
-					bool speedDirty = false;	// Котнроль скорости
-					bool a_hdDirty = false;		// Котнроль скорости анимации
-					bool a_sDirty = false;		// Котнроль анимации
-					bool a_sizeDirty = false;		// Котнроль анимации
-
-					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
-
-					/********************************************/
-
-					/* Элементы управления позицией и скорости главного персонажа */
-
-					if (ImGui::CollapsingHeader("Физика", ImGuiTreeNodeFlags_DefaultOpen))
+					if (ImGui::BeginTabBar("ioSet", ImGuiTabBarFlags_None))
 					{
-						ImGui::Text("Скорость:");
-						dcheck(ImGui::SliderFloat(" ", &hero->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
-
-						ImGui::Separator();	// Разделитель
-					}
-
-					/**************************************************************/
-
-					/* Элементы управления эффектом главного персонажа */
-
-					if (ImGui::CollapsingHeader("Эффекты"))
-					{
-						dcheck(ImGui::SliderFloat("Продолжитель.", &hero->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
-						dcheck(ImGui::SliderFloat("Время", &hero->effect.Time, 0.0f, 100.0f, "%.3f"), effDirty);
-
-						ImGui::Checkbox("Активен", &hero->effect.Active);
-
-						ImGui::Separator();	// Разделитель
-					}
-
-					/***************************************************/
-
-					/* Элементы управления хитбоксом главного персонажа */
-
-					if (ImGui::CollapsingHeader("Hit-box"))
-					{
-						ImGui::Checkbox("Показать", &hero->hitbox.visability);
-
-						/* Если нажата кнопка изменить HitBox */
+						if (ImGui::BeginTabItem("Объект"))
 						{
-							if (ImGui::Button("Изменить", ImVec2(100, 20)))
+							SpawnDefaultObject2DControl(IobjCon->objects.at(k).get(), IobjCon->dataPath);
+
+							// КОСТЫЛЬ \\ !		
+							if (!IsCaclulatedDeltas)
 							{
-								AddLog("Изменение Hit-box для: ");
-								AddLog(hero->name.c_str());
-								AddLog("\n");
+								hb_delta.x = IobjCon->objects.at(k)->hitbox.coordinates.x - IobjCon->objects.at(k)->position.x;
+								hb_delta.y = IobjCon->objects.at(k)->hitbox.coordinates.y - IobjCon->objects.at(k)->position.y;
 
-								DrawingHitBox = true;
-								hero->hitbox.visability = false;
-
-								ImGui::GetStyle().Alpha = 0.1f;
+								IsCaclulatedDeltas = true;
 							}
 
-							if (DrawingHitBox)
+							DirectX::XMFLOAT2 delta;
+							delta.x = IobjCon->objects.at(k)->position.x - IobjCon->objects.at(k)->hitbox.coordinates.x + hb_delta.x;
+							delta.y = IobjCon->objects.at(k)->position.y - IobjCon->objects.at(k)->hitbox.coordinates.y + hb_delta.y;
+
+							IobjCon->objects.at(k)->hitbox.Translate(delta);
+
+							ImGui::EndTabItem();
+						}
+
+						if (ImGui::BeginTabItem("Дополнительно"))
+						{
+							/* Переменные управления сбросом интерфейса */
+
+							bool deepDirty = false; // Контроль позиции
+
+							const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+							/********************************************/
+
+							/* Элементы управления параметрами коллизий объекта */
+
+							if (ImGui::CollapsingHeader("Параметры коллизий", ImGuiTreeNodeFlags_DefaultOpen))
 							{
-								auto new_hb = CreateNewHitBox();
+								ImGui::Text("Степень прозрачности:");
+								dcheck(ImGui::SliderFloat("Глубина", &IobjCon->objects.at(k)->deep, 1.0f, 100.0f, "%.3f"), deepDirty);
 
-								if (new_hb.name != "empty")
+								ImGui::Checkbox("Прозрачность", &IobjCon->objects.at(k)->drawGhostable);
+
+								ImGui::Separator();
+							}
+
+							/****************************************************/
+
+							/* Элементы управления хитбоксом интерактивного объекта */
+
+							if (ImGui::CollapsingHeader("Hit-box"))
+							{
+								ImGui::Checkbox("Показать", &IobjCon->objects.at(k)->hitbox.visability);
+
+								/* Если нажата кнопка изменить HitBox */
 								{
-									hero->SetHitBox(new_hb);
-									hero->hitbox.visability = true;
+									if (ImGui::Button("Изменить", ImVec2(100, 20)))
+									{
+										AddLog("Изменение Hit-box для:");
+										AddLog(IobjSelected.c_str());
+										AddLog("\n");
 
-									AddLog("Сохранение Hit-box:\n");
-									EngineFunctions::SaveHitBoxData(heroSelected, hero->hitbox, hero->dataPath, &applog);
+										DrawingHitBox = true;
+										IobjCon->objects.at(k)->hitbox.visability = false;
+
+										ImGui::GetStyle().Alpha = 0.1f;
+									}
+
+									if (DrawingHitBox)
+									{
+										auto new_hb = CreateNewHitBox();
+
+										if (new_hb.name != "empty")
+										{
+											IobjCon->objects.at(k)->SetHitBox(new_hb);
+											IobjCon->objects.at(k)->hitbox.visability = true;
+
+											AddLog("Сохранение Hit-box:\n");
+											EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
+
+											IsCaclulatedDeltas = false;
+										}
+									}
 								}
+								/**************************************/
+
+								ImGui::Separator(); // Разделитель
 							}
-						}
-						/**************************************/
+							/*******************************************/
 
-						ImGui::Separator(); // Разделитель
-					}
-
-					/****************************************************/
-
-					/* Элементы управления анимацией главного персонажа */
-					
-					if (ImGui::CollapsingHeader("Анимации"))
-					{
-						std::ostringstream str;
-						str << "Кол-во анимаций: " << hero->animations.size();						
-						ImGui::Text(str.str().c_str());
-						
-						if (ImGui::BeginCombo("Анимация", animSelected.c_str()))
-						{
-							for (size_t i = 0; i < hero->animations.size(); i++)
+							/* Если нажата кнопка сохранить текущие настройки объекта */
 							{
-								if (ImGui::Selectable(hero->animations[i].name.c_str(), animSelected == hero->animations[i].name))
+								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 								{
-									animSelected = hero->animations[i].name;
-									animSelectedId = i;
-								}
-							}
+									AddLog("Сохранение настроек для: ");
+									AddLog(IobjSelected.c_str());
+									AddLog("\n");
 
-							ImGui::EndCombo();
-						}
-
-						if (animSelected != "")
-						{
-
-							ImGui::SliderInt("Кадр", &hero->animations[animSelectedId].iCurFrame, 0, hero->animations[animSelectedId].frames.size());							
-							dcheck(ImGui::SliderFloat("Превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
-
-							ImGui::NewLine();
-
-							curFrame = hero->animations[animSelectedId].iCurFrame;
-
-							curAnimW = (float)hero->animations[animSelectedId].width;
-							curAnimH = (float)hero->animations[animSelectedId].height;
-
-							previewSize = ImVec2(
-								curAnimW * scaleFrame,
-								curAnimH * scaleFrame
-							);
-
-							ltNormPixel = ImVec2(
-								curAnimW + curAnimW * curFrame,
-								curAnimH * animSelectedId
-								);
-						
-							rtNormPixel = ImVec2(
-								2.0f * curAnimW + curAnimW * curFrame,
-									   curAnimH + curAnimH * animSelectedId
-							);
-
-							ltNormPixel.x /= sprite_width;
-							ltNormPixel.y /= sprite_height;	
-							rtNormPixel.x /= sprite_width;
-							rtNormPixel.y /= sprite_height;
-
-							ImGui::Text("Превью:");
-
-							ImGui::Image((void*)loadedSprite.Get(),
-								previewSize,
-								ltNormPixel,
-								rtNormPixel);
-						}
-
-						ImGui::NewLine();
-
-						dcheck(ImGui::SliderFloat("Задержка", &hero->animations[animSelectedId].holdTime, 0.01f, 1.0f), a_hdDirty);
-						hero->holdTime = hero->animations[animSelectedId].holdTime;
-
-						for (auto& a : hero->animations)
-						{
-							a.holdTime = hero->holdTime;
-						}
-
-						if(ImGui::Button("Создать анимацию"))
-						{
-							CreatingAnimation = true;
-						}
-						
-						if (CreatingAnimation)
-						{
-							auto animations = ShowAnimationCreatingDialog(dt);
-
-							if (!animations.empty())
-							{
-								hero->image = Surface2D(animPath);
-								std::vector<Animation> newAnim;
-
-								for (auto& a : animations)
-								{
-									newAnim.emplace_back(Animation(a.pStart, a.pEnd, a.width, a.height, a.frames, hero->image, a.ft, a.name));
+									SavingSettings = true;
 								}
 
-								hero->SetAnimation(newAnim);
+								if (SavingSettings)
+								{
+									EngineFunctions::SetNewValue<float>(
+										IobjSelected,
+										"g-deep", IobjCon->objects.at(k)->deep,
+										IobjCon->dataPath,
+										&applog
+										);
 
-								EngineFunctions::SaveAnimationData(
-									hero->name, 
-									AnimationData(animations[0].pStart, animations[0].pEnd, animations[0].width, animations[0].height, animations[0].frames, animations[0].ft, animations[0].name), 
-									hero->dataPath,
-									&applog);
+									EngineFunctions::SetNewValue<bool>(
+										IobjSelected,
+										"g-able", IobjCon->objects.at(k)->drawGhostable,
+										IobjCon->dataPath,
+										&applog
+										);
 
-								CreatingAnimation = false;
+									EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
+
+									SavingSettings = false;
+								}
 							}
+							/**********************************************************/
+
+							ImGui::EndTabItem();
 						}
 
-						ImGui::Separator();
+						ImGui::EndTabBar();
 					}
 
-					/****************************************************/
-
-					/* Элементы управления камерой главного персонажа */
-					
-					if (ImGui::CollapsingHeader("Камера"))
-					{
-						SpawnCameraToHeroControl();
-
-						ImGui::Separator();
-					}
-
-					/**************************************************/
-
-					ImGui::NewLine();
-					ImGui::NewLine();
-
-					/* Если нажата кнопка сохранить текущие настройки главного персонажа */
-					{
-						if (ImGui::Button("Сохранить", ImVec2(100, 20)))
-						{
-							AddLog("Сохранение настроек для: ");
-							AddLog(hero->name.c_str());
-							AddLog("\n");
-
-							SavingSettings = true;
-						}
-
-						if (SavingSettings)
-						{
-							/* Сохранение скорости */
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"speed", hero->speed,
-								hero->dataPath,
-								&applog
-								);
-
-							/**********************/
-
-							/* Сохранение настроек эффекта */
-
-							EngineFunctions::SetNewValue<bool>(
-								hero->name,
-								"eff-a", hero->effect.Active,
-								hero->dataPath,
-								&applog
-								);
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"eff-d", hero->effect.Duration,
-								hero->dataPath,
-								&applog
-								);
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"eff-t", hero->effect.Time,
-								hero->dataPath,
-								&applog
-								);
-
-							/*******************************/
-
-							/* Пересохранение hitbox */
-
-							auto actual_hb = hero->hitbox;
-
-							EngineFunctions::SaveHitBoxData(hero->name, actual_hb, hero->dataPath, &applog);
-
-							/*************************/
-
-							/* Сохранение настроек камеры */
-							
-							EngineFunctions::SetNewValue<size_t>(
-								hero->name,
-								"camera-mode", static_cast<size_t>(hero->cameraMode),
-								hero->dataPath,
-								&applog
-								);
-							
-							/******************************/
-
-							/* Сохранение настроек анимаций */
-							
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"a-ft", hero->holdTime,
-								hero->dataPath,
-								&applog
-								);
-
-							/********************************/
-
-							SavingSettings = false;
-						}
-					}
-					/*********************************************************************/
-
-					ImGui::EndTabItem();
+					ImGui::EndChild();
 				}
 
-				ImGui::EndTabBar();
+				break;
 			}
-
-			ImGui::EndChild();
-		}
-	}
-
-	ImGui::End();
-}
-
-void GUISystem::ShowPhysicsEngineObjList()
-{
-	using namespace Physics;
-
-	if (ImGui::Begin("Объекты", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
-	{
-		if (ImGui::BeginTabBar("PhEngTabs", ImGuiTabBarFlags_None))
-		{
-			if (ImGui::BeginTabItem("Линии"))
-			{
-				for (auto l = phEngPtr->lines.begin(); l != phEngPtr->lines.end(); l++)
-				{
-					char label[128];
-					sprintf_s(label, l->GetName().c_str(), objectSelected);
-
-					std::string contextMenuId = "Context Menu for " + l->name;
-
-					ImGui::Bullet();
-					if (ImGui::Selectable(label, objectSelected == l->GetName().c_str()))
-					{
-						objectSelected = l->GetName();
-					}
-					if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
-					{
-						if(ImGui::Button("Удалить"))
-						{
-							std::string deletedLineName = l->name;
-							AddLog("Удаление ");
-							AddLog(deletedLineName.c_str());
-							AddLog("...\n");
-
-							phEngPtr->DeleteLineAt(l);
-							EngineFunctions::DeleteJsonObject(deletedLineName, phEngPtr->dataPath);
-
-							AddLog("Линия ");
-							AddLog(deletedLineName.c_str());
-							AddLog(" удалена\n");
-
-							ImGui::EndPopup();
-							
-							break;
-						}
-
-						ImGui::EndPopup();
-					}
-				}
-				
-				ImGui::NewLine();
-
-				// Если нажата кнопка добавить линию
-				if (ImGui::Button("Добавить"))
-				{
-					AddLog("Добавление линии...");
-					AddLog("\n");
-
-					AddingObject = true;
-
-					ImGui::GetStyle().Alpha = 0.1f;
-				}
-
-				/* Если идёт добавление линии */
-				{
-					if (AddingObject)
-					{
-						if (!SettedFirstPoint)
-						{
-							mouseHelpInfo = "Идёт добавление линии.\nНажмите ЛКМ, чтобы поставить\nпервую точку.";
-
-							if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-							{
-								auto pos = wnd->mouse.GetPos();
-								firstPoint = { (float)pos.first, (float)pos.second };
-
-								SettedFirstPoint = true;
-								std::ostringstream oss;
-								oss << "Поставлена первая точка:\n" <<
-									"[x: "  << firstPoint.x <<
-									"; y: " << firstPoint.y << "]\n";
-
-								AddLog(oss.str().c_str());
-							}
-						}
-						else if (!SettedSecondPoint)
-						{
-							mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
-
-							int ms_posX = wnd->mouse.GetPosX();
-							int ms_posY = wnd->mouse.GetPosY();
-
-							Line line(std::string("Drown line"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-							wnd->Gfx().DrawLine(line.start, line.end);
-
-							if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-							{
-								auto pos = wnd->mouse.GetPos();
-								secondPoint = { (float)pos.first, (float)pos.second };
-
-								std::ostringstream line_name;
-								line_name << "line " << phEngPtr->GetLinesAmount();
-
-								Line line_new(line_name.str(), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);								
-								phEngPtr->AddLine(line_new);
-
-								std::ostringstream oss;
-								oss << "Поставлена вторая точка:\n" <<
-									"[x: "  << secondPoint.x <<
-									"; y: " << secondPoint.y << "]\n";
-
-								AddLog(oss.str().c_str());
-
-								AddLog("Сохранение линии:\n");
-
-								using std::to_string;
-
-								// Открытие файла с данными о физике сцены
-								std::ifstream dataFile(phEngPtr->dataPath);
-								if (!dataFile.is_open())
-								{
-									throw ("Не удаётся открыть файл с данными о физике сцены");
-								}
-
-								// Чтение файла
-								json j;
-								dataFile >> j;
-
-								// Закрытие файла
-								dataFile.close();
-
-								// Новая линия
-								std::ostringstream newLine;
-								newLine << "\"" << line_name.str() << "\":[{";
-
-								newLine << "\"start-x\": "	<< firstPoint.x  << ",";
-								newLine << "\"start-y\" : " << firstPoint.y  << ",";
-								newLine << "\"end-x\" : "	<< secondPoint.x << ",";
-								newLine << "\"end-y\" : "	<< secondPoint.y << "}]";
-								
-								// Подготовка к вставке в файл
-								std::string json_str = j.dump();
-								size_t pos_of_par = json_str.find_last_of('}');
-								size_t pos_of_par2 = json_str.find_last_of(']');
-
-								json_str.at(pos_of_par) = ' ';
-								json_str.at(pos_of_par2 + 1) = ',';
-
-								// Запись в файл данных новой линии
-								std::ofstream ostream(phEngPtr->dataPath);
-								ostream << json_str + newLine.str() + '}';
-
-								// Закрытие файла
-								ostream.close();
-
-								std::ostringstream oss_l;
-								oss_l << "Добавлено [" << line_name.str() << "]\n";
-
-								AddLog(oss_l.str().c_str());
-
-								mouseHelpInfo = "";
-								SettedSecondPoint = true;
-							}
-						}
-						else if (SettedFirstPoint && SettedSecondPoint)
-						{
-							AddingObject = false;
-							SettedFirstPoint = false;
-							SettedSecondPoint = false;
-
-							ImGui::GetStyle().Alpha = 1.0f;
-						}
-					}
-				}
-				/******************************/
-
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("Hit-Box'ы"))
-			{
-				for (auto hb = phEngPtr->hitboxes.begin(); hb != phEngPtr->hitboxes.end(); hb++)
-				{
-					char label[128];
-					sprintf_s(label, hb->GetName().c_str(), objectSelected);
-
-					std::string contextMenuId = "Context Menu for " + hb->name;
-
-					ImGui::Bullet();
-					if (ImGui::Selectable(label, objectSelected == hb->GetName().c_str()))
-					{
-						objectSelected = hb->GetName();
-					}
-					if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
-					{
-						if (ImGui::Button("Удалить"))
-						{
-							std::string deletedHitBoxName = hb->name;
-							AddLog("Удаление ");
-							AddLog(deletedHitBoxName.c_str());
-							AddLog("...\n");
-
-							phEngPtr->DeleteHitBoxAt(hb);
-							EngineFunctions::DeleteJsonObject(deletedHitBoxName, phEngPtr->dataPath);
-
-							AddLog("Hit-Box ");
-							AddLog(deletedHitBoxName.c_str());
-							AddLog(" удалён\n");
-
-							ImGui::EndPopup();
-
-							break;
-						}
-
-						ImGui::EndPopup();
-					}
-				}
-
-				ImGui::NewLine();
-
-				// Если нажата кнопка добавить hitbox
-				if (ImGui::Button("Добавить"))
-				{
-					AddLog("Добавление Hit-Box'а...");
-					AddLog("\n");
-
-					AddingObject = true;
-
-					ImGui::GetStyle().Alpha = 0.1f;
-				}
-
-				/* Если идёт добавление hitbox */
-				{
-					if (AddingObject)
-					{
-						if (!SettedFirstPoint)
-						{
-							mouseHelpInfo = "Идёт добавление Hit-Box'а.\nНажмите ЛКМ, чтобы поставить\nпервую точку.";
-
-							if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-							{
-								auto pos = wnd->mouse.GetPos();
-								firstPoint = { (float)pos.first, (float)pos.second };
-
-								SettedFirstPoint = true;
-								std::ostringstream oss;
-								oss << "Поставлена первая точка:\n" <<
-									"[x: "  << firstPoint.x <<
-									"; y: " << firstPoint.y << "]\n";
-
-								AddLog(oss.str().c_str());
-							}
-						}
-						else if (!SettedSecondPoint)
-						{
-							mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
-
-							int ms_posX = wnd->mouse.GetPosX();
-							int ms_posY = wnd->mouse.GetPosY();
-
-							HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-							wnd->Gfx().DrawHitBox(hb);
-
-							if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-							{
-								auto pos = wnd->mouse.GetPos();
-								secondPoint = { (float)pos.first, (float)pos.second };
-
-								std::ostringstream hb_name;
-								hb_name << "hb " << phEngPtr->GetHitBoxAmount();
-
-								HitBox hb_new(hb_name.str(), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-								phEngPtr->AddHitBox(hb_new);
-
-								std::ostringstream oss;
-								oss << "Поставлена вторая точка:\n" <<
-									"[x: "  << secondPoint.x <<
-									"; y: " << secondPoint.y << "]\n";
-
-								AddLog(oss.str().c_str());
-
-								AddLog("Сохранение Hit-Box'а:\n");
-
-								using std::to_string;
-
-								// Открытие файла с данными о физике сцены
-								std::ifstream dataFile(phEngPtr->dataPath);
-								if (!dataFile.is_open())
-								{
-									throw ("Не удаётся открыть файл с данными о физике сцены");
-								}
-
-								// Чтение файла
-								json j;
-								dataFile >> j;
-
-								// Закрытие файла
-								dataFile.close();
-
-								// Новый hitbox
-								std::ostringstream newLine;
-								newLine << "\"" << hb_name.str() << "\":[{";
-
-								newLine << "\"lt-x\": " <<  firstPoint.x << ",";
-								newLine << "\"lt-y\" : " << firstPoint.y << ",";
-								newLine << "\"rb-x\" : " << secondPoint.x << ",";
-								newLine << "\"rb-y\" : " << secondPoint.y << "}]";
-
-								// Подготовка к вставке в файл
-								std::string json_str = j.dump();
-								size_t pos_of_par = json_str.find_last_of('}');
-								size_t pos_of_par2 = json_str.find_last_of(']');
-
-								json_str.at(pos_of_par) = ' ';
-								json_str.at(pos_of_par2 + 1) = ',';
-
-								// Запись в файл данных нового hitbox
-								std::ofstream ostream(phEngPtr->dataPath);
-								ostream << json_str + newLine.str() + '}';
-
-								// Закрытие файла
-								ostream.close();
-
-								std::ostringstream oss_l;
-								oss_l << "Добавлено [" << hb_name.str() << "]\n";
-
-								AddLog(oss_l.str().c_str());
-
-								mouseHelpInfo = "";
-								SettedSecondPoint = true;
-							}
-						}
-						else if (SettedFirstPoint && SettedSecondPoint)
-						{
-							AddingObject = false;
-							SettedFirstPoint = false;
-							SettedSecondPoint = false;
-
-							ImGui::GetStyle().Alpha = 1.0f;
-						}
-					}
-				}
-				/******************************/
-
-				ImGui::EndTabItem();
-			}
-
-			ImGui::EndTabBar();
 		}
 	}
 
@@ -2333,10 +2364,10 @@ void GUISystem::ShowLayersControl()
 
 		if (ImGui::Button("Сохранить"))
 		{
-			SavingLayersSettings = true;
+			SavingSettings = true;
 		}
 
-		if (SavingLayersSettings)
+		if (SavingSettings)
 		{
 			for (size_t i = 0; i < objQueue->queue.size(); i++)
 			{
@@ -2362,296 +2393,195 @@ void GUISystem::ShowLayersControl()
 					&applog);
 			}
 
-			SavingLayersSettings = false;
+			SavingSettings = false;
 		}
 	}
 
 	ImGui::End();
 }
 
-void GUISystem::ShowIobjList()
+void GUISystem::ShowCameraControl()
 {
-	if (ImGui::Begin("Объекты", NULL,
-		ImGuiWindowFlags_NoMove   | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 DispSize = io.DisplaySize;
+
+	ImVec2 PanelSize = ImVec2(
+		round(DispSize.x * 0.25f),
+		DispSize.y * 0.5f
+	);
+
+	ImGui::SetNextWindowSize(PanelSize);
+	if (ImGui::Begin("Камера", &ShowCameraSettings, ImGuiWindowFlags_NoResize))
 	{
-		for (auto o = IobjCon->objects.begin(); o != IobjCon->objects.end(); o++)
+		/* Переменные управления сбросом интерфейса */
+
+		bool posDirty = false;	 // Контроль позиции
+		bool speedDirty = false; // Контроль скорости
+
+		const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+		/********************************************/
+
+		/* Элементы управления позицией камеры */
+
+		if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text("Текущая позиция:");
+			std::ostringstream cPos;
+			cPos << "X: " << camera->position.x << " Y: " << camera->position.y;
+			ImGui::Text(cPos.str().c_str());
+
+			ImGui::Text("Исходная позиция:");
+			dcheck(ImGui::SliderFloat("X", &camera->initPosition.x, -1000.0f, 1000.0f), posDirty);
+			dcheck(ImGui::SliderFloat("Y", &camera->initPosition.y, -1000.0f, 1000.0f), posDirty);
+
+			if (ImGui::Button("Вернуть на исходную позицию"))
+			{
+				AddLog("Возвращение камеры на исходную позицию...\n");
+				camera->SetPosition(camera->initPosition);
+
+				std::ostringstream str;
+				str << "Камера установлена по кординатам: " << "X: " << camera->position.x << " Y: " << camera->position.y << "\n";
+				AddLog(str.str().c_str());
+			}
+
+			ImGui::Separator();
+		}
+
+		/***************************************/
+
+		/* Элементы управления no-clip камеры */
+
+		if (ImGui::CollapsingHeader("Перемещение"))
+		{
+			ImGui::Checkbox("No-clip", &camera->noclip);
+			dcheck(ImGui::SliderFloat("Скорость No-clip", &camera->noclipSpeed, 1.0f, 1000.0f), speedDirty);
+
+			ImGui::Separator();
+		}
+
+		/**************************************/
+
+		/* Элементы управления взаимодействия камеры с игроком */
+
+		if (ImGui::CollapsingHeader("Взаимодействие с игроком"))
+		{
+			SpawnCameraToHeroControl();
+
+			ImGui::Separator();
+		}
+
+		/*******************************************************/
+
+		if (ImGui::Button("Сохранить"))
+		{
+			SavingSettings = true;
+		}
+
+		if (SavingSettings)
+		{
+			EngineFunctions::SetNewValue<float>(
+				"camera",
+				"pos-x", camera->initPosition.x,
+				camera->dataPath,
+				&applog
+				);
+
+			EngineFunctions::SetNewValue<float>(
+				"camera",
+				"pos-y", camera->initPosition.y,
+				camera->dataPath,
+				&applog
+				);
+
+			EngineFunctions::SetNewValue<float>(
+				"camera",
+				"nc-speed", camera->noclipSpeed,
+				camera->dataPath,
+				&applog
+				);
+
+			EngineFunctions::SetNewValue<bool>(
+				"camera",
+				"nc-able", camera->noclip,
+				camera->dataPath,
+				&applog
+				);
+
+			EngineFunctions::SetNewValue<size_t>(
+				hero->name,
+				"camera-mode", static_cast<size_t>(hero->cameraMode),
+				hero->dataPath,
+				&applog
+				);
+
+			SavingSettings = false;
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowScenesControl()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 DispSize = io.DisplaySize;
+
+	ImVec2 PanelSize = ImVec2(
+		round(DispSize.x * 0.2f),
+		DispSize.y * 0.6f
+	);
+
+	ImGui::SetNextWindowSize(PanelSize);
+	if (ImGui::Begin("Сцены", &ShowScenesSettings, ImGuiWindowFlags_NoResize))
+	{
+		auto scenesNames = EngineFunctions::GetScenesNames();
+
+		for (size_t i = 0; i < scenesNames.size(); i++)
 		{
 			char label[128];
-			sprintf_s(label, o->get()->name.c_str(), IobjSelected);
+			sprintf_s(label, scenesNames[i].c_str(), objectSelected);
 
-			std::string contextMenuId = "Context Menu for " + o->get()->name;
+			std::string contextMenuId = "Context Menu for " + scenesNames[i];
 
 			ImGui::Bullet();
-			if (ImGui::Selectable(label, IobjSelected == o->get()->name.c_str()))
+			if (ImGui::Selectable(label, curSceneName == scenesNames[i]))
 			{
-				IobjSelected = o->get()->name;
-				LoadedPreview = false;
-				isCaclulatedDeltas = false;
-			}
-			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
-			{
-				if (ImGui::Button("Удалить"))
+				if (curSceneName != scenesNames[i])
 				{
-					std::string deletedObjName = o->get()->name;
-					AddLog("Удаление ");
-					AddLog(deletedObjName.c_str());
-					AddLog("...\n");
-
-					objQueue->DeleteObjectAt(o->get()->name);
-					IobjCon->DeleteObjectAt(o);
-
-					EngineFunctions::DeleteJsonObject(deletedObjName, IobjCon->dataPath);
-
-					AddLog("Объект ");
-					AddLog(deletedObjName.c_str());
-					AddLog(" удалён\n");
-
-					ImGui::EndPopup();
-
-					break;
+					curSceneName = scenesNames[i];
+					IsUpdatingScene = true;
 				}
-
-				ImGui::EndPopup();
 			}
 		}
 
-		ImGui::NewLine();
+		ImGui::Separator();
 
-		if (ImGui::Button("Добавить"))
+		if (ImGui::Button("Сохранить"))
 		{
-			AddingIobj = true;
+			SavingScenesSettings = true;
 		}
 
-		if (AddingIobj)
+		if (SavingScenesSettings)
 		{
-			auto d = ShowAddingIobjDialog();
-
-			if (d.value().name != "")
-			{
-				Surface2D im(d.value().pathToSprite);
-
-				DirectX::XMFLOAT4 hb_coord;
-				hb_coord.x = d.value().position.x;
-				hb_coord.y = d.value().position.y;
-				hb_coord.z = d.value().position.x + im.GetWidth();
-				hb_coord.w = d.value().position.y + im.GetHeight();
-			
-				IobjCon->objects.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
-				objQueue->queue.push_back(IobjCon->objects.back().get());
-
-				using std::to_string;
-
-				// Открытие файла с данными о физике сцены
-				std::ifstream dataFile(IobjCon->dataPath);
-				if (!dataFile.is_open())
-				{
-					throw ("Не удаётся открыть файл с данными о физике сцены");
-				}
-
-				// Чтение файла
-				json j;
-				dataFile >> j;
-
-				// Закрытие файла
-				dataFile.close();
-
-				// Новый объект
-				std::ostringstream newLine;
-				newLine << "\"" << d.value().name << "\":[{";
-
-				newLine << "\"pos-x\": "    << d.value().position.x << ",";
-				newLine << "\"pos-y\" : "   << d.value().position.y << ",";
-				newLine << "\"hb-ltx\" : "  << hb_coord.x << ",";
-				newLine << "\"hb-lty\" : "  << hb_coord.y << ",";
-				newLine << "\"hb-rbx\" : "  << hb_coord.z << ",";
-				newLine << "\"hb-rby\" : "  << hb_coord.w << ",";
-				newLine << "\"g-deep\" : "  << 2.0f  << ",";
-				newLine << "\"g-able\" : "  << false << ",";
-				newLine << "\"layer\" : "   << d.value().layer << ",";
-				newLine << "\"path\" : \""  << d.value().pathToSprite << "\"}]";
-
-				// Подготовка к вставке в файл
-				std::string json_str = j.dump();
-				size_t pos_of_par = json_str.find_last_of('}');
-				size_t pos_of_par2 = json_str.find_last_of(']');
-
-				json_str.at(pos_of_par) = ' ';
-				json_str.at(pos_of_par2 + 1) = ',';
-
-				// Запись в файл данных новой линии
-				std::ofstream ostream(IobjCon->dataPath);
-				ostream << json_str + newLine.str() + '}';
-
-				// Закрытие файла
-				ostream.close();
-
-				std::ostringstream oss_l;
-				oss_l << "Добавлено [" << d.value().name << "]\n";
-
-				AddLog(oss_l.str().c_str());
-
-				AddingIobj = false;
-			}
+			SavingScenesSettings = false;
 		}
 	}
 
 	ImGui::End();
 }
 
-void GUISystem::ShowIobjControl()
+void GUISystem::SpawnCameraToHeroControl()
 {
-	if (ImGui::Begin("Опции", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Button("Фиксировать мир"))
 	{
-		// Цикл по интерактивным объектам
-		for (int k = 0; k < IobjCon->objects.size(); k++)
-		{
-			// Поиск выбранного интерактивного объекта
-			if (IobjCon->objects.at(k)->name == IobjSelected)
-			{				
-				if (ImGui::BeginChild(""))
-				{
-					if (ImGui::BeginTabBar("ioSet", ImGuiTabBarFlags_None))
-					{
-						if (ImGui::BeginTabItem("Объект"))
-						{
-							SpawnDefaultObject2DControl(IobjCon->objects.at(k).get(), IobjCon->dataPath);
-							
-							// КОСТЫЛЬ \\ !		
-							if (!isCaclulatedDeltas)
-							{					
-								hb_delta.x = IobjCon->objects.at(k)->hitbox.coordinates.x - IobjCon->objects.at(k)->position.x;
-								hb_delta.y = IobjCon->objects.at(k)->hitbox.coordinates.y - IobjCon->objects.at(k)->position.y;
-
-								isCaclulatedDeltas = true;
-							}
-
-							DirectX::XMFLOAT2 delta;
-							delta.x = IobjCon->objects.at(k)->position.x - IobjCon->objects.at(k)->hitbox.coordinates.x + hb_delta.x;
-							delta.y = IobjCon->objects.at(k)->position.y - IobjCon->objects.at(k)->hitbox.coordinates.y + hb_delta.y;
-
-							IobjCon->objects.at(k)->hitbox.Translate(delta);
-							
-							ImGui::EndTabItem();
-						}
-
-						if (ImGui::BeginTabItem("Дополнительно"))
-						{
-							/* Переменные управления сбросом интерфейса */
-
-							bool deepDirty = false; // Контроль позиции
-
-							const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
-
-							/********************************************/
-
-							/* Элементы управления параметрами коллизий объекта */
-							
-							if (ImGui::CollapsingHeader("Параметры коллизий", ImGuiTreeNodeFlags_DefaultOpen))
-							{
-								ImGui::Text("Степень прозрачности:");
-								dcheck(ImGui::SliderFloat("Глубина", &IobjCon->objects.at(k)->deep, 1.0f, 100.0f, "%.3f"), deepDirty);
-
-								ImGui::Checkbox("Прозрачность", &IobjCon->objects.at(k)->drawGhostable);
-
-								ImGui::Separator();
-							}
-
-							/****************************************************/
-							
-							/* Элементы управления хитбоксом интерактивного объекта */
-
-							if (ImGui::CollapsingHeader("Hit-box"))
-							{
-								ImGui::Checkbox("Показать", &IobjCon->objects.at(k)->hitbox.visability);
-
-								/* Если нажата кнопка изменить HitBox */
-								{
-									if (ImGui::Button("Изменить", ImVec2(100, 20)))
-									{
-										AddLog("Изменение Hit-box для:");
-										AddLog(IobjSelected.c_str());
-										AddLog("\n");
-
-										DrawingHitBox = true;
-										IobjCon->objects.at(k)->hitbox.visability = false;
-
-										ImGui::GetStyle().Alpha = 0.1f;
-									}
-
-									if (DrawingHitBox)
-									{
-										auto new_hb = CreateNewHitBox();
-
-										if (new_hb.name != "empty")
-										{
-											IobjCon->objects.at(k)->SetHitBox(new_hb);
-											IobjCon->objects.at(k)->hitbox.visability = true;
-
-											AddLog("Сохранение Hit-box:\n");
-											EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
-										
-											isCaclulatedDeltas = false;
-										}
-									}
-								}
-								/**************************************/
-
-								ImGui::Separator(); // Разделитель
-							}
-							/*******************************************/
-
-							/* Если нажата кнопка сохранить текущие настройки объекта */							
-							{
-								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
-								{
-									AddLog("Сохранение настроек для: ");
-									AddLog(IobjSelected.c_str());
-									AddLog("\n");
-
-									SavingSettings = true;
-								}
-
-								if (SavingSettings)
-								{
-									EngineFunctions::SetNewValue<float>(
-										IobjSelected,
-										"g-deep", IobjCon->objects.at(k)->deep,
-										IobjCon->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<bool>(
-										IobjSelected,
-										"g-able", IobjCon->objects.at(k)->drawGhostable,
-										IobjCon->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
-
-									SavingSettings = false;
-								}
-							}
-							/**********************************************************/
-							
-							ImGui::EndTabItem();
-						}
-
-						ImGui::EndTabBar();
-					}
-
-					ImGui::EndChild();
-				}
-
-				break;
-			}
-		}
+		hero->cameraMode = MainPerson::CameraMode::SteadyWorld;
 	}
 
-	ImGui::End();
+	if (ImGui::Button("Фиксировать игрока"))
+	{
+		hero->cameraMode = MainPerson::CameraMode::SteadyPerson;
+	}
 }
 
 void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
@@ -2697,7 +2627,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		}
 
 		dcheck(ImGui::SliderFloat("Размер", &scaleObj, 0.1f, 20.0f, "%.4f"), scaleDirty);
-		
+
 		ImGui::Image((void*)loadedSprite.Get(), ImVec2(sprite_width * scaleObj, sprite_height * scaleObj));
 
 		ImGui::Separator();	// Разделитель
@@ -2721,7 +2651,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		{
 			Surface2D im(imagePath);
 			obj->SetSurface(im);
-			
+
 			if (obj->name.find("obj") != obj->name.npos)
 			{
 				for (auto& io : IobjCon->objects)
@@ -2793,20 +2723,345 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 			/**********************/
 
 			/* Сохранение изображения */
-			
+
 			EngineFunctions::SetNewValue<std::string>(
 				obj->name,
 				"path", obj->image.GetFileName(),
 				dataPath,
 				&applog
 				);
-			
+
 			/**************************/
 
 			SavingSettings = false;
 		}
 	}
 	/*********************************************************************/
+}
+
+void GUISystem::ShowLog()
+{
+	ImGui::Begin("Лог", NULL,
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+	applog.Draw("Лог", NULL);
+	ImGui::End();
+}
+
+void GUISystem::ShowGPU()
+{
+	if (ImGui::Begin("Представление", NULL,
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
+		ImGui::Text("%.3f мс/кадр (%.2f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+		std::ostringstream s;
+		s << sizeof(*this);
+
+		ImGui::Text("Вес GUI: %s байт", s.str().c_str());
+
+		ImGui::Separator();
+
+		ImGui::Text("Графическое оборудование:");
+		for (auto& d : gpu_desc)
+		{
+			char name_gpu[256];
+			sprintf_s(name_gpu, "%ws", reinterpret_cast<const char*>(d.first.c_str()));
+
+			if (ImGui::TreeNode(name_gpu))
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.52f, 0.85f, 0.059, 1.0f));
+				ImGui::Text("Память: ~%.1f ГБ", d.second);
+				ImGui::PopStyleColor();
+				ImGui::TreePop();
+			}
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowFPS()
+{
+	if (ImGui::Begin("График FPS", &ShowFPSChart))
+	{
+		if (counter != N_POINTS)
+		{
+			arr[counter] = ImGui::GetIO().Framerate;
+			counter++;
+		}
+		else
+		{
+			counter = 0;
+			for (size_t i = 0; i < N_POINTS; i++)
+			{
+				sum += (double)arr[i];
+			}
+
+			average = sum / N_POINTS;
+			sum = 0.0;
+
+			pYMin = average - 20.0;
+			pYMax = average + 20.0;
+		}
+
+		ImPlot::LinkNextPlotLimits(&pXMin, &pXMax, &pYMin, &pYMax);
+		if (ImPlot::BeginPlot("FPS", "", "FPS"))
+		{
+			ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+			ImPlot::PlotShaded("FPS", counters, arr, N_POINTS);
+			ImPlot::PopStyleVar();
+			ImPlot::PlotLine("", counters, arr, N_POINTS);
+
+			ImPlot::EndPlot();
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowPhysicsEngineObjHelp()
+{
+	std::string objName;
+	ImVec2 pos;
+
+	for (auto& l : phEngPtr->lines)
+	{
+		std::ostringstream oss;
+		oss << "Physics engine info for " << l.name;
+
+		float offset = -30.0f;
+
+		if (l.start.y == l.end.y)
+		{
+			pos = { (l.start.x + l.end.x) / 2.0f, l.start.y + offset };
+		}
+		else if (l.start.y != l.end.y)
+		{
+			pos = { (l.start.x + l.end.x) / 2.0f, (l.start.y + l.end.y) / 2.0f + offset };
+		}
+
+		ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
+		if (ImGui::Begin(oss.str().c_str(), (bool*)0,
+			ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+			| ImGuiWindowFlags_NoBackground))
+		{
+			ImGui::Text(l.name.c_str());
+			ImGui::End();
+		}
+	}
+
+	for (auto& hb : phEngPtr->hitboxes)
+	{
+		std::ostringstream oss;
+		oss << "Physics engine info for " << hb.name;
+
+		float offset = 7.0f;
+		ImVec2 pos;
+
+		pos = { hb.coordinates.x + offset, hb.coordinates.y + offset };
+
+		ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
+		if (ImGui::Begin(oss.str().c_str(), (bool*)0,
+			ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+			| ImGuiWindowFlags_NoBackground))
+		{
+			ImGui::Text(hb.name.c_str());
+			ImGui::End();
+		}
+	}
+}
+
+void GUISystem::ShowPhysicsEngineSettings()
+{
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
+	if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize))
+	{
+		using namespace Physics;
+
+		if (ImGui::CollapsingHeader("Общая информация", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+
+			ImGui::TextWrapped(
+				"Физический движок позволяет настраивать коллизию объектов и их физические параметры. "
+				"Основными примитивами для создания объектов являтся линии и прямоугольники (Hit-Box).\n");
+			ImGui::Text("Занимаемый объём памяти данными о линиях %d байт (%.1f килобайт).\n", sizeof(phEngPtr->lines) + sizeof(Line) * phEngPtr->lines.size(), float(sizeof(phEngPtr->lines) + sizeof(Line) * phEngPtr->lines.size()) / (1024.0f));
+			ImGui::Text("Занимаемый объём памяти данными о прямоугольниках %d байт (%.1f килобайт).\n", sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size(), float(sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size()) / (1024.0f));
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::CollapsingHeader("Цвета"))
+		{
+			ImGui::ColorEdit3("Цвет линий", phEngPtr->lineColor);
+			ImGui::ColorEdit3("Цвет прямоугольников", phEngPtr->hbColor);
+
+			if (ImGui::Button("Сохранить"))
+			{
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"l-clr-r",
+					phEngPtr->lineColor[0],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"l-clr-g",
+					phEngPtr->lineColor[1],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"l-clr-b",
+					phEngPtr->lineColor[2],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"h-clr-r",
+					phEngPtr->hbColor[0],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"h-clr-g",
+					phEngPtr->hbColor[1],
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"h-clr-b",
+					phEngPtr->hbColor[2],
+					phEngPtr->dataPath,
+					&applog
+					);
+			}
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::CollapsingHeader("Параметры объектов и коллизий"))
+		{
+			ImGui::SliderFloat("Отступ между коллизиями объектов", &phEngPtr->deltaCollision, -20.0f, 20.0f);
+			ImGui::SliderFloat("Сторона квадрата", &sq_l, 0.0f, 100.0f);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Длина стороны квадрата, созданного из Hit-Box");
+			}
+
+			ImGui::Checkbox("Показать все объекты", &phEngPtr->objVisability);
+			ImGui::Checkbox("Показать подписи объектов", &ShowPhysicsEngineObjInfo);
+			if (ImGui::Button("Сохранить"))
+			{
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"delta-collision",
+					phEngPtr->deltaCollision,
+					phEngPtr->dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<bool>(
+					"settings",
+					"obj-vis",
+					phEngPtr->objVisability,
+					phEngPtr->dataPath,
+					&applog
+					);
+			}
+
+			ImGui::Separator();
+		}
+	}
+
+	ImGui::End();
+	ImGui::PopStyleColor();
+}
+
+void GUISystem::ShowProjectSettings()
+{
+}
+
+HitBox GUISystem::CreateNewHitBox()
+{
+	HitBox hb_new("empty", 0.0f, 0.0f, 0.0f, 0.0f);
+
+	if (!SettedFirstPoint)
+	{
+		mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			auto pos = wnd->mouse.GetPos();
+			firstPoint = { (float)pos.first, (float)pos.second };
+
+			SettedFirstPoint = true;
+			std::ostringstream oss;
+			oss << "Поставлена первая точка:\n" <<
+				"[x: " << firstPoint.x <<
+				"; y: " << firstPoint.y << "]\n";
+
+			AddLog(oss.str().c_str());
+		}
+	}
+	else if (!SettedSecondPoint)
+	{
+		mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+		int ms_posX = wnd->mouse.GetPosX();
+		int ms_posY = wnd->mouse.GetPosY();
+
+		HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+		wnd->Gfx().DrawHitBox(hb);
+
+		if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+		{
+			auto pos = wnd->mouse.GetPos();
+			secondPoint = { (float)pos.first, (float)pos.second };
+
+			hb_new = HitBox(hero->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+
+			std::ostringstream oss;
+			oss << "Поставлена вторая точка:\n" <<
+				"[x: " << secondPoint.x <<
+				"; y: " << secondPoint.y << "]\n";
+
+			AddLog(oss.str().c_str());
+
+			mouseHelpInfo = "";
+			SettedSecondPoint = true;
+		}
+	}
+	else if (SettedFirstPoint && SettedSecondPoint)
+	{
+		SettedFirstPoint = false;
+		SettedSecondPoint = false;
+		DrawingHitBox = false;
+
+		ImGui::GetStyle().Alpha = 1.0f;
+	}
+
+	return hb_new;
 }
 
 std::string GUISystem::ShowLoadingSpriteDilaog()
@@ -2940,190 +3195,6 @@ std::optional<IobjData> GUISystem::ShowAddingIobjDialog()
 	return data;
 }
 
-HitBox GUISystem::CreateNewHitBox()
-{
-	HitBox hb_new("empty", 0.0f, 0.0f, 0.0f, 0.0f);
-
-	if (!SettedFirstPoint)
-	{
-		mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
-
-		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
-		{
-			auto pos = wnd->mouse.GetPos();
-			firstPoint = { (float)pos.first, (float)pos.second };
-
-			SettedFirstPoint = true;
-			std::ostringstream oss;
-			oss << "Поставлена первая точка:\n" <<
-				"[x: " << firstPoint.x <<
-				"; y: " << firstPoint.y << "]\n";
-
-			AddLog(oss.str().c_str());
-		}
-	}
-	else if (!SettedSecondPoint)
-	{
-		mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
-
-		int ms_posX = wnd->mouse.GetPosX();
-		int ms_posY = wnd->mouse.GetPosY();
-
-		HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-		wnd->Gfx().DrawHitBox(hb);
-
-		if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
-		{
-			auto pos = wnd->mouse.GetPos();
-			secondPoint = { (float)pos.first, (float)pos.second };
-
-			hb_new = HitBox(hero->name + std::string(" hitbox"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-
-			std::ostringstream oss;
-			oss << "Поставлена вторая точка:\n" <<
-				"[x: " << secondPoint.x <<
-				"; y: " << secondPoint.y << "]\n";
-
-			AddLog(oss.str().c_str());
-
-			mouseHelpInfo = "";
-			SettedSecondPoint = true;
-		}
-	}
-	else if (SettedFirstPoint && SettedSecondPoint)
-	{
-		SettedFirstPoint = false;
-		SettedSecondPoint = false;
-		DrawingHitBox = false;
-
-		ImGui::GetStyle().Alpha = 1.0f;
-	}
-
-	return hb_new;
-}
-
-void GUISystem::ShowCameraControl()
-{
-	ImGuiIO& io = ImGui::GetIO();
-	ImVec2 DispSize = io.DisplaySize;
-
-	ImVec2 PanelSize = ImVec2(
-		round(DispSize.x * 0.25f),
-			  DispSize.y * 0.5f
-	);
-
-	ImGui::SetNextWindowSize(PanelSize);
-	if (ImGui::Begin("Камера", &ShowCameraSettings, ImGuiWindowFlags_NoResize))
-	{
-		/* Переменные управления сбросом интерфейса */
-
-		bool posDirty = false;	 // Контроль позиции
-		bool speedDirty = false; // Контроль скорости
-
-		const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
-
-		/********************************************/
-
-		/* Элементы управления позицией камеры */
-		
-		if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::Text("Текущая позиция:");
-			std::ostringstream cPos;
-			cPos << "X: " << camera->position.x << " Y: " << camera->position.y;
-			ImGui::Text(cPos.str().c_str());
-
-			ImGui::Text("Исходная позиция:");
-			dcheck(ImGui::SliderFloat("X", &camera->initPosition.x, -1000.0f, 1000.0f), posDirty);
-			dcheck(ImGui::SliderFloat("Y", &camera->initPosition.y, -1000.0f, 1000.0f), posDirty);
-
-			if (ImGui::Button("Вернуть на исходную позицию"))
-			{
-				AddLog("Возвращение камеры на исходную позицию...\n");
-				camera->SetPosition(camera->initPosition);
-
-				std::ostringstream str;
-				str << "Камера установлена по кординатам: " << "X: " << camera->position.x << " Y: " << camera->position.y << "\n";
-				AddLog(str.str().c_str());
-			}					   
-
-			ImGui::Separator();
-		}
-		
-		/***************************************/
-
-		/* Элементы управления no-clip камеры */
-		
-		if (ImGui::CollapsingHeader("Перемещение"))
-		{
-			ImGui::Checkbox("No-clip", &camera->noclip);
-			dcheck(ImGui::SliderFloat("Скорость No-clip", &camera->noclipSpeed, 1.0f, 1000.0f), speedDirty);
-
-			ImGui::Separator();
-		}
-
-		/**************************************/
-
-		/* Элементы управления взаимодействия камеры с игроком */
-		
-		if (ImGui::CollapsingHeader("Взаимодействие с игроком"))
-		{
-			SpawnCameraToHeroControl();
-
-			ImGui::Separator();
-		}
-
-		/*******************************************************/
-
-		if (ImGui::Button("Сохранить"))
-		{
-			SavingSettings = true;
-		}
-
-		if (SavingSettings)
-		{
-			EngineFunctions::SetNewValue<float>(
-				"camera",
-				"pos-x", camera->initPosition.x,
-				camera->dataPath,
-				&applog
-				);	
-			
-			EngineFunctions::SetNewValue<float>(
-				"camera",
-				"pos-y", camera->initPosition.y,
-				camera->dataPath,
-				&applog
-				);
-
-			EngineFunctions::SetNewValue<float>(
-				"camera",
-				"nc-speed", camera->noclipSpeed,
-				camera->dataPath,
-				&applog
-				);
-
-			EngineFunctions::SetNewValue<bool>(
-				"camera",
-				"nc-able", camera->noclip,
-				camera->dataPath,
-				&applog
-				);
-
-			EngineFunctions::SetNewValue<size_t>(
-				hero->name,
-				"camera-mode", static_cast<size_t>(hero->cameraMode),
-				hero->dataPath,
-				&applog
-				);
-
-			SavingSettings = false;
-		}
-	}
-
-	ImGui::End();
-}
-
 std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -3172,8 +3243,8 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 				if (animPath != "")
 				{
 					//
-					ImGui::BeginChild("Превью спрайта", { PanelSize.x / 2 - 2, PanelSize.y  });
-					
+					ImGui::BeginChild("Превью спрайта", { PanelSize.x / 2 - 2, PanelSize.y });
+
 					if (!CreatingAnimtionLoaded)
 					{
 						bool ret = wnd->Gfx().LoadTextureFromFile(animPath.c_str(), loadedSprite.GetAddressOf(), &sprite_width, &sprite_height);
@@ -3191,14 +3262,14 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 
 					dcheck(ImGui::SliderFloat("Размер", &scaleObj, 0.1f, 20.0f, "%.4f"), scaleDirty);
 					ImGui::Image((void*)loadedSprite.Get(), ImVec2(sprite_width * scaleObj, sprite_height * scaleObj));
-					
+
 					ImGui::EndChild();
 
 					ImGui::SameLine();
-					
+
 					//
 					ImGui::BeginChild("Настройки анимации", { PanelSize.x / 2 - 2, PanelSize.y });
-					
+
 					if (ImGui::BeginCombo("Тип анимации", newAnimNameSelected.c_str()))
 					{
 						for (size_t i = 0; i < animationNames.size(); i++)
@@ -3251,10 +3322,10 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 					dcheck(ImGui::SliderInt("Кол-во кадров", &maxFrames, 0, 16), a_fDirty);
 					dcheck(ImGui::SliderInt("Кадр", &curFrame, 0, maxFrames), a_fDirty);
 					dcheck(ImGui::SliderFloat("Задержка", &framesHoldTime, 0.0f, 1.0f, "%.2f"), a_fDirty);
-				
+
 					if (ImGui::Button("Создать анимацию"))
 					{
-						animationsPreview.emplace_back(Animation((int)newFrameWidth, (int)newFrameHeight * animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, animSpritePreview, framesHoldTime, animationNames[animSelectedId]));
+						animationsPreview.emplace_back(Animation((int)newFrameWidth, (int)newFrameHeight * (int)animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, animSpritePreview, framesHoldTime, animationNames[animSelectedId]));
 						animationsData.emplace_back(AnimationData((int)newFrameWidth, (int)newFrameHeight * (int)animSelectedId, (int)newFrameWidth, (int)newFrameHeight, maxFrames, framesHoldTime, animationNames[animSelectedId]));
 					}
 
@@ -3272,8 +3343,8 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 
 						for (size_t i = n; i < animationNames.size(); i++)
 						{
-							animationsPreview.emplace_back(Animation(0, (int)newFrameHeight * (i - n), (int)newFrameWidth, (int)newFrameHeight, 1, animSpritePreview, framesHoldTime, animationNames[i]));
-							animationsData.emplace_back(AnimationData(0, (int)newFrameHeight * (i - n), (int)newFrameWidth, (int)newFrameHeight, 1, framesHoldTime, animationNames[i]));
+							animationsPreview.emplace_back(Animation(0, (int)newFrameHeight * int(i - n), (int)newFrameWidth, (int)newFrameHeight, 1, animSpritePreview, framesHoldTime, animationNames[i]));
+							animationsData.emplace_back(AnimationData(0, (int)newFrameHeight * int(i - n), (int)newFrameWidth, (int)newFrameHeight, 1, framesHoldTime, animationNames[i]));
 						}
 
 						ChoosingAnimation = false;
@@ -3300,18 +3371,18 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 							}
 
 							previewSize = ImVec2(
-								a.width * scaleFrame,
-								a.height * scaleFrame
+								(float)a.width * scaleFrame,
+								(float)a.height * scaleFrame
 							);
 
 							ltNormPixel = ImVec2(
-								a.width + a.width * a.iCurFrame,
-								a.height * animPlayingId
+								(float)a.width + float(a.width * a.iCurFrame),
+								(float)a.height * (float)animPlayingId
 							);
 
 							rtNormPixel = ImVec2(
-								2.0f * a.width + a.width * a.iCurFrame,
-								a.height + a.height * animPlayingId
+								2.0f * (float)a.width + float(a.width * a.iCurFrame),
+								(float)a.height + float(a.height * animPlayingId)
 							);
 
 							ltNormPixel.x /= sprite_width;
@@ -3371,73 +3442,6 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 	else
 	{
 		return animationsData;
-	}
-}
-
-void GUISystem::ShowScenesData()
-{
-	ImGuiIO& io = ImGui::GetIO();
-	ImVec2 DispSize = io.DisplaySize;
-
-	ImVec2 PanelSize = ImVec2(
-		round(DispSize.x * 0.2f),
-		DispSize.y * 0.6f
-	);
-
-	ImGui::SetNextWindowSize(PanelSize);
-	if (ImGui::Begin("Сцены", &ShowScenesSettings, ImGuiWindowFlags_NoResize))
-	{
-		auto scenesNames = EngineFunctions::GetScenesNames();
-
-		for (size_t i = 0; i < scenesNames.size(); i++)
-		{			
-			char label[128];
-			sprintf_s(label, scenesNames[i].c_str(), objectSelected);
-
-			std::string contextMenuId = "Context Menu for " + scenesNames[i];
-
-			ImGui::Bullet();
-			if (ImGui::Selectable(label, curSceneName == scenesNames[i]))
-			{
-				if (curSceneName != scenesNames[i])
-				{
-					curSceneName = scenesNames[i];
-					IsUpdatingScene = true;
-				}
-			}
-		}
-
-		ImGui::Separator();
-
-		if (ImGui::Button("Сохранить"))
-		{
-			SavingScenesSettings = true;
-		}
-
-		if (SavingScenesSettings)
-		{
-			SavingScenesSettings = false;
-		}
-	}
-
-	ImGui::End();
-}
-
-std::pair<bool, std::string> GUISystem::UpdatingScene()
-{
-	return std::pair<bool, std::string>(IsUpdatingScene, curSceneName);
-}
-
-void GUISystem::SpawnCameraToHeroControl()
-{
-	if (ImGui::Button("Фиксировать мир"))
-	{
-		hero->cameraMode = MainPerson::CameraMode::SteadyWorld;
-	}
-
-	if (ImGui::Button("Фиксировать игрока"))
-	{
-		hero->cameraMode = MainPerson::CameraMode::SteadyPerson;
 	}
 }
 
