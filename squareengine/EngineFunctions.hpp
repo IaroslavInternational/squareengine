@@ -8,6 +8,7 @@
 #include <fstream>
 #include <filesystem>
 #include "json.hpp"
+#include "dirent.h"
 
 using json = nlohmann::json;
 using namespace std::string_literals;
@@ -242,5 +243,42 @@ namespace EngineFunctions
 		}
 
 		return name;
+	}
+
+	inline std::vector<std::string> static GetScenesNames()
+	{
+		std::vector<std::string> names;
+
+		int file_count = 0;
+		int dir_count = 0;
+		int total = 0;
+
+		DIR* dirp;
+		struct dirent* entry;
+
+		std::ostringstream path;
+		path << "Projects\\" << GetProjectName() << "\\Scenes\\";
+
+		dirp = opendir(path.str().c_str());
+		while ((entry = readdir(dirp)) != NULL) 
+		{
+			total++;
+			if (std::string(entry->d_name).find('.') != std::string(entry->d_name).npos)
+			{
+				file_count++;
+			}
+		}
+		dir_count = total - file_count;
+		closedir(dirp);
+
+		for (size_t i = 0; i < dir_count; i++)
+		{
+			std::ostringstream oss;
+			oss << "Scene " << i + 1;
+
+			names.push_back(oss.str());
+		}
+
+		return names;
 	}
 }

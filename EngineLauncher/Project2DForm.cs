@@ -105,6 +105,9 @@ namespace EngineLauncher
                 return;
             }
 
+            progressBar.Visible = true;
+            createBtn.Enabled = false;
+
             dirInfo.CreateSubdirectory(@"Scenes");
 
             for (int i = 1; i <= Convert.ToInt32(scenesAmount.Text); i++)
@@ -112,6 +115,8 @@ namespace EngineLauncher
                 dirInfo.CreateSubdirectory(@"Scenes\Scene " + i);
                 dirInfo.CreateSubdirectory(@"Scenes\Scene " + i + @"\Objects");
             }
+
+            progressBar.Value += 10;
 
             /* Создание настроек проекта */
 
@@ -138,6 +143,8 @@ namespace EngineLauncher
                 serializer.Serialize(writer, projectSettings);
             }
 
+            progressBar.Value += 10;
+
             /*****************************/
 
             /* Создание настроек камеры */
@@ -159,6 +166,8 @@ namespace EngineLauncher
             string pathToCameraSettings = path + @"\Scenes\camera.json";
 
             CreateAndSaveJson(pathToCameraSettings, cameraSettingsStr);
+
+            progressBar.Value += 10;
 
             /***************************/
 
@@ -198,6 +207,8 @@ namespace EngineLauncher
 
             CreateAndSaveJson(pathToHeroSettings, heroSettingsStr);
 
+            progressBar.Value += 15;
+
             /****************************************/
 
             /* Создание настроек сцен */
@@ -224,6 +235,8 @@ namespace EngineLauncher
                 CreateAndSaveJson(pathToSceneSettings, sceneSettingsStr);
             }
 
+            progressBar.Value += 20;
+
             /**************************/
 
             /* Создание копий настроек интерактивных объектов и персонажей */
@@ -243,6 +256,8 @@ namespace EngineLauncher
                     File.Copy(file.FullName, secondPath + result, true);
                 }
             }
+
+            progressBar.Value += 15;
 
             /***************************************************************/
 
@@ -266,6 +281,8 @@ namespace EngineLauncher
                 }
             }
 
+            progressBar.Value += 10;
+
             /**********************************/
 
             /* Создание настроек проекта */
@@ -284,8 +301,13 @@ namespace EngineLauncher
 
             CreateAndSaveJson(pathToSetupSettings, setupSettingsStr);
 
+            progressBar.Value += 10;
 
             /*****************************/
+
+            progressBar.Value = progressBar.Minimum;
+            progressBar.Visible = false;
+            createBtn.Enabled = true;
         }
 
         private void projectName_MouseClick(object sender, MouseEventArgs e)

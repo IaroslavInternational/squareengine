@@ -7,6 +7,7 @@
 
 GUISystem::GUISystem(Scene* scene)
 	:
+	curSceneName(scene->name),
 	wnd(scene->wnd),
 	hero(&scene->hero),
 	persCon(&scene->persCon),
@@ -69,7 +70,9 @@ void GUISystem::AddLog(const char* text)
 }
 
 void GUISystem::LoadScene(Scene* scene)
-{
+{	
+	IsUpdatingScene = false;
+
 	wnd      = scene->wnd;
 	hero     = &scene->hero;
 	persCon  = &scene->persCon;
@@ -476,6 +479,11 @@ void GUISystem::ShowOptionalPanel()
 	if (ShowCameraSettings)
 	{
 		ShowCameraControl();
+	}
+
+	if (ShowScenesSettings)
+	{
+		ShowScenesData();
 	}
 
 	if (mouseHelpInfo == "")
@@ -3364,6 +3372,60 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 	{
 		return animationsData;
 	}
+}
+
+void GUISystem::ShowScenesData()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 DispSize = io.DisplaySize;
+
+	ImVec2 PanelSize = ImVec2(
+		round(DispSize.x * 0.2f),
+		DispSize.y * 0.6f
+	);
+
+	ImGui::SetNextWindowSize(PanelSize);
+	if (ImGui::Begin("—цены", &ShowScenesSettings, ImGuiWindowFlags_NoResize))
+	{
+		auto scenesNames = EngineFunctions::GetScenesNames();
+
+		for (size_t i = 0; i < scenesNames.size(); i++)
+		{			
+			char label[128];
+			sprintf_s(label, scenesNames[i].c_str(), objectSelected);
+
+			std::string contextMenuId = "Context Menu for " + scenesNames[i];
+
+			ImGui::Bullet();
+			if (ImGui::Selectable(label, curSceneName == scenesNames[i]))
+			{
+				if (curSceneName != scenesNames[i])
+				{
+					curSceneName = scenesNames[i];
+					IsUpdatingScene = true;
+				}
+			}
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::Button("—охранить"))
+		{
+			SavingScenesSettings = true;
+		}
+
+		if (SavingScenesSettings)
+		{
+			SavingScenesSettings = false;
+		}
+	}
+
+	ImGui::End();
+}
+
+std::pair<bool, std::string> GUISystem::UpdatingScene()
+{
+	return std::pair<bool, std::string>(IsUpdatingScene, curSceneName);
 }
 
 void GUISystem::SpawnCameraToHeroControl()

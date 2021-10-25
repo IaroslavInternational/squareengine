@@ -32,6 +32,7 @@ public:
 	void Hide();					// Скрыть интерфейс
 	void AddLog(const char* text);	// Добавить лог
 	void LoadScene(Scene* scene);
+	std::pair<bool, std::string> UpdatingScene();
 
 	/*******************************************/
 private: 
@@ -75,7 +76,9 @@ private:
 	HitBox					CreateNewHitBox();
 	void					ShowCameraControl();
 	std::vector<AnimationData>	ShowAnimationCreatingDialog(float dt);
-	
+	void					ShowScenesData();
+	void					ShowProjectSettings();
+
 	/*******************************************/
 private:
 	/* Переменные видимости панелей */
@@ -96,15 +99,20 @@ private:
 	bool ShowLayersSettings			  = false;	// Показать панель настроек слоёв
 	bool ShowIobjEnum				  = false;	//
 	bool ShowIobjSettings			  = false;	//
-	bool ShowCameraSettings			  = true;
-
+	bool ShowCameraSettings			  = true;	//
+	bool ShowScenesSettings			  = true;	//
+	
 	/********************************/
+private:
+	std::string curSceneName;
+	bool SavingScenesSettings = false;
+	bool IsUpdatingScene = false;
 private:
 	/* Системные переменные */
 	
 	std::shared_ptr<Window>					wnd;		// Указатель на окно отрисовки
 	std::shared_ptr<Physics::PhysicsEngine> phEngPtr;	// Указатель на физический движок
-	std::shared_ptr<Camera>					camera;
+	std::shared_ptr<Camera>					camera;		//
 	std::map<std::wstring, double>			gpu_desc;	// Описание графических адаптеров [first - имя, second - объём памяти]
 	AppLog									applog;		// Лог
 
@@ -112,10 +120,10 @@ private:
 private:
 	/* Указатели на объекты */
 
-	MainPerson*					   hero;
-	PersonContainer*			   persCon;
-	InteractableObject2DContainer* IobjCon;
-	ObjectsQueue*				   objQueue;
+	MainPerson*					   hero;		//
+	PersonContainer*			   persCon;		//
+	InteractableObject2DContainer* IobjCon;		//
+	ObjectsQueue*				   objQueue;	//
 
 	/************************/
 private:

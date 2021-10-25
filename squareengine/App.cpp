@@ -3,6 +3,7 @@
 #include "imgui\imgui.h"
 #include "EngineUtil.h"
 #include "EngineFunctions.hpp"
+#include <thread>
 
 App::App(const std::string& commandLine, const std::string& projectName)
 	:
@@ -120,15 +121,42 @@ void App::DoFrame(float dt)
 	for (auto& s : scenes)
 	{
 		if (s.second)
-		{
-			scene->Render(dt);
-
+		{			
 			// Имя активной сцены
 			auto activeSceneName = scene->GetName();
 
+			if (gui->UpdatingScene().first)
+			{
+				std::ostringstream oss;
+				oss << "Projects\\" << projectName << "\\Scenes\\" << gui->UpdatingScene().second << "\\scene_"
+					<< EngineFunctions::StrReplace(gui->UpdatingScene().second, "Scene ", "") << ".json";
+				
+				for (auto it = scenes.begin(); it != scenes.end(); ++it)
+				{
+					if (it->first == gui->UpdatingScene().second)
+					{
+						it->second = true;
+					}
+				}
+
+				for (auto it = scenes.begin(); it != scenes.end(); ++it)
+				{
+					if (it->first == activeSceneName)
+					{
+						it->second = false;
+						break;
+					}
+				}
+
+				scene = std::make_unique<Scene>(gui->UpdatingScene().second, wnd, oss.str(), phEngine);
+				gui->LoadScene(scene.get());
+			}
+
+			scene->Render(dt);
+
 			// Данные о триггере
 			auto t = scene->IsOnTheSceneTrigger();
-
+			
 			if (t.second)
 			{
 				// Делаем новую сцену активной
