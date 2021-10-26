@@ -15,7 +15,9 @@ GUISystem::GUISystem(Scene* scene)
 	objQueue(&scene->objQueue),
 	phEngPtr(scene->phEngine),
 	camera(scene->camera),
-	animSpritePreview(1, 1)
+	animSpritePreview(1, 1),
+	viewportWidth(wnd->Gfx().GetWidth()),
+	viewportHeight(wnd->Gfx().GetHeight())
 {
 	SetGUIColors();
 
@@ -182,10 +184,20 @@ void GUISystem::ShowMenu()
 
 		if (ImGui::BeginMenu("Окна"))
 		{
+			if (ImGui::MenuItem("Сцены"))
+			{
+				ShowScenesSettings ? ShowScenesSettings = false : ShowScenesSettings = true;
+			}
+
 			if (ImGui::BeginMenu("Система"))
 			{
-				if (ImGui::MenuItem("Графика"))
+				if (ImGui::BeginMenu("Графика"))
 				{
+					if (ImGui::MenuItem("Viewport"))
+					{
+					}
+
+					ImGui::EndMenu();
 				}
 
 				if (ImGui::BeginMenu("Физика"))
@@ -303,6 +315,11 @@ void GUISystem::ShowMenu()
 				}
 
 				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem("Камера"))
+			{
+				ShowCameraSettings ? ShowCameraSettings = false : ShowCameraSettings = true;
 			}
 
 			if (ImGui::MenuItem("Слои"))
@@ -479,6 +496,12 @@ void GUISystem::ShowOptionalPanel()
 	else if (ShowPhysicsEngineObjInfo)
 	{
 		ShowPhysicsEngineObjHelp();
+	}
+
+	if (ShowViewportSettings)
+	{
+		SetPanelSizeAndPosition(0, 0.65f, 0.7f, 0.175f, 0.15f);
+		ShowViewportControl();
 	}
 
 	if (ShowFPSChart)
@@ -3010,6 +3033,61 @@ void GUISystem::ShowPhysicsEngineSettings()
 
 void GUISystem::ShowProjectSettings()
 {
+}
+
+void GUISystem::ShowViewportControl()
+{
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
+	if (ImGui::Begin("Настройки Viewport", &ShowViewportSettings,
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize))
+	{
+		if (ImGui::CollapsingHeader("Общая информация", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			std::ostringstream oss;
+			oss << "Viewport - это отображаемая прямоуглольная область на экране. Задаётся шириной и высотой. Нужен " <<
+				   "для корректного отображения содержимого на разных мониторах.\n";
+
+			oss << "Примеры разрешений:\n" <<
+					" - 1366x768\n" <<
+					" - 1440x900\n" <<
+					" - 1536x864\n" <<
+					" - 1600x900\n" <<
+					" - 1920x1080";
+
+			ImGui::TextWrapped(oss.str().c_str());
+
+			ImGui::Separator();
+		}
+
+		if (ImGui::CollapsingHeader("Настройки"))
+		{
+			bool dirty = false;
+
+			const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+			dcheck(ImGui::SliderInt("Ширина", &viewportWidth , 100, 4000), dirty);
+			dcheck(ImGui::SliderInt("Высота", &viewportHeight, 100, 2500), dirty);		
+
+			if (ImGui::Button("Применить"))
+			{
+				D3D11_VIEWPORT vp;
+				vp.Width =  (float)viewportWidth;
+				vp.Height = (float)viewportHeight;
+				vp.MinDepth = 0.0f;
+				vp.MaxDepth = 1.0f;
+				vp.TopLeftX = float(1366 - viewportWidth) / 2.0f; // Нужно брать актуальные параметры экрана
+				vp.TopLeftY = float(768 - viewportHeight) / 2.0f; // Нужно брать актуальные параметры экрана	
+
+				wnd->Gfx().SetViewPort(vp);
+			}
+
+			ImGui::Separator();
+		}
+	}
+	ImGui::PopStyleColor();
+
+	ImGui::End();
 }
 
 HitBox GUISystem::CreateNewHitBox()

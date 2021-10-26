@@ -80,6 +80,7 @@ private:
 	void   ShowPhysicsEngineObjHelp();		// Показать подписи имён объектов физического движка
 	void   ShowPhysicsEngineSettings();		// Показать панель настроек физического движка
 	void   ShowProjectSettings();			// Показать панель настроек проекта
+	void   ShowViewportControl();			// Показать панель настроек Viewport
 	HitBox CreateNewHitBox();				// Создать HitBox с помощью интерфейса
 
 	std::string					ShowLoadingSpriteDilaog();				// Показать диалоговое окно для загрузки спрайта
@@ -103,12 +104,12 @@ private:
 	bool ShowTriggersSettings		  = false;	// Видимость правой панели настроек выбранного триггера
 
 	bool ShowLayersSettings			  = false;	// Видимость панели настроек слоёв
-	bool ShowCameraSettings			  = true;	// Видимость панели настроек камеры
-	bool ShowScenesSettings			  = true;	// Видимость панели настроек сцен
+	bool ShowCameraSettings			  = false;	// Видимость панели настроек камеры
+	bool ShowScenesSettings			  = false;	// Видимость панели настроек сцен
 
 	bool ShowPhysicsEngineObjInfo	  = true;	// Видимость подписей имён объектов физического движка  
 	bool ShowPhysicsSettings		  = false;	// Видимость панели настроек физического движка
-	
+	bool ShowViewportSettings		  = true;	// Видимость панели настроек Viewport
 	bool ShowLogs					  = true;	// Видимость лога
 	bool ShowHardwareInfo 			  =	true;	// Видимость FPS и информации о графическом адаптере
 	bool ShowFPSChart 				  =	false;	// Видимость графика изменения FPS
@@ -221,9 +222,9 @@ private:
 	std::string animSelected		   = "";				// Имя выбранной анимации
 	std::string newAnimNameSelected	   = "";				// Имя выбранной анимации при создании
 
-	std::vector<std::string>   animationNames;		//
-	std::vector<Animation>     animationsPreview;	//
-	std::vector<AnimationData> animationsData;		//
+	std::vector<std::string>   animationNames;		// Списко доступных имён анимаций
+	std::vector<Animation>     animationsPreview;	// Анимации в превью при создании
+	std::vector<AnimationData> animationsData;		// Созданые анимации
 
 	/*****************************************************/
 private:
@@ -240,6 +241,9 @@ private:
 	size_t counter = 0;							// Счётчик итерации
 
 	/**************************************************/
+private:
+	int viewportWidth;	// Ширина viewport
+	int viewportHeight;	// Высота viewport
 private:
 	std::string mouseHelpInfo = "";	// Подпись под курсором
 };

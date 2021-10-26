@@ -78,7 +78,7 @@ namespace EngineLauncher
         }
 
         private Thread thread;
-        Form popup;
+        private Form popup;
 
         public Project2DForm()
         {
