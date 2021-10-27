@@ -5,6 +5,7 @@ MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, s
 	Object2D(data.name, data.position, data.layer, data.pathToSprite),
 	dataPath(data.dataPath),
 	speed(data.speed),
+	jump_count(jump_height),
 	holdTime(data.anim_ft),
 	hitbox(data.name + std::string(" hitbox"), data.hb_coord),
 	wnd(wnd),
@@ -61,27 +62,44 @@ void MainPerson::Draw(Graphics& gfx)
 void MainPerson::ProcessMoving(float dt)
 {
 	DirectX::XMFLOAT2 dir = { 0.0f,0.0f };
-	if (!wnd->CursorEnabled())
+
+	if (wnd->kbd.KeyIsPressed('W'))
 	{
-		if (wnd->kbd.KeyIsPressed('W'))
+		if (AllowedMovingUp)
+			dir.y -= 1.0f;
+	}
+	if (wnd->kbd.KeyIsPressed('A'))
+	{
+		if (AllowedMovingLeft)
+			dir.x -= 1.0f;
+	}
+	if (wnd->kbd.KeyIsPressed('S'))
+	{
+		if (AllowedMovingDown)
+			dir.y += 1.0f;
+	}
+	if (wnd->kbd.KeyIsPressed('D'))
+	{
+		if (AllowedMovingRight)
+			dir.x += 1.0f;
+	}
+	if (!IsOnJump && wnd->kbd.KeyIsPressed(VK_SPACE) && AllowedMovingUp)
+	{
+		IsOnJump = true;
+	}
+
+	if (AllowedMovingDown && !IsOnJump && dir.y != -1.0f)
+	{
+		float d = gravity * dt;
+		
+		if (cameraMode == CameraMode::SteadyPerson)
 		{
-			if (AllowedMovingUp)
-				dir.y -= 1.0f;
+			camera->Translate({ 0.0f, (float)d });
 		}
-		if (wnd->kbd.KeyIsPressed('A'))
+		else if (cameraMode == CameraMode::SteadyWorld)
 		{
-			if (AllowedMovingLeft)
-				dir.x -= 1.0f;
-		}
-		if (wnd->kbd.KeyIsPressed('S'))
-		{
-			if (AllowedMovingDown)
-				dir.y += 1.0f;
-		}
-		if (wnd->kbd.KeyIsPressed('D'))
-		{
-			if (AllowedMovingRight)
-				dir.x += 1.0f;
+			position.y += d;
+			hitbox.UpdateY(d);
 		}
 	}
 
@@ -183,6 +201,32 @@ void MainPerson::Update(float dt)
 			position.y += vel.y;
 			hitbox.UpdateY(vel.y);
 		}	
+	}
+
+	if (IsOnJump)
+	{
+		if (jump_count >= -jump_height)
+		{
+			if (jump_count < 0)
+			{
+				int d = (jump_count * jump_count) / 2;
+				position.y += d;
+				hitbox.UpdateY((float)d);
+			}
+			else
+			{
+				int d = (jump_count * jump_count) / 2;
+				position.y -= d;	
+				hitbox.UpdateY((float)-d);
+			}
+
+			jump_count -= 1;
+		}
+		else
+		{
+			IsOnJump = false;
+			jump_count = jump_height;
+		}
 	}
 
 	CalculateDeltas();

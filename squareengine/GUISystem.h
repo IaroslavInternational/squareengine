@@ -109,7 +109,7 @@ private:
 
 	bool ShowPhysicsEngineObjInfo	  = true;	// Видимость подписей имён объектов физического движка  
 	bool ShowPhysicsSettings		  = false;	// Видимость панели настроек физического движка
-	bool ShowViewportSettings		  = true;	// Видимость панели настроек Viewport
+	bool ShowViewportSettings		  = false;	// Видимость панели настроек Viewport
 	bool ShowLogs					  = true;	// Видимость лога
 	bool ShowHardwareInfo 			  =	true;	// Видимость FPS и информации о графическом адаптере
 	bool ShowFPSChart 				  =	false;	// Видимость графика изменения FPS

@@ -52,6 +52,10 @@ private:
 	std::string		  dataPath;				// Путь к данным о главном персонаже
 	DirectX::XMFLOAT2 vel = { 0.0f, 0.0f };	// Вектор скорости движения
 	float			  speed;				// Скорость перемещения
+	int				  jump_height = 7;		// Высота прыжка
+	int				  jump_count;
+	float			  gravity = 50.0f;
+	bool			  IsOnJump = false;		// Состояние прыжка
 	struct
 	{
 		float Duration;	// Продолжительность эффекта

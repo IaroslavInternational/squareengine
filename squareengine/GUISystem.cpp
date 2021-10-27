@@ -1162,9 +1162,10 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 					bool effDirty = false;		// Котнроль эффекта
 					bool speedDirty = false;	// Котнроль скорости
+					bool gravityDirty = false;	// Контроль гравитации
 					bool a_hdDirty = false;		// Котнроль скорости анимации
 					bool a_sDirty = false;		// Котнроль анимации
-					bool a_sizeDirty = false;		// Котнроль анимации
+					bool a_sizeDirty = false;	// Котнроль анимации
 
 					const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
 
@@ -1176,6 +1177,9 @@ void GUISystem::ShowMainPersonControl(float dt)
 					{
 						ImGui::Text("Скорость:");
 						dcheck(ImGui::SliderFloat(" ", &hero->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
+
+						ImGui::Text("Гравитация:");
+						dcheck(ImGui::SliderFloat("у.е.", &hero->gravity, 0.0f, 1000.0f, "%.2f"), gravityDirty);
 
 						ImGui::Separator();	// Разделитель
 					}
