@@ -83,7 +83,7 @@ void MainPerson::ProcessMoving(float dt)
 		if (AllowedMovingRight)
 			dir.x += 1.0f;
 	}
-	if (!IsOnJump && wnd->kbd.KeyIsPressed(VK_SPACE) && AllowedMovingUp)
+	if (!IsOnJump && !IsMovingDown && wnd->kbd.KeyIsPressed(VK_SPACE) && AllowedMovingUp)
 	{
 		IsOnJump = true;
 	}
@@ -94,7 +94,7 @@ void MainPerson::ProcessMoving(float dt)
 		
 		if (cameraMode == CameraMode::SteadyPerson)
 		{
-			camera->Translate({ 0.0f, (float)d });
+			camera->Translate({ 0.0f, (float)-d });
 		}
 		else if (cameraMode == CameraMode::SteadyWorld)
 		{
@@ -205,28 +205,29 @@ void MainPerson::Update(float dt)
 
 	if (IsOnJump)
 	{
-		if (jump_count >= -jump_height)
+		if (jump_count > 0)
 		{
-			if (jump_count < 0)
+			int d = (jump_count * jump_count) / 2;
+			d *= 60.0f * dt;
+
+			if (cameraMode == CameraMode::SteadyPerson)
 			{
-				int d = (jump_count * jump_count) / 2;
-				position.y += d;
-				hitbox.UpdateY((float)d);
+				camera->Translate({ 0.0f, (float)d });
 			}
-			else
+			else if (cameraMode == CameraMode::SteadyWorld)
 			{
-				int d = (jump_count * jump_count) / 2;
-				position.y -= d;	
+				position.y -= d;
 				hitbox.UpdateY((float)-d);
 			}
-
-			jump_count -= 1;
 		}
 		else
 		{
-			IsOnJump = false;
 			jump_count = jump_height;
+			IsOnJump = false;
+			IsMovingDown = true;
 		}
+
+		jump_count -= 1;
 	}
 
 	CalculateDeltas();
@@ -291,6 +292,7 @@ void MainPerson::DisAllowMoveUp()
 void MainPerson::DisAllowMoveDown()
 {
 	AllowedMovingDown = false;
+	IsMovingDown = false;
 }
 
 void MainPerson::DisAllowMoveLeft()
@@ -322,6 +324,11 @@ void MainPerson::SetAnimation(std::vector<Animation> anim)
 	{
 		animations.emplace_back(a);
 	}
+}
+
+bool MainPerson::OnJump()
+{
+	return IsOnJump;
 }
 
 /**********************************************************/

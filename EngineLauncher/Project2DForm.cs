@@ -50,6 +50,7 @@ namespace EngineLauncher
             public bool eff_a;
             public float eff_d;
             public float eff_t;
+            public float gravity;
             public float hb_ltx;
             public float hb_lty;
             public float hb_rbx;
@@ -60,6 +61,7 @@ namespace EngineLauncher
             public float pos_x;
             public float pos_y;
             public float speed;
+            public int j_h;
         };
 
         private struct HeroSettings
@@ -193,6 +195,7 @@ namespace EngineLauncher
             h.eff_a = false;
             h.eff_d = 1.3070000410079956f;
             h.eff_t = 1.3170925378799438f;
+            h.gravity = 300.0f;
             h.hb_ltx = 594.1419067382813f;
             h.hb_lty = 289.8402099609375f;
             h.hb_rbx = 628.1419067382813f;
@@ -203,6 +206,7 @@ namespace EngineLauncher
             h.pos_x = 568.9295654296875f;
             h.pos_y = 279.4468688964844f;
             h.speed = 104.58000183105469f;
+            h.j_h = 8;
 
             heroSettings.mainperson.Add(h);
 

@@ -9,6 +9,7 @@
 class MainPerson : public Object2D
 {
 public:
+	friend class Physics::PhysicsEngine;
 	friend class GUISystem;
 	friend class ObjectsQueue;
 public:
@@ -38,6 +39,7 @@ public:
 	void   SetHitBox(HitBox hb);	// Установить hitbox
 	HitBox GetHitBox();				// Получить hitbox
 	void   SetAnimation(std::vector<Animation> anim);
+	bool   OnJump();
 
 	/**********************************************************/
 private:
@@ -49,23 +51,24 @@ private:
 private:
 	/* Переменные описания состояния персонажа */
 
-	std::string		  dataPath;				// Путь к данным о главном персонаже
-	DirectX::XMFLOAT2 vel = { 0.0f, 0.0f };	// Вектор скорости движения
-	float			  speed;				// Скорость перемещения
-	int				  jump_height = 7;		// Высота прыжка
-	int				  jump_count;
-	float			  gravity = 50.0f;
-	bool			  IsOnJump = false;		// Состояние прыжка
+	std::string		  dataPath;							// Путь к данным о главном персонаже
+	DirectX::XMFLOAT2 vel		   = { 0.0f, 0.0f };	// Вектор скорости движения
+	float			  speed;							// Скорость перемещения
+	int				  jump_height  = 8;					// Высота прыжка
+	int				  jump_count;						// Вспомогательня переменная для прыжка
+	bool			  IsMovingDown = false;				// Состояние движения после прыжка
+	float			  gravity	   = 300.0f;			// Коэффицент притяжения
+	bool			  IsOnJump	   = false;				// Состояние прыжка
 	struct
 	{
-		float Duration;	// Продолжительность эффекта
-		float Time;		// Время эффекта
-		bool Active;	// Состояние активности эффекта
-	} effect;			// Параметры эффекта
-	bool AllowedMovingUp    = true;
-	bool AllowedMovingDown  = true;	
-	bool AllowedMovingLeft  = true;
-	bool AllowedMovingRight = true;
+		float Duration;									// Продолжительность эффекта
+		float Time;										// Время эффекта
+		bool Active;									// Состояние активности эффекта
+	} effect;											// Параметры эффекта
+	bool AllowedMovingUp    = true;						// Состояние ограничения движения вверх
+	bool AllowedMovingDown  = true;						// Состояние ограничения движения вниз
+	bool AllowedMovingLeft  = true;						// Состояние ограничения движения влево
+	bool AllowedMovingRight = true;						// Состояние ограничения движения вправо
 
 	/*******************************************/
 private:
@@ -102,9 +105,8 @@ private:
 	{
 		SteadyPerson,
 		SteadyWorld
-	};
-
-	std::shared_ptr<Window> wnd;	// Указатель на главное окно
-	std::shared_ptr<Camera> camera;	// Указатель на камеру
-	CameraMode				cameraMode;
+	};									// Список режимов камеры
+	std::shared_ptr<Window> wnd;		// Указатель на главное окно
+	std::shared_ptr<Camera> camera;		// Указатель на камеру
+	CameraMode				cameraMode;	// Режим камеры
 };

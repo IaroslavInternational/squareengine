@@ -1163,6 +1163,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 					bool effDirty = false;		// Котнроль эффекта
 					bool speedDirty = false;	// Котнроль скорости
 					bool gravityDirty = false;	// Контроль гравитации
+					bool jHeightDirty = false;	// Контроль высоты прыжка
 					bool a_hdDirty = false;		// Котнроль скорости анимации
 					bool a_sDirty = false;		// Котнроль анимации
 					bool a_sizeDirty = false;	// Котнроль анимации
@@ -1181,6 +1182,9 @@ void GUISystem::ShowMainPersonControl(float dt)
 						ImGui::Text("Гравитация:");
 						dcheck(ImGui::SliderFloat("у.е.", &hero->gravity, 0.0f, 1000.0f, "%.2f"), gravityDirty);
 
+						ImGui::Text("Высота прыжка:");
+						dcheck(ImGui::SliderInt("степень", &hero->jump_height, 0, 20), jHeightDirty);
+						
 						ImGui::Separator();	// Разделитель
 					}
 
@@ -1442,6 +1446,24 @@ void GUISystem::ShowMainPersonControl(float dt)
 								);
 
 							/********************************/
+
+							/* Сохранение настроек физики для персонажа */
+
+							EngineFunctions::SetNewValue<float>(
+								hero->name,
+								"gravity", hero->gravity,
+								hero->dataPath,
+								&applog
+								);
+
+							EngineFunctions::SetNewValue<int>(
+								hero->name,
+								"j-h", hero->jump_height,
+								hero->dataPath,
+								&applog
+								);
+
+							/********************************************/
 
 							SavingSettings = false;
 						}
