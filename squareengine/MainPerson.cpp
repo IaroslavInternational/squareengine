@@ -326,11 +326,6 @@ void MainPerson::SetAnimation(std::vector<Animation> anim)
 	}
 }
 
-bool MainPerson::OnJump()
-{
-	return IsOnJump;
-}
-
 /**********************************************************/
 
 /* Внутренние методы */

@@ -4,6 +4,8 @@
 
 struct AnimationData
 {
+	AnimationData() = default;
+
 	AnimationData(int pStart, int pEnd, int width, int height, int frames, float ft, std::string name)
 	{
 		this->pStart = pStart;

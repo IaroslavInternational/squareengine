@@ -9,7 +9,6 @@
 class MainPerson : public Object2D
 {
 public:
-	friend class Physics::PhysicsEngine;
 	friend class GUISystem;
 	friend class ObjectsQueue;
 public:
@@ -39,7 +38,6 @@ public:
 	void   SetHitBox(HitBox hb);	// Установить hitbox
 	HitBox GetHitBox();				// Получить hitbox
 	void   SetAnimation(std::vector<Animation> anim);
-	bool   OnJump();
 
 	/**********************************************************/
 private:
@@ -88,6 +86,7 @@ private:
 	};																// Список анимаций
 	std::vector<Animation> animations;								// Вектор анимаций
 	Sequence			   iCurSequence = Sequence::StandingDown;	// Текущее состояние анимаций
+	float				   holdTime;								// Задержка анимации
 
 	/*******************************************/
 private:
@@ -97,7 +96,6 @@ private:
 	bool   hitbox_visability = true;	// Видимость hitbox
 	float  dx;							// Корректирующий отступ hitbox от блока спрайта по оси x
 	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
-	float  holdTime;					// Задержка анимации
 
 	/***************************************/
 private:

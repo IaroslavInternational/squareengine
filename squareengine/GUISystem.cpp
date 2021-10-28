@@ -411,16 +411,16 @@ void GUISystem::ShowRightSide(float dt)
 
 	/* Содержимое */
 
-	if (ShowPersonEnum)
+	if (ShowMainPersonSettings)
 	{
-		ShowPersonControl();
+		ShowMainPersonControl(dt);
 
 		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
 		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
 	}
-	else if (ShowMainPersonSettings)
+	else if (ShowPersonEnum)
 	{
-		ShowMainPersonControl(dt);
+		ShowPersonControl(dt);
 
 		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
 		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
@@ -1483,7 +1483,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 	ImGui::End();
 }
 
-void GUISystem::ShowPersonControl()
+void GUISystem::ShowPersonControl(float dt)
 {
 	if (ImGui::Begin("Опции", NULL,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
@@ -1519,6 +1519,9 @@ void GUISystem::ShowPersonControl()
 
 							bool effDirty = false;		// Котнроль эффекта
 							bool speedDirty = false;	// Котнроль скорости
+							bool a_hdDirty = false;		// Котнроль скорости анимации
+							bool a_sDirty = false;		// Котнроль анимации
+							bool a_sizeDirty = false;	// Котнроль анимации
 
 							const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
 
@@ -1589,6 +1592,118 @@ void GUISystem::ShowPersonControl()
 								ImGui::Separator(); // Разделитель
 							}
 							/*******************************************/
+
+							/* Элементы управления анимацией главного персонажа */
+
+							if (ImGui::CollapsingHeader("Анимации"))
+							{
+								//auto& persCon->persons.at(k) = persCon->persons.at(k);
+
+								std::ostringstream str;
+								str << "Кол-во анимаций: " << persCon->persons.at(k)->animations.size();
+								ImGui::Text(str.str().c_str());
+
+								if (ImGui::BeginCombo("Анимация", animSelected.c_str()))
+								{
+									for (size_t i = 0; i < persCon->persons.at(k)->animations.size(); i++)
+									{
+										std::string lbl = persCon->persons.at(k)->animations[i].name;
+										if (ImGui::Selectable(lbl.c_str(), animSelected == lbl))
+										{
+											animSelected = lbl;
+											animSelectedId = i;
+										}
+									}
+
+									ImGui::EndCombo();
+								}
+
+								if (animSelected != "")
+								{
+
+									ImGui::SliderInt("Кадр", &persCon->persons.at(k)->animations[animSelectedId].iCurFrame, 0, (int)persCon->persons.at(k)->animations[animSelectedId].frames.size());
+									dcheck(ImGui::SliderFloat("Превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
+
+									ImGui::NewLine();
+
+									curFrame = persCon->persons.at(k)->animations[animSelectedId].iCurFrame;
+
+									curAnimW = (float)persCon->persons.at(k)->animations[animSelectedId].width;
+									curAnimH = (float)persCon->persons.at(k)->animations[animSelectedId].height;
+
+									previewSize = ImVec2(
+										curAnimW * scaleFrame,
+										curAnimH * scaleFrame
+									);
+
+									ltNormPixel = ImVec2(
+										curAnimW + curAnimW * curFrame,
+										curAnimH * animSelectedId
+									);
+
+									rtNormPixel = ImVec2(
+										2.0f * curAnimW + curAnimW * curFrame,
+										curAnimH + curAnimH * animSelectedId
+									);
+
+									ltNormPixel.x /= sprite_width;
+									ltNormPixel.y /= sprite_height;
+									rtNormPixel.x /= sprite_width;
+									rtNormPixel.y /= sprite_height;
+
+									ImGui::Text("Превью:");
+
+									ImGui::Image((void*)loadedSprite.Get(),
+										previewSize,
+										ltNormPixel,
+										rtNormPixel);
+								}
+
+								ImGui::NewLine();
+
+								dcheck(ImGui::SliderFloat("Задержка", &persCon->persons.at(k)->animations[animSelectedId].holdTime, 0.01f, 1.0f), a_hdDirty);
+								persCon->persons.at(k)->holdTime = persCon->persons.at(k)->animations[animSelectedId].holdTime;
+
+								for (auto& a : persCon->persons.at(k)->animations)
+								{
+									a.holdTime = persCon->persons.at(k)->holdTime;
+								}
+
+								if (ImGui::Button("Создать анимацию"))
+								{
+									CreatingAnimation = true;
+								}
+
+								if (CreatingAnimation)
+								{
+									auto animations = ShowAnimationCreatingDialog(dt);
+
+									if (!animations.empty())
+									{
+										persCon->persons.at(k)->image = Surface2D(animPath);
+										std::vector<Animation> newAnim;
+
+										for (auto& a : animations)
+										{
+											newAnim.emplace_back(Animation(a.pStart, a.pEnd, a.width, a.height, a.frames, persCon->persons.at(k)->image, a.ft, a.name));
+										}
+
+										persCon->persons.at(k)->SetAnimation(newAnim);
+
+										EngineFunctions::SaveAnimationData(
+											persCon->persons.at(k)->name,
+											AnimationData(animations[0].pStart, animations[0].pEnd, animations[0].width, animations[0].height, animations[0].frames, animations[0].ft, animations[0].name),
+											persCon->dataPath,
+											&applog);
+
+										CreatingAnimation = false;
+									}
+								}
+
+								ImGui::Separator();
+							}
+
+							/****************************************************/
 
 							ImGui::NewLine();
 							ImGui::NewLine();

@@ -74,9 +74,21 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 			/****************************/
 
+			/* Получение настройки анимаций */
+
+			AnimationData aData;
+			aData.pStart = obj.at("a-ps");
+			aData.pEnd = obj.at("a-pe");
+			aData.width = obj.at("a-fw");
+			aData.height = obj.at("a-fh");
+			aData.frames = obj.at("a-fa");
+			aData.ft = obj.at("a-ft");
+
+			/********************************/
+
 			/* Инициализация объекта */
 
-			persons.emplace_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), speed, eff_d, eff_t, eff_a));
+			persons.emplace_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, speed, eff_d, eff_t, eff_a));
 
 			/*************************/
 		}

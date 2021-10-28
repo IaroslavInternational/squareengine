@@ -1,11 +1,15 @@
 #include "Person.h"
 
-Person::Person(std::string name,		 DirectX::XMFLOAT2 position, size_t layer,
-			   std::string pathToSprite, HitBox			   hitbox,
-			   float	   speed,		 float			   effectDuration,
-			   float	   effectTime,	 bool			   effectActive)
+#include "AnimationData.h"
+
+Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
+			   std::string	 pathToSprite, HitBox			 hitbox,
+			   AnimationData aData,
+			   float	     speed,		   float			 effectDuration,
+			   float	     effectTime,   bool			     effectActive)
 	:
 	Object2D(name, position, layer, pathToSprite),
+	holdTime(aData.ft),
 	speed(speed),
 	hitbox(hitbox)
 {
@@ -29,11 +33,11 @@ Person::Person(std::string name,		 DirectX::XMFLOAT2 position, size_t layer,
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
-		animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, image, 0.16f, animationNames[i]));
+		animations.emplace_back(Animation(aData.pStart, aData.pEnd * i, aData.width, aData.height, aData.frames, image, aData.ft, animationNames[i]));
 	}
 	for (int i = (int)Sequence::StandingLeft; i < (int)Sequence::Count; i++)
 	{
-		animations.emplace_back(Animation(0, 90 * (i - (int)Sequence::StandingLeft), 90, 90, 1, image, 0.16f, animationNames[i]));
+		animations.emplace_back(Animation(0, aData.pEnd * (i - (int)Sequence::StandingLeft), aData.width, aData.height, 1, image, aData.ft, animationNames[i]));
 	}
 }
 
@@ -148,6 +152,16 @@ void Person::SetHitBox(HitBox hb)
 HitBox Person::GetHitBox()
 {
 	return hitbox - DirectX::XMFLOAT2(dx, dy);
+}
+
+void Person::SetAnimation(std::vector<Animation> anim)
+{
+	animations.clear();
+
+	for (auto& a : anim)
+	{
+		animations.emplace_back(a);
+	}
 }
 
 /**************************************************/

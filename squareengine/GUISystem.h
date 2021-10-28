@@ -62,7 +62,7 @@ private:
 	void   ShowPhysicsEngineObjList();		// Показать левую панель списка объектов в физическом движке		   
 
 	void   ShowMainPersonControl(float dt); // Показать правую панель настроек для главного персонажа
-	void   ShowPersonControl();				// Показать правую панель настроек для выбранного персонажа
+	void   ShowPersonControl(float dt);		// Показать правую панель настроек для выбранного персонажа
 	void   ShowIobjControl();				// Показать правую панель настроек для выбранного интерактивного объекта
 	void   ShowPhysicsEngineObjControl();	// Показать правую панель настроек для выбранного объекта в физическом движке		   
 

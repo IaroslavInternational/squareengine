@@ -3,19 +3,22 @@
 #include "Object2D.h"
 #include "Animation.h"
 
+struct AnimationData;
+
 class Person : public Object2D
 {
 public:
 	friend class GUISystem;
 	friend class ObjectsQueue;
 public:
-	Person(std::string name,		 DirectX::XMFLOAT2 position,
-		   size_t      layer,
-		   std::string pathToSprite, HitBox			   hitbox,
-		   float	   speed 		  =	1.0f, 
-		   float	   effectDuration = 0.045f, 
-		   float	   effectTime 	  =	0.0f, 
-		   bool		   effectActive   =	false);
+	Person(std::string   name,		   DirectX::XMFLOAT2   position,
+		   size_t        layer,
+		   std::string   pathToSprite, HitBox			   hitbox,
+		   AnimationData aData,
+		   float		 speed 			= 1.0f, 
+		   float		 effectDuration	= 0.045f, 
+		   float		 effectTime 	= 0.0f, 
+		   bool			 effectActive	= false);
 public:
 	/* Главные методы для отрисовки персонажа */
 	
@@ -31,6 +34,7 @@ public:
 	void   Translate(DirectX::XMFLOAT2 delta);
 	void   SetHitBox(HitBox hb);	// Установить hitbox
 	HitBox GetHitBox();				// Получить hitbox
+	void   SetAnimation(std::vector<Animation> anim);
 
 	/**************************************************/
 private:
@@ -66,10 +70,10 @@ private:
 		StandingUp,
 		StandingDown,
 		Count
-	};	// Список анимаций
-
+	};																// Список анимаций
 	std::vector<Animation> animations;								// Вектор анимаций
 	Sequence			   iCurSequence = Sequence::StandingDown;	// Текущее состояние анимаций
+	float				   holdTime;								// Задержка анимации
 
 	/*******************************************/
 private:
