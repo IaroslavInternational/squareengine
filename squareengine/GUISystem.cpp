@@ -527,8 +527,8 @@ void GUISystem::ShowOptionalPanel()
 	if (mouseHelpInfo == "")
 	{
 		std::ostringstream pos;
-		pos << "x: "   << ImGui::GetMousePos().x
-			<< "\ny: " << ImGui::GetMousePos().y;
+		pos << "x: "   << ImGui::GetMousePos().x + camera->position.x
+			<< "\ny: " << ImGui::GetMousePos().y + camera->position.y;
 
 		ShowMouseHelperPanel(pos.str().c_str());
 	}
@@ -1234,7 +1234,8 @@ void GUISystem::ShowMainPersonControl(float dt)
 									hero->hitbox.visability = true;
 
 									AddLog("Сохранение Hit-box:\n");
-									EngineFunctions::SaveHitBoxData(heroSelected, hero->hitbox, hero->dataPath, &applog);
+									new_hb.Translate(camera->position);
+									EngineFunctions::SaveHitBoxData(heroSelected, new_hb, hero->dataPath, &applog);
 								}
 							}
 						}
@@ -1583,7 +1584,8 @@ void GUISystem::ShowPersonControl(float dt)
 											persCon->persons.at(k)->hitbox.visability = true;
 
 											AddLog("Сохранение Hit-box:\n");
-											EngineFunctions::SaveHitBoxData(personSelected, persCon->persons.at(k)->hitbox, persCon->dataPath, &applog);
+											new_hb.Translate(camera->position);
+											EngineFunctions::SaveHitBoxData(personSelected, new_hb, persCon->dataPath, &applog);
 										}
 									}
 								}
@@ -1894,7 +1896,8 @@ void GUISystem::ShowIobjControl()
 											IobjCon->objects.at(k)->hitbox.visability = true;
 
 											AddLog("Сохранение Hit-box:\n");
-											EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
+											new_hb.Translate(camera->position);
+											EngineFunctions::SaveHitBoxData(IobjSelected, new_hb, IobjCon->dataPath, &applog);
 
 											IsCaclulatedDeltas = false;
 										}
@@ -2099,6 +2102,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 											secondPoint = { (float)pos.first, (float)pos.second };
 
 											Line line_new(objectSelected, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+											line_new.Translate(camera->position);
 											phEngPtr->UpdateLineAt(k, line_new);
 
 											std::ostringstream oss;
@@ -2331,6 +2335,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 											secondPoint = { (float)pos.first, (float)pos.second };
 
 											HitBox hb_new(objectSelected, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+											hb_new.Translate(camera->position);
 											phEngPtr->UpdateHitBoxAt(k, hb_new);
 
 											std::ostringstream oss;
@@ -2837,6 +2842,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 						io->hitbox = HitBox(io->name + std::string("hitbox"), hb_coord);
 
+						IsCaclulatedDeltas = false;
 						AddLog("Обновлён Hit-Box ");
 						AddLog(" для:");
 						AddLog(obj->name);
@@ -3244,8 +3250,8 @@ HitBox GUISystem::CreateNewHitBox()
 			SettedFirstPoint = true;
 			std::ostringstream oss;
 			oss << "Поставлена первая точка:\n" <<
-				"[x: " << firstPoint.x <<
-				"; y: " << firstPoint.y << "]\n";
+				 "[x: " << firstPoint.x + camera->position.x <<
+				"; y: " << firstPoint.y + camera->position.y << "]\n";
 
 			AddLog(oss);
 		}
@@ -3258,7 +3264,7 @@ HitBox GUISystem::CreateNewHitBox()
 		int ms_posY = wnd->mouse.GetPosY();
 
 		HitBox hb(std::string("Drown hitbox"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
-		wnd->Gfx().DrawHitBox(hb);
+		wnd->Gfx().DrawHitBox(hb);							  
 
 		if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
 		{
@@ -3269,8 +3275,8 @@ HitBox GUISystem::CreateNewHitBox()
 
 			std::ostringstream oss;
 			oss << "Поставлена вторая точка:\n" <<
-				"[x: " << secondPoint.x <<
-				"; y: " << secondPoint.y << "]\n";
+				 "[x: " << secondPoint.x + camera->position.x <<
+				"; y: " << secondPoint.y + camera->position.y << "]\n";
 
 			AddLog(oss);
 
