@@ -1596,21 +1596,18 @@ void GUISystem::ShowPersonControl(float dt)
 							/* Элементы управления анимацией главного персонажа */
 
 							if (ImGui::CollapsingHeader("Анимации"))
-							{
-								//auto& persCon->persons.at(k) = persCon->persons.at(k);
-
+							{								
 								std::ostringstream str;
 								str << "Кол-во анимаций: " << persCon->persons.at(k)->animations.size();
 								ImGui::Text(str.str().c_str());
-
+								
 								if (ImGui::BeginCombo("Анимация", animSelected.c_str()))
 								{
 									for (size_t i = 0; i < persCon->persons.at(k)->animations.size(); i++)
 									{
-										std::string lbl = persCon->persons.at(k)->animations[i].name;
-										if (ImGui::Selectable(lbl.c_str(), animSelected == lbl))
+										if (ImGui::Selectable(persCon->persons.at(k)->animations[i].name.c_str(), animSelected == persCon->persons.at(k)->animations[i].name))
 										{
-											animSelected = lbl;
+											animSelected = persCon->persons.at(k)->animations[i].name;
 											animSelectedId = i;
 										}
 									}

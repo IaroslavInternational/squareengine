@@ -1,6 +1,7 @@
 #include "Person.h"
 
 #include "AnimationData.h"
+#include "EngineFunctions.hpp"
 
 Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
 			   std::string	 pathToSprite, HitBox			 hitbox,

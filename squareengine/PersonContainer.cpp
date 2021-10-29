@@ -88,7 +88,7 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 			/* Инициализация объекта */
 
-			persons.emplace_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, speed, eff_d, eff_t, eff_a));
+			persons.push_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, speed, eff_d, eff_t, eff_a));
 
 			/*************************/
 		}
