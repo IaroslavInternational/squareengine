@@ -195,6 +195,7 @@ void GUISystem::ShowMenu()
 				{
 					if (ImGui::MenuItem("Viewport"))
 					{
+						ShowViewportSettings ? ShowViewportSettings = false : ShowViewportSettings = true;
 					}
 
 					ImGui::EndMenu();
