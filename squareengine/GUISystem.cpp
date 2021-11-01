@@ -19,13 +19,16 @@ GUISystem::GUISystem(Scene* scene)
 	viewportWidth(wnd->Gfx().GetWidth()),
 	viewportHeight(wnd->Gfx().GetHeight())
 {
+	AddLog("Установка цветовой гаммы GUI...\n");
 	SetGUIColors();
+	AddLog("Установка выполнена\n");
 
 	for (size_t i = 0; i < N_POINTS; i++)
 	{
 		counters[i] = float(i);
 	}
 
+	AddLog("Получение данных о графическом адаптере...\n");
 	auto GPU_Data = AdapterReader::GetAdapterData();
 
 	for (auto& d : GPU_Data)
@@ -35,7 +38,9 @@ GUISystem::GUISystem(Scene* scene)
 			gpu_desc.emplace(std::wstring(d.desc.Description), round(static_cast<double>(d.desc.DedicatedVideoMemory) / 1073741824));
 		}
 	}
+	AddLog("Данные получены\n");
 
+	AddLog("Установка вомзожных вариантов анимаций...\n");
 	animationNames.push_back("Ходьба влево");
 	animationNames.push_back("Ходьба вправо");
 	animationNames.push_back("Ходьба вверх");
@@ -44,6 +49,7 @@ GUISystem::GUISystem(Scene* scene)
 	animationNames.push_back("Покой вправо");
 	animationNames.push_back("Покой вверх");
 	animationNames.push_back("Покой вниз");
+	AddLog("Установка выполнена\n");
 }
 
 /* Главные методы для отрисовки интерфейса */
@@ -60,10 +66,14 @@ void GUISystem::Show(float dt)
 
 void GUISystem::Hide()
 {
+	AddLog("Скрывание GUI...\n");
+
 	DisableSides();
 
 	ShowPhysicsSettings = false;
 	ShowLogs = false;
+
+	AddLog("GUI скрыт\n");
 }
 
 void GUISystem::AddLog(const std::ostringstream& oss)
@@ -83,15 +93,21 @@ void GUISystem::AddLog(const char* text)
 
 void GUISystem::LoadScene(Scene* scene)
 {	
+	AddLog("Загрузка сцены...\n");
 	IsUpdatingScene = false;
 
-	wnd      = scene->wnd;
-	hero     = &scene->hero;
-	persCon  = &scene->persCon;
-	IobjCon  = &scene->Iobj;
-	objQueue = &scene->objQueue;
-	phEngPtr = scene->phEngine;
-	camera   = scene->camera;
+	curSceneName = scene->name;
+	wnd			 = scene->wnd;
+	hero		 = &scene->hero;
+	persCon		 = &scene->persCon;
+	IobjCon		 = &scene->Iobj;
+	objQueue	 = &scene->objQueue;
+	phEngPtr	 = scene->phEngine;
+	camera		 = scene->camera;
+
+	AddLog("Сцена ");
+	AddLog(scene->name);
+	AddLog(" загружена\n");
 }
 
 std::pair<bool, std::string> GUISystem::UpdatingScene()
@@ -176,6 +192,7 @@ void GUISystem::ShowMenu()
 		{
 			if (ImGui::MenuItem("Выход"))
 			{
+				AddLog("Завершение работы...");
 				exit(0);
 			}
 
@@ -624,10 +641,9 @@ void GUISystem::ShowPersonList()
 			{
 				if (ImGui::Button("Удалить"))
 				{
+					AddLog("Удаление персонажа...\n");
+
 					std::string deletedPersonName = p->get()->name;
-					AddLog("Удаление ");
-					AddLog(deletedPersonName);
-					AddLog("...\n");
 
 					objQueue->DeleteObjectAt(p->get()->name);
 					persCon->DeletePersonAt(p);
@@ -650,7 +666,7 @@ void GUISystem::ShowPersonList()
 
 		if (ImGui::Button("Добавить"))
 		{
-
+			
 		}
 	}
 
@@ -681,17 +697,16 @@ void GUISystem::ShowIobjList()
 			{
 				if (ImGui::Button("Удалить"))
 				{
+					AddLog("Удаление интерактивного объекта...\n");
+
 					std::string deletedObjName = o->get()->name;
-					AddLog("Удаление ");
-					AddLog(deletedObjName);
-					AddLog("...\n");
 
 					objQueue->DeleteObjectAt(o->get()->name);
 					IobjCon->DeleteObjectAt(o);
 
 					EngineFunctions::DeleteJsonObject(deletedObjName, IobjCon->dataPath);
 
-					AddLog("Объект ");
+					AddLog("Интерактивный объект ");
 					AddLog(deletedObjName);
 					AddLog(" удалён\n");
 
@@ -708,6 +723,7 @@ void GUISystem::ShowIobjList()
 
 		if (ImGui::Button("Добавить"))
 		{
+			AddLog("Добавление...\n");
 			AddingIobj = true;
 		}
 
@@ -774,10 +790,9 @@ void GUISystem::ShowIobjList()
 				// Закрытие файла
 				ostream.close();
 
-				std::ostringstream oss_l;
-				oss_l << "Добавлено [" << d.value().name << "]\n";
-
-				AddLog(oss_l);
+				AddLog("Интерактивный объект ");
+				AddLog(d.value().name);
+				AddLog(" добавлен\n");
 
 				AddingIobj = false;
 			}
@@ -815,10 +830,9 @@ void GUISystem::ShowPhysicsEngineObjList()
 					{
 						if (ImGui::Button("Удалить"))
 						{
+							AddLog("Удаление линии...\n");
+
 							std::string deletedLineName = l->name;
-							AddLog("Удаление ");
-							AddLog(deletedLineName);
-							AddLog("...\n");
 
 							phEngPtr->DeleteLineAt(l);
 							EngineFunctions::DeleteJsonObject(deletedLineName, phEngPtr->dataPath);
@@ -841,8 +855,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 				// Если нажата кнопка добавить линию
 				if (ImGui::Button("Добавить"))
 				{
-					AddLog("Добавление линии...");
-					AddLog("\n");
+					AddLog("Добавление линии...\n");
 
 					AddingObject = true;
 
@@ -865,7 +878,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 								SettedFirstPoint = true;
 								std::ostringstream oss;
 								oss << "Поставлена первая точка:\n" <<
-									"[x: " << firstPoint.x <<
+									 "[x: " << firstPoint.x <<
 									"; y: " << firstPoint.y << "]\n";
 
 								AddLog(oss);
@@ -898,8 +911,6 @@ void GUISystem::ShowPhysicsEngineObjList()
 									"; y: " << secondPoint.y << "]\n";
 
 								AddLog(oss);
-
-								AddLog("Сохранение линии:\n");
 
 								using std::to_string;
 
@@ -941,10 +952,9 @@ void GUISystem::ShowPhysicsEngineObjList()
 								// Закрытие файла
 								ostream.close();
 
-								std::ostringstream oss_l;
-								oss_l << "Добавлено [" << line_name.str() << "]\n";
-
-								AddLog(oss_l);
+								AddLog("Линия ");
+								AddLog(line_name);
+								AddLog(" добавлена\n");
 
 								mouseHelpInfo = "";
 								SettedSecondPoint = true;
@@ -983,15 +993,14 @@ void GUISystem::ShowPhysicsEngineObjList()
 					{
 						if (ImGui::Button("Удалить"))
 						{
+							AddLog("Удаление Hit-box...\n");
+
 							std::string deletedHitBoxName = hb->name;
-							AddLog("Удаление ");
-							AddLog(deletedHitBoxName);
-							AddLog("...\n");
 
 							phEngPtr->DeleteHitBoxAt(hb);
 							EngineFunctions::DeleteJsonObject(deletedHitBoxName, phEngPtr->dataPath);
 
-							AddLog("Hit-Box ");
+							AddLog("Hit-box ");
 							AddLog(deletedHitBoxName);
 							AddLog(" удалён\n");
 
@@ -1009,8 +1018,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 				// Если нажата кнопка добавить hitbox
 				if (ImGui::Button("Добавить"))
 				{
-					AddLog("Добавление Hit-Box'а...");
-					AddLog("\n");
+					AddLog("Добавление HitBox...\n");
 
 					AddingObject = true;
 
@@ -1033,7 +1041,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 								SettedFirstPoint = true;
 								std::ostringstream oss;
 								oss << "Поставлена первая точка:\n" <<
-									"[x: " << firstPoint.x <<
+									 "[x: " << firstPoint.x <<
 									"; y: " << firstPoint.y << "]\n";
 
 								AddLog(oss);
@@ -1062,12 +1070,10 @@ void GUISystem::ShowPhysicsEngineObjList()
 
 								std::ostringstream oss;
 								oss << "Поставлена вторая точка:\n" <<
-									"[x: " << secondPoint.x <<
+									 "[x: " << secondPoint.x <<
 									"; y: " << secondPoint.y << "]\n";
 
 								AddLog(oss);
-
-								AddLog("Сохранение Hit-Box'а:\n");
 
 								using std::to_string;
 
@@ -1109,10 +1115,9 @@ void GUISystem::ShowPhysicsEngineObjList()
 								// Закрытие файла
 								ostream.close();
 
-								std::ostringstream oss_l;
-								oss_l << "Добавлено [" << hb_name.str() << "]\n";
-
-								AddLog(oss_l);
+								AddLog("Hit-box ");
+								AddLog(hb_name);
+								AddLog(" добавлен\n");
 
 								mouseHelpInfo = "";
 								SettedSecondPoint = true;
@@ -1215,9 +1220,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 						{
 							if (ImGui::Button("Изменить", ImVec2(100, 20)))
 							{
-								AddLog("Изменение Hit-box для: ");
-								AddLog(hero->name);
-								AddLog("\n");
+								AddLog("Изменение Hit-box...\n");
 
 								DrawingHitBox = true;
 								hero->hitbox.visability = false;
@@ -1231,10 +1234,13 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 								if (new_hb.name != "empty")
 								{
+									AddLog("Создан Hit-box ");
+									AddLog(new_hb.name);
+									AddLog("\n");
+
 									hero->SetHitBox(new_hb);
 									hero->hitbox.visability = true;
 
-									AddLog("Сохранение Hit-box:\n");
 									new_hb.Translate(camera->position);
 									EngineFunctions::SaveHitBoxData(heroSelected, new_hb, hero->dataPath, &applog);
 								}
@@ -1271,7 +1277,6 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 						if (animSelected != "")
 						{
-
 							ImGui::SliderInt("Кадр", &hero->animations[animSelectedId].iCurFrame, 0, (int)hero->animations[animSelectedId].frames.size());
 							dcheck(ImGui::SliderFloat("Превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
 
@@ -1322,6 +1327,8 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 						if (ImGui::Button("Создать анимацию"))
 						{
+							AddLog("Создание анимации...\n");
+
 							CreatingAnimation = true;
 						}
 
@@ -1331,6 +1338,9 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 							if (!animations.empty())
 							{
+								AddLog("Создана анимация для ");
+								AddLog("главного персонажа\n");
+
 								hero->image = Surface2D(animPath);
 								std::vector<Animation> newAnim;
 
@@ -1374,9 +1384,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 					{
 						if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 						{
-							AddLog("Сохранение настроек для: ");
-							AddLog(hero->name);
-							AddLog("\n");
+							AddLog("Сохранение настроек для главного персонажа...\n");
 
 							SavingSettings = true;
 						}
@@ -1466,6 +1474,8 @@ void GUISystem::ShowMainPersonControl(float dt)
 								);
 
 							/********************************************/
+
+							AddLog("Настройки сохранены\n");
 
 							SavingSettings = false;
 						}
@@ -1565,9 +1575,7 @@ void GUISystem::ShowPersonControl(float dt)
 								{
 									if (ImGui::Button("Изменить", ImVec2(100, 20)))
 									{
-										AddLog("Изменение Hit-box для:");
-										AddLog(personSelected);
-										AddLog("\n");
+										AddLog("Изменение Hit-box...\n");
 
 										DrawingHitBox = true;
 										persCon->persons.at(k)->hitbox.visability = false;
@@ -1581,10 +1589,13 @@ void GUISystem::ShowPersonControl(float dt)
 
 										if (new_hb.name != "empty")
 										{
+											AddLog("Создан Hit-box ");
+											AddLog(new_hb.name);
+											AddLog("\n");
+
 											persCon->persons.at(k)->SetHitBox(new_hb);
 											persCon->persons.at(k)->hitbox.visability = true;
 
-											AddLog("Сохранение Hit-box:\n");
 											new_hb.Translate(camera->position);
 											EngineFunctions::SaveHitBoxData(personSelected, new_hb, persCon->dataPath, &applog);
 										}
@@ -1671,6 +1682,7 @@ void GUISystem::ShowPersonControl(float dt)
 
 								if (ImGui::Button("Создать анимацию"))
 								{
+									AddLog("Создание анимации...\n");
 									CreatingAnimation = true;
 								}
 
@@ -1680,6 +1692,10 @@ void GUISystem::ShowPersonControl(float dt)
 
 									if (!animations.empty())
 									{
+										AddLog("Создана анимация для ");
+										AddLog(persCon->persons.at(k)->name);
+										AddLog("\n");
+
 										persCon->persons.at(k)->image = Surface2D(animPath);
 										std::vector<Animation> newAnim;
 
@@ -1712,8 +1728,8 @@ void GUISystem::ShowPersonControl(float dt)
 							{
 								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 								{
-									AddLog("Сохранение настроек для: ");
-									AddLog(personSelected);
+									AddLog("Сохранение настроек для ");
+									AddLog(persCon->persons.at(k)->name);
 									AddLog("\n");
 
 									SavingSettings = true;
@@ -1763,6 +1779,8 @@ void GUISystem::ShowPersonControl(float dt)
 
 									/*************************/
 
+									AddLog("Настройки сохранены\n");
+
 									SavingSettings = false;
 								}
 							}
@@ -1774,6 +1792,10 @@ void GUISystem::ShowPersonControl(float dt)
 							{
 								if (ImGui::Button("Удалить", ImVec2(100, 20)))
 								{
+									AddLog("Удаление ");
+									AddLog(persCon->persons.at(k)->name);
+									AddLog("\n");
+
 									for (auto i = persCon->persons.begin(); i != persCon->persons.end(); i++)
 									{
 										if (i->get()->name == personSelected)
@@ -1784,6 +1806,8 @@ void GUISystem::ShowPersonControl(float dt)
 									}
 
 									EngineFunctions::DeleteJsonObject(personSelected, persCon->dataPath);
+
+									AddLog("Персонаж удалён\n");
 								}
 							}
 							/****************************************/
@@ -1877,9 +1901,7 @@ void GUISystem::ShowIobjControl()
 								{
 									if (ImGui::Button("Изменить", ImVec2(100, 20)))
 									{
-										AddLog("Изменение Hit-box для:");
-										AddLog(IobjSelected);
-										AddLog("\n");
+										AddLog("Изменение Hit-box...\n");
 
 										DrawingHitBox = true;
 										IobjCon->objects.at(k)->hitbox.visability = false;
@@ -1893,10 +1915,13 @@ void GUISystem::ShowIobjControl()
 
 										if (new_hb.name != "empty")
 										{
+											AddLog("Создан Hit-box ");
+											AddLog(new_hb.name);
+											AddLog("\n");
+
 											IobjCon->objects.at(k)->SetHitBox(new_hb);
 											IobjCon->objects.at(k)->hitbox.visability = true;
 
-											AddLog("Сохранение Hit-box:\n");
 											new_hb.Translate(camera->position);
 											EngineFunctions::SaveHitBoxData(IobjSelected, new_hb, IobjCon->dataPath, &applog);
 
@@ -1914,8 +1939,8 @@ void GUISystem::ShowIobjControl()
 							{
 								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 								{
-									AddLog("Сохранение настроек для: ");
-									AddLog(IobjSelected);
+									AddLog("Сохранение настроек для ");
+									AddLog(IobjCon->objects.at(k)->name);
 									AddLog("\n");
 
 									SavingSettings = true;
@@ -1938,6 +1963,8 @@ void GUISystem::ShowIobjControl()
 										);
 
 									EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
+
+									AddLog("Настройки сохранены\n");
 
 									SavingSettings = false;
 								}
@@ -2000,9 +2027,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 
 							if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
 							{
-								AddLog("Нормирование по Xs для: ");
-								AddLog(objectSelected);
-								AddLog("\n");
+								AddLog("Нормирование по оси X...\n");
 
 								phEngPtr->lines.at(k).end.x = phEngPtr->lines.at(k).start.x;
 
@@ -2019,15 +2044,15 @@ void GUISystem::ShowPhysicsEngineObjControl()
 									phEngPtr->dataPath,
 									&applog
 									);
+
+								AddLog("Нормирование выполнено\n");
 							}
 
 							ImGui::SameLine();
 
 							if (ImGui::Button("Нормировать Y", ImVec2(100, 20)))
 							{
-								AddLog("Нормирование по Ys для: ");
-								AddLog(objectSelected);
-								AddLog("\n");
+								AddLog("Нормирование по оси Y...\n");
 
 								phEngPtr->lines.at(k).end.y = phEngPtr->lines.at(k).start.y;
 
@@ -2044,6 +2069,8 @@ void GUISystem::ShowPhysicsEngineObjControl()
 									phEngPtr->dataPath,
 									&applog
 									);
+
+								AddLog("Нормирование выполнено\n");
 							}
 
 							ImGui::Separator();	// Разделитель
@@ -2057,9 +2084,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 							{
 								if (ImGui::Button("Перерисовать", ImVec2(100, 20)))
 								{
-									AddLog("Изменение линии: ");
-									AddLog(objectSelected);
-									AddLog("\n");
+									AddLog("Изменение линии...\n");
 
 									DrawingLine = true;
 									phEngPtr->lines.at(k).visability = false;
@@ -2110,11 +2135,9 @@ void GUISystem::ShowPhysicsEngineObjControl()
 											oss << "Поставлена вторая точка:\n" <<
 												"[x: " << secondPoint.x <<
 												"; y: " << secondPoint.y << "]\n";
-
+											
 											AddLog(oss);
-
-											AddLog("Сохранение линии:\n");
-
+																						
 											EngineFunctions::SetNewValue<float>(
 												objectSelected,
 												"start-x", line_new.start.x,
@@ -2144,6 +2167,11 @@ void GUISystem::ShowPhysicsEngineObjControl()
 												);
 
 											mouseHelpInfo = "";
+
+											AddLog("Линия ");
+											AddLog(line_new.name);
+											AddLog(" изменена\n");
+
 											SettedSecondPoint = true;
 										}
 									}
@@ -2170,8 +2198,8 @@ void GUISystem::ShowPhysicsEngineObjControl()
 						{
 							if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 							{
-								AddLog("Сохранение настроек для: ");
-								AddLog(objectSelected);
+								AddLog("Сохранение настроек для ");
+								AddLog(phEngPtr->lines.at(k).name);
 								AddLog("\n");
 
 								SavingSettings = true;
@@ -2210,6 +2238,8 @@ void GUISystem::ShowPhysicsEngineObjControl()
 									);
 
 								/************************/
+
+								AddLog("Настройки сохранены\n");
 
 								SavingSettings = false;
 							}
@@ -2257,9 +2287,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 
 							if (ImGui::Button("Сделать квадрат", ImVec2(100, 21)))
 							{
-								AddLog("Создание квадрата из: ");
-								AddLog(objectSelected);
-								AddLog("\n");
+								AddLog("Создание квадрата...\n");
 
 								phEngPtr->hitboxes.at(k).coordinates.z = phEngPtr->hitboxes.at(k).coordinates.x + sq_l;
 								phEngPtr->hitboxes.at(k).coordinates.w = phEngPtr->hitboxes.at(k).coordinates.y + sq_l;
@@ -2277,6 +2305,8 @@ void GUISystem::ShowPhysicsEngineObjControl()
 									phEngPtr->dataPath,
 									&applog
 									);
+
+								AddLog("Квадрат создан\n");
 							}
 
 							ImGui::Separator();	// Разделитель
@@ -2290,9 +2320,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 							{
 								if (ImGui::Button("Перерисовать", ImVec2(100, 20)))
 								{
-									AddLog("Изменение Hit-Box'а: ");
-									AddLog(objectSelected);
-									AddLog("\n");
+									AddLog("Изменение Hit-box...\n");
 
 									DrawingHitBox = true;
 									phEngPtr->hitboxes.at(k).visability = false;
@@ -2346,8 +2374,6 @@ void GUISystem::ShowPhysicsEngineObjControl()
 
 											AddLog(oss);
 
-											AddLog("Сохранение Hit-Box'а:\n");
-
 											EngineFunctions::SetNewValue<float>(
 												objectSelected,
 												"lt-x", hb_new.coordinates.x,
@@ -2377,6 +2403,11 @@ void GUISystem::ShowPhysicsEngineObjControl()
 												);
 
 											mouseHelpInfo = "";
+
+											AddLog("Hit-box ");
+											AddLog(hb_new.name);
+											AddLog(" изменён\n");
+
 											SettedSecondPoint = true;
 										}
 									}
@@ -2403,9 +2434,9 @@ void GUISystem::ShowPhysicsEngineObjControl()
 						{
 							if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 							{
-								AddLog("Сохранение настроек для: ");
-								AddLog(objectSelected);
-								AddLog("\n");
+								AddLog("Сохранение настроек для ");
+								AddLog(phEngPtr->hitboxes.at(k).name);
+								AddLog(" ...\n");
 
 								SavingSettings = true;
 							}
@@ -2443,6 +2474,8 @@ void GUISystem::ShowPhysicsEngineObjControl()
 									);
 
 								/************************/
+
+								AddLog("Настройки сохранены\n");
 
 								SavingSettings = false;
 							}
@@ -2501,6 +2534,9 @@ void GUISystem::ShowLayersControl()
 							{
 								if (io->name == objQueue->queue[k]->name)
 								{
+									AddLog(objQueue->queue[k]->name);
+									AddLog(" сдвинут на задний план\n");
+
 									if (hero->layer < io->layer)
 									{
 										io->drawGhostable = true;
@@ -2523,6 +2559,9 @@ void GUISystem::ShowLayersControl()
 							{
 								if (io->name == objQueue->queue[k]->name)
 								{
+									AddLog(objQueue->queue[k]->name);
+									AddLog(" сдвинут на передний план\n");
+
 									if (hero->layer < io->layer)
 									{
 										io->drawGhostable = true;
@@ -2541,6 +2580,8 @@ void GUISystem::ShowLayersControl()
 
 		if (ImGui::Button("Сохранить"))
 		{
+			AddLog("Сохранение настроек слоёв...\n");
+			
 			SavingSettings = true;
 		}
 
@@ -2569,6 +2610,8 @@ void GUISystem::ShowLayersControl()
 					pathToFile,
 					&applog);
 			}
+
+			AddLog("Настройки сохранены\n");
 
 			SavingSettings = false;
 		}
@@ -2614,11 +2657,12 @@ void GUISystem::ShowCameraControl()
 
 			if (ImGui::Button("Вернуть на исходную позицию"))
 			{
-				AddLog("Возвращение камеры на исходную позицию...\n");
+				AddLog("Возращение на исходную позицию...\n");
 				camera->SetPosition(camera->initPosition);
 
 				std::ostringstream str;
 				str << "Камера установлена по кординатам: " << "X: " << camera->position.x << " Y: " << camera->position.y << "\n";
+
 				AddLog(str);
 			}
 
@@ -2652,6 +2696,8 @@ void GUISystem::ShowCameraControl()
 
 		if (ImGui::Button("Сохранить"))
 		{
+			AddLog("Сохранение настроек камеры...\n");
+
 			SavingSettings = true;
 		}
 
@@ -2691,6 +2737,8 @@ void GUISystem::ShowCameraControl()
 				hero->dataPath,
 				&applog
 				);
+
+			AddLog("Настройки сохранены\n");
 
 			SavingSettings = false;
 		}
@@ -2752,11 +2800,13 @@ void GUISystem::SpawnCameraToHeroControl()
 {
 	if (ImGui::Button("Фиксировать мир"))
 	{
+		AddLog("Режим фиксации мира активирован\n");
 		hero->cameraMode = MainPerson::CameraMode::SteadyWorld;
 	}
 
 	if (ImGui::Button("Фиксировать игрока"))
 	{
+		AddLog("Режим фиксации игрока активирован\n");
 		hero->cameraMode = MainPerson::CameraMode::SteadyPerson;
 	}
 }
@@ -2811,9 +2861,9 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 		if (ImGui::Button("Загрузить", ImVec2(100, 20)))
 		{
-			AddLog("Загрузка спрайта для: ");
+			AddLog("Загрузка нового спрайта для ");
 			AddLog(obj->name);
-			AddLog("\n");
+			AddLog("...\n");
 
 			LoadingSprite = true;
 			LoadedPreview = false;
@@ -2842,23 +2892,17 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 						hb_coord.w = obj->position.y + im.GetHeight();
 
 						io->hitbox = HitBox(io->name + std::string("hitbox"), hb_coord);
+						
+						AddLog("Hit-box обновлён\n");
 
 						IsCaclulatedDeltas = false;
-						AddLog("Обновлён Hit-Box ");
-						AddLog(" для:");
-						AddLog(obj->name);
-						AddLog("\n");
 
 						break;
 					}
 				}
 			}
 
-			AddLog("Загружен спрайт ");
-			AddLog(imagePath);
-			AddLog(" для:");
-			AddLog(obj->name);
-			AddLog("\n");
+			AddLog("Новый спрайт загружен\n");
 
 			LoadingSprite = false;
 		}
@@ -2873,9 +2917,9 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 	{
 		if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 		{
-			AddLog("Сохранение настроек для: ");
+			AddLog("Сохранение настроек для ");
 			AddLog(obj->name);
-			AddLog("\n");
+			AddLog("...\n");
 
 			SavingSettings = true;
 		}
@@ -2910,6 +2954,8 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 				);
 
 			/**************************/
+			
+			AddLog("Настройки сохранены\n");
 
 			SavingSettings = false;
 		}
@@ -3086,6 +3132,8 @@ void GUISystem::ShowPhysicsEngineSettings()
 
 			if (ImGui::Button("Сохранить"))
 			{
+				AddLog("Сохранение цветовых настроек физического движка...\n");
+
 				EngineFunctions::SetNewValue<float>(
 					"settings",
 					"l-clr-r",
@@ -3133,6 +3181,8 @@ void GUISystem::ShowPhysicsEngineSettings()
 					phEngPtr->dataPath,
 					&applog
 					);
+
+				AddLog("Настройки сохранены\n");
 			}
 
 			ImGui::Separator();
@@ -3151,6 +3201,8 @@ void GUISystem::ShowPhysicsEngineSettings()
 			ImGui::Checkbox("Показать подписи объектов", &ShowPhysicsEngineObjInfo);
 			if (ImGui::Button("Сохранить"))
 			{
+				AddLog("Сохранение настроек физического движка...\n");
+
 				EngineFunctions::SetNewValue<float>(
 					"settings",
 					"delta-collision",
@@ -3216,6 +3268,8 @@ void GUISystem::ShowViewportControl()
 
 			if (ImGui::Button("Применить"))
 			{
+				AddLog("Изменение Viewport...\n");
+
 				D3D11_VIEWPORT vp;
 				vp.Width =  (float)viewportWidth;
 				vp.Height = (float)viewportHeight;
@@ -3225,6 +3279,8 @@ void GUISystem::ShowViewportControl()
 				vp.TopLeftY = float(768 - viewportHeight) / 2.0f; // Нужно брать актуальные параметры экрана	
 
 				wnd->Gfx().SetViewPort(vp);
+
+				AddLog("Viewport обновлён\n");
 			}
 
 			ImGui::Separator();
