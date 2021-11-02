@@ -5,6 +5,12 @@
 #include "HitBox.h"
 #include "Line.h"
 
+#define POS_X_LIMIT 10000.0f
+#define POS_Y_LIMIT 10000.0f
+
+#define BIG_POPUP_PANEL_FLAGS ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+#define SIDE_PANEL_FLAGS     BIG_POPUP_PANEL_FLAGS | ImGuiWindowFlags_NoBringToFrontOnFocus
+
 GUISystem::GUISystem(Scene* scene)
 	:
 	curSceneName(scene->name),
@@ -27,7 +33,7 @@ GUISystem::GUISystem(Scene* scene)
 	{
 		counters[i] = float(i);
 	}
-
+	
 	AddLog("Получение данных о графическом адаптере...\n");
 	auto GPU_Data = AdapterReader::GetAdapterData();
 
@@ -57,21 +63,22 @@ GUISystem::GUISystem(Scene* scene)
 void GUISystem::Show(float dt)
 {
 	ShowMenu();
-	ShowLeftSide();
-	ShowRightSide(dt);
-	ShowLeftBottomSide();
-	ShowBottomPanel();
-	ShowOptionalPanel();
+
+	if (IsShow)
+	{
+		ShowLeftSide();
+		ShowRightSide(dt);
+		ShowLeftBottomSide();
+		ShowBottomPanel();
+		ShowOptionalPanel();
+	}
 }
 
 void GUISystem::Hide()
 {
 	AddLog("Скрывание GUI...\n");
-
-	DisableSides();
-
-	ShowPhysicsSettings = false;
-	ShowLogs = false;
+	
+	IsShow = false;
 
 	AddLog("GUI скрыт\n");
 }
@@ -121,38 +128,38 @@ std::pair<bool, std::string> GUISystem::UpdatingScene()
 
 void GUISystem::SetGUIColors()
 {
-	/*Стиль интерфейса*/
+	/* Стиль интерфейса */
 
-	ImGui::GetStyle().FrameRounding = 4.0f;									// Закругление компонентов
+	ImGui::GetStyle().FrameRounding    = 4.0f;								// Закругление компонентов
 	ImGui::GetStyle().WindowBorderSize = 0.0f;								// Размер границы
-	ImGui::GetStyle().WindowRounding = 0.0f;								// Закругление окон
+	ImGui::GetStyle().WindowRounding   = 0.0f;								// Закругление окон
 	
 	// Цвета
 	ImVec4* colors = ImGui::GetStyle().Colors;
-	colors[ImGuiCol_MenuBarBg] = ImVec4(0.15f, 0.36f, 0.39f, 1.00f);		// Главное меню
-	colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.84f);			// Фон окна
-	colors[ImGuiCol_TitleBg] = ImVec4(0.24f, 0.00f, 0.20f, 0.73f);			// Меню окна
-	colors[ImGuiCol_TitleBgActive] = ImVec4(0.15f, 0.00f, 0.07f, 0.73f);	// Наведение на меню окна
-	colors[ImGuiCol_FrameBg] = ImVec4(0.00f, 0.50f, 0.38f, 0.54f);			// Компонента
-	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.00f, 0.18f, 0.15f, 0.40f);	// Наведение на компоненту
-	colors[ImGuiCol_FrameBgActive] = ImVec4(0.06f, 0.48f, 0.45f, 0.67f);	// Активные компоненты
-	colors[ImGuiCol_CheckMark] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);		// Галочка
-	colors[ImGuiCol_SliderGrab] = ImVec4(0.37f, 0.70f, 0.00f, 1.00f);		// Ползунок слайдера
+	colors[ImGuiCol_MenuBarBg]        = ImVec4(0.15f, 0.36f, 0.39f, 1.00f);	// Главное меню
+	colors[ImGuiCol_WindowBg]         = ImVec4(0.00f, 0.00f, 0.00f, 0.84f);	// Фон окна
+	colors[ImGuiCol_TitleBg]          = ImVec4(0.24f, 0.00f, 0.20f, 0.73f);	// Меню окна
+	colors[ImGuiCol_TitleBgActive]    = ImVec4(0.15f, 0.00f, 0.07f, 0.73f); // Наведение на меню окна
+	colors[ImGuiCol_FrameBg]	      = ImVec4(0.00f, 0.50f, 0.38f, 0.54f);	// Компонента
+	colors[ImGuiCol_FrameBgHovered]   = ImVec4(0.00f, 0.18f, 0.15f, 0.40f);	// Наведение на компоненту
+	colors[ImGuiCol_FrameBgActive]    = ImVec4(0.06f, 0.48f, 0.45f, 0.67f);	// Активные компоненты
+	colors[ImGuiCol_CheckMark]        = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);	// Галочка
+	colors[ImGuiCol_SliderGrab]       = ImVec4(0.37f, 0.70f, 0.00f, 1.00f);	// Ползунок слайдера
 	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.62f, 0.82f, 0.19f, 1.00f);	// Активный ползунок слайдера
-	colors[ImGuiCol_Button] = ImVec4(0.56f, 0.05f, 0.05f, 0.59f);			// Кнопка
-	colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.01f, 0.17f, 1.00f);	// Наведение на кнопку
-	colors[ImGuiCol_ButtonActive] = ImVec4(0.03f, 0.55f, 0.48f, 1.00f);		// Активная кнопка
-	colors[ImGuiCol_Separator] = ImVec4(0.66f, 0.60f, 0.00f, 0.50f);		// Разделитель
-	colors[ImGuiCol_Tab] = ImVec4(0.00f, 0.08f, 0.27f, 0.86f);				// Раздел
-	colors[ImGuiCol_TabHovered] = ImVec4(0.01f, 0.43f, 0.63f, 0.80f);		// Наведение на раздел
-	colors[ImGuiCol_TabActive] = ImVec4(0.66f, 0.60f, 0.00f, 0.50f);		// Активный раздел
-	colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.19f, 0.67f, 0.65f, 1.00f);	// Ползунок
-	colors[ImGuiCol_TableHeaderBg] = ImVec4(0.31f, 0.04f, 0.04f, 0.81f);	// Блок заголовка таблицы
-	colors[ImGuiCol_Header] = ImVec4(0.50f, 0.09f, 0.70f, 0.31f);			// Заголовок
-	colors[ImGuiCol_HeaderActive] = ImVec4(0.00f, 0.57f, 0.49f, 1.00f);		// Активный заголовок
-	colors[ImGuiCol_HeaderHovered] = ImVec4(0.40f, 0.22f, 0.59f, 0.80f);	// Наведение на заголовк
+	colors[ImGuiCol_Button]			  = ImVec4(0.56f, 0.05f, 0.05f, 0.59f);	// Кнопка
+	colors[ImGuiCol_ButtonHovered]    = ImVec4(0.26f, 0.01f, 0.17f, 1.00f);	// Наведение на кнопку
+	colors[ImGuiCol_ButtonActive]     = ImVec4(0.03f, 0.55f, 0.48f, 1.00f);	// Активная кнопка
+	colors[ImGuiCol_Separator]		  = ImVec4(0.66f, 0.60f, 0.00f, 0.50f);	// Разделитель
+	colors[ImGuiCol_Tab]			  = ImVec4(0.00f, 0.08f, 0.27f, 0.86f);	// Раздел
+	colors[ImGuiCol_TabHovered]		  = ImVec4(0.01f, 0.43f, 0.63f, 0.80f);	// Наведение на раздел
+	colors[ImGuiCol_TabActive]		  = ImVec4(0.66f, 0.60f, 0.00f, 0.50f);	// Активный раздел
+	colors[ImGuiCol_ScrollbarGrab]    = ImVec4(0.19f, 0.67f, 0.65f, 1.00f);	// Ползунок
+	colors[ImGuiCol_TableHeaderBg]    = ImVec4(0.31f, 0.04f, 0.04f, 0.81f);	// Блок заголовка таблицы
+	colors[ImGuiCol_Header]			  = ImVec4(0.50f, 0.09f, 0.70f, 0.31f);	// Заголовок
+	colors[ImGuiCol_HeaderActive]	  = ImVec4(0.00f, 0.57f, 0.49f, 1.00f);	// Активный заголовок
+	colors[ImGuiCol_HeaderHovered]	  = ImVec4(0.40f, 0.22f, 0.59f, 0.80f);	// Наведение на заголовк
 
-	/******************/
+	/********************/
 }
 
 void GUISystem::SetPanelSizeAndPosition(int corner, float width, float height, float x_offset, float y_offset)
@@ -360,9 +367,20 @@ void GUISystem::ShowMenu()
 				ShowLogs ? ShowLogs = false : ShowLogs = true;
 			}
 
-			if (ImGui::MenuItem("Отключить панели"))
+			std::string title = "";
+
+			if (IsShow)
 			{
-				Hide();
+				title = "Скрыть всё";
+			}
+			else
+			{
+				title = "Показать всё";
+			}
+
+			if (ImGui::MenuItem(title.c_str()))
+			{
+				IsShow ? IsShow = false : IsShow = true;
 			}
 
 			ImGui::EndMenu();
@@ -603,9 +621,7 @@ void GUISystem::DisableSides()
 
 void GUISystem::ShowMainPersonList()
 {
-	if (ImGui::Begin("Персонажи", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Begin("Персонажи", NULL, SIDE_PANEL_FLAGS))
 	{
 		ImGui::Bullet();
 		if (ImGui::Selectable(hero->name.c_str(), heroSelected == hero->name))
@@ -620,9 +636,7 @@ void GUISystem::ShowMainPersonList()
 
 void GUISystem::ShowPersonList()
 {
-	if (ImGui::Begin("Персонажи", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Begin("Персонажи", NULL, SIDE_PANEL_FLAGS))
 	{
 		for (auto p = persCon->persons.begin(); p != persCon->persons.end(); p++)
 		{
@@ -675,9 +689,7 @@ void GUISystem::ShowPersonList()
 
 void GUISystem::ShowIobjList()
 {
-	if (ImGui::Begin("Объекты", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Begin("Объекты", NULL, SIDE_PANEL_FLAGS))
 	{
 		for (auto o = IobjCon->objects.begin(); o != IobjCon->objects.end(); o++)
 		{
@@ -806,9 +818,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 {
 	using namespace Physics;
 
-	if (ImGui::Begin("Объекты", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Begin("Объекты", NULL, SIDE_PANEL_FLAGS))
 	{
 		if (ImGui::BeginTabBar("PhEngTabs", ImGuiTabBarFlags_None))
 		{
@@ -1147,9 +1157,7 @@ void GUISystem::ShowPhysicsEngineObjList()
 
 void GUISystem::ShowMainPersonControl(float dt)
 {
-	if (ImGui::Begin("Опции", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Begin("Опции", NULL, SIDE_PANEL_FLAGS))
 	{
 		if (ImGui::BeginChild(""))
 		{
@@ -1497,9 +1505,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 void GUISystem::ShowPersonControl(float dt)
 {
-	if (ImGui::Begin("Опции", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Begin("Опции", NULL, SIDE_PANEL_FLAGS))
 	{
 		// Цикл по персонажам
 		for (size_t k = 0; k < persCon->persons.size(); k++)
@@ -1831,9 +1837,7 @@ void GUISystem::ShowPersonControl(float dt)
 
 void GUISystem::ShowIobjControl()
 {
-	if (ImGui::Begin("Опции", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Begin("Опции", NULL, SIDE_PANEL_FLAGS))
 	{
 		// Цикл по интерактивным объектам
 		for (int k = 0; k < IobjCon->objects.size(); k++)
@@ -1992,9 +1996,7 @@ void GUISystem::ShowPhysicsEngineObjControl()
 {
 	using namespace Physics;
 
-	if (ImGui::Begin("Опции", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus))
+	if (ImGui::Begin("Опции", NULL, SIDE_PANEL_FLAGS))
 	{
 		if (objectSelected.find("line") != objectSelected.npos)
 		{
@@ -2018,12 +2020,12 @@ void GUISystem::ShowPhysicsEngineObjControl()
 						if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 						{
 							ImGui::Text("Позиция начальной точки:");
-							dcheck(ImGui::SliderFloat("Xs", &phEngPtr->lines.at(k).start.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ys", &phEngPtr->lines.at(k).start.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xs", &phEngPtr->lines.at(k).start.x, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ys", &phEngPtr->lines.at(k).start.y, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
 
 							ImGui::Text("Позиция конечной точки:");
-							dcheck(ImGui::SliderFloat("Xe", &phEngPtr->lines.at(k).end.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ye", &phEngPtr->lines.at(k).end.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xe", &phEngPtr->lines.at(k).end.x, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ye", &phEngPtr->lines.at(k).end.y, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
 
 							if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
 							{
@@ -2270,16 +2272,16 @@ void GUISystem::ShowPhysicsEngineObjControl()
 
 						/********************************************/
 
-						/* Элементы управления позициями точек линии */
+						/* Элементы управления позициями точек hitbox */
 						if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 						{
 							ImGui::Text("Позиция левой верхней точки:");
-							dcheck(ImGui::SliderFloat("Xs", &phEngPtr->hitboxes.at(k).coordinates.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ys", &phEngPtr->hitboxes.at(k).coordinates.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xs", &phEngPtr->hitboxes.at(k).coordinates.x, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ys", &phEngPtr->hitboxes.at(k).coordinates.y, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
 
 							ImGui::Text("Позиция правой нижней точки:");
-							dcheck(ImGui::SliderFloat("Xe", &phEngPtr->hitboxes.at(k).coordinates.z, -1000.0f, 1000.0f, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ye", &phEngPtr->hitboxes.at(k).coordinates.w, -1000.0f, 1000.0f, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xe", &phEngPtr->hitboxes.at(k).coordinates.z, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ye", &phEngPtr->hitboxes.at(k).coordinates.w, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
 
 							ImGui::NewLine();
 
@@ -2652,8 +2654,8 @@ void GUISystem::ShowCameraControl()
 			ImGui::Text(cPos.str().c_str());
 
 			ImGui::Text("Исходная позиция:");
-			dcheck(ImGui::SliderFloat("X", &camera->initPosition.x, -1000.0f, 1000.0f), posDirty);
-			dcheck(ImGui::SliderFloat("Y", &camera->initPosition.y, -1000.0f, 1000.0f), posDirty);
+			dcheck(ImGui::SliderFloat("X", &camera->initPosition.x, -POS_X_LIMIT, POS_X_LIMIT), posDirty);
+			dcheck(ImGui::SliderFloat("Y", &camera->initPosition.y, -POS_Y_LIMIT, POS_Y_LIMIT), posDirty);
 
 			if (ImGui::Button("Вернуть на исходную позицию"))
 			{
@@ -2827,8 +2829,8 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 	if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Text("Позиция:");
-		dcheck(ImGui::SliderFloat("X", &obj->position.x, -1000.0f, 1000.0f, "%.2f"), posDirty);
-		dcheck(ImGui::SliderFloat("Y", &obj->position.y, -1000.0f, 1000.0f, "%.2f"), posDirty);
+		dcheck(ImGui::SliderFloat("X", &obj->position.x, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
+		dcheck(ImGui::SliderFloat("Y", &obj->position.y, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
 
 		ImGui::NewLine();
 
@@ -3107,9 +3109,7 @@ void GUISystem::ShowPhysicsEngineObjHelp()
 void GUISystem::ShowPhysicsEngineSettings()
 {
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
-	if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize))
+	if (ImGui::Begin("Настройки физического движка", &ShowPhysicsSettings, BIG_POPUP_PANEL_FLAGS))
 	{
 		using namespace Physics;
 
@@ -3235,9 +3235,7 @@ void GUISystem::ShowProjectSettings()
 void GUISystem::ShowViewportControl()
 {
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
-	if (ImGui::Begin("Настройки Viewport", &ShowViewportSettings,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize))
+	if (ImGui::Begin("Настройки Viewport", &ShowViewportSettings, BIG_POPUP_PANEL_FLAGS))
 	{
 		if (ImGui::CollapsingHeader("Общая информация", ImGuiTreeNodeFlags_DefaultOpen))
 		{
@@ -3292,7 +3290,7 @@ void GUISystem::ShowViewportControl()
 }
 
 HitBox GUISystem::CreateNewHitBox()
-{
+{	
 	HitBox hb_new("empty", 0.0f, 0.0f, 0.0f, 0.0f);
 
 	if (!SettedFirstPoint)
@@ -3359,9 +3357,7 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 
 	SetPanelSizeAndPosition(0, 0.60f, 0.70f, 0.2f, 0.15f);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
-	if (ImGui::Begin("Загрузить изображение", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize))
+	if (ImGui::Begin("Загрузить изображение", NULL, BIG_POPUP_PANEL_FLAGS))
 	{
 		namespace fs = std::filesystem;
 
@@ -3428,9 +3424,7 @@ std::optional<IobjData> GUISystem::ShowAddingIobjDialog()
 
 	SetPanelSizeAndPosition(0, 0.3f, 0.2f, 0.35f, 0.4f);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
-	if (ImGui::Begin("Добавление объекта", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize))
+	if (ImGui::Begin("Добавление объекта", NULL, BIG_POPUP_PANEL_FLAGS))
 	{
 		ImGui::Text("Путь к спрайту: ");
 		
@@ -3496,9 +3490,7 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 
 	SetPanelSizeAndPosition(0, 0.60f, 0.70f, 0.2f, 0.1f);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
-	if (ImGui::Begin("Создание/Изменение анимации", NULL,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize))
+	if (ImGui::Begin("Создание/Изменение анимации", NULL, BIG_POPUP_PANEL_FLAGS))
 	{
 		if (ImGui::CollapsingHeader("Загрузка", ImGuiTreeNodeFlags_DefaultOpen))
 		{

@@ -245,6 +245,7 @@ private:
 	int viewportWidth;	// Ширина viewport
 	int viewportHeight;	// Высота viewport
 private:
-	std::string mouseHelpInfo = "";	// Подпись под курсором
+	std::string mouseHelpInfo = "";		// Подпись под курсором
+	bool IsShow				  = true;	// Состояние видимости интерфейса
 };
 
