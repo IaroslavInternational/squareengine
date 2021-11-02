@@ -3248,6 +3248,12 @@ void GUISystem::ShowGraphicsEngineSettings()
 		{
 			ImGui::Checkbox("Показать задний фон", &wnd->Gfx().IsBackgroundDrawn);
 			ImGui::ColorEdit3("Цвет заднего фона", wnd->Gfx().backgroundColor);
+			
+			ImGui::NewLine();
+			
+			ImGui::Checkbox("Показать сетку", &wnd->Gfx().IsGridDrawn);
+			ImGui::ColorEdit3("Цвет сетки", wnd->Gfx().gridColor);
+			ImGui::SliderFloat("Размер сетки", &wnd->Gfx().gridScale, 1.0f, 1000.0f);
 
 			if (ImGui::Button("Сохранить"))
 			{
@@ -3281,6 +3287,46 @@ void GUISystem::ShowGraphicsEngineSettings()
 					"settings",
 					"b-b",
 					wnd->Gfx().backgroundColor[2],
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<bool>(
+					"settings",
+					"g-s",
+					wnd->Gfx().IsGridDrawn,
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"g-sc",
+					wnd->Gfx().gridScale,
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"g-r",
+					wnd->Gfx().gridColor[0],
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"g-g",
+					wnd->Gfx().gridColor[1],
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"g-b",
+					wnd->Gfx().gridColor[2],
 					wnd->Gfx().dataPath,
 					&applog
 					);

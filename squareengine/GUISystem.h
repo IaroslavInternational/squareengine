@@ -203,26 +203,26 @@ private:
 private:
 	/* Вспомагательные переменные для работы с анимацией */
 	
-	int			curFrame			   = 0;					// Текущий кадр анимации во всех превью
-	int			maxFrames			   = 4;					// Максимальное число кадров в анимации при создании анимации
-	bool        CreatingAnimation	   = false;				// Статус создания анимации
-	bool        ChoosingAnimation	   = false;				// Статус редактирования анимации
-	bool        CreatingAnimtionLoaded = false;				// Статус загрузки нового спрайта анимации
-	float       scaleFrame			   = 1.0f;				// Множитель размера превью спрайта
-	float		newFrameWidth		   = 90.0f;				// Ширина кадра новой анимации
-	float		newFrameHeight		   = 90.0f;				// Высота кадра новой анимации
-	float		curAnimW			   = 0.0f;				// Ширина кадра превью
-	float		curAnimH			   = 0.0f;				// Высота кадра превью
-	float		framesHoldTime		   = 0.2f;				// Задержка проигрывания анимаций 
-	size_t		animSelectedId		   = 0;					// Номер выбранного типа анимации
-	size_t		animPlayingId		   = 0;					// Номер выбранного типа анимации при создании анимации
-	ImVec2		previewSize			   = { 0.0f, 0.0f };	// Размер превью анимации
-	ImVec2		ltNormPixel			   = { 0.0f, 0.0f };	// Нормированый пиксель (левый верхний) для масштабирования кадра
-	ImVec2		rtNormPixel			   = { 0.0f, 0.0f };	// Нормированый пиксель (правый нижний) для масштабирования кадра
-	Surface2D   animSpritePreview;							// Временный реусрс для созданных анимаций
-	std::string animPath			   = "";				// Путь к спрайту при создании анимации
-	std::string animSelected		   = "";				// Имя выбранной анимации
-	std::string newAnimNameSelected	   = "";				// Имя выбранной анимации при создании
+	int			curFrame			   = 0;				 // Текущий кадр анимации во всех превью
+	int			maxFrames			   = 4;				 // Максимальное число кадров в анимации при создании анимации
+	bool        CreatingAnimation	   = false;			 // Статус создания анимации
+	bool        ChoosingAnimation	   = false;			 // Статус редактирования анимации
+	bool        CreatingAnimtionLoaded = false;			 // Статус загрузки нового спрайта анимации
+	float       scaleFrame			   = 1.0f;			 // Множитель размера превью спрайта
+	float		newFrameWidth		   = 90.0f;			 // Ширина кадра новой анимации
+	float		newFrameHeight		   = 90.0f;			 // Высота кадра новой анимации
+	float		curAnimW			   = 0.0f;			 // Ширина кадра превью
+	float		curAnimH			   = 0.0f;			 // Высота кадра превью
+	float		framesHoldTime		   = 0.2f;			 // Задержка проигрывания анимаций 
+	size_t		animSelectedId		   = 0;				 // Номер выбранного типа анимации
+	size_t		animPlayingId		   = 0;				 // Номер выбранного типа анимации при создании анимации
+	ImVec2		previewSize			   = { 0.0f, 0.0f }; // Размер превью анимации
+	ImVec2		ltNormPixel			   = { 0.0f, 0.0f }; // Нормированый пиксель (левый верхний) для масштабирования кадра
+	ImVec2		rtNormPixel			   = { 0.0f, 0.0f }; // Нормированый пиксель (правый нижний) для масштабирования кадра
+	Surface2D   animSpritePreview;						 // Временный реусрс для созданных анимаций
+	std::string animPath			   = "";			 // Путь к спрайту при создании анимации
+	std::string animSelected		   = "";			 // Имя выбранной анимации
+	std::string newAnimNameSelected	   = "";			 // Имя выбранной анимации при создании
 
 	std::vector<std::string>   animationNames;		// Списко доступных имён анимаций
 	std::vector<Animation>     animationsPreview;	// Анимации в превью при создании
@@ -232,15 +232,15 @@ private:
 private:
 	/* Вспомагательные переменные для отображения FPS */
 
-	double sum     = 0.0;						// Сумма всех элементов массива
-	double average = 0.0;						// Среднее значение FPS
-	double pXMin   = 0.0;						// Минимальное значение для масштабирования графика по оси X
-	double pXMax   = MAX_POINTS					// Максимальное значение для масштабирования графика по оси X
-	double pYMin   = 0.0;						// Минимальное значение для масштабирования графика по оси Y
-	double pYMax   = 0.0;						// Максимальное значение для масштабирования графика по оси Y
-	float  arr[N_POINTS];						// Массив значений fps
-	float  counters[N_POINTS];					// Массив отчётов
-	size_t counter = 0;							// Счётчик итерации
+	double sum     = 0.0;		// Сумма всех элементов массива
+	double average = 0.0;		// Среднее значение FPS
+	double pXMin   = 0.0;		// Минимальное значение для масштабирования графика по оси X
+	double pXMax   = MAX_POINTS	// Максимальное значение для масштабирования графика по оси X
+	double pYMin   = 0.0;		// Минимальное значение для масштабирования графика по оси Y
+	double pYMax   = 0.0;		// Максимальное значение для масштабирования графика по оси Y
+	float  arr[N_POINTS];		// Массив значений fps
+	float  counters[N_POINTS];	// Массив отчётов
+	size_t counter = 0;			// Счётчик итерации
 
 	/**************************************************/
 private:

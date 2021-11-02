@@ -109,7 +109,8 @@ void App::DoFrame(float dt)
 {
 	wnd->Gfx().BeginFrame();	// Начало кадра
 
-	wnd->Gfx().DrawBackground();
+	wnd->Gfx().DrawBackground();	// Отрисовка заднего фона
+	wnd->Gfx().DrawGrid();			// Отрисовка сетки
 
 	for (auto& s : scenes)
 	{

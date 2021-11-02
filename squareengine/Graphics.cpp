@@ -60,6 +60,16 @@ Graphics::Graphics( HWND hWnd,int width,int height, std::string dataPath)
 			backgroundColor[2] = obj.at("b-b");
 
 			/*******************************/
+
+			/* Получение настроек сетки */
+
+			IsGridDrawn  = obj.at("g-s");
+			gridColor[0] = obj.at("g-r");
+			gridColor[1] = obj.at("g-g");
+			gridColor[2] = obj.at("g-b");
+			gridScale	 = obj.at("g-sc");
+
+			/*******************************/
 		}
 	}
 
@@ -842,6 +852,18 @@ void Graphics::DrawBackground()
 			{
 				PutPixel(i, j, Color(backgroundColor[0] * 255.0f, backgroundColor[1] * 255.0f, backgroundColor[2] * 255.0f));
 			}
+		}
+	}
+}
+
+void Graphics::DrawGrid()
+{
+	if (IsGridDrawn)
+	{
+		for (float i = 0.0f; i < width; i += width / gridScale)
+		{
+			DrawLine({ i, 0 }, { i, (float)height }, Color(gridColor[0] * 255.0f, gridColor[1] * 255.0f, gridColor[2] * 255.0f));
+			DrawLine({ 0, i }, { (float)width, i },  Color(gridColor[0] * 255.0f, gridColor[1] * 255.0f, gridColor[2] * 255.0f));
 		}
 	}
 }
