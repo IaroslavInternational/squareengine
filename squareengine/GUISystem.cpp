@@ -9,7 +9,7 @@
 #define POS_Y_LIMIT 10000.0f
 
 #define BIG_POPUP_PANEL_FLAGS ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
-#define SIDE_PANEL_FLAGS     BIG_POPUP_PANEL_FLAGS | ImGuiWindowFlags_NoBringToFrontOnFocus
+#define SIDE_PANEL_FLAGS      BIG_POPUP_PANEL_FLAGS   | ImGuiWindowFlags_NoBringToFrontOnFocus
 
 GUISystem::GUISystem(Scene* scene)
 	:
@@ -220,6 +220,11 @@ void GUISystem::ShowMenu()
 					if (ImGui::MenuItem("Viewport"))
 					{
 						ShowViewportSettings ? ShowViewportSettings = false : ShowViewportSettings = true;
+					}
+
+					if (ImGui::MenuItem("Настройки"))
+					{
+						ShowGraphicsSettings ? ShowGraphicsSettings = false : ShowGraphicsSettings = true;
 					}
 
 					ImGui::EndMenu();
@@ -532,6 +537,12 @@ void GUISystem::ShowOptionalPanel()
 	else if (ShowPhysicsEngineObjInfo)
 	{
 		ShowPhysicsEngineObjHelp();
+	}
+
+	if (ShowGraphicsSettings)
+	{
+		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);
+		ShowGraphicsEngineSettings();
 	}
 
 	if (ShowViewportSettings)
@@ -3218,6 +3229,63 @@ void GUISystem::ShowPhysicsEngineSettings()
 					phEngPtr->dataPath,
 					&applog
 					);
+			}
+
+			ImGui::Separator();
+		}
+	}
+
+	ImGui::End();
+	ImGui::PopStyleColor();
+}
+
+void GUISystem::ShowGraphicsEngineSettings()
+{
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
+	if (ImGui::Begin("Настройки графики", &ShowGraphicsSettings, BIG_POPUP_PANEL_FLAGS))
+	{
+		if(ImGui::CollapsingHeader("Цветовые настройки", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Checkbox("Показать задний фон", &wnd->Gfx().IsBackgroundDrawn);
+			ImGui::ColorEdit3("Цвет заднего фона", wnd->Gfx().backgroundColor);
+
+			if (ImGui::Button("Сохранить"))
+			{
+				AddLog("Сохранение цветовых настроек графического движка...\n");
+
+				EngineFunctions::SetNewValue<bool>(
+					"settings",
+					"b-s",
+					wnd->Gfx().IsBackgroundDrawn,
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"b-r",
+					wnd->Gfx().backgroundColor[0],
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"b-g",
+					wnd->Gfx().backgroundColor[1],
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"b-b",
+					wnd->Gfx().backgroundColor[2],
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				AddLog("Настройки сохранены\n");
 			}
 
 			ImGui::Separator();

@@ -7,6 +7,8 @@
 #include "imgui/imgui_impl_win32.h"
 #endif // IS_ENGINE_MODE
 
+#include "EngineFunctions.hpp"
+
 // Мод запуска окна
 #define ENGINE_WINDOW 0
 
@@ -95,8 +97,11 @@ Window::Window(const char* name)
 		ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
 #endif // IS_ENGINE_MODE
 
+	std::ostringstream oss;
+	oss << "Projects\\" << EngineFunctions::GetProjectName() << "\\Scenes\\graphics_settings.json";
+
 	// Создание графического объекта
-	pGfx = std::make_unique<Graphics>(hWnd, width, height);
+	pGfx = std::make_unique<Graphics>(hWnd, width, height, oss.str());
 
 	// Регистрация данных с мыши
 	RAWINPUTDEVICE rid;

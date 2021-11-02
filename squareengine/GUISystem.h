@@ -79,6 +79,7 @@ private:
 	void   ShowFPS();						// Показать панель с графиком изменения FPS		   
 	void   ShowPhysicsEngineObjHelp();		// Показать подписи имён объектов физического движка
 	void   ShowPhysicsEngineSettings();		// Показать панель настроек физического движка
+	void   ShowGraphicsEngineSettings();			// Показать панель настроек графики
 	void   ShowProjectSettings();			// Показать панель настроек проекта
 	void   ShowViewportControl();			// Показать панель настроек Viewport
 	HitBox CreateNewHitBox();				// Создать HitBox с помощью интерфейса
@@ -109,6 +110,7 @@ private:
 
 	bool ShowPhysicsEngineObjInfo	  = true;	// Видимость подписей имён объектов физического движка  
 	bool ShowPhysicsSettings		  = false;	// Видимость панели настроек физического движка
+	bool ShowGraphicsSettings		  = false;	// Видимость панели настроек графики
 	bool ShowViewportSettings		  = false;	// Видимость панели настроек Viewport
 	bool ShowLogs					  = true;	// Видимость лога
 	bool ShowHardwareInfo 			  =	true;	// Видимость FPS и информации о графическом адаптере

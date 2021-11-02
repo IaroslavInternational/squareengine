@@ -109,6 +109,8 @@ void App::DoFrame(float dt)
 {
 	wnd->Gfx().BeginFrame();	// Начало кадра
 
+	wnd->Gfx().DrawBackground();
+
 	for (auto& s : scenes)
 	{
 		if (s.second)

@@ -69,7 +69,7 @@ public:
 		std::string reason;
 	};
 public:
-	Graphics( HWND hWnd,int width,int height );
+	Graphics( HWND hWnd,int width,int height, std::string dataPath);
 	Graphics( const Graphics& ) = delete;
 	
 	Graphics& operator=( const Graphics& ) = delete;
@@ -100,7 +100,7 @@ public:
 	void DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
 	// Simple helper function to load an image into a DX11 texture with common settings
 	bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);
-
+	void DrawBackground();
 	void SetViewPort(D3D11_VIEWPORT& vp);
 
 	~Graphics();
@@ -150,4 +150,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>			pSamplerState;
 	D3D11_MAPPED_SUBRESOURCE							mappedSysBufferTexture;
 	Color* pSysBuffer = nullptr;
+public:
+	std::string dataPath;
+	bool IsBackgroundDrawn = true;
+	float backgroundColor[3] = { 0.0f, 0.0f, 0.0f };
 };

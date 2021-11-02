@@ -7,6 +7,8 @@
 #include <array>
 #include "GraphicsThrowMacros.h"
 
+#include "EngineFunctions.hpp"
+
 #if IS_ENGINE_MODE
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
@@ -27,11 +29,40 @@ namespace FramebufferShaders
 	#include "FramebufferVS.shh"
 }
 
-Graphics::Graphics( HWND hWnd,int width,int height )
+Graphics::Graphics( HWND hWnd,int width,int height, std::string dataPath)
 	:
 	width( width ),
-	height( height )
+	height( height ),
+	dataPath(dataPath)
 {
+	std::ifstream dataFile(dataPath);
+	if (!dataFile.is_open())
+	{
+		throw ("Не удаётся открыть файл с данными о графике");
+	}
+
+	json j;
+	dataFile >> j;
+
+	dataFile.close();
+
+	for (json::iterator m = j.begin(); m != j.end(); ++m)
+	{
+		auto d = m.key();
+
+		for (const auto& obj : j.at(d))
+		{
+			/* Получение настроек заднего фона */
+
+			IsBackgroundDrawn  = obj.at("b-s");
+			backgroundColor[0] = obj.at("b-r");
+			backgroundColor[1] = obj.at("b-g");
+			backgroundColor[2] = obj.at("b-b");
+
+			/*******************************/
+		}
+	}
+
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
@@ -799,6 +830,20 @@ bool Graphics::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceVie
 	stbi_image_free(image_data);
 
 	return true;
+}
+
+void Graphics::DrawBackground()
+{
+	if (IsBackgroundDrawn)
+	{
+		for (size_t i = 0; i < width; i++)
+		{
+			for (size_t j = 0; j < height; j++)
+			{
+				PutPixel(i, j, Color(backgroundColor[0] * 255.0f, backgroundColor[1] * 255.0f, backgroundColor[2] * 255.0f));
+			}
+		}
+	}
 }
 
 void Graphics::SetViewPort(D3D11_VIEWPORT& vp)
