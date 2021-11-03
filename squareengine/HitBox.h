@@ -36,7 +36,8 @@ public:
 public:
 	/* Методы операций с hitbox */
 	
-	bool IsCollide(HitBox hb);	// Проверка столкновения с другим hitbox
+	bool IsCollide(HitBox hb);					// Проверка столкновения с другим hitbox
+	bool IsOverlap(DirectX::XMFLOAT2 point);	// Проверка вхождения точки
 
 	/****************************/
 private:

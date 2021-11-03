@@ -76,16 +76,12 @@ private:
 	{
 		WalkingLeft,
 		WalkingRight,
-		WalkingUp,
-		WalkingDown,
 		StandingLeft,
 		StandingRight,
-		StandingUp,
-		StandingDown,
 		Count
 	};																// Список анимаций
 	std::vector<Animation> animations;								// Вектор анимаций
-	Sequence			   iCurSequence = Sequence::StandingDown;	// Текущее состояние анимаций
+	Sequence			   iCurSequence = Sequence::StandingRight;	// Текущее состояние анимаций
 	float				   holdTime;								// Задержка анимации
 
 	/*******************************************/

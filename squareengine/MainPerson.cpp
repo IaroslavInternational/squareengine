@@ -22,12 +22,8 @@ MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, s
 	{
 		"Ходьба влево",
 		"Ходьба вправо",
-		"Ходьба вверх",
-		"Ходьба вниз",
 		"Покой влево",
 		"Покой вправо",
-		"Покой вверх",
-		"Покой вниз",
 	};
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
@@ -117,14 +113,6 @@ void MainPerson::SetDirection(DirectX::XMFLOAT2 dir)
 	{
 		iCurSequence = Sequence::WalkingLeft;
 	}
-	else if (dir.y < 0.0f)
-	{
-		iCurSequence = Sequence::WalkingUp;
-	}
-	else if (dir.y > 0.0f)
-	{
-		iCurSequence = Sequence::WalkingDown;
-	}
 	else
 	{
 		if (vel.x > 0.0f)
@@ -134,14 +122,6 @@ void MainPerson::SetDirection(DirectX::XMFLOAT2 dir)
 		else if (vel.x < 0.0f)
 		{
 			iCurSequence = Sequence::StandingLeft;
-		}
-		else if (vel.y < 0.0f)
-		{
-			iCurSequence = Sequence::StandingUp;
-		}
-		else if (vel.y > 0.0f)
-		{
-			iCurSequence = Sequence::StandingDown;
 		}
 	}
 	vel.x = dir.x * speed;

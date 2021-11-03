@@ -114,4 +114,10 @@ bool HitBox::IsCollide(HitBox hb)
 			  (coordinates.w >= hb.coordinates.y &&	   coordinates.w <= hb.coordinates.w))));	
 }
 
+bool HitBox::IsOverlap(DirectX::XMFLOAT2 point)
+{
+	return  (point.x >= coordinates.x && point.x <= coordinates.z) &&
+			(point.y >= coordinates.y && point.y <= coordinates.w);
+}
+
 /****************************/

@@ -74,16 +74,17 @@ private:
 		   Object2D* obj, 
 		   std::string dataPath);			// Показать модуль настроек для объекта на базе Object2D
 
+	void   SaveAll();						// Сохранить все настройки
 	void   ShowLog();						// Показать панель лога
 	void   ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
 	void   ShowFPS();						// Показать панель с графиком изменения FPS		   
 	void   ShowPhysicsEngineObjHelp();		// Показать подписи имён объектов физического движка
 	void   ShowPhysicsEngineSettings();		// Показать панель настроек физического движка
-	void   ShowGraphicsEngineSettings();			// Показать панель настроек графики
+	void   ShowGraphicsEngineSettings();	// Показать панель настроек графики
 	void   ShowProjectSettings();			// Показать панель настроек проекта
 	void   ShowViewportControl();			// Показать панель настроек Viewport
 	HitBox CreateNewHitBox();				// Создать HitBox с помощью интерфейса
-
+	
 	std::string					ShowLoadingSpriteDilaog();				// Показать диалоговое окно для загрузки спрайта
 	std::optional<IobjData>		ShowAddingIobjDialog();					// Показать диалоговое окно для добавления интерактивного объекта
 	std::vector<AnimationData>	ShowAnimationCreatingDialog(float dt);	// Показать диалоговое окно для создания анимации
@@ -249,5 +250,6 @@ private:
 private:
 	std::string mouseHelpInfo = "";		// Подпись под курсором
 	bool IsShow				  = true;	// Состояние видимости интерфейса
+	int sel = -1;
 };
 

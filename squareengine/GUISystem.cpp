@@ -700,6 +700,44 @@ void GUISystem::ShowPersonList()
 
 void GUISystem::ShowIobjList()
 {
+	/*if (sel == -1)
+	{
+		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			auto mPosX = wnd->mouse.GetPosX() + camera->position.x;
+			auto mPosY = wnd->mouse.GetPosY() + camera->position.y;
+
+			for (size_t i = 0; i < IobjCon->objects.size(); i++)
+			{
+				if (IobjCon->objects[i]->hitbox.IsOverlap({ mPosX, mPosY }))
+				{
+					sel = i;
+				}
+			}
+		}
+	}
+	else
+	{
+		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			sel = -1;
+		}
+		else
+		{
+			auto mPosX = wnd->mouse.GetPosX() + camera->position.x;
+			auto mPosY = wnd->mouse.GetPosY() + camera->position.y;
+
+			float dx = IobjCon->objects[sel]->hitbox.coordinates.x - IobjCon->objects[sel]->position.x;
+			float dy = IobjCon->objects[sel]->hitbox.coordinates.y - IobjCon->objects[sel]->position.y;
+
+			IobjCon->objects[sel]->SetPosition({ mPosX, mPosY });
+			IobjCon->objects[sel]->hitbox.coordinates.x = dx - IobjCon->objects[sel]->position.x;
+			IobjCon->objects[sel]->hitbox.coordinates.y = dy - IobjCon->objects[sel]->position.y;
+			IobjCon->objects[sel]->hitbox.coordinates.z = dx - IobjCon->objects[sel]->position.x + fabs(IobjCon->objects[sel]->hitbox.coordinates.z - IobjCon->objects[sel]->hitbox.coordinates.x);
+			IobjCon->objects[sel]->hitbox.coordinates.w = dy - IobjCon->objects[sel]->position.y + fabs(IobjCon->objects[sel]->hitbox.coordinates.w - IobjCon->objects[sel]->hitbox.coordinates.y);
+		}
+	}*/
+
 	if (ImGui::Begin("Îáúåêòû", NULL, SIDE_PANEL_FLAGS))
 	{
 		for (auto o = IobjCon->objects.begin(); o != IobjCon->objects.end(); o++)
