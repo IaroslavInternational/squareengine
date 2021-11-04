@@ -104,7 +104,7 @@ namespace EngineFunctions
 
 		EngineFunctions::SetNewValue<int>(
 			objectName,
-			"a-pe", data.pEnd,
+			"a-pe", data.pStart,
 			path,
 			applog
 			);

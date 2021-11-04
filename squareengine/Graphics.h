@@ -16,16 +16,11 @@
 #include "Surface2D.h"
 #include "RectI.h"
 #include "HitBox.h"
-
-namespace Bind
-{
-	class Bindable;
-	class RenderTarget;
-}
+#include "Line.h"
 
 class Graphics
 {
-	friend class GraphicsResource;
+public:
 	friend class GUISystem;
 public:
 	class Exception : public EngineException
@@ -70,93 +65,80 @@ public:
 		std::string reason;
 	};
 public:
-	Graphics( HWND hWnd,int width,int height, std::string dataPath);
-	Graphics( const Graphics& ) = delete;
-	
-	Graphics& operator=( const Graphics& ) = delete;
-	
+	Graphics(HWND hWnd, int width, int height, std::string dataPath);
+	Graphics(const Graphics&) = delete;
+	~Graphics();
+	Graphics& operator=(const Graphics&) = delete;
+public:
+	void  BeginFrame()			 noexcept;
+	void  EndFrame();
+	void  EnableImgui()			 noexcept;
+	void  DisableImgui()		 noexcept;
+	bool  IsImguiEnabled() const noexcept;
+	UINT  GetWidth()	   const noexcept;
+	UINT  GetHeight()	   const noexcept;
+	RectI GetScreenRect();
+public:
 	Color GetPixel(int x, int y) const;
-	void PutPixel(int x, int y, int r, int g, int b)
-	{
-		PutPixel(x, y, { unsigned char(r),unsigned char(g),unsigned char(b) });
-	}
-	void PutPixel(int x, int y, Color c);
+	void  PutPixel(int x, int y, int r, int g, int b);
+	void  PutPixel(int x, int y, Color c);
+public:
+	void DrawBackground();
+	void DrawGrid();
+	void SetViewPort(D3D11_VIEWPORT& vp);
+public:
+	void DrawLine(Physics::Line line, Color c = Colors::White);
 	void DrawLine(DirectX::XMFLOAT2 p0, DirectX::XMFLOAT2 p1, Color c = Colors::White);
-	void DrawVerticalLine(int start_x, int start_y, int end_y, Color c = Colors::Red);
-	void DrawHorizontalLine(int start_x, int end_x, int start_y, Color c = Colors::Red);
 	void DrawHitBox(HitBox hb, Color c = Colors::DodgerBlue);
+public:
 	void DrawSpriteNonChroma(int x, int y, const Surface2D& s);
 	void DrawSpriteNonChroma(int x, int y, const RectI& srcRect, const Surface2D& s);
 	void DrawSpriteNonChroma(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s);
 	void DrawSprite(int x, int y, const Surface2D& s, Color chroma = Colors::Magenta);
 	void DrawSprite(int x, int y, const RectI& srcRect, const Surface2D& s, Color chroma = Colors::Magenta);
 	void DrawSprite(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, Color chroma = Colors::Magenta);
-	// this version of drawsprite substitutes all drawn pixel colors with the supplied color
 	void DrawSpriteSubstitute(int x, int y, Color substitute, const Surface2D& s, Color chroma = Colors::Magenta);
 	void DrawSpriteSubstitute(int x, int y, Color substitute, const RectI& srcRect, const Surface2D& s, Color chroma = Colors::Magenta);
 	void DrawSpriteSubstitute(int x, int y, Color substitute, RectI srcRect, const RectI& clip, const Surface2D& s, Color chroma = Colors::Magenta);
-	// this version of drawsprite has 50% transparency
 	void DrawSpriteGhost(int x, int y, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
 	void DrawSpriteGhost(int x, int y, const RectI& srcRect, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
 	void DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
-	// Simple helper function to load an image into a DX11 texture with common settings
+public:
+	bool LoadTextureFromFile(std::string filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);
 	bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);
-	void DrawBackground();
-	void DrawGrid();
-	void SetViewPort(D3D11_VIEWPORT& vp);
-
-	~Graphics();
-	
-	void EndFrame();
-	void BeginFrame() noexcept;
-	
-	void DrawIndexed( UINT count ) noxnd;
-
-#if IS_ENGINE_MODE
-	void EnableImgui() noexcept;
-	void DisableImgui() noexcept;
-	bool IsImguiEnabled() const noexcept;
-#endif //IS_ENGINE_MODE
-
-	UINT GetWidth() const noexcept;
-	UINT GetHeight() const noexcept;
-	RectI GetScreenRect();
-
 private:
-	// vertex format for the framebuffer fullscreen textured quad
 	struct FSQVertex
 	{
-		float x, y, z;		// position
-		float u, v;			// texcoords
+		float x, y, z; // Кооординаты
+		float u, v;	   // Координаты текстуры
 	};
-
-	UINT width;
-	UINT height;
-
-#if IS_ENGINE_MODE
-	bool imguiEnabled = true;
-#endif //IS_ENGINE_MODE
+	UINT   width;				// Ширина экрана
+	UINT   height;			    // Высота экрана
+	bool   imguiEnabled = true; // Статус доступности GUI
+private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
-	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
-	Microsoft::WRL::ComPtr<ID3D11Device>				pDevice;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext>			pImmediateContext;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>		pRenderTargetView;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D>				pSysBufferTexture;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	pSysBufferTextureView;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader>			pPixelShader;
-	Microsoft::WRL::ComPtr<ID3D11VertexShader>			pVertexShader;
-	Microsoft::WRL::ComPtr<ID3D11Buffer>				pVertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11InputLayout>			pInputLayout;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState>			pSamplerState;
-	D3D11_MAPPED_SUBRESOURCE							mappedSysBufferTexture;
+	Microsoft::WRL::ComPtr<IDXGISwapChain>			 pSwapChain;
+	Microsoft::WRL::ComPtr<ID3D11Device>			 pDevice;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext>		 pImmediateContext;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	 pRenderTargetView;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D>			 pSysBufferTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pSysBufferTextureView;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader>		 pPixelShader;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader>		 pVertexShader;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>			 pVertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout>		 pInputLayout;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState>		 pSamplerState;
+	D3D11_MAPPED_SUBRESOURCE						 mappedSysBufferTexture;
 	Color* pSysBuffer = nullptr;
-
-	std::string dataPath;
-	bool IsBackgroundDrawn;
-	float backgroundColor[3];
-	bool IsGridDrawn;
-	float gridColor[3];
-	float gridScale;
+private:
+	std::string dataPath;			// Путь к данным о графическом движке
+	bool        IsBackgroundDrawn;	// Статус отрисовки заднего фона
+	float       backgroundColor[3];	// Цвет заднего фона
+	bool        IsGridDrawn;		// Статус отрисовки сетки
+	float       gridColor[3];		// Цвет сетки
+	float       gridScale;			// Масштаб
+	float		POS_X_LIMIT;		// Граница мира по оси X
+	float		POS_Y_LIMIT;		// Граница мира по оси Y
 };

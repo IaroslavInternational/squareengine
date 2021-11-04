@@ -5,9 +5,6 @@
 #include "HitBox.h"
 #include "Line.h"
 
-#define POS_X_LIMIT 10000.0f
-#define POS_Y_LIMIT 10000.0f
-
 #define BIG_POPUP_PANEL_FLAGS ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
 #define SIDE_PANEL_FLAGS      BIG_POPUP_PANEL_FLAGS   | ImGuiWindowFlags_NoBringToFrontOnFocus
 
@@ -725,8 +722,8 @@ void GUISystem::ShowIobjList()
 		if (!wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
 		{
 			IobjCon->objects[draggingObjId]->hitbox.visability = true;
-			draggingObjId = -1;
-			
+			draggingObjId = -1;		
+
 			AddLog("Перемещение завершенно\n");
 		}
 		else
@@ -740,10 +737,10 @@ void GUISystem::ShowIobjList()
 			IobjCon->objects[draggingObjId]->hitbox.visability = false;
 
 			IobjCon->objects[draggingObjId]->SetPosition({ mPosX, mPosY });
-			IobjCon->objects[draggingObjId]->hitbox.coordinates.z = IobjCon->objects[draggingObjId]->position.x - dx + fabs(IobjCon->objects[draggingObjId]->hitbox.coordinates.z - IobjCon->objects[draggingObjId]->hitbox.coordinates.x);
-			IobjCon->objects[draggingObjId]->hitbox.coordinates.w = IobjCon->objects[draggingObjId]->position.y - dy + fabs(IobjCon->objects[draggingObjId]->hitbox.coordinates.w - IobjCon->objects[draggingObjId]->hitbox.coordinates.y);
-			IobjCon->objects[draggingObjId]->hitbox.coordinates.x = IobjCon->objects[draggingObjId]->position.x - dx;
-			IobjCon->objects[draggingObjId]->hitbox.coordinates.y = IobjCon->objects[draggingObjId]->position.y - dy;
+			IobjCon->objects[draggingObjId]->hitbox.coordinates.z = IobjCon->objects[draggingObjId]->position.x + dx + fabs(IobjCon->objects[draggingObjId]->hitbox.coordinates.z - IobjCon->objects[draggingObjId]->hitbox.coordinates.x);
+			IobjCon->objects[draggingObjId]->hitbox.coordinates.w = IobjCon->objects[draggingObjId]->position.y + dy + fabs(IobjCon->objects[draggingObjId]->hitbox.coordinates.w - IobjCon->objects[draggingObjId]->hitbox.coordinates.y);
+			IobjCon->objects[draggingObjId]->hitbox.coordinates.x = IobjCon->objects[draggingObjId]->position.x + dx;
+			IobjCon->objects[draggingObjId]->hitbox.coordinates.y = IobjCon->objects[draggingObjId]->position.y + dy;
 		}
 	}
 
@@ -1423,6 +1420,13 @@ void GUISystem::ShowMainPersonControl(float dt)
 									hero->dataPath,
 									&applog);
 
+								EngineFunctions::SetNewValue<std::string>(
+									hero->name,
+									"path", hero->image.GetFileName(),
+									hero->dataPath,
+									&applog
+									);
+
 								CreatingAnimation = false;
 							}
 						}
@@ -2078,12 +2082,12 @@ void GUISystem::ShowPhysicsEngineObjControl()
 						if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 						{
 							ImGui::Text("Позиция начальной точки:");
-							dcheck(ImGui::SliderFloat("Xs", &phEngPtr->lines.at(k).start.x, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ys", &phEngPtr->lines.at(k).start.y, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xs", &phEngPtr->lines.at(k).start.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ys", &phEngPtr->lines.at(k).start.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
 
 							ImGui::Text("Позиция конечной точки:");
-							dcheck(ImGui::SliderFloat("Xe", &phEngPtr->lines.at(k).end.x, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ye", &phEngPtr->lines.at(k).end.y, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xe", &phEngPtr->lines.at(k).end.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ye", &phEngPtr->lines.at(k).end.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
 
 							if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
 							{
@@ -2334,12 +2338,12 @@ void GUISystem::ShowPhysicsEngineObjControl()
 						if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 						{
 							ImGui::Text("Позиция левой верхней точки:");
-							dcheck(ImGui::SliderFloat("Xs", &phEngPtr->hitboxes.at(k).coordinates.x, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ys", &phEngPtr->hitboxes.at(k).coordinates.y, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xs", &phEngPtr->hitboxes.at(k).coordinates.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ys", &phEngPtr->hitboxes.at(k).coordinates.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
 
 							ImGui::Text("Позиция правой нижней точки:");
-							dcheck(ImGui::SliderFloat("Xe", &phEngPtr->hitboxes.at(k).coordinates.z, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ye", &phEngPtr->hitboxes.at(k).coordinates.w, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xe", &phEngPtr->hitboxes.at(k).coordinates.z, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ye", &phEngPtr->hitboxes.at(k).coordinates.w, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
 
 							ImGui::NewLine();
 
@@ -2712,8 +2716,8 @@ void GUISystem::ShowCameraControl()
 			ImGui::Text(cPos.str().c_str());
 
 			ImGui::Text("Исходная позиция:");
-			dcheck(ImGui::SliderFloat("X", &camera->initPosition.x, -POS_X_LIMIT, POS_X_LIMIT), posDirty);
-			dcheck(ImGui::SliderFloat("Y", &camera->initPosition.y, -POS_Y_LIMIT, POS_Y_LIMIT), posDirty);
+			dcheck(ImGui::SliderFloat("X", &camera->initPosition.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT), posDirty);
+			dcheck(ImGui::SliderFloat("Y", &camera->initPosition.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT), posDirty);
 
 			if (ImGui::Button("Вернуть на исходную позицию"))
 			{
@@ -2887,8 +2891,8 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 	if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Text("Позиция:");
-		dcheck(ImGui::SliderFloat("X", &obj->position.x, -POS_X_LIMIT, POS_X_LIMIT, "%.2f"), posDirty);
-		dcheck(ImGui::SliderFloat("Y", &obj->position.y, -POS_Y_LIMIT, POS_Y_LIMIT, "%.2f"), posDirty);
+		dcheck(ImGui::SliderFloat("X", &obj->position.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+		dcheck(ImGui::SliderFloat("Y", &obj->position.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
 
 		ImGui::NewLine();
 
@@ -2926,7 +2930,6 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 			AddLog("...\n");
 
 			LoadingSprite = true;
-			LoadedPreview = false;
 		}
 	}
 
@@ -2951,7 +2954,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 						hb_coord.z = obj->position.x + im.GetWidth();
 						hb_coord.w = obj->position.y + im.GetHeight();
 
-						io->hitbox = HitBox(io->name + std::string("hitbox"), hb_coord);
+						io->hitbox = HitBox(io->name + std::string(" hitbox"), hb_coord);
 						
 						AddLog("Hit-box обновлён\n");
 
@@ -2965,6 +2968,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 			AddLog("Новый спрайт загружен\n");
 
 			LoadingSprite = false;
+			LoadedPreview = false;
 		}
 	}
 
@@ -3291,7 +3295,39 @@ void GUISystem::ShowGraphicsEngineSettings()
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
 	if (ImGui::Begin("Настройки графики", &ShowGraphicsSettings, BIG_POPUP_PANEL_FLAGS))
 	{
-		if(ImGui::CollapsingHeader("Цветовые настройки", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("Настройки мира", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text("Границы мира");
+			ImGui::SliderFloat("X", &wnd->Gfx().POS_X_LIMIT, 1000.0f, 500000.0f);
+			ImGui::SliderFloat("Y", &wnd->Gfx().POS_Y_LIMIT, 1000.0f, 500000.0f);
+
+			if (ImGui::Button("Сохранить"))
+			{
+				AddLog("Сохранение настроек мира графического движка...\n");
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"lim-x",
+					wnd->Gfx().POS_X_LIMIT,
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				EngineFunctions::SetNewValue<float>(
+					"settings",
+					"lim-y",
+					wnd->Gfx().POS_Y_LIMIT,
+					wnd->Gfx().dataPath,
+					&applog
+					);
+
+				AddLog("Настройки сохранены\n");
+			}
+
+			ImGui::Separator();
+		}
+
+		if(ImGui::CollapsingHeader("Цветовые настройки"))
 		{
 			ImGui::Checkbox("Показать задний фон", &wnd->Gfx().IsBackgroundDrawn);
 			ImGui::ColorEdit3("Цвет заднего фона", wnd->Gfx().backgroundColor);
