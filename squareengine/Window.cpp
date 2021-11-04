@@ -93,7 +93,7 @@ Window::Window(const char* name)
 	// Инициализация ImGui Win32 Impl
 	ImGui_ImplWin32_Init( hWnd );
 
-	ImGui::GetIO().Fonts->AddFontFromFileTTF("Fonts\\Ubuntu-L.ttf", 14.0F, NULL,
+	ImGui::GetIO().Fonts->AddFontFromFileTTF("Fonts\\SegoeUISemilight.ttf", 17.0F, NULL,
 		ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
 #endif // IS_ENGINE_MODE
 

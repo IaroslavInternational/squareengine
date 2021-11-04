@@ -150,7 +150,7 @@ void App::DoFrame(float dt)
 			}
 
 			scene->Render(dt);	// Отрисовка содержания сцены
-
+			
 			// Данные о триггере
 			auto t = scene->IsOnTheSceneTrigger();
 			

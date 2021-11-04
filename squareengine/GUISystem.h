@@ -26,7 +26,7 @@ public:
 	GUISystem(Scene* scene);	// Конструктор (принимает указатель на сцену)
 public:
 	/* Главные методы для отрисовки интерфейса */
-	
+
 	void						 Show(float dt);						// Показать интерфейс (принимает время одного кадра)
 	void						 Hide();								// Скрыть интерфейс
 	void						 AddLog(const std::ostringstream& oss);	// Добавить лог
@@ -71,10 +71,9 @@ private:
 	void   ShowScenesControl();		   		// Показать панель настроек сцен
 	void   SpawnCameraToHeroControl();		// Показать модуль настроек для взаимодейтсвия камеры и героя
 	void   SpawnDefaultObject2DControl(
-		   Object2D* obj, 
+		   Object2D*   obj, 
 		   std::string dataPath);			// Показать модуль настроек для объекта на базе Object2D
 
-	void   SaveAll();						// Сохранить все настройки
 	void   ShowLog();						// Показать панель лога
 	void   ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
 	void   ShowFPS();						// Показать панель с графиком изменения FPS		   
@@ -90,6 +89,20 @@ private:
 	std::vector<AnimationData>	ShowAnimationCreatingDialog(float dt);	// Показать диалоговое окно для создания анимации
 
 	/*******************************************/
+private:
+	/* Методы сохранения данных */
+
+	void SaveAll();						// Сохранить все настройки
+	void SaveMainPersonData();
+	void SavePersonsData();
+	void SaveIobjData();
+	void SaveLayersData();
+	void SaveCameraData();
+	void SaveScenesData();
+	void SavePhysicsEngineData();
+	void SaveGraphicsEngineData();
+
+	/****************************/
 private:
 	/* Переменные видимости панелей */
 	
@@ -257,7 +270,7 @@ private:
 	std::string mouseHelpInfo = "";	  // Подпись под курсором
 	bool		IsShow		  = true; // Состояние видимости интерфейса
 	int			draggingObjId = -1;	  // Индекс выбранного интеративного объекта для перемещения мышкой
-	
+
 	/*********************************************/
 };
 

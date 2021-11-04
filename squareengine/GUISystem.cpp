@@ -5,6 +5,8 @@
 #include "HitBox.h"
 #include "Line.h"
 
+#include <future>
+
 #define BIG_POPUP_PANEL_FLAGS ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
 #define SIDE_PANEL_FLAGS      BIG_POPUP_PANEL_FLAGS   | ImGuiWindowFlags_NoBringToFrontOnFocus
 
@@ -129,7 +131,7 @@ void GUISystem::SetGUIColors()
 
 	ImGui::GetStyle().FrameRounding    = 4.0f;								// Закругление компонентов
 	ImGui::GetStyle().WindowBorderSize = 0.0f;								// Размер границы
-	ImGui::GetStyle().WindowRounding   = 0.0f;								// Закругление окон
+	ImGui::GetStyle().WindowRounding   = 10.0f;								// Закругление окон
 	
 	// Цвета
 	ImVec4* colors = ImGui::GetStyle().Colors;
@@ -194,6 +196,12 @@ void GUISystem::ShowMenu()
 	{
 		if (ImGui::BeginMenu("Файл"))
 		{
+			if (ImGui::MenuItem("Сохранить всё"))
+			{
+				auto thread = std::async(&GUISystem::SaveAll, this);
+				thread.get();
+			}
+
 			if (ImGui::MenuItem("Выход"))
 			{
 				AddLog("Завершение работы...");
@@ -1843,7 +1851,8 @@ void GUISystem::ShowPersonControl(float dt)
 
 									/* Пересохранение hitbox */
 									
-									EngineFunctions::SaveHitBoxData(personSelected, persCon->persons.at(k)->hitbox, persCon->dataPath, &applog);
+									auto hitbox = persCon->persons[k]->hitbox;
+									EngineFunctions::SaveHitBoxData(personSelected, hitbox, persCon->dataPath, &applog);
 
 									/*************************/
 
@@ -2028,7 +2037,8 @@ void GUISystem::ShowIobjControl()
 										&applog
 										);
 
-									EngineFunctions::SaveHitBoxData(IobjSelected, IobjCon->objects.at(k)->hitbox, IobjCon->dataPath, &applog);
+									auto hitbox = IobjCon->objects.at(k)->hitbox;
+									EngineFunctions::SaveHitBoxData(IobjSelected, hitbox, IobjCon->dataPath, &applog);
 
 									AddLog("Настройки сохранены\n");
 
@@ -3924,3 +3934,572 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 }
 
 /*******************************************/
+
+/* Методы сохранения данных */
+
+void GUISystem::SaveAll()
+{
+	AddLog("Сохранение всех настроек и изменений...\n");
+
+	SaveMainPersonData();
+	SavePersonsData();
+	SaveIobjData();
+	SaveLayersData();
+	SaveCameraData();
+	SaveScenesData();
+	SavePhysicsEngineData();
+	SaveGraphicsEngineData();
+
+	AddLog("Все настройки сохранены успешно\n");
+}
+
+void GUISystem::SaveMainPersonData()
+{
+	AddLog("Сохранение настроек для главного персонажа...\n");
+
+	/* Сохранение позиции */
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"pos-x", hero->position.x,
+		hero->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"pos-y", hero->position.y,
+		hero->dataPath,
+		&applog
+		);
+
+	/**********************/
+
+	/* Сохранение изображения */
+
+	EngineFunctions::SetNewValue<std::string>(
+		hero->name,
+		"path", hero->image.GetFileName(),
+		hero->dataPath,
+		&applog
+		);
+
+	/**************************/
+
+	/* Сохранение скорости */
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"speed", hero->speed,
+		hero->dataPath,
+		&applog
+		);
+
+	/**********************/
+
+	/* Сохранение настроек эффекта */
+
+	EngineFunctions::SetNewValue<bool>(
+		hero->name,
+		"eff-a", hero->effect.Active,
+		hero->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"eff-d", hero->effect.Duration,
+		hero->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"eff-t", hero->effect.Time,
+		hero->dataPath,
+		&applog
+		);
+
+	/*******************************/
+
+	/* Пересохранение hitbox */
+
+	auto actual_hb = hero->hitbox;
+
+	EngineFunctions::SaveHitBoxData(hero->name, actual_hb, hero->dataPath, &applog);
+
+	/*************************/
+
+	/* Сохранение настроек камеры */
+
+	EngineFunctions::SetNewValue<size_t>(
+		hero->name,
+		"camera-mode", static_cast<size_t>(hero->cameraMode),
+		hero->dataPath,
+		&applog
+		);
+
+	/******************************/
+
+	/* Сохранение настроек анимаций */
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"a-ft", hero->holdTime,
+		hero->dataPath,
+		&applog
+		);
+
+	/********************************/
+
+	/* Сохранение настроек физики для персонажа */
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"gravity", hero->gravity,
+		hero->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<int>(
+		hero->name,
+		"j-h", hero->jump_height,
+		hero->dataPath,
+		&applog
+		);
+
+	/********************************************/
+
+	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SavePersonsData()
+{
+	AddLog("Сохранение настроек для персонажей...\n");
+
+	for (size_t i = 0; i < persCon->persons.size(); i++)
+	{
+		/* Сохранение позиции */
+
+		EngineFunctions::SetNewValue<float>(
+			persCon->persons[i]->name,
+			"pos-x", persCon->persons[i]->position.x,
+			persCon->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			persCon->persons[i]->name,
+			"pos-y", persCon->persons[i]->position.y,
+			persCon->dataPath,
+			&applog
+			);
+
+		/**********************/
+
+		/* Сохранение скорости */
+
+		EngineFunctions::SetNewValue<float>(
+			persCon->persons[i]->name,
+			"speed", persCon->persons[i]->speed,
+			persCon->dataPath,
+			&applog
+			);
+
+		/***********************/
+
+		/* Сохранение настроек эффекта */
+
+		EngineFunctions::SetNewValue<bool>(
+			persCon->persons[i]->name,
+			"eff-a", persCon->persons[i]->effect.Active,
+			persCon->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			persCon->persons[i]->name,
+			"eff-d", persCon->persons[i]->effect.Duration,
+			persCon->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			persCon->persons[i]->name,
+			"eff-t", persCon->persons[i]->effect.Time,
+			persCon->dataPath,
+			&applog
+			);
+
+		/*******************************/
+
+		/* Пересохранение hitbox */
+
+		auto hitbox = persCon->persons[i]->hitbox;
+		EngineFunctions::SaveHitBoxData(persCon->persons[i]->name, hitbox, persCon->dataPath, &applog);
+
+		/*************************/
+	}
+
+	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SaveIobjData()
+{
+	AddLog("Сохранение настроек для интерактивных объектов...\n");
+
+	for (size_t i = 0; i < IobjCon->objects.size(); i++)
+	{
+		/* Сохранение позиции */
+
+		EngineFunctions::SetNewValue<float>(
+			IobjCon->objects[i]->name,
+			"pos-x", IobjCon->objects[i]->position.x,
+			IobjCon->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			IobjCon->objects[i]->name,
+			"pos-y", IobjCon->objects[i]->position.y,
+			IobjCon->dataPath,
+			&applog
+			);
+
+		/**********************/
+
+		EngineFunctions::SetNewValue<float>(
+			IobjCon->objects[i]->name,
+			"g-deep", IobjCon->objects[i]->deep,
+			IobjCon->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<bool>(
+			IobjCon->objects[i]->name,
+			"g-able", IobjCon->objects[i]->drawGhostable,
+			IobjCon->dataPath,
+			&applog
+			);
+
+		auto hitbox = IobjCon->objects[i]->hitbox;
+		EngineFunctions::SaveHitBoxData(IobjCon->objects[i]->name, hitbox, IobjCon->dataPath, &applog);
+	}
+
+	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SaveLayersData()
+{
+	AddLog("Сохранение настроек для слоёв...\n");
+
+	for (size_t i = 0; i < objQueue->queue.size(); i++)
+	{
+		std::string pathToFile = "";
+
+		if (objQueue->queue[i]->name.find("obj") != objQueue->queue[i]->name.npos)
+		{
+			pathToFile = IobjCon->dataPath;
+		}
+		else if (objQueue->queue[i]->name.find("mainperson") != objQueue->queue[i]->name.npos)
+		{
+			pathToFile = hero->dataPath;
+		}
+		else
+		{
+			pathToFile = persCon->dataPath;
+		}
+
+		EngineFunctions::SetNewValue<size_t>(
+			objQueue->queue[i]->name,
+			"layer", objQueue->queue[i]->layer,
+			pathToFile,
+			&applog);
+	}
+
+	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SaveCameraData()
+{
+	AddLog("Сохранение настроек для камеры...\n");
+
+	EngineFunctions::SetNewValue<float>(
+		"camera",
+		"pos-x", camera->initPosition.x,
+		camera->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"camera",
+		"pos-y", camera->initPosition.y,
+		camera->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"camera",
+		"nc-speed", camera->noclipSpeed,
+		camera->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<bool>(
+		"camera",
+		"nc-able", camera->noclip,
+		camera->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<size_t>(
+		hero->name,
+		"camera-mode", static_cast<size_t>(hero->cameraMode),
+		hero->dataPath,
+		&applog
+		);
+
+	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SaveScenesData()
+{
+}
+
+void GUISystem::SavePhysicsEngineData()
+{
+	AddLog("Сохранение настроек физического движка...\n");
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"l-clr-r",
+		phEngPtr->lineColor[0],
+		phEngPtr->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"l-clr-g",
+		phEngPtr->lineColor[1],
+		phEngPtr->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"l-clr-b",
+		phEngPtr->lineColor[2],
+		phEngPtr->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"h-clr-r",
+		phEngPtr->hbColor[0],
+		phEngPtr->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"h-clr-g",
+		phEngPtr->hbColor[1],
+		phEngPtr->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"h-clr-b",
+		phEngPtr->hbColor[2],
+		phEngPtr->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"delta-collision",
+		phEngPtr->deltaCollision,
+		phEngPtr->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<bool>(
+		"settings",
+		"obj-vis",
+		phEngPtr->objVisability,
+		phEngPtr->dataPath,
+		&applog
+		);
+
+	for (size_t i = 0; i < phEngPtr->lines.size(); i++)
+	{
+		/* Сохранение координат */
+
+		EngineFunctions::SetNewValue<float>(
+			phEngPtr->lines[i].name,
+			"start-x", phEngPtr->lines[i].start.x,
+			phEngPtr->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			phEngPtr->lines[i].name,
+			"start-y", phEngPtr->lines[i].start.y,
+			phEngPtr->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			phEngPtr->lines[i].name,
+			"end-x", phEngPtr->lines[i].end.x,
+			phEngPtr->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			phEngPtr->lines[i].name,
+			"end-y", phEngPtr->lines[i].end.y,
+			phEngPtr->dataPath,
+			&applog
+			);
+
+		/************************/
+	}
+
+	for (size_t i = 0; i < phEngPtr->hitboxes.size(); i++)
+	{
+		/* Сохранение координат */
+
+		EngineFunctions::SetNewValue<float>(
+			phEngPtr->hitboxes[i].name,
+			"lt-x", phEngPtr->hitboxes[i].coordinates.x,
+			phEngPtr->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			phEngPtr->hitboxes[i].name,
+			"lt-y", phEngPtr->hitboxes[i].coordinates.y,
+			phEngPtr->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			phEngPtr->hitboxes[i].name,
+			"rb-x", phEngPtr->hitboxes[i].coordinates.z,
+			phEngPtr->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			phEngPtr->hitboxes[i].name,
+			"rb-y", phEngPtr->hitboxes[i].coordinates.w,
+			phEngPtr->dataPath,
+			&applog
+			);
+
+		/************************/
+	}
+
+	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SaveGraphicsEngineData()
+{
+	AddLog("Сохранение настроек физического движка...\n");
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"lim-x",
+		wnd->Gfx().POS_X_LIMIT,
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"lim-y",
+		wnd->Gfx().POS_Y_LIMIT,
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<bool>(
+		"settings",
+		"b-s",
+		wnd->Gfx().IsBackgroundDrawn,
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"b-r",
+		wnd->Gfx().backgroundColor[0],
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"b-g",
+		wnd->Gfx().backgroundColor[1],
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"b-b",
+		wnd->Gfx().backgroundColor[2],
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<bool>(
+		"settings",
+		"g-s",
+		wnd->Gfx().IsGridDrawn,
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"g-sc",
+		wnd->Gfx().gridScale,
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"g-r",
+		wnd->Gfx().gridColor[0],
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"g-g",
+		wnd->Gfx().gridColor[1],
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		"settings",
+		"g-b",
+		wnd->Gfx().gridColor[2],
+		wnd->Gfx().dataPath,
+		&applog
+		);
+
+	AddLog("Настройки сохранены\n");
+}
+
+/****************************/
