@@ -250,6 +250,6 @@ private:
 private:
 	std::string mouseHelpInfo = "";		// Подпись под курсором
 	bool IsShow				  = true;	// Состояние видимости интерфейса
-	int sel = -1;
+	int draggingObjId = -1;
 };
 

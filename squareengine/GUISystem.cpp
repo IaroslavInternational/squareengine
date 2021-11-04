@@ -700,7 +700,7 @@ void GUISystem::ShowPersonList()
 
 void GUISystem::ShowIobjList()
 {
-	/*if (sel == -1)
+	if (draggingObjId == -1)
 	{
 		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
 		{
@@ -711,32 +711,41 @@ void GUISystem::ShowIobjList()
 			{
 				if (IobjCon->objects[i]->hitbox.IsOverlap({ mPosX, mPosY }))
 				{
-					sel = i;
+					draggingObjId = i;
+					
+					AddLog("Перемещение мышкой объекта ");
+					AddLog(IobjCon->objects[i]->name);
+					AddLog("\n");
 				}
 			}
 		}
 	}
 	else
 	{
-		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		if (!wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
 		{
-			sel = -1;
+			IobjCon->objects[draggingObjId]->hitbox.visability = true;
+			draggingObjId = -1;
+			
+			AddLog("Перемещение завершенно\n");
 		}
 		else
 		{
 			auto mPosX = wnd->mouse.GetPosX() + camera->position.x;
 			auto mPosY = wnd->mouse.GetPosY() + camera->position.y;
 
-			float dx = IobjCon->objects[sel]->hitbox.coordinates.x - IobjCon->objects[sel]->position.x;
-			float dy = IobjCon->objects[sel]->hitbox.coordinates.y - IobjCon->objects[sel]->position.y;
+			float dx = IobjCon->objects[draggingObjId]->hitbox.coordinates.x - IobjCon->objects[draggingObjId]->position.x;
+			float dy = IobjCon->objects[draggingObjId]->hitbox.coordinates.y - IobjCon->objects[draggingObjId]->position.y;
 
-			IobjCon->objects[sel]->SetPosition({ mPosX, mPosY });
-			IobjCon->objects[sel]->hitbox.coordinates.x = dx - IobjCon->objects[sel]->position.x;
-			IobjCon->objects[sel]->hitbox.coordinates.y = dy - IobjCon->objects[sel]->position.y;
-			IobjCon->objects[sel]->hitbox.coordinates.z = dx - IobjCon->objects[sel]->position.x + fabs(IobjCon->objects[sel]->hitbox.coordinates.z - IobjCon->objects[sel]->hitbox.coordinates.x);
-			IobjCon->objects[sel]->hitbox.coordinates.w = dy - IobjCon->objects[sel]->position.y + fabs(IobjCon->objects[sel]->hitbox.coordinates.w - IobjCon->objects[sel]->hitbox.coordinates.y);
+			IobjCon->objects[draggingObjId]->hitbox.visability = false;
+
+			IobjCon->objects[draggingObjId]->SetPosition({ mPosX, mPosY });
+			IobjCon->objects[draggingObjId]->hitbox.coordinates.z = IobjCon->objects[draggingObjId]->position.x - dx + fabs(IobjCon->objects[draggingObjId]->hitbox.coordinates.z - IobjCon->objects[draggingObjId]->hitbox.coordinates.x);
+			IobjCon->objects[draggingObjId]->hitbox.coordinates.w = IobjCon->objects[draggingObjId]->position.y - dy + fabs(IobjCon->objects[draggingObjId]->hitbox.coordinates.w - IobjCon->objects[draggingObjId]->hitbox.coordinates.y);
+			IobjCon->objects[draggingObjId]->hitbox.coordinates.x = IobjCon->objects[draggingObjId]->position.x - dx;
+			IobjCon->objects[draggingObjId]->hitbox.coordinates.y = IobjCon->objects[draggingObjId]->position.y - dy;
 		}
-	}*/
+	}
 
 	if (ImGui::Begin("Объекты", NULL, SIDE_PANEL_FLAGS))
 	{
