@@ -933,10 +933,35 @@ void GUISystem::ShowPhysicsEngineObjList()
 						{
 							AddLog("Удаление линии...\n");
 
-							std::string deletedLineName = l->name;
+							std::string deletedLineName = l->name;				
+							size_t deletedLineId;
+
+							for (size_t i = 0; i < phEngPtr->lines.size(); i++)
+							{
+								if (phEngPtr->lines[i].name == deletedLineName)
+								{
+									deletedLineId = i;
+									break;
+								}
+							}
 
 							phEngPtr->DeleteLineAt(l);
 							EngineFunctions::DeleteJsonObject(deletedLineName, phEngPtr->dataPath);
+
+							for (size_t i = deletedLineId; i < phEngPtr->lines.size(); i++)
+							{
+								std::ostringstream src;
+								src << "line " << i + 1;
+
+								std::ostringstream dst;
+								dst << "line " << i;
+
+								EngineFunctions::ChangeObjectName(src.str(), dst.str(), phEngPtr->dataPath);
+
+								phEngPtr->lines[i].name = EngineFunctions::StrReplace(phEngPtr->lines[i].name, src.str(), dst.str());
+							}
+
+							SavePhysicsEngineData();
 
 							AddLog("Линия ");
 							AddLog(deletedLineName);
@@ -1097,9 +1122,34 @@ void GUISystem::ShowPhysicsEngineObjList()
 							AddLog("Удаление Hit-box...\n");
 
 							std::string deletedHitBoxName = hb->name;
+							size_t deletedHitBoxId;
+
+							for (size_t i = 0; i < phEngPtr->hitboxes.size(); i++)
+							{
+								if (phEngPtr->hitboxes[i].name == deletedHitBoxName)
+								{
+									deletedHitBoxId = i;
+									break;
+								}
+							}
 
 							phEngPtr->DeleteHitBoxAt(hb);
 							EngineFunctions::DeleteJsonObject(deletedHitBoxName, phEngPtr->dataPath);
+
+							for (size_t i = deletedHitBoxId; i < phEngPtr->hitboxes.size(); i++)
+							{
+								std::ostringstream src;
+								src << "hb " << i + 1;
+
+								std::ostringstream dst;
+								dst << "hb " << i;
+
+								EngineFunctions::ChangeObjectName(src.str(), dst.str(), phEngPtr->dataPath);
+
+								phEngPtr->hitboxes[i].name = EngineFunctions::StrReplace(phEngPtr->hitboxes[i].name, src.str(), dst.str());
+							}
+
+							SavePhysicsEngineData();
 
 							AddLog("Hit-box ");
 							AddLog(deletedHitBoxName);
