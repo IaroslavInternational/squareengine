@@ -775,11 +775,39 @@ void GUISystem::ShowIobjList()
 					AddLog("Удаление интерактивного объекта...\n");
 
 					std::string deletedObjName = o->get()->name;
+					size_t deletedObjId;
+					size_t deletedObjLayer;
 
+					for (size_t i = 0; i < IobjCon->objects.size(); i++)
+					{
+						if (IobjCon->objects[i]->name == deletedObjName)
+						{
+							deletedObjId = i;
+							deletedObjLayer = IobjCon->objects[i]->layer;
+							break;
+						}
+					}
+					
 					objQueue->DeleteObjectAt(o->get()->name);
 					IobjCon->DeleteObjectAt(o);
 
 					EngineFunctions::DeleteJsonObject(deletedObjName, IobjCon->dataPath);
+
+					for (size_t i = deletedObjId; i < IobjCon->objects.size(); i++)
+					{
+						std::ostringstream src;
+						src << "obj " << i + 1;
+
+						std::ostringstream dst;
+						dst << "obj " << i;
+
+						EngineFunctions::ChangeObjectName(src.str(), dst.str(), IobjCon->dataPath);
+						
+						IobjCon->objects[i]->name = EngineFunctions::StrReplace(IobjCon->objects[i]->name, src.str(), dst.str());	
+					}
+
+					SaveIobjData();
+					SaveLayersData();
 
 					AddLog("Интерактивный объект ");
 					AddLog(deletedObjName);

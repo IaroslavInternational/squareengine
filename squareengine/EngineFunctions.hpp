@@ -62,6 +62,7 @@ namespace EngineFunctions
 		ostr.close();
 	}
 
+	// Сохранить данные о hitbox
 	inline void static SaveHitBoxData(std::string objectName, HitBox hitbox, std::string path, AppLog* applog)
 	{
 		EngineFunctions::SetNewValue<float>(
@@ -93,6 +94,7 @@ namespace EngineFunctions
 			);
 	}
 
+	// Сохранить данные об анимации
 	inline void static SaveAnimationData(std::string objectName, AnimationData data, std::string path, AppLog* applog)
 	{
 		EngineFunctions::SetNewValue<int>(
@@ -138,6 +140,7 @@ namespace EngineFunctions
 			);
 	}
 
+	// Заменить подстроку в строке
 	inline std::string static StrReplace(const std::string& inputStr, const std::string& src, const std::string& dst)
 	{
 		std::string result(inputStr);
@@ -153,17 +156,7 @@ namespace EngineFunctions
 		return result;
 	}
 
-	// Соеденить два объекта в одну строку через пробел
-	template <typename T>
-	inline std::string static AttachStrings(T str1, T str2)
-	{
-		std::ostringstream oss;
-		oss << str1 << " " << str2;
-
-		return oss.str();
-	}
-
-	// Удаление объекта из файла json
+	// Удалить объект из файла json
 	inline void static DeleteJsonObject(std::string objectName, std::string path)
 	{
 		// Открытие файла
@@ -211,6 +204,7 @@ namespace EngineFunctions
 		ostr.close();
 	}
 
+	// Получить имя проекта
 	inline const static std::string& GetProjectName()
 	{
 		std::ifstream dataFile("current_project_setup.json");
@@ -245,6 +239,7 @@ namespace EngineFunctions
 		return name;
 	}
 
+	// Получить список доступных сцен
 	inline std::vector<std::string> static GetScenesNames()
 	{
 		std::vector<std::string> names;
@@ -280,5 +275,33 @@ namespace EngineFunctions
 		}
 
 		return names;
+	}
+
+	// Изменить имя объекта
+	inline void static ChangeObjectName(const std::string& objectSrc, const std::string& objectDst, const std::string& path)
+	{
+		// Открытие файла
+		std::ifstream dataFile(path);
+		if (!dataFile.is_open())
+		{
+			throw ("Не удаётся открыть файл с данными");
+		}
+
+		// Чтение файла
+		json j;
+		dataFile >> j;
+
+		// Закрытие файла
+		dataFile.close();
+
+		auto str = j.dump();
+		str = EngineFunctions::StrReplace(str, objectSrc, objectDst);
+
+		// Запись в файл
+		std::ofstream ostr(path);
+		ostr << str;
+
+		// Закрытие файла
+		ostr.close();
 	}
 }
