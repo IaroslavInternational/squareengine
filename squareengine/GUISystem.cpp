@@ -720,8 +720,8 @@ void GUISystem::ShowIobjList()
 	{
 		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
 		{
-			auto mPosX = wnd->mouse.GetPosX() + camera->position.x;
-			auto mPosY = wnd->mouse.GetPosY() + camera->position.y;
+			auto mPosX = (float)wnd->mouse.GetPosX();
+			auto mPosY = (float)wnd->mouse.GetPosY();
 
 			for (size_t i = 0; i < IobjCon->objects.size(); i++)
 			{
@@ -747,8 +747,8 @@ void GUISystem::ShowIobjList()
 		}
 		else
 		{
-			auto mPosX = wnd->mouse.GetPosX() + camera->position.x;
-			auto mPosY = wnd->mouse.GetPosY() + camera->position.y;
+			auto mPosX = (float)wnd->mouse.GetPosX();
+			auto mPosY = (float)wnd->mouse.GetPosY();
 
 			float dx = IobjCon->objects[draggingObjId]->hitbox.coordinates.x - IobjCon->objects[draggingObjId]->position.x;
 			float dy = IobjCon->objects[draggingObjId]->hitbox.coordinates.y - IobjCon->objects[draggingObjId]->position.y;
@@ -918,6 +918,47 @@ void GUISystem::ShowIobjList()
 
 void GUISystem::ShowPhysicsEngineObjList()
 {
+	if (draggingObjId == -1)
+	{
+		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			auto mPosX = (float)wnd->mouse.GetPosX();
+			auto mPosY = (float)wnd->mouse.GetPosY();
+
+			for (size_t i = 0; i < phEngPtr->hitboxes.size(); i++)
+			{
+				if (phEngPtr->hitboxes[i].IsOverlap({ mPosX, mPosY }))
+				{
+					draggingObjId = i;
+
+					AddLog("Перемещение мышкой объекта ");
+					AddLog(phEngPtr->hitboxes[i].name);
+					AddLog("\n");
+				}
+			}
+		}
+	}
+	else
+	{
+		if (!wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			draggingObjId = -1;
+
+			AddLog("Перемещение завершенно\n");
+		}
+		else
+		{
+			auto mPosX = (float)wnd->mouse.GetPosX();
+			auto mPosY = (float)wnd->mouse.GetPosY();
+
+			phEngPtr->hitboxes[draggingObjId].coordinates.z = mPosX + fabs(phEngPtr->hitboxes[draggingObjId].coordinates.z - phEngPtr->hitboxes[draggingObjId].coordinates.x);
+			phEngPtr->hitboxes[draggingObjId].coordinates.w = mPosY + fabs(phEngPtr->hitboxes[draggingObjId].coordinates.w - phEngPtr->hitboxes[draggingObjId].coordinates.y);
+			phEngPtr->hitboxes[draggingObjId].coordinates.x = mPosX;
+			phEngPtr->hitboxes[draggingObjId].coordinates.y = mPosY;
+			
+		}
+	}
+
 	using namespace Physics;
 
 	if (ImGui::Begin("Объекты", NULL, SIDE_PANEL_FLAGS))
@@ -3236,9 +3277,9 @@ void GUISystem::ShowPhysicsEngineObjHelp()
 
 		ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
 		if (ImGui::Begin(oss.str().c_str(), (bool*)0,
-			ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+			ImGuiWindowFlags_NoDecoration    | ImGuiWindowFlags_AlwaysAutoResize   |
 			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
-			| ImGuiWindowFlags_NoBackground))
+			| ImGuiWindowFlags_NoBackground  | ImGuiWindowFlags_NoInputs))
 		{
 			ImGui::Text(l.name.c_str());
 			ImGui::End();
@@ -3257,9 +3298,9 @@ void GUISystem::ShowPhysicsEngineObjHelp()
 
 		ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
 		if (ImGui::Begin(oss.str().c_str(), (bool*)0,
-			ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+			ImGuiWindowFlags_NoDecoration    | ImGuiWindowFlags_AlwaysAutoResize   |
 			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
-			| ImGuiWindowFlags_NoBackground))
+			| ImGuiWindowFlags_NoBackground  | ImGuiWindowFlags_NoInputs))
 		{
 			ImGui::Text(hb.name.c_str());
 			ImGui::End();
