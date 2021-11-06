@@ -80,7 +80,7 @@ private:
 	void   ShowPhysicsEngineObjHelp();		// Показать подписи имён объектов физического движка
 	void   ShowPhysicsEngineSettings();		// Показать панель настроек физического движка
 	void   ShowGraphicsEngineSettings();	// Показать панель настроек графики
-	void   ShowProjectSettings();			// Показать панель настроек проекта
+	void   ShowProjectControl();			// Показать панель настроек проекта
 	void   ShowViewportControl();			// Показать панель настроек Viewport
 	HitBox CreateNewHitBox();				// Создать HitBox с помощью интерфейса
 	
@@ -92,15 +92,15 @@ private:
 private:
 	/* Методы сохранения данных */
 
-	void SaveAll();						// Сохранить все настройки
-	void SaveMainPersonData();
-	void SavePersonsData();
-	void SaveIobjData();
-	void SaveLayersData();
-	void SaveCameraData();
-	void SaveScenesData();
-	void SavePhysicsEngineData();
-	void SaveGraphicsEngineData();
+	void SaveAll();					// Сохранить все настройки
+	void SaveMainPersonData();		// Сохранить настройки для главного персонажа
+	void SavePersonsData();			// Сохранить настройки для персонажей
+	void SaveIobjData();			// Сохранить настройки для интерактивных объектов
+	void SaveLayersData();			// Сохранить настройки для слоёв
+	void SaveCameraData();			// Сохранить настройки для камеры
+	void SaveScenesData();			// Сохранить настройки для сцен
+	void SavePhysicsEngineData();	// Сохранить настройки для физического движка
+	void SaveGraphicsEngineData();	// Сохранить настройки для графического движка
 
 	/****************************/
 private:
@@ -125,6 +125,7 @@ private:
 	bool ShowPhysicsEngineObjInfo	  = true;	// Видимость подписей имён объектов физического движка  
 	bool ShowPhysicsSettings		  = false;	// Видимость панели настроек физического движка
 	bool ShowGraphicsSettings		  = false;	// Видимость панели настроек графики
+	bool ShowProjectSettings		  = false;	// Видимость панели настроек проекта
 	bool ShowViewportSettings		  = false;	// Видимость панели настроек Viewport
 	bool ShowLogs					  = true;	// Видимость лога
 	bool ShowHardwareInfo 			  =	true;	// Видимость FPS и информации о графическом адаптере

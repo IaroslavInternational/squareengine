@@ -537,6 +537,7 @@
       <Filter>Другое</Filter>
     </None>
     <None Include="UML-objects-hierarchy.cd" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferVS.hlsl">

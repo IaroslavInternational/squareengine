@@ -263,6 +263,11 @@ void GUISystem::ShowMenu()
 					ImGui::EndMenu();
 				}
 
+				if (ImGui::MenuItem("Проект"))
+				{
+					ShowProjectSettings ? ShowProjectSettings = false : ShowProjectSettings = true;
+				}
+
 				if (ImGui::MenuItem("Звук"))
 				{
 				}
@@ -554,6 +559,12 @@ void GUISystem::ShowOptionalPanel()
 	{
 		SetPanelSizeAndPosition(0, 0.65f, 0.7f, 0.175f, 0.15f);
 		ShowViewportControl();
+	}
+
+	if (ShowProjectSettings)
+	{
+		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);
+		ShowProjectControl();
 	}
 
 	if (ShowFPSChart)
@@ -3513,8 +3524,24 @@ void GUISystem::ShowGraphicsEngineSettings()
 	ImGui::PopStyleColor();
 }
 
-void GUISystem::ShowProjectSettings()
+void GUISystem::ShowProjectControl()
 {
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
+	if (ImGui::Begin("Настройки проекта", &ShowProjectSettings, BIG_POPUP_PANEL_FLAGS))
+	{
+		if (ImGui::CollapsingHeader("Общая информация", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			std::ostringstream oss;
+			oss << "Текущий проект: "  << EngineFunctions::GetProjectName() << "\n"
+				<< "Количество сцен: " << EngineFunctions::GetScenesNames().size();
+			ImGui::TextWrapped(oss.str().c_str());
+
+			ImGui::Separator();
+		}
+	}
+
+	ImGui::End();
+	ImGui::PopStyleColor();
 }
 
 void GUISystem::ShowViewportControl()
