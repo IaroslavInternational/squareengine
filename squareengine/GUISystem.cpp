@@ -541,7 +541,7 @@ void GUISystem::ShowOptionalPanel()
 {
 	if (ShowPhysicsSettings)
 	{	
-		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);	
+		SetPanelSizeAndPosition(0, 0.25f, 0.65f, 0.375f, 0.1625f);	
 		ShowPhysicsEngineSettings();
 	}
 	else if (ShowPhysicsEngineObjInfo)
@@ -551,19 +551,19 @@ void GUISystem::ShowOptionalPanel()
 
 	if (ShowGraphicsSettings)
 	{
-		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);
+		SetPanelSizeAndPosition(0, 0.25f, 0.65f, 0.375f, 0.1625f);
 		ShowGraphicsEngineSettings();
 	}
 
 	if (ShowViewportSettings)
 	{
-		SetPanelSizeAndPosition(0, 0.65f, 0.7f, 0.175f, 0.15f);
+		SetPanelSizeAndPosition(0, 0.25f, 0.65f, 0.375f, 0.1625f);
 		ShowViewportControl();
 	}
 
 	if (ShowProjectSettings)
 	{
-		SetPanelSizeAndPosition(0, 0.80f, 0.80f, 0.1f, 0.1f);
+		SetPanelSizeAndPosition(0, 0.25f, 0.65f, 0.375f, 0.1625f);
 		ShowProjectControl();
 	}
 
@@ -3321,8 +3321,8 @@ void GUISystem::ShowPhysicsEngineSettings()
 			ImGui::TextWrapped(
 				"Физический движок позволяет настраивать коллизию объектов и их физические параметры. "
 				"Основными примитивами для создания объектов являтся линии и прямоугольники (Hit-Box).\n");
-			ImGui::Text("Занимаемый объём памяти данными о линиях %d байт (%.1f килобайт).\n", sizeof(phEngPtr->lines) + sizeof(Line) * phEngPtr->lines.size(), float(sizeof(phEngPtr->lines) + sizeof(Line) * phEngPtr->lines.size()) / (1024.0f));
-			ImGui::Text("Занимаемый объём памяти данными о прямоугольниках %d байт (%.1f килобайт).\n", sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size(), float(sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size()) / (1024.0f));
+			ImGui::TextWrapped("Занимаемый объём памяти данными о линиях %d байт (%.1f килобайт).\n",		   sizeof(phEngPtr->lines)    + sizeof(Line)   * phEngPtr->lines.size(),    float(sizeof(phEngPtr->lines)    + sizeof(Line)   * phEngPtr->lines.size())    / (1024.0f));
+			ImGui::TextWrapped("Занимаемый объём памяти данными о прямоугольниках %d байт (%.1f килобайт).\n", sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size(), float(sizeof(phEngPtr->hitboxes) + sizeof(HitBox) * phEngPtr->hitboxes.size()) / (1024.0f));
 
 			ImGui::Separator();
 		}
