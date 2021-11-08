@@ -18,73 +18,79 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 	dataFile.close();
 
-	for (json::iterator m = j.begin(); m != j.end(); ++m)
+	if (j.size() != 0)
 	{
-		auto d = m.key();
-
-		for (const auto& obj : j.at(d))
+		for (json::iterator m = j.begin(); m != j.end(); ++m)
 		{
-			/* Получение имени объекта */
+			auto d = m.key();
 
-			std::string name = m.key();
-			std::transform(name.begin(), name.end(), name.begin(), tolower);
+			for (const auto& obj : j.at(d))
+			{
+				/* Получение имени объекта */
 
-			/***************************/
+				std::string name = m.key();
+				std::transform(name.begin(), name.end(), name.begin(), tolower);
 
-			/* Получение позиции */
+				/***************************/
 
-			float pos_x = obj.at("pos-x");
-			float pos_y = obj.at("pos-y");
+				/* Получение позиции */
 
-			DirectX::XMFLOAT2 position = { pos_x, pos_y };
+				float pos_x = obj.at("pos-x");
+				float pos_y = obj.at("pos-y");
 
-			/*********************/
+				DirectX::XMFLOAT2 position = { pos_x, pos_y };
 
-			/* Получение пути к изображению */
+				/*********************/
 
-			std::string pathToSprite = obj.at("path");
+				/* Получение пути к изображению */
 
-			/********************************/
+				std::string pathToSprite = obj.at("path");
 
-			/* Получение настройки слоя */
+				/********************************/
 
-			size_t layer = obj.at("layer");
+				/* Получение настройки слоя */
 
-			/****************************/
+				size_t layer = obj.at("layer");
 
-			/* Получение настроек хит-бокса */
+				/****************************/
 
-			DirectX::XMFLOAT4 hb_coord;
-			hb_coord.x = obj.at("hb-ltx");
-			hb_coord.y = obj.at("hb-lty");
-			hb_coord.z = obj.at("hb-rbx");
-			hb_coord.w = obj.at("hb-rby");
+				/* Получение настроек хит-бокса */
 
-			/********************************/
+				DirectX::XMFLOAT4 hb_coord;
+				hb_coord.x = obj.at("hb-ltx");
+				hb_coord.y = obj.at("hb-lty");
+				hb_coord.z = obj.at("hb-rbx");
+				hb_coord.w = obj.at("hb-rby");
 
-			/* Получение настроек коллизий */
+				/********************************/
 
-			float gDeep = obj.at("g-deep");
-			float gAble = obj.at("g-able");
+				/* Получение настроек коллизий */
 
-			/*******************************/
+				float gDeep = obj.at("g-deep");
+				float gAble = obj.at("g-able");
 
-			/* Инициализация объекта */
+				/*******************************/
 
-			objects.emplace_back(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
+				/* Инициализация объекта */
 
-			/*************************/
+				objects.emplace_back(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
+
+				/*************************/
+			}
 		}
-	}
 
-	objects.shrink_to_fit();
+		objects.shrink_to_fit();
+	}
 }
 
 void InteractableObject2DContainer::Translate(DirectX::XMFLOAT2 delta)
 {
-	for (auto& obj : objects)
+	if (objects.size() != 0)
 	{
-		obj->Translate(delta);
+		for (auto& obj : objects)
+		{
+			obj->Translate(delta);
+		}
 	}
 }
 

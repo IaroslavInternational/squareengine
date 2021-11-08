@@ -173,35 +173,50 @@ namespace EngineFunctions
 		// Закрытие файла
 		dataFile.close();
 
-		j[objectName] = "";
-
-		auto j_str = j.dump();
-
-		auto pos = j_str.find(objectName);
-		
-		if (j_str[pos + objectName.length() + 4] == '}')
+		if (j.size() - 1 != 0)
 		{
-			for (auto i = pos - 2; i < pos + objectName.length() + 4; i++)
+			j[objectName] = "";
+
+			auto j_str = j.dump();
+
+			auto pos = j_str.find(objectName);
+
+			if (j_str[pos + objectName.length() + 4] == '}')
 			{
-				j_str[i] = '*';
+				for (auto i = pos - 2; i < pos + objectName.length() + 4; i++)
+				{
+					j_str[i] = '*';
+				}
 			}
+			else
+			{
+				for (auto i = pos - 1; i < pos + objectName.length() + 5; i++)
+				{
+					j_str[i] = '*';
+				}
+			}
+
+			j_str.erase(std::remove(j_str.begin(), j_str.end(), '*'), j_str.end());
+
+
+			// Запись в файл
+			std::ofstream ostr(path);
+			ostr << j_str;
+
+			// Закрытие файла
+			ostr.close();
 		}
 		else
 		{
-			for (auto i = pos - 1; i < pos + objectName.length() + 5; i++)
-			{
-				j_str[i] = '*';
-			}
+			std::string str = "{}";
+
+			// Запись в файл
+			std::ofstream ostr(path);
+			ostr << str;
+
+			// Закрытие файла
+			ostr.close();
 		}
-
-		j_str.erase(std::remove(j_str.begin(), j_str.end(), '*'), j_str.end());
-
-		// Запись в файл
-		std::ofstream ostr(path);
-		ostr << j_str;
-
-		// Закрытие файла
-		ostr.close();
 	}
 
 	// Получить имя проекта

@@ -16,92 +16,98 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 	dataFile.close();
 
-	for (json::iterator m = j.begin(); m != j.end(); ++m)
+	if (j.size() != 0)
 	{
-		auto d = m.key();
-
-		for (const auto& obj : j.at(d))
+		for (json::iterator m = j.begin(); m != j.end(); ++m)
 		{
-			/* Получение имени объекта */
+			auto d = m.key();
 
-			std::string name = obj.at("name");
-			std::transform(name.begin(), name.end(), name.begin(), tolower);
+			for (const auto& obj : j.at(d))
+			{
+				/* Получение имени объекта */
 
-			/***************************/
+				std::string name = obj.at("name");
+				std::transform(name.begin(), name.end(), name.begin(), tolower);
 
-			/* Получение позиции */
+				/***************************/
 
-			float pos_x = obj.at("pos-x");
-			float pos_y = obj.at("pos-y");
+				/* Получение позиции */
 
-			DirectX::XMFLOAT2 position = { pos_x, pos_y };
+				float pos_x = obj.at("pos-x");
+				float pos_y = obj.at("pos-y");
 
-			/*********************/
+				DirectX::XMFLOAT2 position = { pos_x, pos_y };
 
-			/* Получение пути к изображению */
+				/*********************/
 
-			std::string pathToSprite = obj.at("path");
+				/* Получение пути к изображению */
 
-			/********************************/
+				std::string pathToSprite = obj.at("path");
 
-			/* Получение настроек хит-бокса */
+				/********************************/
 
-			DirectX::XMFLOAT4 hb_coord;
-			hb_coord.x = obj.at("hb-ltx");
-			hb_coord.y = obj.at("hb-lty");	
-			hb_coord.z = obj.at("hb-rbx");
-			hb_coord.w = obj.at("hb-rby");
+				/* Получение настроек хит-бокса */
 
-			/********************************/
-			
-			/* Получение настроек эффекта */
+				DirectX::XMFLOAT4 hb_coord;
+				hb_coord.x = obj.at("hb-ltx");
+				hb_coord.y = obj.at("hb-lty");
+				hb_coord.z = obj.at("hb-rbx");
+				hb_coord.w = obj.at("hb-rby");
 
-			float eff_d = obj.at("eff-d");
-			float eff_t = obj.at("eff-t");
-			float eff_a = obj.at("eff-a");
-			
-			/******************************/
+				/********************************/
 
-			/* Получение настройки скорости */
-			
-			float speed = obj.at("speed");
-			
-			/********************************/
+				/* Получение настроек эффекта */
 
-			/* Получение настройки слоя */
+				float eff_d = obj.at("eff-d");
+				float eff_t = obj.at("eff-t");
+				float eff_a = obj.at("eff-a");
 
-			size_t layer = obj.at("layer");
+				/******************************/
 
-			/****************************/
+				/* Получение настройки скорости */
 
-			/* Получение настройки анимаций */
+				float speed = obj.at("speed");
 
-			AnimationData aData;
-			aData.pStart = obj.at("a-ps");
-			aData.pEnd = obj.at("a-pe");
-			aData.width = obj.at("a-fw");
-			aData.height = obj.at("a-fh");
-			aData.frames = obj.at("a-fa");
-			aData.ft = obj.at("a-ft");
+				/********************************/
 
-			/********************************/
+				/* Получение настройки слоя */
 
-			/* Инициализация объекта */
+				size_t layer = obj.at("layer");
 
-			persons.push_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, speed, eff_d, eff_t, eff_a));
+				/****************************/
 
-			/*************************/
+				/* Получение настройки анимаций */
+
+				AnimationData aData;
+				aData.pStart = obj.at("a-ps");
+				aData.pEnd = obj.at("a-pe");
+				aData.width = obj.at("a-fw");
+				aData.height = obj.at("a-fh");
+				aData.frames = obj.at("a-fa");
+				aData.ft = obj.at("a-ft");
+
+				/********************************/
+
+				/* Инициализация объекта */
+
+				persons.push_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, speed, eff_d, eff_t, eff_a));
+
+				/*************************/
+			}
 		}
-	}
 
-	persons.shrink_to_fit();
+		persons.shrink_to_fit();
+	}
 }
 
 void PersonContainer::Draw(Graphics& gfx)
 {
-	for (auto& p : persons)
+	if (persons.size() != 0)
 	{
-		p->Draw(gfx);
+		for (auto& p : persons)
+		{
+			p->Draw(gfx);
+		}
 	}
 }
 

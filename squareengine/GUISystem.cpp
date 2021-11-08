@@ -895,7 +895,15 @@ void GUISystem::ShowIobjList()
 				size_t pos_of_par2 = json_str.find_last_of(']');
 
 				json_str.at(pos_of_par) = ' ';
-				json_str.at(pos_of_par2 + 1) = ',';
+				
+				if (j.size() != 0)
+				{
+					json_str.at(pos_of_par2 + 1) = ',';
+				}
+				else
+				{
+					json_str.at(pos_of_par2 + 1) = '{';
+				}
 
 				// Запись в файл данных новой линии
 				std::ofstream ostream(IobjCon->dataPath);

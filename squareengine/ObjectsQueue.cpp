@@ -4,29 +4,48 @@ ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persCon, Interacta
 {
 	std::vector<size_t> idx;
 
-	for (size_t i = 0; i < Iobj->objects.size(); i++)
+	if (Iobj->objects.size() != 0)
 	{
-		queue.push_back(Iobj->objects[i].get());
-		idx.push_back(Iobj->objects[i].get()->layer);
+		for (size_t i = 0; i < Iobj->objects.size(); i++)
+		{
+			queue.push_back(Iobj->objects[i].get());
+			idx.push_back(Iobj->objects[i].get()->layer);
+		}
 	}
 
-	for (size_t i = 0; i < persCon->persons.size(); i++)
+	if (persCon->persons.size() != 0)
 	{
-		queue.push_back(persCon->persons[i].get());
-		idx.push_back(persCon->persons[i].get()->layer);
+		for (size_t i = 0; i < persCon->persons.size(); i++)
+		{
+			queue.push_back(persCon->persons[i].get());
+			idx.push_back(persCon->persons[i].get()->layer);
+		}
 	}
 
 	queue.push_back(hero);
 	idx.push_back(hero->layer);
 
-	for (size_t i = 0; i < Iobj->objects.size(); i++)
+	if (Iobj->objects.size() != 0)
 	{
-		queue.at(idx[i]) = Iobj->objects[i].get();
+		for (size_t i = 0; i < Iobj->objects.size(); i++)
+		{
+			queue.at(idx[i]) = Iobj->objects[i].get();
+		}
 	}
 
-	for (size_t i = 0; i < persCon->persons.size(); i++)
+	if (persCon->persons.size() != 0)
 	{
-		queue.at(idx[i + Iobj->objects.size()]) = persCon->persons[i].get();
+		for (size_t i = 0; i < persCon->persons.size(); i++)
+		{
+			if (Iobj->objects.size() != 0)
+			{
+				queue.at(idx[i + Iobj->objects.size()]) = persCon->persons[i].get();
+			}
+			else
+			{
+				queue.at(idx[i]) = persCon->persons[i].get();
+			}
+		}
 	}
 
 	queue.at(idx.back()) = hero;

@@ -9,9 +9,6 @@
 
 #include "EngineFunctions.hpp"
 
-// Мод запуска окна
-#define ENGINE_WINDOW 0
-
 // Window Class stuff
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -63,6 +60,9 @@ Window::Window(const char* name)
 {
 	width = GetDeviceCaps(CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL), HORZRES);
 	height = GetDeviceCaps(CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL), VERTRES);
+
+// Мод запуска окна
+#define ENGINE_WINDOW 0
 
 #if ENGINE_WINDOW == 0
 		// Создание окна
