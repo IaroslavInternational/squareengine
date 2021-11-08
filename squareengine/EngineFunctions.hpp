@@ -34,10 +34,13 @@ namespace EngineFunctions
 			throw ("Не удаётся открыть файл с данными");
 		}
 
-		std::ostringstream ostrlog;
-		ostrlog << "Установка [" << param << " : " << val << "] " << "для [" << objectName << "]\n";
+		if (applog != nullptr)
+		{
+			std::ostringstream ostrlog;
+			ostrlog << "Установка [" << param << " : " << val << "] " << "для [" << objectName << "]\n";
 
-		applog->AddLog(SYSTEM_LOG, ostrlog.str().c_str());
+			applog->AddLog(SYSTEM_LOG, ostrlog.str().c_str());
+		}
 
 		// Чтение файла
 		json j;
@@ -318,5 +321,127 @@ namespace EngineFunctions
 
 		// Закрытие файла
 		ostr.close();
+	}
+
+	// Создать сцену
+	inline void static CreateScene()
+	{
+		std::ostringstream oss;
+		oss << GetProjectName() << "\\Scenes\\Scene " << GetScenesNames().size() + 1;
+
+		auto p = std::filesystem::current_path();
+		p.append("Projects");
+		p.append(oss.str());
+
+		// Создание папок
+		std::filesystem::create_directory(p);
+		std::filesystem::create_directory(p.append("Objects"));
+		
+		// Создание пустых файлов в Objects
+		std::ostringstream f;
+		f << p.string() << "\\interactable_objects_scene_" << GetScenesNames().size() << ".json";
+
+		std::ofstream fs;
+		
+		fs.open(f.str());
+		fs << "{}";
+		fs.close();
+		f.str("");
+
+		f << p.string() << "\\objects_scene_" << GetScenesNames().size() << ".json";
+
+		fs.open(f.str());
+		fs << "{}";
+		fs.close();
+		f.str("");
+
+		// Копирование остальных файлов
+		auto pf = std::filesystem::current_path();
+		pf.append("Projects");
+		pf.append("Hello World");
+		pf.append("Scenes");
+		pf.append("Scene 1");
+		
+		auto pt = std::filesystem::current_path();
+		pt.append("Projects");
+		pt.append(GetProjectName());
+		pt.append("Scenes");
+		std::ostringstream s;
+		s << "Scene " << GetScenesNames().size();
+		pt.append(s.str());
+
+		std::ostringstream ff;
+		ff << pf.string() << "\\camera.json";
+		std::ostringstream ft;
+		ft << pt.string() << "\\camera.json";
+
+		std::filesystem::copy_file(ff.str(), ft.str(), std::filesystem::copy_options::create_hard_links);
+		ff.str("");
+		ft.str("");
+
+		ff << pf.string() << "\\main_person.json";
+		ft << pt.string() << "\\main_person.json";
+
+		std::filesystem::copy_file(ff.str(), ft.str(), std::filesystem::copy_options::create_hard_links);
+		SetNewValue("mainperson", "layer", 0, ft.str(), nullptr);
+		ff.str("");
+		ft.str("");
+
+		ff << pf.string() << "\\physics.json";
+		ft << pt.string() << "\\physics.json";
+
+		std::filesystem::copy_file(ff.str(), ft.str(), std::filesystem::copy_options::create_hard_links);
+		ff.str("");
+		ft.str("");
+
+		ff << pf.string() << "\\scene_1.json";
+		ft << pt.string() << "\\scene_" << GetScenesNames().size() << ".json";
+
+		std::filesystem::copy_file(ff.str(), ft.str(), std::filesystem::copy_options::create_hard_links);
+		
+		std::ifstream ss(ft.str());
+		json j;
+		ss >> j;
+		ss.close();
+
+		std::string str = j.dump();
+
+		std::ostringstream scNum;
+		scNum << GetScenesNames().size();
+
+		//str = StrReplace(str, "Hello World", GetProjectName()); !!! Uncomment in prod
+		str = StrReplace(str, "1", scNum.str());
+
+		std::ofstream os;
+		os.open(ft.str());
+		os << str;
+		os.close();
+
+		ff.str("");
+		ft.str("");
+
+		auto pathToSettings = std::filesystem::current_path();
+		pathToSettings.append("Projects");
+		pathToSettings.append("Hello World");
+
+		std::ostringstream pathStr;
+		pathStr << pathToSettings.string() << "\\project_settings.json";
+
+		std::ifstream ss_s(pathStr.str());
+		json _j;
+		ss_s >> _j;
+		ss_s.close();
+
+		std::ostringstream scName;
+		scName << "scene " << GetScenesNames().size();
+		
+		_j["scenes"].array().push_back({ scName.str(), false });
+		
+		std::string settings = _j.dump();
+		
+		std::ofstream os_settings;
+		os_settings.open(pathStr.str());
+		os_settings << settings;
+		os_settings.close();
 	}
 }

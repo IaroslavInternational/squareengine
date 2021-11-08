@@ -136,6 +136,7 @@ private:
 	/* Переменные для работы с настройками сцен */
 	
 	bool		SavingScenesSettings = false;	// Статус сохранения настроек сцен
+	bool		AddingScene			 = false;	// Статус добавления сцены
 	bool		IsUpdatingScene		 = false;	// Статус изменения сцены на другую
 	std::string curSceneName;					// Имя текущей сцены
 

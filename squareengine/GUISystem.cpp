@@ -2992,6 +2992,18 @@ void GUISystem::ShowScenesControl()
 			}
 		}
 
+		if (ImGui::Button("Добавить"))
+		{
+			AddingScene = true;
+		}
+
+		if (AddingScene)
+		{
+			EngineFunctions::CreateScene();
+
+			AddingScene = false;
+		}
+
 		ImGui::Separator();
 
 		if (ImGui::Button("Сохранить"))

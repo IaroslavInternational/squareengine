@@ -165,7 +165,7 @@ void App::DoFrame(float dt)
 						
 						std::ostringstream oss;
 						oss << "Projects\\"<< projectName << "\\Scenes\\" << it->first << "\\scene_" 
-							<< EngineFunctions::StrReplace(it->first, "Scene ", "") << ".json";
+							<< EngineFunctions::StrReplace(std::ref(it->first), "Scene ", "") << ".json";
 
 						scene = std::make_unique<Scene>(it->first, wnd, oss.str(), phEngine);						
 						gui->LoadScene(scene.get());
