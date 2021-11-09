@@ -34,6 +34,8 @@ public:
 	void						 AddLog(const char* text);				// Добавить лог
 	void						 LoadScene(Scene* scene);				// Загрузить сцену
 	std::pair<bool, std::string> UpdatingScene();						// Идёт обновление сцены
+	bool						 AddingScene();							// Идёт добавление сцены
+	void						 SetAddingSceneState(bool state);		// Установить статус добавления сцены
 
 	/*******************************************/
 private: 
@@ -136,7 +138,7 @@ private:
 	/* Переменные для работы с настройками сцен */
 	
 	bool		SavingScenesSettings = false;	// Статус сохранения настроек сцен
-	bool		AddingScene			 = false;	// Статус добавления сцены
+	bool		IsAddingScene		 = false;	// Статус добавления сцены
 	bool		IsUpdatingScene		 = false;	// Статус изменения сцены на другую
 	std::string curSceneName;					// Имя текущей сцены
 

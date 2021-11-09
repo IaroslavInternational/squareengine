@@ -119,6 +119,17 @@ void App::DoFrame(float dt)
 			// Имя активной сцены
 			std::string activeSceneName = scene->GetName();
 
+			// Если добавляется сцена
+			if (gui->AddingScene())
+			{
+				std::ostringstream scName;
+				scName << "Scene " << scenes.size() + 1;
+				
+				scenes.emplace(std::pair(scName.str(), false));
+
+				gui->SetAddingSceneState(false);
+			}
+
 			// Если переход на другую сцену вызван из интерфейса
 			if (gui->UpdatingScene().first)
 			{

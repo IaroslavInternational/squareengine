@@ -435,7 +435,7 @@ namespace EngineFunctions
 		std::ostringstream scName;
 		scName << "scene " << GetScenesNames().size();
 		
-		_j["scenes"].array().push_back({ scName.str(), false });
+		_j["scenes"][0][scName.str()] = false;
 		
 		std::string settings = _j.dump();
 		

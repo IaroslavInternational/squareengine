@@ -121,6 +121,16 @@ std::pair<bool, std::string> GUISystem::UpdatingScene()
 	return std::pair<bool, std::string>(IsUpdatingScene, curSceneName);
 }
 
+bool GUISystem::AddingScene()
+{
+	return IsAddingScene;
+}
+
+void GUISystem::SetAddingSceneState(bool state)
+{
+	IsAddingScene = state;
+}
+
 /*******************************************/
 
 /* Методы настройки и отрисовки панелей */
@@ -2994,14 +3004,8 @@ void GUISystem::ShowScenesControl()
 
 		if (ImGui::Button("Добавить"))
 		{
-			AddingScene = true;
-		}
-
-		if (AddingScene)
-		{
 			EngineFunctions::CreateScene();
-
-			AddingScene = false;
+			IsAddingScene = true;
 		}
 
 		ImGui::Separator();
