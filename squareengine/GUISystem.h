@@ -20,6 +20,15 @@ struct IobjData
 	DirectX::XMFLOAT2 position;
 };
 
+struct PersonData
+{
+	size_t					   layer;
+	std::string				   name;
+	std::string				   pathToSprite;
+	DirectX::XMFLOAT2		   position;
+	std::vector<AnimationData> animPersonData;
+};
+
 class GUISystem
 {
 public:
@@ -46,7 +55,7 @@ private:
 								 float height,			float x_offset = 0.0f, 
 								 float y_offset = 0.0f); 	
 	void ShowMenu(); 															// Верхняя панель меню
-	void ShowLeftSide();														// Левая панель	
+	void ShowLeftSide(float dt);														// Левая панель	
 	void ShowRightSide(float dt);												// Правая панель
 	void ShowLeftBottomSide();													// Левая нижняя панель
 	void ShowBottomPanel();														// Нижняя панель
@@ -59,7 +68,7 @@ private:
 	/* Методы отрисовки конкретных интерфейсов */
 
 	void   ShowMainPersonList();			// Показать левую панель главного персонажа в списке
-	void   ShowPersonList();				// Показать левую панель списка персонажей 
+	void   ShowPersonList(float dt);		// Показать левую панель списка персонажей 
 	void   ShowIobjList();					// Показать	левую панель списка интерактивных объектов
 	void   ShowPhysicsEngineObjList();		// Показать левую панель списка объектов в физическом движке		   
 
@@ -88,6 +97,7 @@ private:
 	
 	std::string					ShowLoadingSpriteDilaog();				// Показать диалоговое окно для загрузки спрайта
 	std::optional<IobjData>		ShowAddingIobjDialog();					// Показать диалоговое окно для добавления интерактивного объекта
+	std::optional<PersonData>	ShowAddingPersonDialog(float dt);		// Показать диалоговое окно для добавления персонажа
 	std::vector<AnimationData>	ShowAnimationCreatingDialog(float dt);	// Показать диалоговое окно для создания анимации
 
 	/*******************************************/
@@ -183,7 +193,12 @@ private:
 private:
 	/* Вспомагательные переменные для работы с контейнером персонажей */
 	
+	bool		IsAddingPerson = false;	// Статус добавления персонажа
+	bool		GotPersonData  = false;	// Статус получения данных о новом персонаже
+	bool		ChoosingPerson = false;	// Статус выбора спрайта персонажа
 	std::string personSelected = "";	// Имя выбранного персонажа
+	std::string PersonPath	   = "";	// Путь к выбранному спрайту персонажа
+	std::optional<PersonData> optPdata;
 
 	/******************************************************************/
 private:

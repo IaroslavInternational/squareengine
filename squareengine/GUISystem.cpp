@@ -65,7 +65,7 @@ void GUISystem::Show(float dt)
 
 	if (IsShow)
 	{
-		ShowLeftSide();
+		ShowLeftSide(dt);
 		ShowRightSide(dt);
 		ShowLeftBottomSide();
 		ShowBottomPanel();
@@ -415,7 +415,7 @@ void GUISystem::ShowMenu()
 	}
 }
 
-void GUISystem::ShowLeftSide()
+void GUISystem::ShowLeftSide(float dt)
 {
 	/* Левая сторона */
 
@@ -425,7 +425,7 @@ void GUISystem::ShowLeftSide()
 
 	if (ShowPersonEnum)
 	{
-		ShowPersonList();
+		ShowPersonList(dt);
 	}
 	else if (ShowMainPersonEnum)
 	{
@@ -671,7 +671,7 @@ void GUISystem::ShowMainPersonList()
 	ImGui::End();
 }
 
-void GUISystem::ShowPersonList()
+void GUISystem::ShowPersonList(float dt)
 {
 	if (ImGui::Begin("Персонажи", NULL, SIDE_PANEL_FLAGS))
 	{
@@ -717,7 +717,115 @@ void GUISystem::ShowPersonList()
 
 		if (ImGui::Button("Добавить"))
 		{
-			
+			IsAddingPerson = true;
+		}
+
+		if (IsAddingPerson)
+		{	
+			if (!GotPersonData)
+			{
+				optPdata = ShowAddingPersonDialog(dt);
+			}
+
+			if (optPdata.value().name != "")
+			{
+				GotPersonData = true;
+
+				optPdata.value().animPersonData = ShowAnimationCreatingDialog(dt);
+
+				if (!optPdata.value().animPersonData.empty())
+				{
+					AddLog("Создана анимация для ");
+					AddLog("персонажа\n");
+
+					std::vector<Animation> newAnim;
+
+					for (auto& a : optPdata.value().animPersonData)
+					{
+						newAnim.emplace_back(Animation(a.pStart, a.pEnd, a.width, a.height, a.frames, hero->image, a.ft, a.name));
+					}
+
+					auto data = optPdata.value();
+
+					DirectX::XMFLOAT4 hb_coord;
+					hb_coord.x = optPdata.value().position.x;
+					hb_coord.y = optPdata.value().position.y;
+					hb_coord.z = optPdata.value().position.x + data.animPersonData[0].width;
+					hb_coord.w = optPdata.value().position.y + data.animPersonData[0].height;
+
+					persCon->persons.push_back(std::make_unique<Person>(data.name, data.position, data.layer, data.pathToSprite, HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0]));
+					objQueue->queue.push_back(persCon->persons.back().get());
+
+					using std::to_string;
+
+					// Открытие файла с данными о физике сцены
+					std::ifstream dataFile(persCon->dataPath);
+					if (!dataFile.is_open())
+					{
+						throw ("Не удаётся открыть файл с данными о персонажах");
+					}
+
+					// Чтение файла
+					json j;
+					dataFile >> j;
+
+					// Закрытие файла
+					dataFile.close();
+
+					// Новый объект
+					std::ostringstream newLine;
+					newLine << "\"" << data.name << "\":[{";
+
+					newLine << "\"pos-x\": "   << data.position.x << ",";
+					newLine << "\"pos-y\" : "  << data.position.y << ",";
+					newLine << "\"hb-ltx\" : " << hb_coord.x << ",";
+					newLine << "\"hb-lty\" : " << hb_coord.y << ",";
+					newLine << "\"hb-rbx\" : " << hb_coord.z << ",";
+					newLine << "\"hb-rby\" : " << hb_coord.w << ",";
+					newLine << "\"layer\" : "  << data.layer << ",";
+					newLine << "\"speed\" : "  << 100.0f     << ",";
+					newLine << "\"eff-a\" : "  << false      << ",";
+					newLine << "\"eff-d\" : "  << 0.045f     << ",";
+					newLine << "\"eff-t\" : "  << 0.0f       << ",";
+					newLine << "\"name\" : \"" << data.name  << "\",";
+					newLine << "\"a-fa\" : "   << data.animPersonData[0].frames  << ",";
+					newLine << "\"a-fw\" : "   << data.animPersonData[0].width   << ",";
+					newLine << "\"a-fh\" : "   << data.animPersonData[0].height  << ",";
+					newLine << "\"a-ft\" : "   << data.animPersonData[0].ft  << ",";
+					newLine << "\"a-ps\" : "   << data.animPersonData[0].pStart  << ",";
+					newLine << "\"a-pe\" : "   << data.animPersonData[0].pEnd    << ",";
+					newLine << "\"path\" : \"" << data.pathToSprite << "\"}]";
+
+					// Подготовка к вставке в файл
+					std::string json_str = j.dump();
+					size_t pos_of_par = json_str.find_last_of('}');
+					size_t pos_of_par2 = json_str.find_last_of(']');
+
+					json_str.at(pos_of_par) = ' ';
+
+					if (j.size() != 0)
+					{
+						json_str.at(pos_of_par2 + 1) = ',';
+					}
+					else
+					{
+						json_str.at(pos_of_par2 + 1) = '{';
+					}
+
+					// Запись в файл данных новой линии
+					std::ofstream ostream(persCon->dataPath);
+					ostream << json_str + newLine.str() + '}';
+
+					// Закрытие файла
+					ostream.close();
+
+					AddLog("Персонаж ");
+					AddLog(data.name);
+					AddLog(" добавлен\n");
+
+					IsAddingPerson = false;
+				}
+			}
 		}
 	}
 
@@ -3786,6 +3894,7 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 			ChosingIobj = false;
 			LoadingSprite = false;
 			AddingIobj = false;
+			IsAddingPerson = false;
 		}
 	}
 
@@ -3853,6 +3962,68 @@ std::optional<IobjData> GUISystem::ShowAddingIobjDialog()
 	ImGui::PopStyleColor();
 
 	return data;
+}
+
+std::optional<PersonData> GUISystem::ShowAddingPersonDialog(float dt)
+{
+	PersonData data;
+
+	SetPanelSizeAndPosition(0, 0.3f, 0.2f, 0.35f, 0.4f);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 1.0f));
+	if (ImGui::Begin("Добавление персонажа", NULL, BIG_POPUP_PANEL_FLAGS))
+	{
+		ImGui::Text("Путь к спрайту: ");
+
+		if (PersonPath == "")
+		{
+			ImGui::Text("...");
+		}
+		else
+		{
+			ImGui::Text(PersonPath.c_str());
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Выбрать"))
+		{
+			ChoosingPerson = true;
+		}
+
+		if (ChoosingPerson)
+		{
+			PersonPath = ShowLoadingSpriteDilaog();
+
+			if (PersonPath != "")
+			{
+				std::ostringstream n;
+				n << "person " << persCon->persons.size() + 1;
+
+				data.name = n.str();
+				data.pathToSprite = PersonPath;
+				data.position = DirectX::XMFLOAT2(0.0f, 0.0f);
+				data.layer = objQueue->queue.size();
+
+				ChoosingPerson = false;
+				CreatingAnimation = true;
+			}
+		}
+
+		ImGui::NewLine();
+
+		if (ImGui::Button("Отмена"))
+		{
+			ChoosingPerson = false;
+			LoadingSprite = false;
+			IsAddingPerson = false;
+			CreatingAnimation = false;
+		}
+
+		ImGui::End();
+		ImGui::PopStyleColor();
+
+		return data;
+	}
 }
 
 std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
@@ -4087,6 +4258,7 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 		{
 			LoadingSprite = false;
 			CreatingAnimation = false;
+			IsAddingPerson = false;
 		}
 
 		ImGui::End();
