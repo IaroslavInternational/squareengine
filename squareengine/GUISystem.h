@@ -198,7 +198,7 @@ private:
 	bool		ChoosingPerson = false;	// —татус выбора спрайта персонажа
 	std::string personSelected = "";	// »м€ выбранного персонажа
 	std::string PersonPath	   = "";	// ѕуть к выбранному спрайту персонажа
-	std::optional<PersonData> optPdata;
+	std::optional<PersonData> optPdata;	// ¬спомогательна€ переменна€ с даннами о новом персонаже
 
 	/******************************************************************/
 private:

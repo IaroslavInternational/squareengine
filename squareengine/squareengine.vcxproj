@@ -166,6 +166,7 @@
     </None>
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="ScriptCommander.cpp" />
+    <ClCompile Include="Trigger.cpp" />
     <ClCompile Include="Vec2.cpp" />
     <ClCompile Include="Vei2.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -237,6 +238,8 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Trigger.h" />
+    <ClInclude Include="TriggerType.hpp" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vei2.h" />
     <ClInclude Include="Window.h" />
