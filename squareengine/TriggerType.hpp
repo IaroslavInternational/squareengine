@@ -2,5 +2,7 @@
 
 enum class TriggerType
 {
-
+	SceneTrigger,
+	SoundTrigger,
+	CutSceneTrigger
 };
