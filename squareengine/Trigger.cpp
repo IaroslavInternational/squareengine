@@ -1,18 +1,19 @@
 #include "Trigger.h"
 
-Trigger::Trigger(float start_x, float start_y, float end_x, float end_y)
+Trigger::Trigger(std::string name, float start_x, float start_y, float end_x, float end_y)
 	:
-	Trigger({ start_x, start_y }, { end_x, end_y })
+	Trigger(name, { start_x, start_y }, { end_x, end_y })
 {}
 
-Trigger::Trigger(const DirectX::XMFLOAT2& start, const DirectX::XMFLOAT2& end)
+Trigger::Trigger(std::string name, const DirectX::XMFLOAT2& start, const DirectX::XMFLOAT2& end)
 	:
-	Trigger(Physics::Line("trigger line", start, end))
+	Trigger(name, Physics::Line("trigger line", start, end))
 {
 }
 
-Trigger::Trigger(const Physics::Line& line)
+Trigger::Trigger(std::string name, const Physics::Line& line)
 	:
+	name(name),
 	line(line)
 {}
 
@@ -34,6 +35,16 @@ bool Trigger::IsCollide(HitBox& hitbox)
 bool Trigger::IsCollide(const Physics::Line& line)
 {
 	return this->line.IsIntersect(line);
+}
+
+TriggerType Trigger::GetType() const
+{
+	return type;
+}
+
+std::string Trigger::GetName() const
+{
+	return name;
 }
 
 std::vector<Physics::Line> Trigger::GetLines(HitBox& hitbox)
