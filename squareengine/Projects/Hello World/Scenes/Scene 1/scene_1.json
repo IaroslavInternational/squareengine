@@ -6,7 +6,8 @@
       "interactableObjectsPath": "Projects\\Hello World\\Scenes\\Scene 1\\Objects\\interactable_objects_scene_1.json",
       "mainPersonPath":          "Projects\\Hello World\\Scenes\\Scene 1\\main_person.json",
       "physicsPath":             "Projects\\Hello World\\Scenes\\Scene 1\\physics.json",
-      "cameraPath":              "Projects\\Hello World\\Scenes\\Scene 1\\camera.json"
+      "cameraPath":              "Projects\\Hello World\\Scenes\\Scene 1\\camera.json",
+      "triggersPath":            "Projects\\Hello World\\Scenes\\Scene 1\\triggers.json"
     }
   ]
 }

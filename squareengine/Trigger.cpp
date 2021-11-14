@@ -1,23 +1,31 @@
 #include "Trigger.h"
+#include "Graphics.h"
 
-Trigger::Trigger(std::string name, float start_x, float start_y, float end_x, float end_y)
+Trigger::Trigger(std::string name, float start_x, float start_y, float end_x, float end_y, TriggerType type, std::string goal)
 	:
-	Trigger(name, { start_x, start_y }, { end_x, end_y })
+	Trigger(name, { start_x, start_y }, { end_x, end_y }, type, goal)
 {}
 
-Trigger::Trigger(std::string name, const DirectX::XMFLOAT2& start, const DirectX::XMFLOAT2& end)
+Trigger::Trigger(std::string name, const DirectX::XMFLOAT2& start, const DirectX::XMFLOAT2& end, TriggerType type, std::string goal)
 	:
-	Trigger(name, Physics::Line("trigger line", start, end))
+	Trigger(name, Physics::Line("trigger line", start, end), type, goal)
 {
 }
 
-Trigger::Trigger(std::string name, const Physics::Line& line)
+Trigger::Trigger(std::string name, const Physics::Line& line, TriggerType type, std::string goal)
 	:
 	name(name),
-	line(line)
+	line(line),
+	type(type),
+	goal(goal)
 {}
 
-bool Trigger::IsCollide(HitBox& hitbox)
+void Trigger::Draw(Graphics& gfx)
+{
+	gfx.DrawLine(line);
+}
+
+bool Trigger::IsCollide(HitBox hitbox)
 {
 	auto lines = GetLines(hitbox);
 
@@ -47,7 +55,12 @@ std::string Trigger::GetName() const
 	return name;
 }
 
-std::vector<Physics::Line> Trigger::GetLines(HitBox& hitbox)
+std::string Trigger::GetGoal() const
+{
+	return goal;
+}
+
+std::vector<Physics::Line> Trigger::GetLines(HitBox hitbox)
 {
 	auto hbCoord = hitbox.GetCoordinates();
 

@@ -14,7 +14,8 @@ Scene::Scene(std::string							 name,
 	hero(mdr, wnd, camera),
 	persCon(sdr.GetPersonContainerPath()),
 	Iobj(sdr.GetInteractableObjectsDataPath()),
-	objQueue(&hero, &persCon, &Iobj)
+	objQueue(&hero, &persCon, &Iobj),
+	trigCon(sdr.GetTriggerContainerDataPath())
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
 	camera->Init();
@@ -90,15 +91,22 @@ void Scene::Render(float dt)
 	/* Отрисовка */
 
 	objQueue.Draw(wnd->Gfx());	
-	
+	trigCon.Draw(wnd->Gfx());
+
 	/*************/
 }
 
 std::pair<std::string, bool> Scene::IsOnTheSceneTrigger()
 {
-	// test
-	/*if(hero.GetPosition().x >= 400.0f && hero.GetPosition().y >= 400.0f)
-		return std::pair{ "Scene 2", true };*/
+	auto state = trigCon.Check(hero.GetHitBox());
+
+	if (state.has_value())
+	{
+		if (state.value().first == TriggerType::SceneTrigger)
+		{
+			return std::pair{ trigCon.GetTriggerByName(state.value().second).GetGoal(), true };
+		}
+	}
 
 	return std::pair{ "NULL", false };
 }

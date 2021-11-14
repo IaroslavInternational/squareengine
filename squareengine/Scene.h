@@ -6,6 +6,7 @@
 #include "ObjectsQueue.h"
 #include "PhysicsEngine.h"
 #include "Camera.h"
+#include "TriggerContainer.h"
 
 class Scene
 {
@@ -54,6 +55,7 @@ private:
 	PersonContainer				  persCon;
 	InteractableObject2DContainer Iobj;
 	ObjectsQueue				  objQueue;
-	
+	TriggerContainer			  trigCon;
+
 	/***********/
 };

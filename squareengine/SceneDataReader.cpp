@@ -56,7 +56,13 @@ SceneDataReader::SceneDataReader(std::string path)
 			
 			paths.emplace_back(obj.at("cameraPath"));
 
-			/***********************/
+			/*******************************/
+
+			/* Запись пути к даннам триггеров */
+
+			paths.emplace_back(obj.at("triggersPath"));
+
+			/**********************************/
 		}
 	}
 }
@@ -84,6 +90,11 @@ std::string SceneDataReader::GetInteractableObjectsDataPath() const
 std::string SceneDataReader::GetCameraDataPath() const
 {
 	return paths[4];
+}
+
+std::string SceneDataReader::GetTriggerContainerDataPath() const
+{
+	return paths[5];
 }
 
 std::vector<std::string>& SceneDataReader::GetPaths()

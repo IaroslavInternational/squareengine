@@ -1,0 +1,13 @@
+{
+  "trig 0": 
+  [
+    {
+      "pos-ltx": 500,
+      "pos-lty": 500,
+      "pos-rbx": 500,
+      "pos-rby": 550,
+      "goal": "Scene 2",
+      "type": 0
+    }
+  ]
+}
