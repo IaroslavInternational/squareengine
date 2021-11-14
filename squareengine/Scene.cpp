@@ -8,14 +8,14 @@ Scene::Scene(std::string							 name,
 	name(name),
 	phEngine(phEngine),
 	wnd(wnd),
-	sdr(scData),
-	camera(std::make_shared<Camera>(&hero, &persCon, &Iobj, phEngine, sdr.GetCameraDataPath())),
+	sdr(scData), 
+	trigCon(sdr.GetTriggerContainerDataPath()),
+	camera(std::make_shared<Camera>(&hero, &persCon, &Iobj, &trigCon, phEngine, sdr.GetCameraDataPath())),
 	mdr(sdr.GetMainPersonDataPath()),
 	hero(mdr, wnd, camera),
 	persCon(sdr.GetPersonContainerPath()),
 	Iobj(sdr.GetInteractableObjectsDataPath()),
-	objQueue(&hero, &persCon, &Iobj),
-	trigCon(sdr.GetTriggerContainerDataPath())
+	objQueue(&hero, &persCon, &Iobj)
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
 	camera->Init();
@@ -96,19 +96,19 @@ void Scene::Render(float dt)
 	/*************/
 }
 
-std::pair<std::string, bool> Scene::IsOnTheSceneTrigger()
+std::optional<std::string> Scene::IsOnTheSceneTrigger()
 {
-	auto state = trigCon.Check(hero.GetHitBox());
+	auto trigger = trigCon.Check(hero.GetHitBox());
 
-	if (state.has_value())
+	if (trigger.has_value())
 	{
-		if (state.value().first == TriggerType::SceneTrigger)
+		if (trigger.value().GetType() == TriggerType::SceneTrigger)
 		{
-			return std::pair{ trigCon.GetTriggerByName(state.value().second).GetGoal(), true };
+			return trigger.value().GetGoal();
 		}
 	}
 
-	return std::pair{ "NULL", false };
+	return std::nullopt;
 }
 
 const std::string& Scene::GetName() const

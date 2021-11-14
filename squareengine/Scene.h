@@ -23,7 +23,7 @@ public:
 
 	void						 ProcessInput(float dt);	// Обработка входных данных переферии
 	void						 Render(float dt);			// Отрисовка сцены
-	std::pair<std::string, bool> IsOnTheSceneTrigger();		// Состояние вызова триггера перехода на сцене 
+	std::optional<std::string>   IsOnTheSceneTrigger();		// Состояние вызова триггера перехода на сцене 
 	const std::string&			 GetName() const;			// Получить имя сцены
 
 	/****************/

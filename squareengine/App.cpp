@@ -162,15 +162,15 @@ void App::DoFrame(float dt)
 
 			scene->Render(dt);	// Отрисовка содержания сцены
 			
-			// Данные о триггере
+			// Данные о триггере перехода на след. сцену
 			auto t = scene->IsOnTheSceneTrigger();
 			
-			if (t.second)
+			if (t.has_value())
 			{
 				// Делаем новую сцену активной
 				for (auto it = scenes.begin(); it != scenes.end(); ++it)
 				{
-					if (it->first == t.first)
+					if (it->first == t.value())
 					{
 						it->second = true;
 						

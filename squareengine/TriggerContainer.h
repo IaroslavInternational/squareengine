@@ -9,10 +9,9 @@ class TriggerContainer
 public:
 	TriggerContainer(std::string dataPath);
 public:
-	void											   Draw(Graphics& gfx);
-	std::optional<std::pair<TriggerType, std::string>> Check(HitBox hitbox);
-public:
-	const Trigger& GetTriggerByName(std::string name);
+	void				   Draw(Graphics& gfx);
+	void				   Translate(const DirectX::XMFLOAT2& delta);
+	std::optional<Trigger> Check(HitBox hitbox);
 private:
 	std::string dataPath;
 private:

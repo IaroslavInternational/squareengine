@@ -14,6 +14,7 @@ public:
 	Trigger(std::string name, const DirectX::XMFLOAT2& start, const DirectX::XMFLOAT2& end, TriggerType type, std::string goal);
 	Trigger(std::string name, const Physics::Line& line,								    TriggerType type, std::string goal);
 public:
+	void Translate(const DirectX::XMFLOAT2& delta);
 	void Draw(Graphics& gfx);
 	bool IsCollide(HitBox hitbox);
 	bool IsCollide(const Physics::Line& line);

@@ -8,7 +8,7 @@ Trigger::Trigger(std::string name, float start_x, float start_y, float end_x, fl
 
 Trigger::Trigger(std::string name, const DirectX::XMFLOAT2& start, const DirectX::XMFLOAT2& end, TriggerType type, std::string goal)
 	:
-	Trigger(name, Physics::Line("trigger line", start, end), type, goal)
+	Trigger(name, Physics::Line(name + std::string("line"), start, end), type, goal)
 {
 }
 
@@ -20,9 +20,14 @@ Trigger::Trigger(std::string name, const Physics::Line& line, TriggerType type, 
 	goal(goal)
 {}
 
+void Trigger::Translate(const DirectX::XMFLOAT2& delta)
+{
+	line.Translate(delta);
+}
+
 void Trigger::Draw(Graphics& gfx)
 {
-	gfx.DrawLine(line);
+	gfx.DrawLine(line, Colors::Yellow);
 }
 
 bool Trigger::IsCollide(HitBox hitbox)

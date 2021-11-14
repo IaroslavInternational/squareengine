@@ -3,14 +3,16 @@
 #include "MainPerson.h"
 #include "PersonContainer.h"
 #include "InteractableObject2DContainer.h"
+#include "TriggerContainer.h"
 
 #include "EngineFunctions.hpp"
 
-Camera::Camera(MainPerson* hero, PersonContainer* pc, InteractableObject2DContainer* Iobj, std::shared_ptr<Physics::PhysicsEngine> phEngPtr, std::string dataPath)
+Camera::Camera(MainPerson* hero, PersonContainer* pc, InteractableObject2DContainer* Iobj, TriggerContainer* trigCon, std::shared_ptr<Physics::PhysicsEngine> phEngPtr, std::string dataPath)
 	:
 	hero(hero),
 	pc(pc),
 	Iobj(Iobj),
+	trigCon(trigCon),
 	phEngPtr(phEngPtr),
 	dataPath(dataPath)
 {
@@ -62,6 +64,7 @@ void Camera::Translate(DirectX::XMFLOAT2 delta)
 
 	phEngPtr->TranslateObjects(delta);
 	Iobj->Translate(delta);
+	trigCon->Translate(delta);
 	pc->Translate(delta);
 }
 
@@ -89,6 +92,7 @@ void Camera::SetPosition(DirectX::XMFLOAT2 pos)
 
 	phEngPtr->TranslateObjects(dif);
 	Iobj->Translate(dif);
+	trigCon->Translate(dif);
 	pc->Translate(dif);
 	hero->Translate(dif);
 }

@@ -73,26 +73,23 @@ void TriggerContainer::Draw(Graphics& gfx)
 	}
 }
 
-std::optional<std::pair<TriggerType, std::string>> TriggerContainer::Check(HitBox hitbox)
+void TriggerContainer::Translate(const DirectX::XMFLOAT2& delta)
+{
+	for (auto& t : triggers)
+	{
+		t.Translate(delta);
+	}
+}
+
+std::optional<Trigger> TriggerContainer::Check(HitBox hitbox)
 {
 	for (auto& t : triggers)
 	{
 		if (t.IsCollide(hitbox))
 		{
-			return std::pair<TriggerType, std::string>(t.GetType(), t.GetName());
+			return t;
 		}
 	}
 
 	return std::nullopt;
-}
-
-const Trigger& TriggerContainer::GetTriggerByName(std::string name)
-{
-	for (auto& t : triggers)
-	{
-		if (t.GetName() == name)
-		{
-			return t;
-		}
-	}
 }
