@@ -8,7 +8,7 @@ Trigger::Trigger(std::string name, float start_x, float start_y, float end_x, fl
 
 Trigger::Trigger(std::string name, const DirectX::XMFLOAT2& start, const DirectX::XMFLOAT2& end, TriggerType type, std::string goal)
 	:
-	Trigger(name, Physics::Line(name + std::string("line"), start, end), type, goal)
+	Trigger(name, Physics::Line(name + std::string(" line"), start, end), type, goal)
 {
 }
 

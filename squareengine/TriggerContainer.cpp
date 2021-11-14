@@ -33,10 +33,10 @@ TriggerContainer::TriggerContainer(std::string dataPath)
 
 				/* Получение позиции */
 
-				float pos_ltx = obj.at("pos-ltx");
-				float pos_lty = obj.at("pos-lty");
-				float pos_rbx = obj.at("pos-rbx");
-				float pos_rby = obj.at("pos-rby");
+				float start_x = obj.at("start-x");
+				float start_y = obj.at("start-y");
+				float end_x   = obj.at("end-x");
+				float end_y   = obj.at("end-y");
 
 				/*********************/
 
@@ -55,7 +55,7 @@ TriggerContainer::TriggerContainer(std::string dataPath)
 
 				/* Инициализация объекта */
 
-				triggers.push_back(Trigger(name, pos_ltx, pos_lty, pos_rbx, pos_rby, type, goal));
+				triggers.push_back(Trigger(name, start_x, start_y, end_x, end_y, type, goal));
 
 				/*************************/
 			}
@@ -100,4 +100,19 @@ std::optional<Trigger> TriggerContainer::Check(HitBox hitbox)
 	}
 
 	return std::nullopt;
+}
+
+void TriggerContainer::AddTrigger(Trigger trigger)
+{
+	triggers.push_back(trigger);
+}
+
+void TriggerContainer::DeleteAt(std::vector<Trigger>::iterator it)
+{
+	triggers.erase(it);
+}
+
+size_t TriggerContainer::GetTriggersAmount()
+{
+	return triggers.size();
 }

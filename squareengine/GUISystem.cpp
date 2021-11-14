@@ -1033,6 +1033,8 @@ void GUISystem::ShowIobjList()
 
 void GUISystem::ShowTriggerList()
 {
+	using namespace Physics;
+
 	if (ImGui::Begin("Триггеры", NULL, SIDE_PANEL_FLAGS))
 	{
 		for (auto t = trigCon->triggers.begin(); t != trigCon->triggers.end(); t++)
@@ -1047,7 +1049,170 @@ void GUISystem::ShowTriggerList()
 			{
 				triggerSelected = t->name;
 			}
+			if (ImGui::BeginPopupContextItem(contextMenuId.c_str()))
+			{
+				if (ImGui::Button("Удалить"))
+				{
+					AddLog("Удаление триггера...\n");
+
+					std::string deletedTriggerName = t->name;
+
+					trigCon->DeleteAt(t);
+					EngineFunctions::DeleteJsonObject(deletedTriggerName, trigCon->dataPath);
+
+					AddLog("Триггер ");
+					AddLog(deletedTriggerName);
+					AddLog(" удалён\n");
+
+					ImGui::EndPopup();
+
+					break;
+				}
+
+				ImGui::EndPopup();
+			}
 		}
+
+		ImGui::NewLine();
+
+		// Если нажата кнопка добавить триггер
+		if (ImGui::Button("Добавить"))
+		{
+			AddLog("Добавление триггера...\n");
+
+			AddingTrigger = true;
+
+			ImGui::GetStyle().Alpha = 0.1f;
+		}
+
+		/* Если идёт добавление триггера */
+		{
+			if (AddingTrigger)
+			{
+				if (!SettedFirstPoint)
+				{
+					mouseHelpInfo = "Идёт добавление триггера.\nНажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+					if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+					{
+						auto pos = wnd->mouse.GetPos();
+						firstPoint = { (float)pos.first, (float)pos.second };
+
+						SettedFirstPoint = true;
+						std::ostringstream oss;
+						oss << "Поставлена первая точка:\n" <<
+							"[x: "  << firstPoint.x <<
+							"; y: " << firstPoint.y << "]\n";
+
+						AddLog(oss);
+					}
+				}
+				else if (!SettedSecondPoint)
+				{
+					mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+					int ms_posX = wnd->mouse.GetPosX();
+					int ms_posY = wnd->mouse.GetPosY();
+
+					Line line(std::string("Drown line"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+					wnd->Gfx().DrawLine(line.start, line.end);
+
+					if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+					{
+						auto pos = wnd->mouse.GetPos();
+						secondPoint = { (float)pos.first, (float)pos.second };
+
+						std::ostringstream trigger_name;
+						trigger_name << "trig " << trigCon->GetTriggersAmount();
+
+						std::ostringstream default_goal_name;
+						int next_scene_goal = std::stoi(EngineFunctions::StrReplace(curSceneName, "Scene ", "")) + 1;
+
+						if (next_scene_goal == EngineFunctions::GetScenesNames().size() + 1)
+						{
+							next_scene_goal--;
+						}
+
+						default_goal_name << "Scene " << next_scene_goal;
+
+						trigCon->AddTrigger(std::move(Trigger(trigger_name.str(), firstPoint, secondPoint, TriggerType::SceneTrigger, default_goal_name.str())));
+
+						std::ostringstream oss;
+						oss << "Поставлена вторая точка:\n" <<
+							"[x: " << secondPoint.x <<
+							"; y: " << secondPoint.y << "]\n";
+
+						AddLog(oss);
+
+						using std::to_string;
+
+						// Открытие файла с данными о физике сцены
+						std::ifstream dataFile(trigCon->dataPath);
+						if (!dataFile.is_open())
+						{
+							throw ("Не удаётся открыть файл с данными о триггерах");
+						}
+
+						// Чтение файла
+						json j;
+						dataFile >> j;
+
+						// Закрытие файла
+						dataFile.close();
+
+						// Новая линия
+						std::ostringstream newTrigger;
+						newTrigger << "\"" << trigger_name.str() << "\":[{";
+
+						newTrigger << "\"start-x\": " << firstPoint.x << ",";
+						newTrigger << "\"start-y\" : " << firstPoint.y << ",";
+						newTrigger << "\"end-x\" : " << secondPoint.x << ",";
+						newTrigger << "\"end-y\" : " << secondPoint.y << ",";
+						newTrigger << "\"type\" : " << static_cast<size_t>(TriggerType::SceneTrigger) << ",";
+						newTrigger << "\"goal\" : \"" << default_goal_name.str() << "\"}]";
+
+						// Подготовка к вставке в файл
+						std::string json_str = j.dump();
+						size_t pos_of_par = json_str.find_last_of('}');
+						size_t pos_of_par2 = json_str.find_last_of(']');
+
+						json_str.at(pos_of_par) = ' ';
+
+						if (j.size() != 0)
+						{
+							json_str.at(pos_of_par2 + 1) = ',';
+						}
+						else
+						{
+							json_str.at(pos_of_par2 + 1) = '{';
+						}
+
+						// Запись в файл данных новой линии
+						std::ofstream ostream(trigCon->dataPath);
+						ostream << json_str + newTrigger.str() + '}';
+
+						// Закрытие файла
+						ostream.close();
+
+						AddLog("Триггер ");
+						AddLog(trigger_name);
+						AddLog(" добавлена\n");
+
+						mouseHelpInfo = "";
+						SettedSecondPoint = true;
+					}
+				}
+				else if (SettedFirstPoint && SettedSecondPoint)
+				{
+					AddingTrigger = false;
+					SettedFirstPoint = false;
+					SettedSecondPoint = false;
+
+					ImGui::GetStyle().Alpha = 1.0f;
+				}
+			}
+		}
+		/******************************/
 	}
 
 	ImGui::End();
@@ -2372,14 +2537,14 @@ void GUISystem::ShowTriggerControl()
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"pos-ltx", trigCon->triggers.at(k).line.start.x,
+									"start-x", trigCon->triggers.at(k).line.start.x,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"pos-rbx", trigCon->triggers.at(k).line.end.x,
+									"end-x", trigCon->triggers.at(k).line.end.x,
 									trigCon->dataPath,
 									&applog
 									);
@@ -2397,14 +2562,14 @@ void GUISystem::ShowTriggerControl()
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"pos-lty", trigCon->triggers.at(k).line.start.y,
+									"start-y", trigCon->triggers.at(k).line.start.y,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"pos-rby", trigCon->triggers.at(k).line.end.y,
+									"end-y", trigCon->triggers.at(k).line.end.y,
 									trigCon->dataPath,
 									&applog
 									);
@@ -2481,28 +2646,28 @@ void GUISystem::ShowTriggerControl()
 
 											EngineFunctions::SetNewValue<float>(
 												triggerSelected,
-												"pos-ltx", trigCon->triggers.at(k).line.start.x,
+												"start-x", trigCon->triggers.at(k).line.start.x,
 												trigCon->dataPath,
 												&applog
 												);
 
 											EngineFunctions::SetNewValue<float>(
 												triggerSelected,
-												"pos-rbx", trigCon->triggers.at(k).line.end.x,
+												"end-x", trigCon->triggers.at(k).line.end.x,
 												trigCon->dataPath,
 												&applog
 												);
 
 											EngineFunctions::SetNewValue<float>(
 												triggerSelected,
-												"pos-lty", trigCon->triggers.at(k).line.start.y,
+												"start-y", trigCon->triggers.at(k).line.start.y,
 												trigCon->dataPath,
 												&applog
 												);
 
 											EngineFunctions::SetNewValue<float>(
 												triggerSelected,
-												"pos-rby", trigCon->triggers.at(k).line.end.y,
+												"end-y", trigCon->triggers.at(k).line.end.y,
 												trigCon->dataPath,
 												&applog
 												);

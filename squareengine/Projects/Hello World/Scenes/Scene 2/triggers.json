@@ -2,10 +2,10 @@
   "trig 0": 
   [
     {
-      "pos-ltx": 500,
-      "pos-lty": 500,
-      "pos-rbx": 500,
-      "pos-rby": 550,
+      "start-x": 500,
+      "start-y": 500,
+      "end-x": 500,
+      "end-y": 550,
       "goal": "Scene 1",
       "type": 0
     }

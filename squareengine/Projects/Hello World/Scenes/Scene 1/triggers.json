@@ -1,1 +1,1 @@
-{"trig 0":[{"goal":"Scene 2","pos-ltx":646.0,"pos-lty":248.0,"pos-rbx":700.0,"pos-rby":362.0,"type":0}]}
+{"trig 0":[{"end-x":700.0,"end-y":362.0,"goal":"Scene 2","start-x":646.0,"start-y":248.0,"type":0}],"trig 1":[{"end-x":655,"end-y":360,"goal":"Scene 2","start-x":656,"start-y":302,"type":0}],"trig 2":[{"end-x":633,"end-y":376,"goal":"Scene 2","pos-ltx":631.0,"pos-rbx":631.0,"start-x":631,"start-y":333,"type":0}]}
