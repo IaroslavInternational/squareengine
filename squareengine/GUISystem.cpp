@@ -18,6 +18,7 @@ GUISystem::GUISystem(Scene* scene)
 	persCon(&scene->persCon),
 	IobjCon(&scene->Iobj),
 	objQueue(&scene->objQueue),
+	trigCon(&scene->trigCon),
 	phEngPtr(scene->phEngine),
 	camera(scene->camera),
 	animSpritePreview(1, 1),
@@ -441,7 +442,7 @@ void GUISystem::ShowLeftSide(float dt)
 	}
 	else if (ShowTriggersEnum)
 	{
-		//objects.triggers.ShowLeftPanel();
+		ShowTriggerList();
 	}
 
 	/**************/
@@ -475,35 +476,23 @@ void GUISystem::ShowRightSide(float dt)
 	if (ShowMainPersonSettings)
 	{
 		ShowMainPersonControl(dt);
-
-		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
-		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
 	}
 	else if (ShowPersonEnum)
 	{
 		ShowPersonControl(dt);
-
-		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
-		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
 	}
 	else if (ShowPhysicsEngineObjSettings)
 	{
 		ShowPhysicsEngineObjControl();
 
-		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
-		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
-
 	}
 	else if (ShowIobjSettings)
 	{
 		ShowIobjControl();
-
-		ImGui::SetNextWindowPos({ roundf(io.DisplaySize.x - RightPanelW), MenuHeight }, 0, RightPanelPivot);
-		ImGui::SetNextWindowSize({ io.DisplaySize.x * 0.2f, io.DisplaySize.y * 0.2f }, ImGuiCond_FirstUseEver);
 	}
 	else if (ShowTriggersSettings)
 	{
-
+		ShowTriggerControl();
 	}
 
 	/**************/
@@ -1035,6 +1024,28 @@ void GUISystem::ShowIobjList()
 				AddLog(" добавлен\n");
 
 				AddingIobj = false;
+			}
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowTriggerList()
+{
+	if (ImGui::Begin("Триггеры", NULL, SIDE_PANEL_FLAGS))
+	{
+		for (auto t = trigCon->triggers.begin(); t != trigCon->triggers.end(); t++)
+		{
+			char label[128];
+			sprintf_s(label, t->name.c_str(), triggerSelected);
+
+			std::string contextMenuId = "Context Menu for " + t->name;
+
+			ImGui::Bullet();
+			if (ImGui::Selectable(label, triggerSelected == t->name.c_str()))
+			{
+				triggerSelected = t->name;
 			}
 		}
 	}
@@ -2313,6 +2324,272 @@ void GUISystem::ShowIobjControl()
 				}
 
 				break;
+			}
+		}
+	}
+
+	ImGui::End();
+}
+
+void GUISystem::ShowTriggerControl()
+{
+	if (ImGui::Begin("Опции", NULL, SIDE_PANEL_FLAGS))
+	{
+		// Цикл по триггерам
+		for (int k = 0; k < trigCon->triggers.size(); k++)
+		{
+			// Поиск выбранного триггера
+			if (trigCon->triggers.at(k).name == triggerSelected)
+			{
+				if (ImGui::BeginChild(""))
+				{
+					if (ImGui::BeginChild(""))
+					{
+						/* Переменные управления сбросом интерфейса */
+
+						bool posDirty = false;		// Контроль позиции
+
+						const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение					
+
+						/********************************************/
+
+						/* Элементы управления позициями точек линии */
+						if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
+						{
+							ImGui::Text("Позиция начальной точки:");
+							dcheck(ImGui::SliderFloat("Xs", &trigCon->triggers.at(k).line.start.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ys", &trigCon->triggers.at(k).line.start.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
+
+							ImGui::Text("Позиция конечной точки:");
+							dcheck(ImGui::SliderFloat("Xe", &trigCon->triggers.at(k).line.end.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ye", &trigCon->triggers.at(k).line.end.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
+
+							if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
+							{
+								AddLog("Нормирование по оси X...\n");
+
+								trigCon->triggers.at(k).line.end.x = trigCon->triggers.at(k).line.start.x;
+
+								EngineFunctions::SetNewValue<float>(
+									triggerSelected,
+									"pos-ltx", trigCon->triggers.at(k).line.start.x,
+									trigCon->dataPath,
+									&applog
+									);
+
+								EngineFunctions::SetNewValue<float>(
+									triggerSelected,
+									"pos-rbx", trigCon->triggers.at(k).line.end.x,
+									trigCon->dataPath,
+									&applog
+									);
+
+								AddLog("Нормирование выполнено\n");
+							}
+
+							ImGui::SameLine();
+
+							if (ImGui::Button("Нормировать Y", ImVec2(100, 20)))
+							{
+								AddLog("Нормирование по оси Y...\n");
+
+								trigCon->triggers.at(k).line.end.y = trigCon->triggers.at(k).line.start.y;
+
+								EngineFunctions::SetNewValue<float>(
+									triggerSelected,
+									"pos-lty", trigCon->triggers.at(k).line.start.y,
+									trigCon->dataPath,
+									&applog
+									);
+
+								EngineFunctions::SetNewValue<float>(
+									triggerSelected,
+									"pos-rby", trigCon->triggers.at(k).line.end.y,
+									trigCon->dataPath,
+									&applog
+									);
+
+								AddLog("Нормирование выполнено\n");
+							}
+
+							ImGui::Separator();	// Разделитель
+						}
+						/*********************************************/
+
+						/* Элементы управления линией */
+						if (ImGui::CollapsingHeader("Изменение", ImGuiTreeNodeFlags_DefaultOpen))
+						{
+							/* Если нажата кнопка перерисовать линию */
+							{
+								if (ImGui::Button("Перерисовать", ImVec2(100, 20)))
+								{
+									AddLog("Изменение линии...\n");
+
+									DrawingLine = true;
+									trigCon->triggers.at(k).line.visability = false;
+
+									ImGui::GetStyle().Alpha = 0.1f;
+								}
+
+								if (DrawingLine)
+								{
+									using namespace Physics;
+
+									if (!SettedFirstPoint)
+									{
+										mouseHelpInfo = "Нажмите ЛКМ, чтобы поставить\nпервую точку.";
+
+										if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+										{
+											auto pos = wnd->mouse.GetPos();
+											firstPoint = { (float)pos.first, (float)pos.second };
+
+											SettedFirstPoint = true;
+											std::ostringstream oss;
+											oss << "Поставлена первая точка:\n" <<
+												"[x: " << firstPoint.x <<
+												"; y: " << firstPoint.y << "]\n";
+
+											AddLog(oss);
+										}
+									}
+									else if (!SettedSecondPoint)
+									{
+										mouseHelpInfo = "Нажмите ПКМ, чтобы поставить\nвторую точку.";
+
+										int ms_posX = wnd->mouse.GetPosX();
+										int ms_posY = wnd->mouse.GetPosY();
+
+										Line line(std::string("Drown line"), firstPoint.x, firstPoint.y, (float)ms_posX, (float)ms_posY);
+										wnd->Gfx().DrawLine(line.start, line.end);
+
+										if (wnd->mouse.RightIsPressed() && wnd->mouse.IsInWindow())
+										{
+											auto pos = wnd->mouse.GetPos();
+											secondPoint = { (float)pos.first, (float)pos.second };
+
+											Line line_new(triggerSelected + std::string(" line"), firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+											line_new.Translate(camera->position);
+											trigCon->UpdateLineAt(k, line_new);
+
+											std::ostringstream oss;
+											oss << "Поставлена вторая точка:\n" <<
+												"[x: "  << secondPoint.x <<
+												"; y: " << secondPoint.y << "]\n";
+
+											AddLog(oss);
+
+											EngineFunctions::SetNewValue<float>(
+												triggerSelected,
+												"pos-ltx", trigCon->triggers.at(k).line.start.x,
+												trigCon->dataPath,
+												&applog
+												);
+
+											EngineFunctions::SetNewValue<float>(
+												triggerSelected,
+												"pos-rbx", trigCon->triggers.at(k).line.end.x,
+												trigCon->dataPath,
+												&applog
+												);
+
+											EngineFunctions::SetNewValue<float>(
+												triggerSelected,
+												"pos-lty", trigCon->triggers.at(k).line.start.y,
+												trigCon->dataPath,
+												&applog
+												);
+
+											EngineFunctions::SetNewValue<float>(
+												triggerSelected,
+												"pos-rby", trigCon->triggers.at(k).line.end.y,
+												trigCon->dataPath,
+												&applog
+												);
+
+											mouseHelpInfo = "";
+
+											AddLog("Линия ");
+											AddLog(line_new.name);
+											AddLog(" изменена\n");
+
+											SettedSecondPoint = true;
+										}
+									}
+									else if (SettedFirstPoint && SettedSecondPoint)
+									{
+										DrawingLine = false;
+										SettedFirstPoint = false;
+										SettedSecondPoint = false;
+
+										ImGui::GetStyle().Alpha = 1.0f;
+									}
+								}
+							}
+							/*****************************************/
+
+							ImGui::Separator();	// Разделитель
+						}
+						/******************************/
+
+						ImGui::NewLine();
+						ImGui::NewLine();
+
+						/* Если нажата кнопка сохранить текущие настройки линии */
+						{
+							if (ImGui::Button("Сохранить", ImVec2(100, 20)))
+							{
+								AddLog("Сохранение настроек для ");
+								AddLog(phEngPtr->lines.at(k).name);
+								AddLog("\n");
+
+								SavingSettings = true;
+							}
+
+							if (SavingSettings)
+							{
+								/* Сохранение координат */
+
+								EngineFunctions::SetNewValue<float>(
+									triggerSelected,
+									"pos-ltx", trigCon->triggers.at(k).line.start.x,
+									trigCon->dataPath,
+									&applog
+									);
+
+								EngineFunctions::SetNewValue<float>(
+									triggerSelected,
+									"pos-rbx", trigCon->triggers.at(k).line.end.x,
+									trigCon->dataPath,
+									&applog
+									);
+
+								EngineFunctions::SetNewValue<float>(
+									triggerSelected,
+									"pos-lty", trigCon->triggers.at(k).line.start.y,
+									trigCon->dataPath,
+									&applog
+									);
+
+								EngineFunctions::SetNewValue<float>(
+									triggerSelected,
+									"pos-rby", trigCon->triggers.at(k).line.end.y,
+									trigCon->dataPath,
+									&applog
+									);
+
+								/************************/
+
+								AddLog("Настройки сохранены\n");
+
+								SavingSettings = false;
+							}
+						}
+						/********************************************************/
+
+						ImGui::EndChild();
+					}
+				}
 			}
 		}
 	}

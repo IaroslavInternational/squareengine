@@ -65,6 +65,16 @@ std::string Trigger::GetGoal() const
 	return goal;
 }
 
+Physics::Line Trigger::GetLine() const
+{
+	return line;
+}
+
+void Trigger::SetLine(Physics::Line line)
+{
+	this->line = line;
+}
+
 std::vector<Physics::Line> Trigger::GetLines(HitBox hitbox)
 {
 	auto hbCoord = hitbox.GetCoordinates();

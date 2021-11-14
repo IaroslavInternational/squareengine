@@ -69,7 +69,10 @@ void TriggerContainer::Draw(Graphics& gfx)
 {
 	for (auto& t : triggers)
 	{
-		t.Draw(gfx);
+		if (t.GetLine().IsVisible())
+		{
+			t.Draw(gfx);
+		}
 	}
 }
 
@@ -79,6 +82,11 @@ void TriggerContainer::Translate(const DirectX::XMFLOAT2& delta)
 	{
 		t.Translate(delta);
 	}
+}
+
+void TriggerContainer::UpdateLineAt(size_t k, Physics::Line line)
+{
+	triggers.at(k).SetLine(line);
 }
 
 std::optional<Trigger> TriggerContainer::Check(HitBox hitbox)

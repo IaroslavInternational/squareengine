@@ -10,6 +10,8 @@ class Graphics;
 class Trigger
 {
 public:
+	friend class GUISystem;
+public:
 	Trigger(std::string name, float start_x, float start_y, float end_x, float end_y,       TriggerType type, std::string goal);
 	Trigger(std::string name, const DirectX::XMFLOAT2& start, const DirectX::XMFLOAT2& end, TriggerType type, std::string goal);
 	Trigger(std::string name, const Physics::Line& line,								    TriggerType type, std::string goal);
@@ -19,9 +21,11 @@ public:
 	bool IsCollide(HitBox hitbox);
 	bool IsCollide(const Physics::Line& line);
 public:
-	TriggerType GetType() const;
-	std::string GetName() const;
-	std::string GetGoal() const;
+	TriggerType	  GetType() const;
+	std::string	  GetName() const;
+	std::string	  GetGoal() const;
+	Physics::Line GetLine() const;
+	void		  SetLine(Physics::Line line);
 private:
 	std::vector<Physics::Line> GetLines(HitBox hitbox);
 private:
