@@ -4,5 +4,6 @@ enum class TriggerType
 {
 	SceneTrigger,
 	SoundTrigger,
-	CutSceneTrigger
+	CutSceneTrigger,
+	Count
 };

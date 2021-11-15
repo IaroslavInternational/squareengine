@@ -370,6 +370,14 @@ namespace EngineFunctions
 		s << "Scene " << GetScenesNames().size();
 		pt.append(s.str());
 
+		// Создание пустых файла триггеров
+		f << pt.string() << "\\triggers.json";
+
+		fs.open(f.str());
+		fs << "{}";
+		fs.close();
+		f.str("");
+
 		std::ostringstream ff;
 		ff << pf.string() << "\\camera.json";
 		std::ostringstream ft;

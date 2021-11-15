@@ -2582,7 +2582,7 @@ void GUISystem::ShowTriggerControl()
 						/*********************************************/
 
 						/* Элементы управления линией */
-						if (ImGui::CollapsingHeader("Изменение", ImGuiTreeNodeFlags_DefaultOpen))
+						if (ImGui::CollapsingHeader("Изменение"))
 						{
 							/* Если нажата кнопка перерисовать линию */
 							{
@@ -2697,6 +2697,72 @@ void GUISystem::ShowTriggerControl()
 						}
 						/******************************/
 
+						if (ImGui::CollapsingHeader("Параметры триггера"))
+						{
+							if (ImGui::BeginCombo("Тип триггера", trigType.c_str()))
+							{
+								std::string curType = "";
+								
+								for (size_t i = 0; i < static_cast<size_t>(TriggerType::Count); i++)
+								{
+									if (static_cast<TriggerType>(i) == TriggerType::SceneTrigger)
+									{
+										curType = "Сценовой триггер";
+									}
+
+									if (static_cast<TriggerType>(i) == TriggerType::SoundTrigger)
+									{
+										curType = "Звуковой триггер";
+									}
+
+									if (static_cast<TriggerType>(i) == TriggerType::CutSceneTrigger)
+									{
+										curType = "Кат-сценовой триггер";
+									}
+
+									if (ImGui::Selectable(curType.c_str()))
+									{
+										trigType   = curType;
+										trigTypeId = i;
+									}
+								}
+
+								ImGui::EndCombo();
+							}
+
+							if(trigType != "" && static_cast<TriggerType>(trigTypeId) == TriggerType::SceneTrigger)
+							{
+								if (ImGui::BeginCombo("Переход на сцену", trigScenesPreview.c_str()))
+								{
+									for (size_t i = 1; i <= EngineFunctions::GetScenesNames().size(); i++)
+									{
+										std::ostringstream oss;
+										oss << "Scene " << i;
+
+										if (ImGui::Selectable(oss.str().c_str()))
+										{
+											trigScenesPreview = oss.str().c_str();
+										}
+									}
+									
+									ImGui::EndCombo();
+								}
+
+								if (ImGui::Button("Сохранить цель", ImVec2(100, 20)))
+								{
+									EngineFunctions::SetNewValue<std::string>(
+										trigCon->triggers.at(k).name,
+										"goal",
+										trigScenesPreview,
+										trigCon->dataPath,
+										&applog
+										);
+								}
+							}
+
+							ImGui::Separator();	// Разделитель
+						}
+
 						ImGui::NewLine();
 						ImGui::NewLine();
 
@@ -2717,28 +2783,28 @@ void GUISystem::ShowTriggerControl()
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"pos-ltx", trigCon->triggers.at(k).line.start.x,
+									"start-x", trigCon->triggers.at(k).line.start.x,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"pos-rbx", trigCon->triggers.at(k).line.end.x,
+									"end-x", trigCon->triggers.at(k).line.end.x,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"pos-lty", trigCon->triggers.at(k).line.start.y,
+									"start-y", trigCon->triggers.at(k).line.start.y,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"pos-rby", trigCon->triggers.at(k).line.end.y,
+									"end-y", trigCon->triggers.at(k).line.end.y,
 									trigCon->dataPath,
 									&applog
 									);
@@ -4728,6 +4794,7 @@ void GUISystem::SaveAll()
 	SaveMainPersonData();
 	SavePersonsData();
 	SaveIobjData();
+	SaveTriggersData();
 	SaveLayersData();
 	SaveCameraData();
 	SaveScenesData();
@@ -4970,6 +5037,48 @@ void GUISystem::SaveIobjData()
 		EngineFunctions::SaveHitBoxData(IobjCon->objects[i]->name, hitbox, IobjCon->dataPath, &applog);
 	}
 
+	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SaveTriggersData()
+{
+	AddLog("Сохранение настроек для триггеров...\n");
+
+	for (size_t i = 0; i < trigCon->triggers.size(); i++)
+	{
+		/* Сохранение координат */
+
+		EngineFunctions::SetNewValue<float>(
+			triggerSelected,
+			"start-x", trigCon->triggers.at(i).line.start.x,
+			trigCon->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			triggerSelected,
+			"end-x", trigCon->triggers.at(i).line.end.x,
+			trigCon->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			triggerSelected,
+			"start-y", trigCon->triggers.at(i).line.start.y,
+			trigCon->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			triggerSelected,
+			"end-y", trigCon->triggers.at(i).line.end.y,
+			trigCon->dataPath,
+			&applog
+			);
+
+		/************************/
+	}
+	
 	AddLog("Настройки сохранены\n");
 }
 

@@ -110,6 +110,7 @@ private:
 	void SaveMainPersonData();		// Сохранить настройки для главного персонажа
 	void SavePersonsData();			// Сохранить настройки для персонажей
 	void SaveIobjData();			// Сохранить настройки для интерактивных объектов
+	void SaveTriggersData();		// Сохранить настройки для триггеров
 	void SaveLayersData();			// Сохранить настройки для слоёв
 	void SaveCameraData();			// Сохранить настройки для камеры
 	void SaveScenesData();			// Сохранить настройки для сцен
@@ -226,11 +227,13 @@ private:
 private:
 	/* Вспомогательные переменные для работы с контейнером триггеров */
 
-	bool		AddingTrigger	= false; // Статус добавления триггера
-	std::string triggerSelected = "";	 // Выбранный триггер
+	bool		AddingTrigger	  = false; // Статус добавления триггера
+	std::string trigScenesPreview = "";	   // Выбранная цель триггера (сцена)
+	std::string triggerSelected   = "";	   // Выбранный триггер
+	std::string trigType	      = "";	   // Выбранный тип триггера
+	size_t		trigTypeId	      = 0;	   // Выбранный тип триггера (id)
 
 	/*****************************************************************/
-
 private:
 	/* Вспомагательные переменные для работы с объектом (база - Object2D) */
 	
