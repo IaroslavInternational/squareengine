@@ -17,7 +17,6 @@ public:
 		  std::shared_ptr<Window>				  wnd,		
 		  std::string							  scData, 
 		  std::shared_ptr<Physics::PhysicsEngine> phEngine);
-	~Scene();
 public:
 	/* Методы сцены */
 

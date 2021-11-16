@@ -21,9 +21,6 @@ Scene::Scene(std::string							 name,
 	camera->Init();
 }
 
-Scene::~Scene()
-{}
-
 /* Методы сцены */
 
 void Scene::ProcessInput(float dt)
