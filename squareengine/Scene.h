@@ -7,6 +7,7 @@
 #include "PhysicsEngine.h"
 #include "Camera.h"
 #include "TriggerContainer.h"
+#include "ScriptCompiler.h"
 
 class Scene
 {

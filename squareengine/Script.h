@@ -2,15 +2,18 @@
 
 #include <string>
 #include <vector>
-#include <map>
 
 class Script
 {
 public:
-	Script();
+	Script() = default;
 public:
-	void AddCommand(std::string, int);
+	void AddCommand(std::pair<std::string, int> cmd);
+public:
+	void NextCommand();
 private:
-	std::vector<std::map<std::string, int>> cmd;
+	size_t active_cmd = 0;
+private:
+	std::vector<std::pair<std::string, int>> commands;
 };
 
