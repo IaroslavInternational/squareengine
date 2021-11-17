@@ -81,6 +81,8 @@ void Scene::ProcessInput(float dt)
 	{
 		hero.ProcessMoving(dt);
 	}
+
+	persCon.Process(dt);
 }
 
 void Scene::Render(float dt)

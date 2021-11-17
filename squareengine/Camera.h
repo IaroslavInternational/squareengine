@@ -32,5 +32,5 @@ private:
 	bool			  noclip;
 	float			  noclipSpeed;
 	DirectX::XMFLOAT2 initPosition;
-	DirectX::XMFLOAT2 position;
+	DirectX::XMFLOAT2 position = { 0.0f, 0.0f };
 };

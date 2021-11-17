@@ -742,7 +742,7 @@ void GUISystem::ShowPersonList(float dt)
 					hb_coord.z = optPdata.value().position.x + data.animPersonData[0].width;
 					hb_coord.w = optPdata.value().position.y + data.animPersonData[0].height;
 
-					persCon->persons.push_back(std::make_unique<Person>(data.name, data.position, data.layer, data.pathToSprite, HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0]));
+					persCon->persons.push_back(std::make_unique<Person>(data.name, data.position, data.layer, data.pathToSprite, HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0], ""));
 					objQueue->queue.push_back(persCon->persons.back().get());
 
 					using std::to_string;

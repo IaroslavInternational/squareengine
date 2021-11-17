@@ -88,15 +88,29 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 				/********************************/
 
+				/* Получение пути скрипта */
+
+				std::string scriptPath = obj.at("script");
+
+				/**************************/
+
 				/* Инициализация объекта */
 
-				persons.push_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, speed, eff_d, eff_t, eff_a));
+				persons.push_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, speed, eff_d, eff_t, eff_a));
 
 				/*************************/
 			}
 		}
 
 		persons.shrink_to_fit();
+	}
+}
+
+void PersonContainer::Process(float dt)
+{
+	for (auto& p : persons)
+	{
+		p->Process(dt);
 	}
 }
 

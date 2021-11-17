@@ -10,10 +10,11 @@ public:
 public:
 	PersonContainer(std::string dataPath);
 public:
-	void Draw(Graphics& gfx);
-	void Translate(DirectX::XMFLOAT2 delta);
-	void DeletePersonAt(size_t k);
-	void DeletePersonAt(std::vector<std::unique_ptr<Person>>::iterator it);
+	void					 Process(float dt);
+	void					 Draw(Graphics& gfx);
+	void					 Translate(DirectX::XMFLOAT2 delta);
+	void					 DeletePersonAt(size_t k);
+	void					 DeletePersonAt(std::vector<std::unique_ptr<Person>>::iterator it);
 	std::pair<bool, Person*> CheckCollision(HitBox& hb);
 private:
 	std::string dataPath;

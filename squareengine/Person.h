@@ -2,6 +2,7 @@
 
 #include "Object2D.h"
 #include "Animation.h"
+#include "Script.h"
 
 struct AnimationData;
 
@@ -15,6 +16,7 @@ public:
 		   size_t        layer,
 		   std::string   pathToSprite, HitBox			   hitbox,
 		   AnimationData aData,
+		   std::string   scriptPath,
 		   float		 speed 			= 1.0f, 
 		   float		 effectDuration	= 0.045f, 
 		   float		 effectTime 	= 0.0f, 
@@ -23,6 +25,7 @@ public:
 	/* Главные методы для отрисовки персонажа */
 	
 	void Draw(Graphics& gfx) override;			// Отрисовать персонажа
+	void Process(float dt);						// Игровый цикл персонажа
 	void SetDirection(DirectX::XMFLOAT2 dir);	// Установить направление положения 
 	void Update(float dt);						// Обновить состояние персонажа
 	void ActivateEffect();						// Активировать эффект
@@ -84,4 +87,11 @@ private:
 	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
 
 	/***************************************/
+private:
+	/* Переменные описания работы скрипта */
+	
+	std::string scriptPath;
+	Script      script;
+
+	/**************************************/
 };

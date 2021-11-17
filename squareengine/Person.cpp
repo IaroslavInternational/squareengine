@@ -1,24 +1,26 @@
 #include "Person.h"
 
 #include "AnimationData.h"
+#include "ScriptCompiler.h"
 #include "EngineFunctions.hpp"
 
 Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
 			   std::string	 pathToSprite, HitBox			 hitbox,
-			   AnimationData aData,
+			   AnimationData aData,		   std::string       scriptPath,
 			   float	     speed,		   float			 effectDuration,
 			   float	     effectTime,   bool			     effectActive)
 	:
 	Object2D(name, position, layer, pathToSprite),
 	holdTime(aData.ft),
 	speed(speed),
-	hitbox(hitbox)
+	hitbox(hitbox),
+	scriptPath(scriptPath)
 {
 	CalculateDeltas();
 
 	effect.Duration = effectDuration;
-	effect.Active = effectTime;
-	effect.Time =   effectActive;
+	effect.Active	= effectTime;
+	effect.Time		= effectActive;
 
 	std::vector<std::string> animationNames =
 	{
@@ -40,6 +42,9 @@ Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
 	{
 		animations.emplace_back(Animation(0, aData.pEnd * (i - (int)Sequence::StandingLeft), aData.width, aData.height, 1, image, aData.ft, animationNames[i]));
 	}
+
+	ScriptCompiler sCompiler(scriptPath);
+	script = sCompiler.GetScript();
 }
 
 /* Главные методы для отрисовки персонажа */
@@ -58,6 +63,82 @@ void Person::Draw(Graphics& gfx)
 	if (hitbox.IsVisible())
 	{
 		gfx.DrawHitBox(hitbox - DirectX::XMFLOAT2(dx, dy));
+	}
+}
+
+void Person::Process(float dt)
+{
+	auto current_cmd = script.GetCommand();
+
+	if (current_cmd.first == "step_x")
+	{
+		if (current_cmd.second > 0)
+		{
+			script.SetGoal(position.x + current_cmd.second);
+
+			if (position.x >= script.GetGoal())
+			{
+				script.NextCommand();
+				return;
+			}
+			else
+			{
+				SetDirection({ 1.0f, 0.0f });
+				Update(dt);
+			}
+		}
+		else
+		{
+			script.SetGoal(position.x + current_cmd.second);
+
+			if (position.x <= script.GetGoal())
+			{
+				script.NextCommand();
+				return;
+			}
+			else
+			{
+				SetDirection({ -1.0f, 0.0f });
+				Update(dt);
+			}
+		}
+	}
+	else if (current_cmd.first == "step_y")
+	{
+		if (current_cmd.second > 0)
+		{
+			script.SetGoal(position.y + current_cmd.second);
+
+			if (position.y >= script.GetGoal())
+			{
+				script.NextCommand();
+				return;
+			}
+			else 
+			{
+				SetDirection({ 0.0f, -1.0f });
+				Update(dt);
+			}
+		}
+		else
+		{
+			script.SetGoal(position.y + current_cmd.second);
+
+			if (position.y <= script.GetGoal())
+			{
+				script.NextCommand();
+				return;
+			}
+			else
+			{
+				SetDirection({ 0.0f, 1.0f });
+				Update(dt);
+			}
+		}
+	}
+	else if (current_cmd.first == "delay")
+	{
+		script.NextCommand();
 	}
 }
 
@@ -98,6 +179,7 @@ void Person::SetDirection(DirectX::XMFLOAT2 dir)
 			iCurSequence = Sequence::StandingDown;
 		}
 	}
+
 	vel.x = dir.x * speed;
 	vel.y = dir.y * speed;
 }
