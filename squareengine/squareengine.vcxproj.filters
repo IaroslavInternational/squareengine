@@ -151,6 +151,24 @@
     <Filter Include="Исходные файлы\Сцена\Объекты\Контейнеры объектов">
       <UniqueIdentifier>{3c415182-a30c-4890-88ff-6e578ec179a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\Сцена\Скрипт">
+      <UniqueIdentifier>{b551a1bc-7c7d-41c5-b8c6-c4794714c14b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Сцена\Объекты\Персонажи">
+      <UniqueIdentifier>{26f42288-bc7e-478f-9d4d-60994102a4b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Сцена\Объекты\Триггер">
+      <UniqueIdentifier>{97e3f89e-e689-4c5a-b7a7-ddc61ec6dc91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Сцена\Объекты\Персонажи">
+      <UniqueIdentifier>{2407b885-222e-43c1-ac2b-7ad307a464a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Сцена\Объекты\Триггер">
+      <UniqueIdentifier>{4ee89193-59e1-4b64-a830-f31875002efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Сцена\Скрипт">
+      <UniqueIdentifier>{163f5014-6234-4d0b-8714-16a86ba564f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -237,12 +255,6 @@
     <ClCompile Include="GUISystem.cpp">
       <Filter>Исходные файлы\Интерфейс</Filter>
     </ClCompile>
-    <ClCompile Include="Person.cpp">
-      <Filter>Исходные файлы\Сцена\Объекты</Filter>
-    </ClCompile>
-    <ClCompile Include="MainPerson.cpp">
-      <Filter>Исходные файлы\Сцена\Объекты</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\implot_items.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -303,17 +315,23 @@
     <ClCompile Include="WinMain.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Trigger.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="TriggerContainer.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Script.cpp">
+      <Filter>Исходные файлы\Сцена\Скрипт</Filter>
     </ClCompile>
     <ClCompile Include="ScriptCompiler.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Сцена\Скрипт</Filter>
     </ClCompile>
-    <ClCompile Include="Script.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="MainPerson.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\Персонажи</Filter>
+    </ClCompile>
+    <ClCompile Include="Person.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\Персонажи</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerContainer.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\Триггер</Filter>
+    </ClCompile>
+    <ClCompile Include="Trigger.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\Триггер</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -446,12 +464,6 @@
     <ClInclude Include="GUISystem.h">
       <Filter>Заголовочные файлы\Интерфейс</Filter>
     </ClInclude>
-    <ClInclude Include="Person.h">
-      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
-    </ClInclude>
-    <ClInclude Include="MainPerson.h">
-      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\implot_internal.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -518,26 +530,32 @@
     <ClInclude Include="stb_image.h">
       <Filter>Заголовочные файлы\Система\Графика</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationData.h">
-      <Filter>Заголовочные файлы</Filter>
+    <ClInclude Include="MainPerson.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\Персонажи</Filter>
     </ClInclude>
-    <ClInclude Include="dirent.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Trigger.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="TriggerType.hpp">
-      <Filter>Заголовочные файлы</Filter>
+    <ClInclude Include="Person.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\Персонажи</Filter>
     </ClInclude>
     <ClInclude Include="TriggerContainer.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\Сцена\Объекты\Триггер</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptCompiler.h">
-      <Filter>Заголовочные файлы</Filter>
+    <ClInclude Include="TriggerType.hpp">
+      <Filter>Заголовочные файлы\Сцена\Объекты\Триггер</Filter>
+    </ClInclude>
+    <ClInclude Include="Trigger.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\Триггер</Filter>
     </ClInclude>
     <ClInclude Include="Script.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\Сцена\Скрипт</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptCompiler.h">
+      <Filter>Заголовочные файлы\Сцена\Скрипт</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationData.h">
+      <Filter>Заголовочные файлы\Система\Графика\Анимация</Filter>
+    </ClInclude>
+    <ClInclude Include="dirent.h">
+      <Filter>Заголовочные файлы\Система</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

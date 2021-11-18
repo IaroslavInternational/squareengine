@@ -231,6 +231,11 @@ void GUISystem::ShowMenu()
 
 			if (ImGui::BeginMenu("Система"))
 			{
+				if (ImGui::MenuItem("Игра"))
+				{
+					ShowScriptsSettings ? ShowScriptsSettings = false : ShowScriptsSettings = true;
+				}
+
 				if (ImGui::BeginMenu("Графика"))
 				{
 					if (ImGui::MenuItem("Viewport"))
@@ -584,6 +589,11 @@ void GUISystem::ShowOptionalPanel()
 	if (ShowScenesSettings)
 	{
 		ShowScenesControl();
+	}
+
+	if (ShowScriptsSettings)
+	{
+		ShowScriptsControl();
 	}
 
 	if (mouseHelpInfo == "")
@@ -3805,6 +3815,76 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		}
 	}
 	/*********************************************************************/
+}
+
+void GUISystem::ShowScriptsControl()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 DispSize = io.DisplaySize;
+
+	ImVec2 PanelSize = ImVec2(
+		round(DispSize.x * 0.25f),
+		DispSize.y * 0.5f
+	);
+
+	ImGui::SetNextWindowSize(PanelSize);
+	if (ImGui::Begin("Игра", &ShowScriptsSettings, ImGuiWindowFlags_NoResize))
+	{
+		/* Переменные управления сбросом интерфейса */
+
+		//bool posDirty = false;	 // Контроль позиции
+		//bool speedDirty = false; // Контроль скорости
+		//
+		//const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+		/********************************************/
+
+		/* Элементы управления игровым циклом игры */
+
+		if (ImGui::CollapsingHeader("Запуск", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			if (ImGui::Button("Запустить"))
+			{
+				AddLog("Запуск игрового цикла...\n");
+				
+				persCon->IsScriptsRunning = true;
+
+				AddLog("Цикл запущен\n");
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Остановить"))
+			{
+				AddLog("Остановка игрового цикла...\n");
+
+				persCon->IsScriptsRunning = false;
+
+				AddLog("Цикл остановлен\n");
+			}
+
+			ImGui::Separator();
+		}
+
+		/*******************************************/
+
+		if (ImGui::Button("Сохранить"))
+		{
+			AddLog("Сохранение настроек камеры...\n");
+
+			SavingSettings = true;
+		}
+
+		if (SavingSettings)
+		{
+
+			AddLog("Настройки сохранены\n");
+
+			SavingSettings = false;
+		}
+	}
+
+	ImGui::End();
 }
 
 void GUISystem::ShowLog()

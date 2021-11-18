@@ -86,6 +86,7 @@ private:
 	void   SpawnDefaultObject2DControl(
 		   Object2D*   obj, 
 		   std::string dataPath);			// Показать модуль настроек для объекта на базе Object2D
+	void   ShowScriptsControl();			// Показать панель настроек для скриптов
 
 	void   ShowLog();						// Показать панель лога
 	void   ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
@@ -145,6 +146,7 @@ private:
 	bool ShowLogs					  = true;	// Видимость лога
 	bool ShowHardwareInfo 			  =	true;	// Видимость FPS и информации о графическом адаптере
 	bool ShowFPSChart 				  =	false;	// Видимость графика изменения FPS
+	bool ShowScriptsSettings		  = false;	// Видимость панели настроек скриптов
 
 	/********************************/
 private:
@@ -306,4 +308,3 @@ private:
 
 	/*********************************************/
 };
-

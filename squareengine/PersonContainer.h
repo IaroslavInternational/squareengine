@@ -17,6 +17,7 @@ public:
 	void					 DeletePersonAt(std::vector<std::unique_ptr<Person>>::iterator it);
 	std::pair<bool, Person*> CheckCollision(HitBox& hb);
 private:
-	std::string dataPath;
+	bool								 IsScriptsRunning = true;
+	std::string							 dataPath;
 	std::vector<std::unique_ptr<Person>> persons;
 };

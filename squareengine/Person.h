@@ -15,8 +15,7 @@ public:
 	Person(std::string   name,		   DirectX::XMFLOAT2   position,
 		   size_t        layer,
 		   std::string   pathToSprite, HitBox			   hitbox,
-		   AnimationData aData,
-		   std::string   scriptPath,
+		   AnimationData aData,		   std::string		   scriptPath,
 		   float		 speed 			= 1.0f, 
 		   float		 effectDuration	= 0.045f, 
 		   float		 effectTime 	= 0.0f, 
@@ -82,17 +81,17 @@ private:
 private:
 	/* Переменные описания работы с hitbox */
 
-	HitBox hitbox;						// Hitbox
-	float  dx;							// Корректирующий отступ hitbox от блока спрайта по оси x
-	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
+	HitBox hitbox;	// Hitbox
+	float  dx;		// Корректирующий отступ hitbox от блока спрайта по оси x
+	float  dy;		// Корректирующий отступ hitbox от блока спрайта по оси y
 
 	/***************************************/
 private:
 	/* Переменные описания работы скрипта */
 	
-	std::string scriptPath;
-	Script      script;
-	float		integralTime = 0.0f;
+	std::string scriptPath;			 // Путь к срипту
+	Script      script;				 // Скрипт
+	float		integralTime = 0.0f; // Внутренее время
 
 	/**************************************/
 };

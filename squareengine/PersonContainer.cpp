@@ -108,9 +108,12 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 void PersonContainer::Process(float dt)
 {
-	for (auto& p : persons)
+	if (IsScriptsRunning)
 	{
-		p->Process(dt);
+		for (auto& p : persons)
+		{
+			p->Process(dt);
+		}
 	}
 }
 
