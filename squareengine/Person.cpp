@@ -138,7 +138,20 @@ void Person::Process(float dt)
 	}
 	else if (current_cmd.first == "delay")
 	{
-		script.NextCommand();
+		script.SetGoal(current_cmd.second);
+
+		if (integralTime >= (float)script.GetGoal() / 1000.0f)
+		{
+			script.NextCommand();
+			integralTime = 0.0f;
+
+			return;
+		}
+		else
+		{
+			SetDirection({ 0.0f, 0.0f });
+			integralTime += dt;
+		}
 	}
 }
 

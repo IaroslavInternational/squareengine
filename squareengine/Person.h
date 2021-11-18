@@ -92,6 +92,7 @@ private:
 	
 	std::string scriptPath;
 	Script      script;
+	float		integralTime = 0.0f;
 
 	/**************************************/
 };
