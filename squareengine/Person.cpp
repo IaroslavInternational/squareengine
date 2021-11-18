@@ -107,9 +107,9 @@ void Person::Process(float dt)
 	{
 		if (current_cmd.second > 0)
 		{
-			script.SetGoal(position.y + current_cmd.second);
+			script.SetGoal(position.y - current_cmd.second);
 
-			if (position.y >= script.GetGoal())
+			if (-position.y >= script.GetGoal())
 			{
 				script.NextCommand();
 				return;
@@ -124,7 +124,7 @@ void Person::Process(float dt)
 		{
 			script.SetGoal(position.y + current_cmd.second);
 
-			if (position.y <= script.GetGoal())
+			if (-position.y <= script.GetGoal())
 			{
 				script.NextCommand();
 				return;

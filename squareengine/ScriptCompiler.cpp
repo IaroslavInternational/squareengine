@@ -23,8 +23,7 @@ ScriptCompiler::ScriptCompiler(const std::string& filename)
 
 	while (script_str.find(';') != script_str.npos)
 	{
-		std::string l = FindNextLine(script_str);
-		lines.push_back(l);
+		lines.push_back(FindNextLine(script_str));
 	}
 
 	for (auto& l : lines)
