@@ -43,8 +43,15 @@ Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
 		animations.emplace_back(Animation(0, aData.pEnd * (i - (int)Sequence::StandingLeft), aData.width, aData.height, 1, image, aData.ft, animationNames[i]));
 	}
 
-	ScriptCompiler sCompiler(scriptPath);
-	script = sCompiler.GetScript();
+	if (scriptPath != "")
+	{
+		ScriptCompiler sCompiler(scriptPath);
+		script = sCompiler.GetScript();
+	}
+	else
+	{
+		script = Script();
+	}
 }
 
 /* Главные методы для отрисовки персонажа */
@@ -68,91 +75,102 @@ void Person::Draw(Graphics& gfx)
 
 void Person::Process(float dt)
 {
-	auto current_cmd = script.GetCommand();
-
-	if (current_cmd.first == "step_x")
+	if (!script.IsEmpty())
 	{
-		if (current_cmd.second > 0)
-		{
-			script.SetGoal(position.x + current_cmd.second);
+		auto current_cmd = script.GetCommand();
 
-			if (position.x >= script.GetGoal())
+		if (current_cmd.first == "step_x")
+		{
+			if (current_cmd.second > 0)
+			{
+				script.SetGoal(position.x + current_cmd.second);
+		
+				if (position.x >= script.GetGoal())
+				{
+					script.NextCommand();
+					return;
+				}
+				else
+				{
+					SetDirection({ 1.0f, 0.0f });
+					Update(dt);
+				}
+			}
+			else
+			{
+				script.SetGoal(position.x + current_cmd.second);
+
+				if (position.x <= script.GetGoal())
+				{
+					script.NextCommand();
+					return;
+				}
+				else
+				{
+					SetDirection({ -1.0f, 0.0f });
+					Update(dt);
+				}
+			}
+		}
+		else if (current_cmd.first == "step_y")
+		{
+			if (current_cmd.second > 0)
+			{
+				script.SetGoal(position.y + current_cmd.second);
+
+				if (position.y >= script.GetGoal())
+				{
+					script.NextCommand();
+					return;
+				}
+				else
+				{
+					SetDirection({ 0.0f, 1.0f });
+					Update(dt);
+				}
+			}
+			else
+			{
+				script.SetGoal(position.y + current_cmd.second);
+
+				if (position.y <= script.GetGoal())
+				{
+					script.NextCommand();
+					return;
+				}
+				else
+				{
+					SetDirection({ 0.0f, -1.0f });
+					Update(dt);
+				}
+			}
+		}
+		else if (current_cmd.first == "delay")
+		{
+			script.SetGoal(current_cmd.second);
+
+			if (integralTime >= (float)script.GetGoal() / 1000.0f)
 			{
 				script.NextCommand();
+				integralTime = 0.0f;
+
 				return;
 			}
 			else
 			{
-				SetDirection({ 1.0f, 0.0f });
-				Update(dt);
-			}
-		}
-		else
-		{
-			script.SetGoal(position.x + current_cmd.second);
-
-			if (position.x <= script.GetGoal())
-			{
-				script.NextCommand();
-				return;
-			}
-			else
-			{
-				SetDirection({ -1.0f, 0.0f });
-				Update(dt);
+				SetDirection({ 0.0f, 0.0f });
+				integralTime += dt;
 			}
 		}
 	}
-	else if (current_cmd.first == "step_y")
+
+	/*if (AllowedMovingDown && !IsOnJump)
 	{
-		if (current_cmd.second > 0)
-		{
-			script.SetGoal(position.y - current_cmd.second);
-
-			if (-position.y >= script.GetGoal())
-			{
-				script.NextCommand();
-				return;
-			}
-			else 
-			{
-				SetDirection({ 0.0f, -1.0f });
-				Update(dt);
-			}
-		}
-		else
-		{
-			script.SetGoal(position.y + current_cmd.second);
-
-			if (-position.y <= script.GetGoal())
-			{
-				script.NextCommand();
-				return;
-			}
-			else
-			{
-				SetDirection({ 0.0f, 1.0f });
-				Update(dt);
-			}
-		}
-	}
-	else if (current_cmd.first == "delay")
-	{
-		script.SetGoal(current_cmd.second);
-
-		if (integralTime >= (float)script.GetGoal() / 1000.0f)
-		{
-			script.NextCommand();
-			integralTime = 0.0f;
-
-			return;
-		}
-		else
-		{
-			SetDirection({ 0.0f, 0.0f });
-			integralTime += dt;
-		}
-	}
+		float d = gravity * dt;
+		
+		position.y += d;
+		hitbox.UpdateY(d);
+	}*/
 }
 
 void Person::SetDirection(DirectX::XMFLOAT2 dir)
@@ -209,11 +227,11 @@ void Person::Update(float dt)
 	CalculateDeltas();
 
 	animations[(int)iCurSequence].Update(dt);
-	// update effect time if active
+
 	if (effect.Active)
 	{
 		effect.Time += dt;
-		// deactivate effect if duration exceeded
+
 		if (effect.Time >= effect.Duration)
 		{
 			effect.Active = false;
@@ -235,6 +253,20 @@ void Person::Translate(DirectX::XMFLOAT2 delta)
 {
 	position.x += delta.x;
 	position.y += delta.y;
+
+	if (!script.IsEmpty())
+	{
+		auto current_cmd = script.GetCommand();
+
+		if (current_cmd.first == "step_x")
+		{
+			script.ForceGoalTranslate(delta.x);
+		}
+		else if (current_cmd.first == "step_y")
+		{
+			script.ForceGoalTranslate(delta.y);
+		}
+	}
 
 	hitbox.Translate(delta);
 }

@@ -1,3 +1,4 @@
-step_y(150);
-delay(1000);
-step_y(-150);
+step_y(20);
+delay(500);
+step_y(-20);
+delay(500);

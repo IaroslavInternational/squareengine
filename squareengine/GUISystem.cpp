@@ -793,6 +793,7 @@ void GUISystem::ShowPersonList(float dt)
 					newLine << "\"a-ft\" : "   << data.animPersonData[0].ft  << ",";
 					newLine << "\"a-ps\" : "   << data.animPersonData[0].pStart  << ",";
 					newLine << "\"a-pe\" : "   << data.animPersonData[0].pEnd    << ",";
+					newLine << "\"script\" : " << ""							 << ",";
 					newLine << "\"path\" : \"" << data.pathToSprite << "\"}]";
 
 					// Подготовка к вставке в файл

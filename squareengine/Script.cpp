@@ -1,5 +1,15 @@
 #include "Script.h"
 
+bool Script::IsEmpty()
+{
+	return commands.empty();
+}
+
+void Script::ForceGoalTranslate(float delta)
+{
+	goal += (int)delta;
+}
+
 void Script::SetGoal(int goal)
 {
 	if (!IsSetGoal)

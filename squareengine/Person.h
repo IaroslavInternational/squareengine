@@ -13,7 +13,7 @@ public:
 	friend class ObjectsQueue;
 public:
 	Person(std::string   name,		   DirectX::XMFLOAT2   position,
-		   size_t        layer,
+		   size_t        layer,		   
 		   std::string   pathToSprite, HitBox			   hitbox,
 		   AnimationData aData,		   std::string		   scriptPath,
 		   float		 speed 			= 1.0f, 
@@ -34,8 +34,8 @@ public:
 	/* Главные методы для взаимодействия с персонажем */
 	
 	void   Translate(DirectX::XMFLOAT2 delta);
-	void   SetHitBox(HitBox hb);	// Установить hitbox
-	HitBox GetHitBox();				// Получить hitbox
+	void   SetHitBox(HitBox hb);						// Установить hitbox
+	HitBox GetHitBox();									// Получить hitbox
 	void   SetAnimation(std::vector<Animation> anim);
 
 	/**************************************************/
@@ -49,6 +49,11 @@ private:
 	/* Переменные описания состояния персонажа */
 	
 	DirectX::XMFLOAT2 vel = { 0.0f, 0.0f };	// Вектор скорости движения
+	int				  jump_height = 8;		// Высота прыжка
+	int				  jump_count;			// Вспомогательня переменная для прыжка
+	bool			  IsMovingDown = false;	// Состояние движения после прыжка
+	float			  gravity = 300.0f;		// Коэффицент притяжения
+	bool			  IsOnJump = false;		// Состояние прыжка
 	float			  speed;				// Скорость перемещения
 	struct
 	{
@@ -76,7 +81,11 @@ private:
 	std::vector<Animation> animations;								// Вектор анимаций
 	Sequence			   iCurSequence = Sequence::StandingDown;	// Текущее состояние анимаций
 	float				   holdTime;								// Задержка анимации
-
+	bool				   AllowedMovingUp    = true;				// Состояние ограничения движения вверх
+	bool				   AllowedMovingDown  = true;				// Состояние ограничения движения вниз
+	bool				   AllowedMovingLeft  = true;				// Состояние ограничения движения влево
+	bool				   AllowedMovingRight = true;				// Состояние ограничения движения вправо
+	
 	/*******************************************/
 private:
 	/* Переменные описания работы с hitbox */

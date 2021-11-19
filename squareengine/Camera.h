@@ -20,6 +20,7 @@ public:
 	void TranslateAll(DirectX::XMFLOAT2 delta);
 	bool GetNoClipState();
 	void SetPosition(DirectX::XMFLOAT2 pos);
+	DirectX::XMFLOAT2 GetPosition();
 	void SetInitPosition(DirectX::XMFLOAT2 pos);
 private:
 	MainPerson*								hero;

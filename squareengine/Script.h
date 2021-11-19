@@ -8,6 +8,8 @@ class Script
 public:
 	Script() = default;
 public:
+	bool IsEmpty();
+	void ForceGoalTranslate(float delta);
 	void SetGoal(int goal);
 	void AddCommand(std::pair<std::string, int> cmd);
 public:

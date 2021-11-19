@@ -97,6 +97,11 @@ void Camera::SetPosition(DirectX::XMFLOAT2 pos)
 	hero->Translate(dif);
 }
 
+DirectX::XMFLOAT2 Camera::GetPosition()
+{
+	return position;
+}
+
 void Camera::SetInitPosition(DirectX::XMFLOAT2 pos)
 {
 	initPosition = pos;
