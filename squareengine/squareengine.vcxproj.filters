@@ -333,6 +333,9 @@
     <ClCompile Include="Trigger.cpp">
       <Filter>Исходные файлы\Сцена\Объекты\Триггер</Filter>
     </ClCompile>
+    <ClCompile Include="PhysicObject2D.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -556,6 +559,9 @@
     </ClInclude>
     <ClInclude Include="dirent.h">
       <Filter>Заголовочные файлы\Система</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicObject2D.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

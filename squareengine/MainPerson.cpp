@@ -2,10 +2,9 @@
 
 MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera)
 	:
-	Object2D(data.name, data.position, data.layer, data.pathToSprite),
+	PhysicObject2D(data.name, data.position, data.layer, data.pathToSprite, 8, 300),
 	dataPath(data.dataPath),
 	speed(data.speed),
-	jump_count(jump_height),
 	holdTime(data.anim_ft),
 	hitbox(data.name + std::string(" hitbox"), data.hb_coord),
 	wnd(wnd),
@@ -242,47 +241,6 @@ void MainPerson::Translate(DirectX::XMFLOAT2 delta)
 	position.y += delta.y;
 
 	hitbox.Translate(delta);
-}
-
-void MainPerson::AllowMoveUp()
-{
-	AllowedMovingUp = true;
-}
-
-void MainPerson::AllowMoveDown()
-{
-	AllowedMovingDown = true;
-}
-
-void MainPerson::AllowMoveLeft()
-{
-	AllowedMovingLeft = true;
-}
-
-void MainPerson::AllowMoveRight()
-{
-	AllowedMovingRight = true;
-}
-
-void MainPerson::DisAllowMoveUp()
-{
-	AllowedMovingUp = false;
-}
-
-void MainPerson::DisAllowMoveDown()
-{
-	AllowedMovingDown = false;
-	IsMovingDown = false;
-}
-
-void MainPerson::DisAllowMoveLeft()
-{
-	AllowedMovingLeft = false;
-}
-
-void MainPerson::DisAllowMoveRight()
-{
-	AllowedMovingRight = false;
 }
 
 void MainPerson::SetHitBox(HitBox hb)

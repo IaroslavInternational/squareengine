@@ -1,12 +1,12 @@
 #pragma once
 
 #include "MainPersonDataReader.h"
-#include "Object2D.h"
+#include "PhysicObject2D.h"
 #include "Animation.h"
 #include "Window.h"
 #include "Camera.h"
 
-class MainPerson : public Object2D
+class MainPerson : public PhysicObject2D
 {
 public:
 	friend class GUISystem;
@@ -27,14 +27,6 @@ public:
 	/* Главные методы для взаимодействия с главным персонажем */
 	
 	void   Translate(DirectX::XMFLOAT2 delta);
-	void   AllowMoveUp();
-	void   AllowMoveDown();
-	void   AllowMoveLeft();
-	void   AllowMoveRight();
-	void   DisAllowMoveUp();
-	void   DisAllowMoveDown();
-	void   DisAllowMoveLeft();
-	void   DisAllowMoveRight();
 	void   SetHitBox(HitBox hb);	// Установить hitbox
 	HitBox GetHitBox();				// Получить hitbox
 	void   SetAnimation(std::vector<Animation> anim);
@@ -49,24 +41,15 @@ private:
 private:
 	/* Переменные описания состояния персонажа */
 
-	std::string		  dataPath;							// Путь к данным о главном персонаже
-	DirectX::XMFLOAT2 vel		   = { 0.0f, 0.0f };	// Вектор скорости движения
-	float			  speed;							// Скорость перемещения
-	int				  jump_height  = 8;					// Высота прыжка
-	int				  jump_count;						// Вспомогательня переменная для прыжка
-	bool			  IsMovingDown = false;				// Состояние движения после прыжка
-	float			  gravity	   = 300.0f;			// Коэффицент притяжения
-	bool			  IsOnJump	   = false;				// Состояние прыжка
+	std::string		  dataPath;				// Путь к данным о главном персонаже
+	float			  speed;
+	DirectX::XMFLOAT2 vel = { 0.0f, 0.0f };	// Вектор скорости движения
 	struct
 	{
-		float Duration;									// Продолжительность эффекта
-		float Time;										// Время эффекта
-		bool Active;									// Состояние активности эффекта
-	} effect;											// Параметры эффекта
-	bool AllowedMovingUp    = true;						// Состояние ограничения движения вверх
-	bool AllowedMovingDown  = true;						// Состояние ограничения движения вниз
-	bool AllowedMovingLeft  = true;						// Состояние ограничения движения влево
-	bool AllowedMovingRight = true;						// Состояние ограничения движения вправо
+		float Duration;						// Продолжительность эффекта
+		float Time;							// Время эффекта
+		bool Active;						// Состояние активности эффекта
+	} effect;								// Параметры эффекта
 
 	/*******************************************/
 private:

@@ -10,7 +10,7 @@ Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
 			   float	     speed,		   float			 effectDuration,
 			   float	     effectTime,   bool			     effectActive)
 	:
-	Object2D(name, position, layer, pathToSprite),
+	PhysicObject2D(name, position, layer, pathToSprite, 8, 300),
 	holdTime(aData.ft),
 	speed(speed),
 	hitbox(hitbox),

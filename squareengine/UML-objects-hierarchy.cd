@@ -1,54 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Person" Collapsed="true">
-    <Position X="1.5" Y="2.5" Width="1.5" />
+    <Position X="1" Y="3.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AIQACIQAAAAAAgAAQCAIBAAAAIAAEQEgAACEAAAABAA=</HashCode>
+      <HashCode>AKQACIQAAAAAAgAAQiAIBAAAAIAAEQEAAAiERAAgBAA=</HashCode>
       <FileName>Person.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Object2D" Collapsed="true">
-    <Position X="3.5" Y="1.25" Width="1.75" />
+    <Position X="3.25" Y="1" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAIAAAACAAAkAAAAAAIAAEEAAEAgAAAAQEQAAABAA=</HashCode>
+      <HashCode>AABAIAAAACAAAkAAAAAAIAAEEAEEAgAAAAQERAAEBAA=</HashCode>
       <FileName>Object2D.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MainPerson" Collapsed="true">
-    <Position X="3.75" Y="2.5" Width="1.5" />
+    <Position X="3.25" Y="3.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
-    <NestedTypes>
-      <Struct Name="MainPerson::__unnamed_struct_0385_1" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>MainPerson.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-      <Enum Name="MainPerson::Sequence" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>MainPerson.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Enum>
-      <Enum Name="MainPerson::CameraMode" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>MainPerson.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Enum>
-    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>BAXAKIQAAgCAggEAQTCIBAAAAICAEQEgAAKAAgQABCQ=</HashCode>
+      <HashCode>BAWACIQAAgAAAgAAQSAIBAAAAIAAEQEgAAiEAAAgBCA=</HashCode>
       <FileName>MainPerson.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="InteractableObject2D" Collapsed="true">
-    <Position X="6" Y="2.5" Width="1.5" />
+    <Position X="5.5" Y="2.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAEgAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>EAAAAQQAAAAEEgEAUAAABAAAAAAAgAAAAAAEAAAACAA=</HashCode>
       <FileName>InteractableObject2D.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhysicObject2D" Collapsed="true">
+    <Position X="2" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABEIAgAAACAgBEAABCAAAAIAACAAAAAAAIAAkwAAAQ=</HashCode>
+      <FileName>PhysicObject2D.h</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

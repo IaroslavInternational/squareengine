@@ -128,6 +128,7 @@
     <ClCompile Include="Object2D.cpp" />
     <ClCompile Include="PersonContainer.cpp" />
     <ClCompile Include="Person.cpp" />
+    <ClCompile Include="PhysicObject2D.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="RectI.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="Object2D.h" />
     <ClInclude Include="PersonContainer.h" />
     <ClInclude Include="Person.h" />
+    <ClInclude Include="PhysicObject2D.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="RectI.h" />
     <ClInclude Include="Scene.h" />
