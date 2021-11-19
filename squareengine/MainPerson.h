@@ -17,7 +17,7 @@ public:
 	/* Главные методы для отрисовки главного персонажа */
 
 	void Draw(Graphics& gfx) override;			// Отрисовать главного персонажа
-	void ProcessMoving(float dt);
+	void Process(float dt);
 	void SetDirection(DirectX::XMFLOAT2 dir);	// Установить направление положения 
 	void Update(float dt);						// Обновить состояние главного персонажа
 	void ActivateEffect();						// Активировать эффект
@@ -27,17 +27,9 @@ public:
 	/* Главные методы для взаимодействия с главным персонажем */
 	
 	void   Translate(DirectX::XMFLOAT2 delta);
-	void   SetHitBox(HitBox hb);	// Установить hitbox
-	HitBox GetHitBox();				// Получить hitbox
 	void   SetAnimation(std::vector<Animation> anim);
 
 	/**********************************************************/
-private:
-	/* Внутренние методы */
-
-	void CalculateDeltas();	// Рассчитать корректирующие отступы hitbox от блока спрайта персонажа
-
-	/*********************/
 private:
 	/* Переменные описания состояния персонажа */
 
@@ -68,15 +60,6 @@ private:
 	float				   holdTime;								// Задержка анимации
 
 	/*******************************************/
-private:
-	/* Переменные описания работы с hitbox */
-
-	HitBox hitbox;						// Hitbox
-	bool   hitbox_visability = true;	// Видимость hitbox
-	float  dx;							// Корректирующий отступ hitbox от блока спрайта по оси x
-	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
-
-	/***************************************/
 private:
 	enum class CameraMode
 	{

@@ -1,7 +1,7 @@
 #include "PhysicsEngine.h"
 
 #include "Graphics.h"
-#include "MainPerson.h"
+#include "PhysicObject2D.h"
 #include "EngineFunctions.hpp"
 
 void Physics::PhysicsEngine::LoadData(std::string dataPath)
@@ -174,45 +174,44 @@ size_t Physics::PhysicsEngine::GetHitBoxAmount()
 	return hitboxes.size();
 }
 
-void Physics::PhysicsEngine::CheckMainPersonCollision(MainPerson* mp)
+void Physics::PhysicsEngine::CheckCollision(PhysicObject2D* obj)
 {
-	auto mpHitBoxCoord = mp->GetHitBox();
-	auto lns = GetLines(mpHitBoxCoord);
+	auto lns = GetLines(obj->GetHitBox());
 
 	if (CheckLineCollision(lns[0]))
 	{
-		mp->DisAllowMoveUp();
+		obj->DisAllowMoveUp();
 	}
 	else
 	{
-		mp->AllowMoveUp();
+		obj->AllowMoveUp();
 	}
 
 	if (CheckLineCollision(lns[1]))
 	{
-		mp->DisAllowMoveDown();
+		obj->DisAllowMoveDown();
 	}
 	else
 	{
-		mp->AllowMoveDown();
+		obj->AllowMoveDown();
 	}
 
 	if (CheckLineCollision(lns[2]))
 	{
-		mp->DisAllowMoveLeft();
+		obj->DisAllowMoveLeft();
 	}
 	else
 	{
-		mp->AllowMoveLeft();
+		obj->AllowMoveLeft();
 	}
 
 	if (CheckLineCollision(lns[3]))
 	{
-		mp->DisAllowMoveRight();
+		obj->DisAllowMoveRight();
 	}
 	else
 	{
-		mp->AllowMoveRight();
+		obj->AllowMoveRight();
 	}
 }
 

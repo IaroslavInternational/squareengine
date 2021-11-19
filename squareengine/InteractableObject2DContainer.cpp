@@ -104,7 +104,7 @@ void InteractableObject2DContainer::DeleteObjectAt(std::vector<std::unique_ptr<I
 	objects.erase(it);
 }
 
-void InteractableObject2DContainer::CheckCollision(MainPerson* hero)
+void InteractableObject2DContainer::CheckOverlap(MainPerson* hero)
 {
 	for (auto& obj : objects)
 	{

@@ -136,6 +136,16 @@ void PersonContainer::Translate(DirectX::XMFLOAT2 delta)
 	}
 }
 
+size_t PersonContainer::GetSize()
+{
+	return persons.size();
+}
+
+std::unique_ptr<Person>& PersonContainer::Get(size_t i)
+{
+	return persons.at(i);
+}
+
 void PersonContainer::DeletePersonAt(size_t k)
 {
 	DeletePersonAt(persons.begin() + k);
@@ -144,18 +154,4 @@ void PersonContainer::DeletePersonAt(size_t k)
 void PersonContainer::DeletePersonAt(std::vector<std::unique_ptr<Person>>::iterator it)
 {
 	persons.erase(it);
-}
-
-std::pair<bool, Person*> PersonContainer::CheckCollision(HitBox& hb)
-{
-	for (auto& p : persons)
-	{
-		if (hb.IsCollide(p->GetHitBox()))
-		{
-			return { true, p.get() };
-			break;
-		}
-	}
-
-	return { false, nullptr };
 }

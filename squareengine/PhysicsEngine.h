@@ -7,7 +7,7 @@
 #include <string>
 
 class Graphics;
-class MainPerson;
+class PhysicObject2D;
 
 namespace Physics
 {
@@ -36,15 +36,15 @@ namespace Physics
 		size_t GetLinesAmount();
 		size_t GetHitBoxAmount();
 	public:
-		void					   CheckMainPersonCollision(MainPerson* mp);
+		void					   CheckCollision(PhysicObject2D* obj);
 		bool					   CheckLineCollision(Line line);
 		std::vector<Physics::Line> GetLines(HitBox hb);
 	private:
 		std::string dataPath = "";
-		float lineColor[3];
-		float hbColor  [3];
-		float deltaCollision;
-		bool  objVisability;
+		float		lineColor[3];
+		float		hbColor  [3];
+		float		deltaCollision;
+		bool		objVisability;
 	private:
 		std::vector<Line>	lines;
 		std::vector<HitBox> hitboxes;

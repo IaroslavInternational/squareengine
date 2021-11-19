@@ -10,14 +10,11 @@ Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
 			   float	     speed,		   float			 effectDuration,
 			   float	     effectTime,   bool			     effectActive)
 	:
-	PhysicObject2D(name, position, layer, pathToSprite, 8, 300),
+	PhysicObject2D(name, position, hitbox, layer, pathToSprite, 8, 300),
 	holdTime(aData.ft),
 	speed(speed),
-	hitbox(hitbox),
 	scriptPath(scriptPath)
 {
-	CalculateDeltas();
-
 	effect.Duration = effectDuration;
 	effect.Active	= effectTime;
 	effect.Time		= effectActive;
@@ -81,11 +78,11 @@ void Person::Process(float dt)
 
 		if (current_cmd.first == "step_x")
 		{
-			if (current_cmd.second > 0)
+			if (current_cmd.second > 0 && AllowedMovingRight)
 			{
-				script.SetGoal(position.x + current_cmd.second);
+				script.SetGoal((int)position.x + current_cmd.second);
 		
-				if (position.x >= script.GetGoal())
+				if ((int)position.x >= script.GetGoal())
 				{
 					script.NextCommand();
 					return;
@@ -96,11 +93,11 @@ void Person::Process(float dt)
 					Update(dt);
 				}
 			}
-			else
+			else if (AllowedMovingLeft)
 			{
-				script.SetGoal(position.x + current_cmd.second);
+				script.SetGoal((int)position.x + current_cmd.second);
 
-				if (position.x <= script.GetGoal())
+				if ((int)position.x <= script.GetGoal())
 				{
 					script.NextCommand();
 					return;
@@ -111,14 +108,19 @@ void Person::Process(float dt)
 					Update(dt);
 				}
 			}
+			else
+			{
+				script.NextCommand();
+				return;
+			}
 		}
 		else if (current_cmd.first == "step_y")
 		{
-			if (current_cmd.second > 0)
+			if (current_cmd.second > 0 && AllowedMovingDown)
 			{
-				script.SetGoal(position.y + current_cmd.second);
+				script.SetGoal((int)position.y + current_cmd.second);
 
-				if (position.y >= script.GetGoal())
+				if ((int)position.y >= script.GetGoal())
 				{
 					script.NextCommand();
 					return;
@@ -129,11 +131,11 @@ void Person::Process(float dt)
 					Update(dt);
 				}
 			}
-			else
+			else if (AllowedMovingUp)
 			{
-				script.SetGoal(position.y + current_cmd.second);
+				script.SetGoal((int)position.y + current_cmd.second);
 
-				if (position.y <= script.GetGoal())
+				if ((int)position.y <= script.GetGoal())
 				{
 					script.NextCommand();
 					return;
@@ -143,6 +145,11 @@ void Person::Process(float dt)
 					SetDirection({ 0.0f, -1.0f });
 					Update(dt);
 				}
+			}
+			else
+			{
+				script.NextCommand();
+				return;
 			}
 		}
 		else if (current_cmd.first == "delay")
@@ -164,13 +171,13 @@ void Person::Process(float dt)
 		}
 	}
 
-	/*if (AllowedMovingDown && !IsOnJump)
+	if (AllowedMovingDown && !IsOnJump)
 	{
 		float d = gravity * dt;
 		
 		position.y += d;
 		hitbox.UpdateY(d);
-	}*/
+	}
 }
 
 void Person::SetDirection(DirectX::XMFLOAT2 dir)
@@ -271,17 +278,6 @@ void Person::Translate(DirectX::XMFLOAT2 delta)
 	hitbox.Translate(delta);
 }
 
-void Person::SetHitBox(HitBox hb)
-{
-	hitbox = hb + DirectX::XMFLOAT2(dx, dy);
-	CalculateDeltas();
-}
-
-HitBox Person::GetHitBox()
-{
-	return hitbox - DirectX::XMFLOAT2(dx, dy);
-}
-
 void Person::SetAnimation(std::vector<Animation> anim)
 {
 	animations.clear();
@@ -293,13 +289,3 @@ void Person::SetAnimation(std::vector<Animation> anim)
 }
 
 /**************************************************/
-
-/* Внутренние методы */
-
-void Person::CalculateDeltas()
-{
-	dx = hitbox.GetCoordinates().x - position.x;
-	dy = hitbox.GetCoordinates().y - position.y;
-}
-
-/*********************/

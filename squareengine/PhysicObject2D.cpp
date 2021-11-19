@@ -1,13 +1,16 @@
 #include "PhysicObject2D.h"
 
-PhysicObject2D::PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite,
+PhysicObject2D::PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, HitBox	hitbox, size_t layer, std::string pathToSprite,
 							   int jump_height, float gravity)
 	:
 	Object2D(name, position, layer, pathToSprite),
 	jump_height(jump_height),
 	jump_count(jump_height),
-	gravity(gravity)
-{}
+	gravity(gravity),
+	hitbox(hitbox)
+{
+	CalculateDeltas();
+}
 
 void PhysicObject2D::AllowMoveUp()
 {
@@ -49,3 +52,24 @@ void PhysicObject2D::DisAllowMoveRight()
 {
 	AllowedMovingRight = false;
 }
+
+/* Внутренние методы */
+
+void PhysicObject2D::SetHitBox(HitBox hb)
+{
+	hitbox = hb + DirectX::XMFLOAT2(dx, dy);
+	CalculateDeltas();
+}
+
+HitBox PhysicObject2D::GetHitBox()
+{
+	return hitbox - DirectX::XMFLOAT2(dx, dy);
+}
+
+void PhysicObject2D::CalculateDeltas()
+{
+	dx = hitbox.GetCoordinates().x - position.x;
+	dy = hitbox.GetCoordinates().y - position.y;
+}
+
+/*********************/

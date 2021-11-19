@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Object2D.h"
+#include "HitBox.h"
 
 class PhysicObject2D : public Object2D
 {
 public:
-	PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite,
+	PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, HitBox	hitbox, size_t layer, std::string pathToSprite,
 				   int jump_height, float gravity);
 public:
 	void AllowMoveUp();
@@ -16,6 +17,14 @@ public:
 	void DisAllowMoveDown();
 	void DisAllowMoveLeft();
 	void DisAllowMoveRight();
+public:
+	/* Внутренние методы */
+	
+	void   SetHitBox(HitBox hb); // Установить hitbox
+	HitBox GetHitBox();			 // Получить hitbox
+	void   CalculateDeltas();	 // Рассчитать корректирующие отступы hitbox от блока спрайта персонажа
+
+	/*********************/
 protected:
 	int   jump_height;		     // Высота прыжка
 	int	  jump_count;			 // Вспомогательня переменная для прыжка
@@ -27,5 +36,14 @@ protected:
 	bool AllowedMovingDown  = true;	// Состояние ограничения движения вниз
 	bool AllowedMovingLeft  = true;	// Состояние ограничения движения влево
 	bool AllowedMovingRight = true;	// Состояние ограничения движения вправо
+protected:
+	/* Переменные описания работы с hitbox */
+
+	HitBox hitbox;						// Hitbox
+	bool   hitbox_visability = true;	// Видимость hitbox
+	float  dx;							// Корректирующий отступ hitbox от блока спрайта по оси x
+	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
+
+	/***************************************/
 };
 

@@ -74,12 +74,18 @@ void Scene::ProcessInput(float dt)
 		}
 	}
 
-	phEngine->CheckMainPersonCollision(&hero);
-	Iobj.CheckCollision(&hero);
+	phEngine->CheckCollision(&hero);
+
+	for (size_t i = 0; i < persCon.GetSize(); i++)
+	{
+		phEngine->CheckCollision(persCon.Get(i).get());
+	}
+	
+	Iobj.CheckOverlap(&hero);
 
 	if (!camera->GetNoClipState())
 	{
-		hero.ProcessMoving(dt);
+		hero.Process(dt);
 	}
 
 	persCon.Process(dt);

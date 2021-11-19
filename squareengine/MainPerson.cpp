@@ -2,17 +2,14 @@
 
 MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera)
 	:
-	PhysicObject2D(data.name, data.position, data.layer, data.pathToSprite, 8, 300),
+	PhysicObject2D(data.name, data.position, HitBox(data.name + std::string(" hitbox"), data.hb_coord), data.layer, data.pathToSprite, 8, 300),
 	dataPath(data.dataPath),
 	speed(data.speed),
 	holdTime(data.anim_ft),
-	hitbox(data.name + std::string(" hitbox"), data.hb_coord),
 	wnd(wnd),
 	camera(camera),
 	cameraMode(static_cast<CameraMode>(data.camMode))
 {
-	CalculateDeltas();
-
 	effect.Duration = data.eff_d;
 	effect.Time = data.eff_t;
 	effect.Active = data.eff_a;
@@ -54,7 +51,7 @@ void MainPerson::Draw(Graphics& gfx)
 	}
 }
 
-void MainPerson::ProcessMoving(float dt)
+void MainPerson::Process(float dt)
 {
 	DirectX::XMFLOAT2 dir = { 0.0f,0.0f };
 
@@ -243,17 +240,6 @@ void MainPerson::Translate(DirectX::XMFLOAT2 delta)
 	hitbox.Translate(delta);
 }
 
-void MainPerson::SetHitBox(HitBox hb)
-{
-	hitbox = hb + DirectX::XMFLOAT2(dx, dy);
-	CalculateDeltas();
-}
-
-HitBox MainPerson::GetHitBox()
-{
-	return hitbox - DirectX::XMFLOAT2(dx, dy);
-}
-
 void MainPerson::SetAnimation(std::vector<Animation> anim)
 {
 	animations.clear();
@@ -265,13 +251,3 @@ void MainPerson::SetAnimation(std::vector<Animation> anim)
 }
 
 /**********************************************************/
-
-/* Внутренние методы */
-
-void MainPerson::CalculateDeltas()
-{
-	dx = hitbox.GetCoordinates().x - position.x;
-	dy = hitbox.GetCoordinates().y - position.y;
-}
-
-/*********************/
