@@ -20,6 +20,7 @@ GUISystem::GUISystem(Scene* scene)
 	objQueue(&scene->objQueue),
 	trigCon(&scene->trigCon),
 	phEngPtr(scene->phEngine),
+	nEditor(),
 	camera(scene->camera),
 	animSpritePreview(1, 1),
 	viewportWidth(wnd->Gfx().GetWidth()),
@@ -64,6 +65,8 @@ void GUISystem::Show(float dt)
 {
 	ShowMenu();
 
+	nEditor.Show();
+
 	if (IsShow)
 	{
 		ShowLeftSide(dt);
@@ -81,6 +84,16 @@ void GUISystem::Hide()
 	IsShow = false;
 
 	AddLog("GUI скрыт\n");
+}
+
+void GUISystem::BeginFrame()
+{
+	nEditor.BeginFrame();
+}
+
+void GUISystem::EndFrame()
+{
+	nEditor.EndFrame();
 }
 
 void GUISystem::AddLog(const std::ostringstream& oss)

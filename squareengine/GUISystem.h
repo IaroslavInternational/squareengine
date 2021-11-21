@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "AnimationData.h"
 #include "Window.h"
+#include "NodeEditor.h"
 
 #include <map>
 
@@ -38,6 +39,8 @@ public:
 
 	void						 Show(float dt);						// Показать интерфейс (принимает время одного кадра)
 	void						 Hide();								// Скрыть интерфейс
+	void						 BeginFrame();							// Начало кадра
+	void						 EndFrame();							// Конец кадра
 	void						 AddLog(const std::ostringstream& oss);	// Добавить лог
 	void						 AddLog(std::string str);				// Добавить лог
 	void						 AddLog(const char* text);				// Добавить лог
@@ -166,6 +169,7 @@ private:
 	std::shared_ptr<Camera>					camera;		// Указатель на камеру
 	std::map<std::wstring, double>			gpu_desc;	// Контейнер описаний графических адаптеров [first - имя, second - объём памяти]
 	std::shared_ptr<Physics::PhysicsEngine> phEngPtr;	// Указатель на физический движок
+	NodeEditor								nEditor;	// Редактор узлов
 
 	/************************/
 private:

@@ -108,6 +108,7 @@ void App::HandleInput(float dt)
 void App::DoFrame(float dt)
 {
 	wnd->Gfx().BeginFrame();	// Начало кадра
+	gui->BeginFrame();
 
 	wnd->Gfx().DrawBackground();	// Отрисовка заднего фона
 	wnd->Gfx().DrawGrid();			// Отрисовка сетки
@@ -202,5 +203,6 @@ void App::DoFrame(float dt)
 
 	gui->Show(dt);	// Отрисовка интерфейса
 
+	gui->EndFrame();
 	wnd->Gfx().EndFrame();	// Конец кадра
 }

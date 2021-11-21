@@ -2,9 +2,6 @@
 
 #include "imgui\imnodes.h"
 
-#include "AppLog.h"
-
-#include <algorithm>
 #include <vector>
 #include <string>
 #include <DirectXMath.h>
@@ -13,71 +10,49 @@
 class NodeEditor
 {
 public:
-	NodeEditor(AppLog* log);
+	NodeEditor();
 	~NodeEditor();
 public:
-	// Инициализация нового кадра
-	void BeginFrame();
-
-	// Завершение нового кадра
-	void EndFrame();
-
-	// Показать Editor
-	void Show(bool *IsShown);
-
-	// Инициализация
+	void Show();
 	void Init();
+	void BeginFrame();
+	void EndFrame();
 private:
-	struct TransformStruct
+	void RenderNodes();	// Отрисовка нод
+	void AddNode(size_t id, std::string cmd, int value); // Добавить ноду
+	void ShowLeftPanel(ImVec2 size);	// Показать модели *Левая панель*
+	void ShowRightPanel(ImVec2 size);	// Показать модели *Правая панель*
+	void ConncetCam2Model(int cam_id, int mod_id); /*/**//*/*/
+private:
+	struct ScriptNode
 	{
-		TransformStruct(DirectX::XMFLOAT3 pos)
+		ScriptNode(size_t id, std::string cmd, int value, DirectX::XMFLOAT2 position)
 			:
-			x(pos.x),
-			y(pos.y),
-			z(pos.z)
+			id(id),
+			cmd(cmd),
+			value(value),
+			position(position)
 		{}
 
-		float x;
-		float y;
-		float z;
-	};
-	
-	// Структура блока камеры
-	struct CameraNode
-	{
-		CameraNode(const int i, std::string n, DirectX::XMFLOAT3 pos)
-			:
-			id(i),
-			name(n),
-			pos(pos),
-			offset(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-			isOffset_CurrentPos(false)
-		{}
+		bool operator == (const ScriptNode& rhs)
+		{
+			return id == rhs.id && cmd == rhs.cmd && value == rhs.value && 
+				   position.x == rhs.position.x && position.y == rhs.position.y;
+		}
 
-		int id;
-		std::string name;
-		TransformStruct pos;
-		TransformStruct offset;
+		static float NextSize(size_t nodes_size)
+		{
+			return height * (float)nodes_size;
+		}
 
-		bool isOffset_CurrentPos;
+		size_t			  id;
+		std::string		  cmd;
+		int				  value;
+		DirectX::XMFLOAT2 position;
+
+		static constexpr float height = 200.0f;
 	};
 
-	// Структура блока модели
-	struct ModelNode
-	{
-		ModelNode(const int i, std::string n, DirectX::XMFLOAT3 pos)
-			:
-			id(i),
-			name(n),
-			pos(pos)
-		{}
-
-		int id;
-		std::string name;
-		TransformStruct pos;
-	};
-
-	// Структура связи блоков
 	struct Link
 	{
 		int id;
@@ -85,69 +60,18 @@ private:
 		int end_attr;
 	};
 private:
-	// Контекст среды разработки
-	imnodes::EditorContext* context = nullptr;
-	
-	// nodes камер
-	std::vector<CameraNode> cNodes;
-
-	// nodes моделей
-	std::vector<ModelNode> mNodes;
-
-	// Связи между node
-	std::vector<Link> links;
-
-	// Текущий id в инициализации
-	int current_id = 0;
-
-	// Отступ для нового блока камер
-	float current_delta_cam = 0.0f;
-
-	// Отступ для нового блока моделей
-	float current_delta_model = 0.0f;
-
-	// Статус инициализации
-	bool IsInit = false;
+	imnodes::EditorContext*  context = nullptr;	// Контекст среды разработки
+	std::vector<ScriptNode>  nodes;				// Ноды скриптов
+	std::vector<Link>		 links;				// Связи между нодами
+	std::vector<std::string> cmd_list = 
+	{
+		"step_x",
+		"step_y",
+		"delay"
+	};
 private:
-	/* Контейнеры */
-
-	// Индекс выбранной камеры
-	size_t activeCam = 0;
-	
-	// Индекс выбранной модели
-	size_t activeModel = 0;
-
-	// id блока камеры при перезаписи
-	mutable int camIdToPopup = 0;
-
-	// id блока модели при перезаписи
-	mutable int modIdToPopup = 0;
-
-	// Если вызвано модальное окно подтверждения
-	bool isPopup = false;
-	/**************/
-private:
-	// Отрисовка nodes
-	void RenderNodes();
-
-	// Добавить камера node
-	void AddCameraNode(int id, std::string name);
-
-	// Добавить модель node
-	void AddModelNode(int id, std::string name);
-
-	// Показать модели *Левая панель*
-	void ShowLeftPanel(ImVec2 size);
-
-	// Показать модели *Правая панель*
-	void ShowRightPanel(ImVec2 size);
-
-	CameraNode* FindCamNodeById(int id);
-
-	ModelNode* FindModNodeById(int id);
-
-	void ConncetCam2Model(int cam_id, int mod_id);
-private:
-	// Лог
-	AppLog* applog;
+	bool		IsInit		= false; //
+	bool		IsPopup		= false; // Статус модального окна подтверждения
+	std::string cmdSelected = "";	 //
+	int			current_id	= 0;	 // Текущий id в инициализации
 };

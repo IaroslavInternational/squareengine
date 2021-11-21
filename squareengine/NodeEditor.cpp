@@ -1,11 +1,9 @@
 #include "NodeEditor.h"
-#include "EngineFunctions.hpp"
 
+#include "EngineFunctions.hpp"
 #include "imgui\imgui.h"
 
-NodeEditor::NodeEditor(AppLog* log)
-    :
-    applog(log)
+NodeEditor::NodeEditor()
 {
     context = imnodes::EditorContextCreate();
 }
@@ -15,17 +13,7 @@ NodeEditor::~NodeEditor()
     imnodes::EditorContextFree(context);
 }
 
-void NodeEditor::BeginFrame()
-{
-	imnodes::CreateContext();
-}
-
-void NodeEditor::EndFrame()
-{
-	imnodes::DestroyContext();
-}
-
-void NodeEditor::Show(bool *IsShown)
+void NodeEditor::Show()
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -43,7 +31,7 @@ void NodeEditor::Show(bool *IsShown)
     ImGui::SetNextWindowPos(PanelPos, ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(PanelW, PanelH));
 
-    if (ImGui::Begin("Редактор узлов", IsShown,
+    if (ImGui::Begin("Редактор узлов", NULL,
         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings |
         ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_MenuBar))
@@ -55,7 +43,6 @@ void NodeEditor::Show(bool *IsShown)
             {
                 if (ImGui::MenuItem("Закрыть"))
                 {
-                    *IsShown = false;
                     ImGui::EndMenu();
                 }
 
@@ -64,11 +51,8 @@ void NodeEditor::Show(bool *IsShown)
                     if (ImGui::MenuItem("Очистить"))
                     {
                         links.clear();
+                        nodes.clear();
 
-                        cNodes.clear();
-                        mNodes.clear();
-
-                        current_id = 0;
                         ImGui::EndMenu();
                     }
 
@@ -106,107 +90,67 @@ void NodeEditor::Init()
     }
 }
 
+void NodeEditor::BeginFrame()
+{
+	imnodes::CreateContext();
+}
+
+void NodeEditor::EndFrame()
+{
+	imnodes::DestroyContext();
+}
+
 void NodeEditor::RenderNodes()
 {
     // Блоки камер
-    for (auto& node : cNodes)
+    for (auto& node : nodes)
     {
         ImGui::PushItemWidth(150.0f);
         imnodes::BeginNode(node.id);
-     
-        // Заголовок
+       
+        /* Заголовок */
+       
         imnodes::BeginNodeTitleBar();
-       // ImGui::TextUnformatted(EngineFunctions::AttachStrings<std::string>("Камера", node.name).c_str());
+        ImGui::TextUnformatted(node.cmd.c_str());
         imnodes::EndNodeTitleBar();
 
-        // Вход
-        // ---
+        /*************/
 
-        /* Контент */
-        
-        imnodes::BeginStaticAttribute(node.id << 16);
-        ImGui::Text("Позиция:");
-        ImGui::Text("x:"); ImGui::SameLine();
-        ImGui::Text(std::to_string(node.pos.x).c_str());
-        ImGui::Text("y:"); ImGui::SameLine();
-        ImGui::Text(std::to_string(node.pos.y).c_str());
-        ImGui::Text("z:"); ImGui::SameLine();
-        ImGui::Text(std::to_string(node.pos.z).c_str());
-        imnodes::EndStaticAttribute();
-
-        ImGui::NewLine();
-
-        imnodes::BeginStaticAttribute(node.id << 8);
-        ImGui::Text("Отступ камеры:");
-        ImGui::SliderFloat("отступ-x", &node.offset.x, -150.0f, 150.0f, "%.3f");
-        ImGui::SliderFloat("отступ-y", &node.offset.y, -150.0f, 150.0f, "%.3f");
-        ImGui::SliderFloat("отступ-z", &node.offset.z, -150.0f, 150.0f, "%.3f");
-        imnodes::EndStaticAttribute();
-        
-        ImGui::NewLine();
-
-        ImGui::Checkbox("Текущее положение", &node.isOffset_CurrentPos);
-
-        if (ImGui::Button("Нулевое положение"))
+        /* Вход */
+     
+        if (node.id == 0)
         {
-            node.offset.x = 0.0f;
-            node.offset.y = 0.0f;
-            node.offset.z = 0.0f;
-
-            node.isOffset_CurrentPos = false;
+            imnodes::BeginStaticAttribute(node.id << 8);
+        }
+        else 
+        {
+            imnodes::BeginInputAttribute(node.id << 8);
         }
 
-        if (node.isOffset_CurrentPos)
+        ImGui::Text("Значение команды");
+        ImGui::SliderInt("val", &node.value, -10000, 10000);
+       
+        if (node.id == 0)
         {
-            node.offset.x = node.pos.x;
-            node.offset.y = node.pos.y;
-            node.offset.z = node.pos.z;
+            imnodes::EndStaticAttribute();
         }
+        else
+        {
+            imnodes::EndInputAttribute();
+        }
+    
+        /********/
 
-        /***********/
+        /* Выход */
         
-        // Выход
-        imnodes::BeginOutputAttribute(node.id << 24);
+        imnodes::BeginOutputAttribute(node.id << 16);
         const float text_width = ImGui::CalcTextSize("Выход").x;
-        ImGui::Indent(150.f + ImGui::CalcTextSize("value").x - text_width);
+        ImGui::Indent(150.f + ImGui::CalcTextSize("val").x - text_width);
         ImGui::NewLine();
         ImGui::TextUnformatted("Выход");
         imnodes::EndOutputAttribute();
-
-        imnodes::EndNode();
-        ImGui::PopItemWidth();
-    }
-
-    // Блоки моделей
-    for (auto& node : mNodes)
-    {
-        ImGui::PushItemWidth(150.0f);
-        imnodes::BeginNode(node.id);
-
-        // Заголовок
-        imnodes::BeginNodeTitleBar();
-       // ImGui::TextUnformatted(EngineFunctions::AttachStrings<std::string>("Модель", node.name).c_str());
-        imnodes::EndNodeTitleBar();
-
-        // Контент
-        imnodes::BeginStaticAttribute(node.id << 16);
-        ImGui::Text("Позиция:");
-        ImGui::Text("x:"); ImGui::SameLine();
-        ImGui::Text(std::to_string(node.pos.x).c_str());
-        ImGui::Text("y:"); ImGui::SameLine();
-        ImGui::Text(std::to_string(node.pos.y).c_str());
-        ImGui::Text("z:"); ImGui::SameLine();
-        ImGui::Text(std::to_string(node.pos.z).c_str());
-        imnodes::EndStaticAttribute();
-
-        // Вход
-        imnodes::BeginInputAttribute(node.id << 8);
-        ImGui::NewLine();
-        ImGui::TextUnformatted("Камера");
-        imnodes::EndInputAttribute();
-
-        // Выход
-        // --
+        
+        /*********/
 
         imnodes::EndNode();
         ImGui::PopItemWidth();
@@ -218,83 +162,42 @@ void NodeEditor::RenderNodes()
     }
 }
 
-void NodeEditor::AddCameraNode(int id, std::string name)
+void NodeEditor::AddNode(size_t id, std::string cmd, int value)
 {
-    current_delta_cam += 10.0f;
+    const float node_margin = ScriptNode::NextSize(nodes.size());
 
-    imnodes::SetNodeEditorSpacePos(id, ImVec2(0.0f, current_delta_cam));
-   // cNodes.emplace_back(CameraNode(id, name, camcon.GetPtr2CameraByName(name)->GetPosition()));
-}
-
-void NodeEditor::AddModelNode(int id, std::string name)
-{
-    current_delta_model += 10.0f;
-
-    imnodes::SetNodeEditorSpacePos(id, ImVec2(100.0f, current_delta_model));
- //   mNodes.emplace_back(ModelNode(id, name, mcon.GetPtr2ModelByName(name)->get()->GetPosition()));
+    imnodes::SetNodeEditorSpacePos(id, ImVec2(0.0f, node_margin));
+    nodes.emplace_back(id, cmd, value, DirectX::XMFLOAT2{ 0.0f, node_margin });
 }
 
 void NodeEditor::ShowLeftPanel(ImVec2 size)
 {
     ImGui::BeginChild("Редактор узлов | Левая панель", size);
 
-    // Список камер
-   /* if (ImGui::BeginCombo("Камеры", camcon->GetName().c_str()))
+    // Список команд
+    if (ImGui::BeginCombo("Команды", cmdSelected.c_str()))
     {
-        for (size_t i = 0; i < camcon.CamerasAmount(); i++)
+        for (size_t i = 0; i < cmd_list.size(); i++)
         {
-            const bool isSelected = i == activeCam;
-            if (ImGui::Selectable(camcon.GetCameraNameByIndex(i).c_str(), isSelected))
+            if (ImGui::Selectable(cmd_list[i].c_str(), cmdSelected == cmd_list[i]))
             {
-                activeCam = i;
-                AddCameraNode((int)i, camcon.GetCameraNameByIndex(i));
+                AddNode(nodes.size() * i + 1, cmd_list[i], 0);
             }
         }
         ImGui::EndCombo();
     }
-    */
-    // Список моделей
-  /*  if (ImGui::BeginCombo("Модели", mcon.GetModelNameByIndex(0).c_str()))
-    {
-        for (size_t i = 0; i < mcon.ModelsAmount(); i++)
-        {
-            const bool isSelected = i == activeModel;
-            if (ImGui::Selectable(mcon.GetModelNameByIndex(i).c_str(), isSelected))
-            {
-                activeModel = i;
-                AddModelNode((int)i + 100, mcon.GetModelNameByIndex(i));
-            }
-        }
-        ImGui::EndCombo();
-    }*/
-
+    
     if (ImGui::Button("Сохранить"))
     {
         if (links.size() != 0)
         {
             for (auto& link : links)
             {
-                int link_start = link.start_attr;   // cam out id
-                int link_end = link.end_attr;       // mod in id
+                int link_start = link.start_attr;   // out id
+                int link_end   = link.end_attr;     // in id
 
-                int camId = link.start_attr >> 24;  // cam id
-                int modId = link.end_attr >> 8;     // mod id
-
-               /* if (!mcon.GetPtr2ModelByName(FindModNodeById(modId)->name)->get()->IsCameraConneсted())
-                {
-                    ConncetCam2Model(camId, modId);
-
-                    break;
-                }
-                else
-                {
-                    camIdToPopup = camId;
-                    modIdToPopup = modId;
-
-                    isPopup = true;
-                    
-                    break;
-                }*/
+                int camId = link.start_attr >> 16;  // id start
+                int modId = link.end_attr >> 8;     // id end
             }
         }
     }
@@ -372,28 +275,6 @@ void NodeEditor::ShowRightPanel(ImVec2 size)
     }
 
     ImGui::EndChild();
-}
-
-NodeEditor::CameraNode* NodeEditor::FindCamNodeById(int id)
-{
-    for (auto& node : cNodes)
-    {
-        if (node.id == id)
-        {
-            return &node;
-        }
-    }
-}
-
-NodeEditor::ModelNode* NodeEditor::FindModNodeById(int id)
-{
-    for (auto& node : mNodes)
-    {
-        if (node.id == id)
-        {
-            return &node;
-        }
-    }
 }
 
 void NodeEditor::ConncetCam2Model(int cam_id, int mod_id)
