@@ -336,6 +336,9 @@
     <ClCompile Include="PhysicObject2D.cpp">
       <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
     </ClCompile>
+    <ClCompile Include="NodeEditor.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -562,6 +565,9 @@
     </ClInclude>
     <ClInclude Include="PhysicObject2D.h">
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeEditor.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

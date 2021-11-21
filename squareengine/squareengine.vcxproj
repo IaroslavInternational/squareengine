@@ -121,6 +121,7 @@
     <ClCompile Include="imgui\implot_items.cpp" />
     <ClCompile Include="InteractableObject2D.cpp" />
     <ClCompile Include="InteractableObject2DContainer.cpp" />
+    <ClCompile Include="NodeEditor.cpp" />
     <ClCompile Include="ObjectsQueue.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="MainPerson.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="InteractableObject2D.h" />
     <ClInclude Include="InteractableObject2DContainer.h" />
+    <ClInclude Include="NodeEditor.h" />
     <ClInclude Include="ObjectsQueue.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="LogCommands.h" />
