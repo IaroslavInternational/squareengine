@@ -50,7 +50,6 @@ void NodeEditor::Show()
                 {
                     if (ImGui::MenuItem("Очистить"))
                     {
-                        links.clear();
                         nodes.clear();
 
                         ImGui::EndMenu();
@@ -105,9 +104,10 @@ void NodeEditor::RenderNodes()
     // Блоки камер
     for (auto& node : nodes)
     {
-        ImGui::PushItemWidth(150.0f);
+        ImGui::PushItemWidth(150.0f); 
+        imnodes::SetNodeEditorSpacePos(node.id, ImVec2(0.0f, node.position.y));
         imnodes::BeginNode(node.id);
-       
+
         /* Заголовок */
        
         imnodes::BeginNodeTitleBar();
@@ -116,49 +116,17 @@ void NodeEditor::RenderNodes()
 
         /*************/
 
-        /* Вход */
+        /* Контент */
      
-        if (node.id == 0)
-        {
-            imnodes::BeginStaticAttribute(node.id << 8);
-        }
-        else 
-        {
-            imnodes::BeginInputAttribute(node.id << 8);
-        }
-
+        imnodes::BeginStaticAttribute(node.id << 8);
         ImGui::Text("Значение команды");
         ImGui::SliderInt("val", &node.value, -10000, 10000);
-       
-        if (node.id == 0)
-        {
-            imnodes::EndStaticAttribute();
-        }
-        else
-        {
-            imnodes::EndInputAttribute();
-        }
+        imnodes::EndStaticAttribute();
     
-        /********/
-
-        /* Выход */
-        
-        imnodes::BeginOutputAttribute(node.id << 16);
-        const float text_width = ImGui::CalcTextSize("Выход").x;
-        ImGui::Indent(150.f + ImGui::CalcTextSize("val").x - text_width);
-        ImGui::NewLine();
-        ImGui::TextUnformatted("Выход");
-        imnodes::EndOutputAttribute();
-        
-        /*********/
+        /***********/
 
         imnodes::EndNode();
         ImGui::PopItemWidth();
-    }
-
-    for (auto& link : links)
-    {
-        imnodes::Link(link.id, link.start_attr, link.end_attr);
     }
 }
 
@@ -166,7 +134,6 @@ void NodeEditor::AddNode(size_t id, std::string cmd, int value)
 {
     const float node_margin = ScriptNode::NextSize(nodes.size());
 
-    imnodes::SetNodeEditorSpacePos(id, ImVec2(0.0f, node_margin));
     nodes.emplace_back(id, cmd, value, DirectX::XMFLOAT2{ 0.0f, node_margin });
 }
 
@@ -189,17 +156,7 @@ void NodeEditor::ShowLeftPanel(ImVec2 size)
     
     if (ImGui::Button("Сохранить"))
     {
-        if (links.size() != 0)
-        {
-            for (auto& link : links)
-            {
-                int link_start = link.start_attr;   // out id
-                int link_end   = link.end_attr;     // in id
-
-                int camId = link.start_attr >> 16;  // id start
-                int modId = link.end_attr >> 8;     // id end
-            }
-        }
+       
     }
 
     /*if (isPopup)
@@ -250,29 +207,6 @@ void NodeEditor::ShowRightPanel(ImVec2 size)
     RenderNodes();
 
     imnodes::EndNodeEditor();
-
-    {
-        Link link;
-        if (imnodes::IsLinkCreated(&link.start_attr, &link.end_attr))
-        {
-            link.id = ++current_id;
-            links.push_back(link);
-        }
-    }
-
-    {
-        int link_id;        
-        if (imnodes::IsLinkDestroyed(&link_id))
-        {
-            auto iter = std::find_if(
-                links.begin(), links.end(), [link_id](const Link& link) -> bool {
-                return link.id == link_id;
-            });
-
-            assert(iter != links.end());
-            links.erase(iter);
-        }
-    }
 
     ImGui::EndChild();
 }

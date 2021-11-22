@@ -50,7 +50,7 @@ private:
 		int				  value;
 		DirectX::XMFLOAT2 position;
 
-		static constexpr float height = 200.0f;
+		static constexpr float height = 90.0f;
 	};
 
 	struct Link
@@ -62,7 +62,6 @@ private:
 private:
 	imnodes::EditorContext*  context = nullptr;	// Контекст среды разработки
 	std::vector<ScriptNode>  nodes;				// Ноды скриптов
-	std::vector<Link>		 links;				// Связи между нодами
 	std::vector<std::string> cmd_list = 
 	{
 		"step_x",
@@ -73,5 +72,4 @@ private:
 	bool		IsInit		= false; //
 	bool		IsPopup		= false; // Статус модального окна подтверждения
 	std::string cmdSelected = "";	 //
-	int			current_id	= 0;	 // Текущий id в инициализации
 };
