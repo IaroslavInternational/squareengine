@@ -7,6 +7,7 @@
 #include <sstream>
 #include <fstream>
 #include <filesystem>
+#include <random>
 #include "json.hpp"
 #include "dirent.h"
 
@@ -451,5 +452,31 @@ namespace EngineFunctions
 		os_settings.open(pathStr.str());
 		os_settings << settings;
 		os_settings.close();
+	}
+
+	template <typename T>
+	inline T static GenerateRandomNumber(T min, T max)
+	{
+		static std::random_device rd;
+		static std::mt19937 rng{ rd() };
+
+		if (typeid(T) == typeid(size_t))
+		{
+			static std::uniform_int_distribution<size_t> ud(min, max);
+
+			return ud(rng);
+		}
+		else if (typeid(T) == typeid(int))
+		{
+			static std::uniform_int_distribution<int> ud(min, max);
+
+			return ud(rng);
+		}
+		else if (typeid(T) == typeid(double))
+		{
+			static std::uniform_real_distribution<double> ud(min, max);
+
+			return ud(rng);
+		}
 	}
 }

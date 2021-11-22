@@ -62,7 +62,7 @@ Window::Window(const char* name)
 	height = GetDeviceCaps(CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL), VERTRES);
 
 // Мод запуска окна
-#define ENGINE_WINDOW 1
+#define ENGINE_WINDOW 0
 
 #if ENGINE_WINDOW == 0
 	// Создание окна

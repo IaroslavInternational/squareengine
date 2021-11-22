@@ -148,7 +148,7 @@ void NodeEditor::ShowLeftPanel(ImVec2 size)
         {
             if (ImGui::Selectable(cmd_list[i].c_str(), cmdSelected == cmd_list[i]))
             {
-                AddNode(nodes.size() * i + 1, cmd_list[i], 0);
+                AddNode(GenerateNodeId(), cmd_list[i], 0);
             }
         }
         ImGui::EndCombo();
@@ -211,23 +211,19 @@ void NodeEditor::ShowRightPanel(ImVec2 size)
     ImGui::EndChild();
 }
 
-void NodeEditor::ConncetCam2Model(int cam_id, int mod_id)
+size_t NodeEditor::GenerateNodeId()
 {
- /*   mcon.GetPtr2ModelByName(FindModNodeById(mod_id)->name)->get()->ConnectCamera(
-        camcon.GetPtr2CameraByName(FindCamNodeById(cam_id)->name),
-        DirectX::XMFLOAT3(
-            FindCamNodeById(cam_id)->offset.x,
-            FindCamNodeById(cam_id)->offset.y,
-            FindCamNodeById(cam_id)->offset.z
-        ));
+    for (size_t i = 0; i < nodes.size(); i++)
+    {
+        auto num = EngineFunctions::GenerateRandomNumber<size_t>(1, 100);
 
-    std::ostringstream oss;
-
-    oss << NODE_EDITOR_LOG << "Камера " << FindCamNodeById(cam_id)->name <<
-        "привязана к модели " << FindModNodeById(mod_id)->name << " с отступами: \n" <<
-        "[отступ по x] " << std::to_string(FindCamNodeById(cam_id)->offset.x) << "\n" <<
-        "[отступ по y] " << std::to_string(FindCamNodeById(cam_id)->offset.y) << "\n" <<
-        "[отступ по z] " << std::to_string(FindCamNodeById(cam_id)->offset.z) << "\n";
-        
-    applog->AddLog(oss.str().c_str());*/
+        if (num != nodes[i].id)
+        {
+            return num;
+        }
+        else
+        {
+            i = 0;
+        }
+    }
 }
