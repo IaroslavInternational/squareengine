@@ -15,6 +15,11 @@ NodeEditor::~NodeEditor()
 
 void NodeEditor::Show()
 {
+    if (!IsShow)
+    {
+        return;
+    }
+
     ImGuiIO& io = ImGui::GetIO();
 
     const float width = 0.85f;
@@ -43,6 +48,8 @@ void NodeEditor::Show()
             {
                 if (ImGui::MenuItem("Закрыть"))
                 {
+                    IsShow = false;
+
                     ImGui::EndMenu();
                 }
 
@@ -89,6 +96,18 @@ void NodeEditor::Init()
     }
 }
 
+std::optional<std::string> NodeEditor::GetScriptPath()
+{
+    if (createdScriptPath != "")
+    {
+        return createdScriptPath;
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
 void NodeEditor::BeginFrame()
 {
 	imnodes::CreateContext();
@@ -105,7 +124,7 @@ void NodeEditor::RenderNodes()
     for (auto& node : nodes)
     {
         ImGui::PushItemWidth(150.0f); 
-        imnodes::SetNodeEditorSpacePos(node.id, ImVec2(0.0f, node.position.y));
+        imnodes::SetNodeGridSpacePos(node.id, ImVec2(0.0f, node.position.y));
         imnodes::BeginNode(node.id);
 
         /* Заголовок */
@@ -120,7 +139,7 @@ void NodeEditor::RenderNodes()
      
         imnodes::BeginStaticAttribute(node.id << 8);
         ImGui::Text("Значение команды");
-        ImGui::SliderInt("val", &node.value, -10000, 10000);
+        ImGui::SliderInt("value", &node.value, -10000, 10000);
         imnodes::EndStaticAttribute();
     
         /***********/
@@ -154,9 +173,21 @@ void NodeEditor::ShowLeftPanel(ImVec2 size)
         ImGui::EndCombo();
     }
     
-    if (ImGui::Button("Сохранить"))
+    if (ImGui::Button("Создать"))
     {
-       
+        std::ostringstream oss;
+
+        for (auto& n : nodes)
+        {
+            oss << n.cmd << "(" << n.value << ")" << ";\n";
+        }
+
+        std::ofstream ofs;
+        ofs.open("Scripts\\test.sqes");
+        ofs << oss.str();
+        ofs.close();
+
+        createdScriptPath = "Scripts\\test.sqes";
     }
 
     /*if (isPopup)

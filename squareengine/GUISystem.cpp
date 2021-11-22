@@ -65,8 +65,6 @@ void GUISystem::Show(float dt)
 {
 	ShowMenu();
 
-	nEditor.Show();
-
 	if (IsShow)
 	{
 		ShowLeftSide(dt);
@@ -2053,6 +2051,41 @@ void GUISystem::ShowPersonControl(float dt)
 							delta.y = persCon->persons.at(k)->position.y - persCon->persons.at(k)->hitbox.coordinates.y + persCon->persons.at(k)->dy;
 
 							persCon->persons.at(k)->hitbox.Translate(delta);
+
+							ImGui::EndTabItem();
+						}
+
+						if (ImGui::BeginTabItem("Скрипт"))
+						{
+							if (ImGui::CollapsingHeader("Создание", ImGuiTreeNodeFlags_DefaultOpen))
+							{
+								if (ImGui::Button("Создать"))
+								{
+									persCon->IsScriptsRunning = false;
+									CreatingScript = true;
+								}
+
+								if (CreatingScript)
+								{
+									nEditor.Show();
+
+									auto newScriptPath = nEditor.GetScriptPath();
+
+									if (newScriptPath.has_value())
+									{
+										persCon->persons.at(k)->SetScript(newScriptPath.value());
+										
+										EngineFunctions::SetNewValue<std::string>(
+											persCon->persons.at(k)->name,
+											"script", newScriptPath.value(),
+											persCon->dataPath,
+											&applog
+											);
+
+										CreatingScript = false;
+									}
+								}
+							}
 
 							ImGui::EndTabItem();
 						}

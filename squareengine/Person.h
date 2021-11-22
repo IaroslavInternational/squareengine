@@ -35,6 +35,7 @@ public:
 	
 	void   Translate(DirectX::XMFLOAT2 delta);
 	void   SetAnimation(std::vector<Animation> anim);
+	void   SetScript(std::string path);
 
 	/**************************************************/
 private:

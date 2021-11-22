@@ -288,4 +288,19 @@ void Person::SetAnimation(std::vector<Animation> anim)
 	}
 }
 
+void Person::SetScript(std::string path)
+{
+	if (path != "")
+	{
+		ScriptCompiler sCompiler(path);
+		script = sCompiler.GetScript();
+	}
+	else
+	{
+		script = Script();
+	}
+
+	scriptPath = path;
+}
+
 /**************************************************/

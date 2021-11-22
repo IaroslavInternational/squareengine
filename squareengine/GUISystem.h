@@ -188,6 +188,7 @@ private:
 	bool			  DrawingHitBox		= false;	// Статус отрисовки хитбокса
 	bool			  DrawingLine		= false;	// Статус отрисовки линии
 	bool			  SavingSettings    = false;	// Статус сохранения настроек
+	bool			  CreatingScript    = false;	// Статус создания скрипта
 	bool			  SettedFirstPoint  = false;	// Статус установки первой точки изменяемого объекта
 	bool			  SettedSecondPoint = false;	// Статус установки второй точки изменяемого объекта
 	DirectX::XMFLOAT2 firstPoint  = {0.0f, 0.0f};	// Координаты первой точки изменяемого объекта

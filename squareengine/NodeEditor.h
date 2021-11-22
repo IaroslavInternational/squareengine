@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <DirectXMath.h>
+#include <optional>
 
 class NodeEditor
 {
@@ -14,13 +15,14 @@ public:
 public:
 	void Show();
 	void Init();
+	std::optional<std::string> GetScriptPath();
 	void BeginFrame();
 	void EndFrame();
 private:
-	void RenderNodes();									 // Отрисовка нод
-	void AddNode(size_t id, std::string cmd, int value); // Добавить ноду
-	void ShowLeftPanel(ImVec2 size);					 // Показать модели *Левая панель*
-	void ShowRightPanel(ImVec2 size);					 // Показать модели *Правая панель*
+	void   RenderNodes();								   // Отрисовка нод
+	void   AddNode(size_t id, std::string cmd, int value); // Добавить ноду
+	void   ShowLeftPanel(ImVec2 size);					   // Показать левую панель
+	void   ShowRightPanel(ImVec2 size);					   // Показать правую панель
 	size_t GenerateNodeId();
 private:
 	struct ScriptNode
@@ -39,7 +41,7 @@ private:
 				   position.x == rhs.position.x && position.y == rhs.position.y;
 		}
 
-		static float  NextSize(size_t nodes_size)
+		static float NextSize(size_t nodes_size)
 		{
 			return height * (float)nodes_size;
 		}
@@ -51,16 +53,9 @@ private:
 
 		static constexpr float height = 90.0f;
 	};
-
-	struct Link
-	{
-		int id;
-		int start_attr;
-		int end_attr;
-	};
 private:	
-	imnodes::EditorContext*  context = nullptr;	// Контекст среды разработки
-	std::vector<ScriptNode>  nodes;				// Ноды скриптов
+	imnodes::EditorContext*  context  = nullptr; // Контекст среды разработки
+	std::vector<ScriptNode>  nodes;				 // Ноды скриптов
 	std::vector<std::string> cmd_list = 
 	{
 		"step_x",
@@ -68,7 +63,9 @@ private:
 		"delay"
 	};
 private:
+	bool		IsShow		= true;	 //
 	bool		IsInit		= false; //
 	bool		IsPopup		= false; // Статус модального окна подтверждения
 	std::string cmdSelected = "";	 //
+	std::string createdScriptPath;
 };
