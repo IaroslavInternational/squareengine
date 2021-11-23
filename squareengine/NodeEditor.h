@@ -67,5 +67,6 @@ private:
 	bool		IsInit		= false; //
 	bool		IsPopup		= false; // —татус модального окна подтверждени€
 	std::string cmdSelected = "";	 //
-	std::string createdScriptPath;
+	std::string createdScriptPath;	 //
+	char        newScriptName[128];	 //
 };

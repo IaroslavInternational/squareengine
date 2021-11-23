@@ -2057,7 +2057,39 @@ void GUISystem::ShowPersonControl(float dt)
 
 						if (ImGui::BeginTabItem("Скрипт"))
 						{
-							if (ImGui::CollapsingHeader("Создание", ImGuiTreeNodeFlags_DefaultOpen))
+							if (ImGui::CollapsingHeader("Информация", ImGuiTreeNodeFlags_DefaultOpen))
+							{
+								std::ostringstream oss;
+
+								if (persCon->persons.at(k)->scriptPath != "")
+								{
+									oss << "Скрипт: " << persCon->persons.at(k)->scriptPath;
+								}
+								else
+								{
+									oss << "Скрипт не установлен";
+								}
+
+								ImGui::Text(oss.str().c_str());
+
+								if (ImGui::CollapsingHeader("Код"))
+								{
+									std::ostringstream code;
+
+									for (size_t i = 0; i < persCon->persons.at(k)->script.commands.size(); i++)
+									{
+										code << i + 1 << ".\t" << persCon->persons.at(k)->script.commands[i].first << "(" << persCon->persons.at(k)->script.commands[i].second << ");\n";
+									}
+
+									ImGui::TextWrapped(code.str().c_str());
+
+									ImGui::Separator();
+								}
+
+								ImGui::Separator();
+							}
+
+							if (ImGui::CollapsingHeader("Создание"))
 							{
 								if (ImGui::Button("Создать"))
 								{
@@ -2085,6 +2117,8 @@ void GUISystem::ShowPersonControl(float dt)
 										CreatingScript = false;
 									}
 								}
+
+								ImGui::Separator();
 							}
 
 							ImGui::EndTabItem();

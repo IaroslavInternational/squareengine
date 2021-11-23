@@ -6,6 +6,8 @@
 class Script
 {
 public:
+	friend class GUISystem;
+public:
 	Script() = default;
 public:
 	bool IsEmpty();

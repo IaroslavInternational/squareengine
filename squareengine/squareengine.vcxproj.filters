@@ -337,7 +337,7 @@
       <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
     </ClCompile>
     <ClCompile Include="NodeEditor.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Интерфейс\Модули интерфейса</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -567,7 +567,7 @@
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
     <ClInclude Include="NodeEditor.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\Интерфейс\Модули интерфейса</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

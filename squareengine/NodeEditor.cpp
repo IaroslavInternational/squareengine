@@ -100,6 +100,7 @@ std::optional<std::string> NodeEditor::GetScriptPath()
 {
     if (createdScriptPath != "")
     {
+        nodes.clear();
         return createdScriptPath;
     }
     else
@@ -170,57 +171,56 @@ void NodeEditor::ShowLeftPanel(ImVec2 size)
                 AddNode(GenerateNodeId(), cmd_list[i], 0);
             }
         }
+
         ImGui::EndCombo();
     }
     
     if (ImGui::Button("Создать"))
     {
-        std::ostringstream oss;
-
-        for (auto& n : nodes)
-        {
-            oss << n.cmd << "(" << n.value << ")" << ";\n";
-        }
-
-        std::ofstream ofs;
-        ofs.open("Scripts\\test.sqes");
-        ofs << oss.str();
-        ofs.close();
-
-        createdScriptPath = "Scripts\\test.sqes";
+        IsPopup = true;
     }
 
-    /*if (isPopup)
+    if (IsPopup)
     {
         ImGui::OpenPopup("Подтверждение");
         if (ImGui::BeginPopup("Подтверждение"),
             ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings)
+            ImGuiWindowFlags_NoCollapse       | ImGuiWindowFlags_NoSavedSettings)
         {
-            ImGui::Text("Перезаписать камеру?");
-            ImGui::Text(EngineFunctions::AttachStrings<std::string>("Текущая камера: ", FindCamNodeById(camIdToPopup)->name).c_str());
+            ImGui::Text("Введите имя нового скрипта");
+            
+            ImGui::InputText("Имя", newScriptName, sizeof(newScriptName));
 
-            if (ImGui::Button("Добавить"))
+            if (ImGui::Button("Потвердить"))
             {
-                mcon.GetPtr2ModelByName(FindModNodeById(modIdToPopup)->name)->get()->DisconnectCamera();
+                std::ostringstream path;
+                path << "Scripts\\" << std::string(newScriptName) << ".sqes";
 
-                ConncetCam2Model(camIdToPopup, modIdToPopup);
-                isPopup = false;
+                std::ostringstream oss;
+                for (auto& n : nodes)
+                {
+                    oss << n.cmd << "(" << n.value << ")" << ";\n";
+                }
 
-                ImGui::CloseCurrentPopup();
+                std::ofstream ofs;
+                ofs.open(path.str());
+                ofs << oss.str();
+                ofs.close();
+
+                createdScriptPath = path.str();
             }
 
             ImGui::SameLine();
 
             if (ImGui::Button("Отмена"))
             {
-                isPopup = false;
+                IsPopup = false;
                 ImGui::CloseCurrentPopup();
             }
 
             ImGui::EndPopup();
         }
-    }*/
+    }
 
     ImGui::EndChild();
 }
