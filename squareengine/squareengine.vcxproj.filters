@@ -570,7 +570,7 @@
       <Filter>Заголовочные файлы\Интерфейс\Модули интерфейса</Filter>
     </ClInclude>
     <ClInclude Include="ContainerBase.hpp">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

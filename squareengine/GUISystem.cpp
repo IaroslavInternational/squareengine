@@ -685,7 +685,7 @@ void GUISystem::ShowPersonList(float dt)
 {
 	if (ImGui::Begin("Персонажи", NULL, SIDE_PANEL_FLAGS))
 	{
-		for (auto p = persCon->persons.begin(); p != persCon->persons.end(); p++)
+		for (auto p = persCon->elements.begin(); p != persCon->elements.end(); p++)
 		{
 			char label[128];
 			sprintf_s(label, p->get()->name.c_str(), personSelected);
@@ -707,7 +707,7 @@ void GUISystem::ShowPersonList(float dt)
 					std::string deletedPersonName = p->get()->name;
 
 					objQueue->DeleteObjectAt(p->get()->name);
-					persCon->DeletePersonAt(p);
+					persCon->DeleteAt(p);
 					EngineFunctions::DeleteJsonObject(deletedPersonName, persCon->dataPath);
 
 					AddLog("Персонаж ");
@@ -763,8 +763,8 @@ void GUISystem::ShowPersonList(float dt)
 					hb_coord.z = optPdata.value().position.x + data.animPersonData[0].width;
 					hb_coord.w = optPdata.value().position.y + data.animPersonData[0].height;
 
-					persCon->persons.push_back(std::make_unique<Person>(data.name, data.position, data.layer, data.pathToSprite, HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0], ""));
-					objQueue->queue.push_back(persCon->persons.back().get());
+					persCon->elements.push_back(std::make_unique<Person>(data.name, data.position, data.layer, data.pathToSprite, HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0], ""));
+					objQueue->queue.push_back(persCon->elements.back().get());
 
 					using std::to_string;
 
@@ -987,6 +987,8 @@ void GUISystem::ShowIobjList()
 				IobjCon->elements.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
 				objQueue->queue.push_back(IobjCon->elements.back().get());
 
+				IsCaclulatedDeltas = false;
+
 				using std::to_string;
 
 				// Открытие файла с данными о физике сцены
@@ -1059,7 +1061,7 @@ void GUISystem::ShowTriggerList()
 
 	if (ImGui::Begin("Триггеры", NULL, SIDE_PANEL_FLAGS))
 	{
-		for (auto t = trigCon->triggers.begin(); t != trigCon->triggers.end(); t++)
+		for (auto t = trigCon->elements.begin(); t != trigCon->elements.end(); t++)
 		{
 			char label[128];
 			sprintf_s(label, t->name.c_str(), triggerSelected);
@@ -1145,7 +1147,7 @@ void GUISystem::ShowTriggerList()
 						secondPoint = { (float)pos.first, (float)pos.second };
 
 						std::ostringstream trigger_name;
-						trigger_name << "trig " << trigCon->GetTriggersAmount();
+						trigger_name << "trig " << trigCon->GetSize();
 
 						std::ostringstream default_goal_name;
 						int next_scene_goal = std::stoi(EngineFunctions::StrReplace(curSceneName, "Scene ", "")) + 1;
@@ -1157,7 +1159,7 @@ void GUISystem::ShowTriggerList()
 
 						default_goal_name << "Scene " << next_scene_goal;
 
-						trigCon->AddTrigger(std::move(Trigger(trigger_name.str(), firstPoint, secondPoint, TriggerType::SceneTrigger, default_goal_name.str())));
+						trigCon->Add(std::move(Trigger(trigger_name.str(), firstPoint, secondPoint, TriggerType::SceneTrigger, default_goal_name.str())));
 
 						std::ostringstream oss;
 						oss << "Поставлена вторая точка:\n" <<
@@ -2032,10 +2034,10 @@ void GUISystem::ShowPersonControl(float dt)
 	if (ImGui::Begin("Опции", NULL, SIDE_PANEL_FLAGS))
 	{
 		// Цикл по персонажам
-		for (size_t k = 0; k < persCon->persons.size(); k++)
+		for (size_t k = 0; k < persCon->elements.size(); k++)
 		{
 			// Поиск выбранного персонажа
-			if (persCon->persons.at(k)->name == personSelected)
+			if (persCon->elements.at(k)->name == personSelected)
 			{				
 				if (ImGui::BeginChild(""))
 				{
@@ -2043,14 +2045,14 @@ void GUISystem::ShowPersonControl(float dt)
 					{
 						if (ImGui::BeginTabItem("Объект"))
 						{
-							SpawnDefaultObject2DControl(persCon->persons.at(k).get(), persCon->dataPath);							
+							SpawnDefaultObject2DControl(persCon->elements.at(k).get(), persCon->dataPath);							
 
 							// КОСТЫЛЬ \\ !
 							DirectX::XMFLOAT2 delta;
-							delta.x = persCon->persons.at(k)->position.x - persCon->persons.at(k)->hitbox.coordinates.x + persCon->persons.at(k)->dx;
-							delta.y = persCon->persons.at(k)->position.y - persCon->persons.at(k)->hitbox.coordinates.y + persCon->persons.at(k)->dy;
+							delta.x = persCon->elements.at(k)->position.x - persCon->elements.at(k)->hitbox.coordinates.x + persCon->elements.at(k)->dx;
+							delta.y = persCon->elements.at(k)->position.y - persCon->elements.at(k)->hitbox.coordinates.y + persCon->elements.at(k)->dy;
 
-							persCon->persons.at(k)->hitbox.Translate(delta);
+							persCon->elements.at(k)->hitbox.Translate(delta);
 
 							ImGui::EndTabItem();
 						}
@@ -2061,9 +2063,9 @@ void GUISystem::ShowPersonControl(float dt)
 							{
 								std::ostringstream oss;
 
-								if (persCon->persons.at(k)->scriptPath != "")
+								if (persCon->elements.at(k)->scriptPath != "")
 								{
-									oss << "Скрипт: " << persCon->persons.at(k)->scriptPath;
+									oss << "Скрипт: " << persCon->elements.at(k)->scriptPath;
 								}
 								else
 								{
@@ -2076,9 +2078,9 @@ void GUISystem::ShowPersonControl(float dt)
 								{
 									std::ostringstream code;
 
-									for (size_t i = 0; i < persCon->persons.at(k)->script.commands.size(); i++)
+									for (size_t i = 0; i < persCon->elements.at(k)->script.commands.size(); i++)
 									{
-										code << i + 1 << ".\t" << persCon->persons.at(k)->script.commands[i].first << "(" << persCon->persons.at(k)->script.commands[i].second << ");\n";
+										code << i + 1 << ".\t" << persCon->elements.at(k)->script.commands[i].first << "(" << persCon->elements.at(k)->script.commands[i].second << ");\n";
 									}
 
 									ImGui::TextWrapped(code.str().c_str());
@@ -2105,10 +2107,10 @@ void GUISystem::ShowPersonControl(float dt)
 
 									if (newScriptPath.has_value())
 									{
-										persCon->persons.at(k)->SetScript(newScriptPath.value());
+										persCon->elements.at(k)->SetScript(newScriptPath.value());
 										
 										EngineFunctions::SetNewValue<std::string>(
-											persCon->persons.at(k)->name,
+											persCon->elements.at(k)->name,
 											"script", newScriptPath.value(),
 											persCon->dataPath,
 											&applog
@@ -2143,7 +2145,7 @@ void GUISystem::ShowPersonControl(float dt)
 							if (ImGui::CollapsingHeader("Физика", ImGuiTreeNodeFlags_DefaultOpen))
 							{
 								ImGui::Text("Скорость:");
-								dcheck(ImGui::SliderFloat(" ", &persCon->persons.at(k)->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
+								dcheck(ImGui::SliderFloat(" ", &persCon->elements.at(k)->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
 
 								ImGui::Separator(); // Разделитель
 							}
@@ -2154,10 +2156,10 @@ void GUISystem::ShowPersonControl(float dt)
 
 							if (ImGui::CollapsingHeader("Эффекты"))
 							{
-								dcheck(ImGui::SliderFloat("Продолжитель.", &persCon->persons.at(k)->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
-								dcheck(ImGui::SliderFloat("Время", &persCon->persons.at(k)->effect.Time, 0.0f, 100.0f, "%.3f"), effDirty);
+								dcheck(ImGui::SliderFloat("Продолжитель.", &persCon->elements.at(k)->effect.Duration, 0.0f, 100.0f, "%.3f"), effDirty);
+								dcheck(ImGui::SliderFloat("Время", &persCon->elements.at(k)->effect.Time, 0.0f, 100.0f, "%.3f"), effDirty);
 
-								ImGui::Checkbox("Активен", &persCon->persons.at(k)->effect.Active);
+								ImGui::Checkbox("Активен", &persCon->elements.at(k)->effect.Active);
 
 								ImGui::Separator();	// Разделитель
 							}
@@ -2168,7 +2170,7 @@ void GUISystem::ShowPersonControl(float dt)
 
 							if (ImGui::CollapsingHeader("Hit-box"))
 							{
-								ImGui::Checkbox("Показать", &persCon->persons.at(k)->hitbox.visability);
+								ImGui::Checkbox("Показать", &persCon->elements.at(k)->hitbox.visability);
 
 								/* Если нажата кнопка изменить HitBox */
 								{
@@ -2177,7 +2179,7 @@ void GUISystem::ShowPersonControl(float dt)
 										AddLog("Изменение Hit-box...\n");
 
 										DrawingHitBox = true;
-										persCon->persons.at(k)->hitbox.visability = false;
+										persCon->elements.at(k)->hitbox.visability = false;
 
 										ImGui::GetStyle().Alpha = 0.1f;
 									}
@@ -2192,8 +2194,8 @@ void GUISystem::ShowPersonControl(float dt)
 											AddLog(new_hb.name);
 											AddLog("\n");
 
-											persCon->persons.at(k)->SetHitBox(new_hb);
-											persCon->persons.at(k)->hitbox.visability = true;
+											persCon->elements.at(k)->SetHitBox(new_hb);
+											persCon->elements.at(k)->hitbox.visability = true;
 
 											new_hb.Translate(camera->position);
 											EngineFunctions::SaveHitBoxData(personSelected, new_hb, persCon->dataPath, &applog);
@@ -2211,16 +2213,16 @@ void GUISystem::ShowPersonControl(float dt)
 							if (ImGui::CollapsingHeader("Анимации"))
 							{								
 								std::ostringstream str;
-								str << "Кол-во анимаций: " << persCon->persons.at(k)->animations.size();
+								str << "Кол-во анимаций: " << persCon->elements.at(k)->animations.size();
 								ImGui::Text(str.str().c_str());
 								
 								if (ImGui::BeginCombo("Анимация", animSelected.c_str()))
 								{
-									for (size_t i = 0; i < persCon->persons.at(k)->animations.size(); i++)
+									for (size_t i = 0; i < persCon->elements.at(k)->animations.size(); i++)
 									{
-										if (ImGui::Selectable(persCon->persons.at(k)->animations[i].name.c_str(), animSelected == persCon->persons.at(k)->animations[i].name))
+										if (ImGui::Selectable(persCon->elements.at(k)->animations[i].name.c_str(), animSelected == persCon->elements.at(k)->animations[i].name))
 										{
-											animSelected = persCon->persons.at(k)->animations[i].name;
+											animSelected = persCon->elements.at(k)->animations[i].name;
 											animSelectedId = i;
 										}
 									}
@@ -2231,15 +2233,15 @@ void GUISystem::ShowPersonControl(float dt)
 								if (animSelected != "")
 								{
 
-									ImGui::SliderInt("Кадр", &persCon->persons.at(k)->animations[animSelectedId].iCurFrame, 0, (int)persCon->persons.at(k)->animations[animSelectedId].frames.size());
+									ImGui::SliderInt("Кадр", &persCon->elements.at(k)->animations[animSelectedId].iCurFrame, 0, (int)persCon->elements.at(k)->animations[animSelectedId].frames.size());
 									dcheck(ImGui::SliderFloat("Превью", &scaleFrame, 1.0f, 5.0f, "%.2f"), a_sDirty);
 
 									ImGui::NewLine();
 
-									curFrame = persCon->persons.at(k)->animations[animSelectedId].iCurFrame;
+									curFrame = persCon->elements.at(k)->animations[animSelectedId].iCurFrame;
 
-									curAnimW = (float)persCon->persons.at(k)->animations[animSelectedId].width;
-									curAnimH = (float)persCon->persons.at(k)->animations[animSelectedId].height;
+									curAnimW = (float)persCon->elements.at(k)->animations[animSelectedId].width;
+									curAnimH = (float)persCon->elements.at(k)->animations[animSelectedId].height;
 
 									previewSize = ImVec2(
 										curAnimW * scaleFrame,
@@ -2271,12 +2273,12 @@ void GUISystem::ShowPersonControl(float dt)
 
 								ImGui::NewLine();
 
-								dcheck(ImGui::SliderFloat("Задержка", &persCon->persons.at(k)->animations[animSelectedId].holdTime, 0.01f, 1.0f), a_hdDirty);
-								persCon->persons.at(k)->holdTime = persCon->persons.at(k)->animations[animSelectedId].holdTime;
+								dcheck(ImGui::SliderFloat("Задержка", &persCon->elements.at(k)->animations[animSelectedId].holdTime, 0.01f, 1.0f), a_hdDirty);
+								persCon->elements.at(k)->holdTime = persCon->elements.at(k)->animations[animSelectedId].holdTime;
 
-								for (auto& a : persCon->persons.at(k)->animations)
+								for (auto& a : persCon->elements.at(k)->animations)
 								{
-									a.holdTime = persCon->persons.at(k)->holdTime;
+									a.holdTime = persCon->elements.at(k)->holdTime;
 								}
 
 								if (ImGui::Button("Создать анимацию"))
@@ -2292,21 +2294,21 @@ void GUISystem::ShowPersonControl(float dt)
 									if (!animations.empty())
 									{
 										AddLog("Создана анимация для ");
-										AddLog(persCon->persons.at(k)->name);
+										AddLog(persCon->elements.at(k)->name);
 										AddLog("\n");
 
-										persCon->persons.at(k)->image = Surface2D(animPath);
+										persCon->elements.at(k)->image = Surface2D(animPath);
 										std::vector<Animation> newAnim;
 
 										for (auto& a : animations)
 										{
-											newAnim.emplace_back(Animation(a.pStart, a.pEnd, a.width, a.height, a.frames, persCon->persons.at(k)->image, a.ft, a.name));
+											newAnim.emplace_back(Animation(a.pStart, a.pEnd, a.width, a.height, a.frames, persCon->elements.at(k)->image, a.ft, a.name));
 										}
 
-										persCon->persons.at(k)->SetAnimation(newAnim);
+										persCon->elements.at(k)->SetAnimation(newAnim);
 
 										EngineFunctions::SaveAnimationData(
-											persCon->persons.at(k)->name,
+											persCon->elements.at(k)->name,
 											AnimationData(animations[0].pStart, animations[0].pEnd, animations[0].width, animations[0].height, animations[0].frames, animations[0].ft, animations[0].name),
 											persCon->dataPath,
 											&applog);
@@ -2328,7 +2330,7 @@ void GUISystem::ShowPersonControl(float dt)
 								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 								{
 									AddLog("Сохранение настроек для ");
-									AddLog(persCon->persons.at(k)->name);
+									AddLog(persCon->elements.at(k)->name);
 									AddLog("\n");
 
 									SavingSettings = true;
@@ -2340,7 +2342,7 @@ void GUISystem::ShowPersonControl(float dt)
 
 									EngineFunctions::SetNewValue<float>(
 										personSelected,
-										"speed", persCon->persons.at(k)->speed,
+										"speed", persCon->elements.at(k)->speed,
 										persCon->dataPath,
 										&applog
 										);
@@ -2351,21 +2353,21 @@ void GUISystem::ShowPersonControl(float dt)
 
 									EngineFunctions::SetNewValue<bool>(
 										personSelected,
-										"eff-a", persCon->persons.at(k)->effect.Active,
+										"eff-a", persCon->elements.at(k)->effect.Active,
 										persCon->dataPath,
 										&applog
 										);
 
 									EngineFunctions::SetNewValue<float>(
 										personSelected,
-										"eff-d", persCon->persons.at(k)->effect.Duration,
+										"eff-d", persCon->elements.at(k)->effect.Duration,
 										persCon->dataPath,
 										&applog
 										);
 
 									EngineFunctions::SetNewValue<float>(
 										personSelected,
-										"eff-t", persCon->persons.at(k)->effect.Time,
+										"eff-t", persCon->elements.at(k)->effect.Time,
 										persCon->dataPath,
 										&applog
 										);
@@ -2374,7 +2376,7 @@ void GUISystem::ShowPersonControl(float dt)
 
 									/* Пересохранение hitbox */
 									
-									auto hitbox = persCon->persons[k]->hitbox;
+									auto hitbox = persCon->elements[k]->hitbox;
 									EngineFunctions::SaveHitBoxData(personSelected, hitbox, persCon->dataPath, &applog);
 
 									/*************************/
@@ -2393,14 +2395,14 @@ void GUISystem::ShowPersonControl(float dt)
 								if (ImGui::Button("Удалить", ImVec2(100, 20)))
 								{
 									AddLog("Удаление ");
-									AddLog(persCon->persons.at(k)->name);
+									AddLog(persCon->elements.at(k)->name);
 									AddLog("\n");
 
-									for (auto i = persCon->persons.begin(); i != persCon->persons.end(); i++)
+									for (auto i = persCon->elements.begin(); i != persCon->elements.end(); i++)
 									{
 										if (i->get()->name == personSelected)
 										{
-											persCon->persons.erase(i);
+											persCon->elements.erase(i);
 											break;
 										}
 									}
@@ -2592,10 +2594,10 @@ void GUISystem::ShowTriggerControl()
 	if (ImGui::Begin("Опции", NULL, SIDE_PANEL_FLAGS))
 	{
 		// Цикл по триггерам
-		for (int k = 0; k < trigCon->triggers.size(); k++)
+		for (int k = 0; k < trigCon->elements.size(); k++)
 		{
 			// Поиск выбранного триггера
-			if (trigCon->triggers.at(k).name == triggerSelected)
+			if (trigCon->elements.at(k).name == triggerSelected)
 			{
 				if (ImGui::BeginChild(""))
 				{
@@ -2613,29 +2615,29 @@ void GUISystem::ShowTriggerControl()
 						if (ImGui::CollapsingHeader("Положение", ImGuiTreeNodeFlags_DefaultOpen))
 						{
 							ImGui::Text("Позиция начальной точки:");
-							dcheck(ImGui::SliderFloat("Xs", &trigCon->triggers.at(k).line.start.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ys", &trigCon->triggers.at(k).line.start.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xs", &trigCon->elements.at(k).line.start.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ys", &trigCon->elements.at(k).line.start.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
 
 							ImGui::Text("Позиция конечной точки:");
-							dcheck(ImGui::SliderFloat("Xe", &trigCon->triggers.at(k).line.end.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
-							dcheck(ImGui::SliderFloat("Ye", &trigCon->triggers.at(k).line.end.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Xe", &trigCon->elements.at(k).line.end.x, -wnd->Gfx().POS_X_LIMIT, wnd->Gfx().POS_X_LIMIT, "%.2f"), posDirty);
+							dcheck(ImGui::SliderFloat("Ye", &trigCon->elements.at(k).line.end.y, -wnd->Gfx().POS_Y_LIMIT, wnd->Gfx().POS_Y_LIMIT, "%.2f"), posDirty);
 
 							if (ImGui::Button("Нормировать X", ImVec2(100, 20)))
 							{
 								AddLog("Нормирование по оси X...\n");
 
-								trigCon->triggers.at(k).line.end.x = trigCon->triggers.at(k).line.start.x;
+								trigCon->elements.at(k).line.end.x = trigCon->elements.at(k).line.start.x;
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"start-x", trigCon->triggers.at(k).line.start.x,
+									"start-x", trigCon->elements.at(k).line.start.x,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"end-x", trigCon->triggers.at(k).line.end.x,
+									"end-x", trigCon->elements.at(k).line.end.x,
 									trigCon->dataPath,
 									&applog
 									);
@@ -2649,18 +2651,18 @@ void GUISystem::ShowTriggerControl()
 							{
 								AddLog("Нормирование по оси Y...\n");
 
-								trigCon->triggers.at(k).line.end.y = trigCon->triggers.at(k).line.start.y;
+								trigCon->elements.at(k).line.end.y = trigCon->elements.at(k).line.start.y;
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"start-y", trigCon->triggers.at(k).line.start.y,
+									"start-y", trigCon->elements.at(k).line.start.y,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"end-y", trigCon->triggers.at(k).line.end.y,
+									"end-y", trigCon->elements.at(k).line.end.y,
 									trigCon->dataPath,
 									&applog
 									);
@@ -2682,7 +2684,7 @@ void GUISystem::ShowTriggerControl()
 									AddLog("Изменение линии...\n");
 
 									DrawingLine = true;
-									trigCon->triggers.at(k).line.visability = false;
+									trigCon->elements.at(k).line.visability = false;
 
 									ImGui::GetStyle().Alpha = 0.1f;
 								}
@@ -2737,28 +2739,28 @@ void GUISystem::ShowTriggerControl()
 
 											EngineFunctions::SetNewValue<float>(
 												triggerSelected,
-												"start-x", trigCon->triggers.at(k).line.start.x,
+												"start-x", trigCon->elements.at(k).line.start.x,
 												trigCon->dataPath,
 												&applog
 												);
 
 											EngineFunctions::SetNewValue<float>(
 												triggerSelected,
-												"end-x", trigCon->triggers.at(k).line.end.x,
+												"end-x", trigCon->elements.at(k).line.end.x,
 												trigCon->dataPath,
 												&applog
 												);
 
 											EngineFunctions::SetNewValue<float>(
 												triggerSelected,
-												"start-y", trigCon->triggers.at(k).line.start.y,
+												"start-y", trigCon->elements.at(k).line.start.y,
 												trigCon->dataPath,
 												&applog
 												);
 
 											EngineFunctions::SetNewValue<float>(
 												triggerSelected,
-												"end-y", trigCon->triggers.at(k).line.end.y,
+												"end-y", trigCon->elements.at(k).line.end.y,
 												trigCon->dataPath,
 												&applog
 												);
@@ -2842,7 +2844,7 @@ void GUISystem::ShowTriggerControl()
 								if (ImGui::Button("Сохранить цель", ImVec2(100, 20)))
 								{
 									EngineFunctions::SetNewValue<std::string>(
-										trigCon->triggers.at(k).name,
+										trigCon->elements.at(k).name,
 										"goal",
 										trigScenesPreview,
 										trigCon->dataPath,
@@ -2874,28 +2876,28 @@ void GUISystem::ShowTriggerControl()
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"start-x", trigCon->triggers.at(k).line.start.x,
+									"start-x", trigCon->elements.at(k).line.start.x,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"end-x", trigCon->triggers.at(k).line.end.x,
+									"end-x", trigCon->elements.at(k).line.end.x,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"start-y", trigCon->triggers.at(k).line.start.y,
+									"start-y", trigCon->elements.at(k).line.start.y,
 									trigCon->dataPath,
 									&applog
 									);
 
 								EngineFunctions::SetNewValue<float>(
 									triggerSelected,
-									"end-y", trigCon->triggers.at(k).line.end.y,
+									"end-y", trigCon->elements.at(k).line.end.y,
 									trigCon->dataPath,
 									&applog
 									);
@@ -4666,7 +4668,7 @@ std::optional<PersonData> GUISystem::ShowAddingPersonDialog(float dt)
 			if (PersonPath != "")
 			{
 				std::ostringstream n;
-				n << "person " << persCon->persons.size() + 1;
+				n << "person " << persCon->elements.size() + 1;
 
 				data.name = n.str();
 				data.pathToSprite = PersonPath;
@@ -5089,20 +5091,20 @@ void GUISystem::SavePersonsData()
 {
 	AddLog("Сохранение настроек для персонажей...\n");
 
-	for (size_t i = 0; i < persCon->persons.size(); i++)
+	for (size_t i = 0; i < persCon->elements.size(); i++)
 	{
 		/* Сохранение позиции */
 
 		EngineFunctions::SetNewValue<float>(
-			persCon->persons[i]->name,
-			"pos-x", persCon->persons[i]->position.x,
+			persCon->elements[i]->name,
+			"pos-x", persCon->elements[i]->position.x,
 			persCon->dataPath,
 			&applog
 			);
 
 		EngineFunctions::SetNewValue<float>(
-			persCon->persons[i]->name,
-			"pos-y", persCon->persons[i]->position.y,
+			persCon->elements[i]->name,
+			"pos-y", persCon->elements[i]->position.y,
 			persCon->dataPath,
 			&applog
 			);
@@ -5112,8 +5114,8 @@ void GUISystem::SavePersonsData()
 		/* Сохранение скорости */
 
 		EngineFunctions::SetNewValue<float>(
-			persCon->persons[i]->name,
-			"speed", persCon->persons[i]->speed,
+			persCon->elements[i]->name,
+			"speed", persCon->elements[i]->speed,
 			persCon->dataPath,
 			&applog
 			);
@@ -5123,22 +5125,22 @@ void GUISystem::SavePersonsData()
 		/* Сохранение настроек эффекта */
 
 		EngineFunctions::SetNewValue<bool>(
-			persCon->persons[i]->name,
-			"eff-a", persCon->persons[i]->effect.Active,
+			persCon->elements[i]->name,
+			"eff-a", persCon->elements[i]->effect.Active,
 			persCon->dataPath,
 			&applog
 			);
 
 		EngineFunctions::SetNewValue<float>(
-			persCon->persons[i]->name,
-			"eff-d", persCon->persons[i]->effect.Duration,
+			persCon->elements[i]->name,
+			"eff-d", persCon->elements[i]->effect.Duration,
 			persCon->dataPath,
 			&applog
 			);
 
 		EngineFunctions::SetNewValue<float>(
-			persCon->persons[i]->name,
-			"eff-t", persCon->persons[i]->effect.Time,
+			persCon->elements[i]->name,
+			"eff-t", persCon->elements[i]->effect.Time,
 			persCon->dataPath,
 			&applog
 			);
@@ -5147,8 +5149,8 @@ void GUISystem::SavePersonsData()
 
 		/* Пересохранение hitbox */
 
-		auto hitbox = persCon->persons[i]->hitbox;
-		EngineFunctions::SaveHitBoxData(persCon->persons[i]->name, hitbox, persCon->dataPath, &applog);
+		auto hitbox = persCon->elements[i]->hitbox;
+		EngineFunctions::SaveHitBoxData(persCon->elements[i]->name, hitbox, persCon->dataPath, &applog);
 
 		/*************************/
 	}
@@ -5205,34 +5207,34 @@ void GUISystem::SaveTriggersData()
 {
 	AddLog("Сохранение настроек для триггеров...\n");
 
-	for (size_t i = 0; i < trigCon->triggers.size(); i++)
+	for (size_t i = 0; i < trigCon->elements.size(); i++)
 	{
 		/* Сохранение координат */
 
 		EngineFunctions::SetNewValue<float>(
-			triggerSelected,
-			"start-x", trigCon->triggers.at(i).line.start.x,
+			trigCon->elements[i].name,
+			"start-x", trigCon->elements.at(i).line.start.x,
 			trigCon->dataPath,
 			&applog
 			);
 
 		EngineFunctions::SetNewValue<float>(
-			triggerSelected,
-			"end-x", trigCon->triggers.at(i).line.end.x,
+			trigCon->elements[i].name,
+			"end-x", trigCon->elements.at(i).line.end.x,
 			trigCon->dataPath,
 			&applog
 			);
 
 		EngineFunctions::SetNewValue<float>(
-			triggerSelected,
-			"start-y", trigCon->triggers.at(i).line.start.y,
+			trigCon->elements[i].name,
+			"start-y", trigCon->elements.at(i).line.start.y,
 			trigCon->dataPath,
 			&applog
 			);
 
 		EngineFunctions::SetNewValue<float>(
-			triggerSelected,
-			"end-y", trigCon->triggers.at(i).line.end.y,
+			trigCon->elements[i].name,
+			"end-y", trigCon->elements.at(i).line.end.y,
 			trigCon->dataPath,
 			&applog
 			);

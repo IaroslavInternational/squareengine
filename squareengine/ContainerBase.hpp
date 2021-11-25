@@ -12,19 +12,23 @@ public:
 		dataPath(dataPath)
 	{}
 public:
-	inline void Add(Type element) 
+	inline void   Add(Type element) 
 	{
 		elements.push_back(std::move(element));
 	}
-	inline void DeleteAt(size_t element_idx)
+	inline void   DeleteAt(size_t element_idx)
 	{
 		elements.erase(elements.begin() + element_idx);
 	}
-	inline void DeleteAt(typename std::vector<Type>::iterator iterator)
+	inline void   DeleteAt(typename std::vector<Type>::iterator iterator)
 	{
-		elements.erase(it);
+		elements.erase(iterator);
+	}
+	inline size_t GetSize()
+	{
+		return elements.size();
 	}
 protected:
-	std::string dataPath;
+	std::string       dataPath;
 	std::vector<Type> elements;
 };

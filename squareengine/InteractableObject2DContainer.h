@@ -3,7 +3,7 @@
 #include "InteractableObject2D.h"
 #include "ContainerBase.hpp"
 
-class MainPerson;
+class PhysicObject2D;
 
 class InteractableObject2DContainer : public ContainerBase<std::unique_ptr<InteractableObject2D>>
 {
@@ -14,6 +14,5 @@ public:
 	InteractableObject2DContainer(std::string dataPath);
 public:
 	void Translate(DirectX::XMFLOAT2 delta);
-	void CheckOverlap(MainPerson* hero);
+	void CheckOverlap(PhysicObject2D* object);
 };
-

@@ -1,9 +1,10 @@
 #include "PersonContainer.h"
+
 #include "EngineFunctions.hpp"
 
 PersonContainer::PersonContainer(std::string dataPath)
 	:
-	dataPath(dataPath)
+	ContainerBase(dataPath)
 {
 	std::ifstream dataFile(dataPath);
 	if (!dataFile.is_open())
@@ -96,13 +97,13 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 				/* Инициализация объекта */
 
-				persons.push_back(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, speed, eff_d, eff_t, eff_a));
+				Add(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, speed, eff_d, eff_t, eff_a));
 
 				/*************************/
 			}
 		}
 
-		persons.shrink_to_fit();
+		elements.shrink_to_fit();
 	}
 }
 
@@ -110,7 +111,7 @@ void PersonContainer::Process(float dt)
 {
 	if (IsScriptsRunning)
 	{
-		for (auto& p : persons)
+		for (auto& p : elements)
 		{
 			p->Process(dt);
 		}
@@ -119,9 +120,9 @@ void PersonContainer::Process(float dt)
 
 void PersonContainer::Draw(Graphics& gfx)
 {
-	if (persons.size() != 0)
+	if (elements.size() != 0)
 	{
-		for (auto& p : persons)
+		for (auto& p : elements)
 		{
 			p->Draw(gfx);
 		}
@@ -130,28 +131,13 @@ void PersonContainer::Draw(Graphics& gfx)
 
 void PersonContainer::Translate(DirectX::XMFLOAT2 delta)
 {
-	for (auto& p : persons)
+	for (auto& p : elements)
 	{
 		p->Translate(delta);
 	}
 }
 
-size_t PersonContainer::GetSize()
-{
-	return persons.size();
-}
-
 std::unique_ptr<Person>& PersonContainer::Get(size_t i)
 {
-	return persons.at(i);
-}
-
-void PersonContainer::DeletePersonAt(size_t k)
-{
-	DeletePersonAt(persons.begin() + k);
-}
-
-void PersonContainer::DeletePersonAt(std::vector<std::unique_ptr<Person>>::iterator it)
-{
-	persons.erase(it);
+	return elements.at(i);
 }

@@ -1,5 +1,5 @@
 #include "InteractableObject2DContainer.h"
-#include "MainPerson.h"
+#include "PhysicObject2D.h"
 
 #include "EngineFunctions.hpp"
 
@@ -94,13 +94,13 @@ void InteractableObject2DContainer::Translate(DirectX::XMFLOAT2 delta)
 	}
 }
 
-void InteractableObject2DContainer::CheckOverlap(MainPerson* hero)
+void InteractableObject2DContainer::CheckOverlap(PhysicObject2D* object)
 {
 	for (auto& obj : elements)
 	{
-		if (hero->GetLayer() < obj->GetLayer() && obj->IsGhostable())
+		if (object->GetLayer() < obj->GetLayer() && obj->IsGhostable())
 		{
-			obj->SetGhostState(hero->GetHitBox().IsCollide(obj->GetHitBox()));
+			obj->SetGhostState(object->GetHitBox().IsCollide(obj->GetHitBox()));
 		}
 	}
 }

@@ -3,7 +3,7 @@
 
 TriggerContainer::TriggerContainer(std::string dataPath)
 	:
-	dataPath(dataPath)
+	ContainerBase(dataPath)
 {
 	std::ifstream dataFile(dataPath);
 	if (!dataFile.is_open())
@@ -55,19 +55,19 @@ TriggerContainer::TriggerContainer(std::string dataPath)
 
 				/* Инициализация объекта */
 
-				triggers.push_back(Trigger(name, start_x, start_y, end_x, end_y, type, goal));
+				Add(Trigger(name, start_x, start_y, end_x, end_y, type, goal));
 
 				/*************************/
 			}
 		}
 
-		triggers.shrink_to_fit();
+		elements.shrink_to_fit();
 	}
 }
 
 void TriggerContainer::Draw(Graphics& gfx)
 {
-	for (auto& t : triggers)
+	for (auto& t : elements)
 	{
 		if (t.GetLine().IsVisible())
 		{
@@ -78,7 +78,7 @@ void TriggerContainer::Draw(Graphics& gfx)
 
 void TriggerContainer::Translate(const DirectX::XMFLOAT2& delta)
 {
-	for (auto& t : triggers)
+	for (auto& t : elements)
 	{
 		t.Translate(delta);
 	}
@@ -86,12 +86,12 @@ void TriggerContainer::Translate(const DirectX::XMFLOAT2& delta)
 
 void TriggerContainer::UpdateLineAt(size_t k, Physics::Line line)
 {
-	triggers.at(k).SetLine(line);
+	elements.at(k).SetLine(line);
 }
 
 std::optional<Trigger> TriggerContainer::Check(HitBox hitbox)
 {
-	for (auto& t : triggers)
+	for (auto& t : elements)
 	{
 		if (t.IsCollide(hitbox))
 		{
@@ -100,19 +100,4 @@ std::optional<Trigger> TriggerContainer::Check(HitBox hitbox)
 	}
 
 	return std::nullopt;
-}
-
-void TriggerContainer::AddTrigger(Trigger trigger)
-{
-	triggers.push_back(trigger);
-}
-
-void TriggerContainer::DeleteAt(std::vector<Trigger>::iterator it)
-{
-	triggers.erase(it);
-}
-
-size_t TriggerContainer::GetTriggersAmount()
-{
-	return triggers.size();
 }

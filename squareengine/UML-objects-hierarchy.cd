@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Person" Collapsed="true">
-    <Position X="1" Y="3.75" Width="1.5" />
+    <Position X="1.25" Y="6.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -11,14 +11,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Object2D" Collapsed="true">
-    <Position X="3.25" Y="1" Width="1.75" />
+    <Position X="3.5" Y="4" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AABAIAAAACAAAkAAAAAAIAAEEAEEAgAAAAQERAAEBAA=</HashCode>
       <FileName>Object2D.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MainPerson" Collapsed="true">
-    <Position X="3.25" Y="3.75" Width="1.5" />
+    <Position X="3.5" Y="6.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -28,38 +28,45 @@
     </TypeIdentifier>
   </Class>
   <Class Name="InteractableObject2D" Collapsed="true">
-    <Position X="5.5" Y="2.25" Width="1.75" />
+    <Position X="5.75" Y="5.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>EAAAAQQAAAAEEgEAUAAABAAAAAAAgAAAAAAEAAAACAA=</HashCode>
       <FileName>InteractableObject2D.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="PhysicObject2D" Collapsed="true">
-    <Position X="2" Y="2.25" Width="1.5" />
+    <Position X="2.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AABEIIwAAACAgBEAQBCIBAAIAACAAAAgAAIAAkwABAQ=</HashCode>
       <FileName>PhysicObject2D.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PersonContainer">
-    <Position X="7.75" Y="3.75" Width="1.5" />
+  <Class Name="PersonContainer" Collapsed="true">
+    <Position X="1.25" Y="2.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAgAAAAAgDAAwAAAQAAAAAAAAAAAQAEAAAAAAA=</HashCode>
+      <HashCode>AQAAAAAgAAAAAgBAAgAAAAAAAAAAAAAAAAAEAAAAAAA=</HashCode>
       <FileName>PersonContainer.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TriggerContainer">
-    <Position X="9.5" Y="3.75" Width="1.5" />
+  <Class Name="ContainerBase&lt;Type&gt;" Collapsed="true">
+    <Position X="4.25" Y="1" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAACAgAAAAAAgAAAQAIACCAAAAAAgAAAAAEAAQAAAA=</HashCode>
-      <FileName>TriggerContainer.h</FileName>
+      <HashCode>QAIACAAAAAAAABCAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContainerBase.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ObjectsQueue">
-    <Position X="11.25" Y="3.75" Width="1.5" />
+  <Class Name="InteractableObject2DContainer" Collapsed="true">
+    <Position X="4.25" Y="2.25" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAEAAAAAAAAAAgAAAABAAIAAAAAAABAAQAAAAAAAAAA=</HashCode>
-      <FileName>ObjectsQueue.h</FileName>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAIEAAAAAAA=</HashCode>
+      <FileName>InteractableObject2DContainer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TriggerContainer" Collapsed="true">
+    <Position X="8" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAgAAAAAAACAAAAAAAAAAAAAEAAQAAAA=</HashCode>
+      <FileName>TriggerContainer.h</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
