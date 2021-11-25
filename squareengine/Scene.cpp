@@ -9,13 +9,13 @@ Scene::Scene(std::string							 name,
 	phEngine(phEngine),
 	wnd(wnd),
 	sdr(scData), 
-	trigCon(sdr.GetTriggerContainerDataPath()),
-	camera(std::make_shared<Camera>(&hero, &persCon, &Iobj, &trigCon, phEngine, sdr.GetCameraDataPath())),
+	triggers(sdr.GetTriggerContainerDataPath()),
+	camera(std::make_shared<Camera>(&hero, &persons, &Iobjects, &triggers, phEngine, sdr.GetCameraDataPath())),
 	mdr(sdr.GetMainPersonDataPath()),
 	hero(mdr, wnd, camera),
-	persCon(sdr.GetPersonContainerPath()),
-	Iobj(sdr.GetInteractableObjectsDataPath()),
-	objQueue(&hero, &persCon, &Iobj)
+	persons(sdr.GetPersonContainerPath()),
+	Iobjects(sdr.GetInteractableObjectsDataPath()),
+	objQueue(&hero, &persons, &Iobjects)
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
 	camera->Init();
@@ -76,19 +76,19 @@ void Scene::ProcessInput(float dt)
 
 	phEngine->CheckCollision(&hero);
 
-	for (size_t i = 0; i < persCon.GetSize(); i++)
+	for (size_t i = 0; i < persons.GetSize(); i++)
 	{
-		phEngine->CheckCollision(persCon.Get(i).get());
+		phEngine->CheckCollision(persons.Get(i).get());
 	}
 	
-	Iobj.CheckOverlap(&hero);
+	Iobjects.CheckOverlap(&hero);
 
 	if (!camera->GetNoClipState())
 	{
 		hero.Process(dt);
 	}
 
-	persCon.Process(dt);
+	persons.Process(dt);
 }
 
 void Scene::Render(float dt)
@@ -96,14 +96,14 @@ void Scene::Render(float dt)
 	/* Отрисовка */
 
 	objQueue.Draw(wnd->Gfx());	
-	trigCon.Draw(wnd->Gfx());
+	triggers.Draw(wnd->Gfx());
 
 	/*************/
 }
 
 std::optional<std::string> Scene::IsOnTheSceneTrigger()
 {
-	auto trigger = trigCon.Check(hero.GetHitBox());
+	auto trigger = triggers.Check(hero.GetHitBox());
 
 	if (trigger.has_value())
 	{

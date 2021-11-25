@@ -52,10 +52,10 @@ private:
 	/* Объекты */
 
 	MainPerson					  hero;
-	PersonContainer				  persCon;
-	InteractableObject2DContainer Iobj;
+	PersonContainer				  persons;
+	InteractableObject2DContainer Iobjects;
 	ObjectsQueue				  objQueue;
-	TriggerContainer			  trigCon;
+	TriggerContainer			  triggers;
 
 	/***********/
 };

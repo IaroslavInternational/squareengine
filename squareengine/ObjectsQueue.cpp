@@ -1,49 +1,49 @@
 #include "ObjectsQueue.h"
 
-ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persCon, InteractableObject2DContainer* Iobj)
+ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persons, InteractableObject2DContainer* Iobjects)
 {
 	std::vector<size_t> idx;
 
-	if (Iobj->elements.size() != 0)
+	if (Iobjects->elements.size() != 0)
 	{
-		for (size_t i = 0; i < Iobj->elements.size(); i++)
+		for (size_t i = 0; i < Iobjects->elements.size(); i++)
 		{
-			queue.push_back(Iobj->elements[i].get());
-			idx.push_back(Iobj->elements[i].get()->layer);
+			queue.push_back(Iobjects->elements[i].get());
+			idx.push_back(Iobjects->elements[i].get()->layer);
 		}
 	}
 
-	if (persCon->elements.size() != 0)
+	if (persons->elements.size() != 0)
 	{
-		for (size_t i = 0; i < persCon->elements.size(); i++)
+		for (size_t i = 0; i < persons->elements.size(); i++)
 		{
-			queue.push_back(persCon->elements[i].get());
-			idx.push_back(persCon->elements[i].get()->layer);
+			queue.push_back(persons->elements[i].get());
+			idx.push_back(persons->elements[i].get()->layer);
 		}
 	}
 
 	queue.push_back(hero);
 	idx.push_back(hero->layer);
 
-	if (Iobj->elements.size() != 0)
+	if (Iobjects->elements.size() != 0)
 	{
-		for (size_t i = 0; i < Iobj->elements.size(); i++)
+		for (size_t i = 0; i < Iobjects->elements.size(); i++)
 		{
-			queue.at(idx[i]) = Iobj->elements[i].get();
+			queue.at(idx[i]) = Iobjects->elements[i].get();
 		}
 	}
 
-	if (persCon->elements.size() != 0)
+	if (persons->elements.size() != 0)
 	{
-		for (size_t i = 0; i < persCon->elements.size(); i++)
+		for (size_t i = 0; i < persons->elements.size(); i++)
 		{
-			if (Iobj->elements.size() != 0)
+			if (Iobjects->elements.size() != 0)
 			{
-				queue.at(idx[i + Iobj->elements.size()]) = persCon->elements[i].get();
+				queue.at(idx[i + Iobjects->elements.size()]) = persons->elements[i].get();
 			}
 			else
 			{
-				queue.at(idx[i]) = persCon->elements[i].get();
+				queue.at(idx[i]) = persons->elements[i].get();
 			}
 		}
 	}

@@ -13,7 +13,7 @@ class Camera
 public:
 	friend class GUISystem;
 public:
-	Camera(MainPerson* hero, PersonContainer* pc, InteractableObject2DContainer* Iobj, TriggerContainer* trigCon, std::shared_ptr<Physics::PhysicsEngine> phEngPtr, std::string dataPath);
+	Camera(MainPerson* hero, PersonContainer* persons, InteractableObject2DContainer* Iobjects, TriggerContainer* trigCon, std::shared_ptr<Physics::PhysicsEngine> phEngPtr, std::string dataPath);
 public:
 	void Init();
 	void Translate(DirectX::XMFLOAT2 delta);
@@ -24,9 +24,9 @@ public:
 	void SetInitPosition(DirectX::XMFLOAT2 pos);
 private:
 	MainPerson*								hero;
-	PersonContainer*						pc;
-	InteractableObject2DContainer*			Iobj;
-	TriggerContainer*						trigCon;
+	PersonContainer*						persons;
+	InteractableObject2DContainer*			Iobjects;
+	TriggerContainer*						triggers;
 	std::shared_ptr<Physics::PhysicsEngine> phEngPtr;
 private:
 	std::string		  dataPath;

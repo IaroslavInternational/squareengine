@@ -9,7 +9,7 @@ class ObjectsQueue
 public:
 	friend class GUISystem;
 public:
-	ObjectsQueue(MainPerson* hero, PersonContainer* persCon, InteractableObject2DContainer* Iobj);
+	ObjectsQueue(MainPerson* hero, PersonContainer* persons, InteractableObject2DContainer* Iobjects);
 public:
 	void Draw(Graphics& gfx);
 public:

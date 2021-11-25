@@ -176,10 +176,10 @@ private:
 	/* ”казатели на объекты */
 
 	MainPerson*					   hero;		// ”казатель на главного персонажа
+	PersonContainer*			   persons;		// ”казатель на	контейнер персонажей
+	InteractableObject2DContainer* Iobjects;	// ”казатель на	контейнер интерактивных объектов
 	ObjectsQueue*				   objQueue;	// ”казатель на	контейнер, определ€ющий очередь (слои) отрисовки
-	PersonContainer*			   persCon;		// ”казатель на	контейнер персонажей
-	InteractableObject2DContainer* IobjCon;		// ”казатель на	контейнер интерактивных объектов
-	TriggerContainer*			   trigCon;		// ”казатель на контейнер триггеров
+	TriggerContainer*			   triggers;	// ”казатель на контейнер триггеров
 
 	/************************/
 private:
