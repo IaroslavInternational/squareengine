@@ -4,12 +4,12 @@ ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persCon, Interacta
 {
 	std::vector<size_t> idx;
 
-	if (Iobj->objects.size() != 0)
+	if (Iobj->elements.size() != 0)
 	{
-		for (size_t i = 0; i < Iobj->objects.size(); i++)
+		for (size_t i = 0; i < Iobj->elements.size(); i++)
 		{
-			queue.push_back(Iobj->objects[i].get());
-			idx.push_back(Iobj->objects[i].get()->layer);
+			queue.push_back(Iobj->elements[i].get());
+			idx.push_back(Iobj->elements[i].get()->layer);
 		}
 	}
 
@@ -25,11 +25,11 @@ ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persCon, Interacta
 	queue.push_back(hero);
 	idx.push_back(hero->layer);
 
-	if (Iobj->objects.size() != 0)
+	if (Iobj->elements.size() != 0)
 	{
-		for (size_t i = 0; i < Iobj->objects.size(); i++)
+		for (size_t i = 0; i < Iobj->elements.size(); i++)
 		{
-			queue.at(idx[i]) = Iobj->objects[i].get();
+			queue.at(idx[i]) = Iobj->elements[i].get();
 		}
 	}
 
@@ -37,9 +37,9 @@ ObjectsQueue::ObjectsQueue(MainPerson* hero, PersonContainer* persCon, Interacta
 	{
 		for (size_t i = 0; i < persCon->persons.size(); i++)
 		{
-			if (Iobj->objects.size() != 0)
+			if (Iobj->elements.size() != 0)
 			{
-				queue.at(idx[i + Iobj->objects.size()]) = persCon->persons[i].get();
+				queue.at(idx[i + Iobj->elements.size()]) = persCon->persons[i].get();
 			}
 			else
 			{

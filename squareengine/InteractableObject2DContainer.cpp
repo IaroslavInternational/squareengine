@@ -5,7 +5,7 @@
 
 InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPath)
 	:
-	dataPath(dataPath)
+	ContainerBase(dataPath)
 {
 	std::ifstream dataFile(dataPath);
 	if (!dataFile.is_open())
@@ -73,40 +73,30 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 				/* Инициализация объекта */
 
-				objects.emplace_back(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
+				Add(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
 
 				/*************************/
 			}
 		}
 
-		objects.shrink_to_fit();
+		elements.shrink_to_fit();
 	}
 }
 
 void InteractableObject2DContainer::Translate(DirectX::XMFLOAT2 delta)
 {
-	if (objects.size() != 0)
+	if (elements.size() != 0)
 	{
-		for (auto& obj : objects)
+		for (auto& obj : elements)
 		{
 			obj->Translate(delta);
 		}
 	}
 }
 
-void InteractableObject2DContainer::DeleteObjectAt(size_t k)
-{
-	DeleteObjectAt(objects.begin() + k);
-}
-
-void InteractableObject2DContainer::DeleteObjectAt(std::vector<std::unique_ptr<InteractableObject2D>>::iterator it)
-{
-	objects.erase(it);
-}
-
 void InteractableObject2DContainer::CheckOverlap(MainPerson* hero)
 {
-	for (auto& obj : objects)
+	for (auto& obj : elements)
 	{
 		if (hero->GetLayer() < obj->GetLayer() && obj->IsGhostable())
 		{

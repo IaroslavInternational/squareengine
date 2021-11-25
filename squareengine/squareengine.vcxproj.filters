@@ -569,6 +569,9 @@
     <ClInclude Include="NodeEditor.h">
       <Filter>Заголовочные файлы\Интерфейс\Модули интерфейса</Filter>
     </ClInclude>
+    <ClInclude Include="ContainerBase.hpp">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="squareengine.rc">
@@ -594,7 +597,6 @@
       <Filter>Другое</Filter>
     </None>
     <None Include="UML-objects-hierarchy.cd" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferVS.hlsl">

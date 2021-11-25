@@ -6,7 +6,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AKQACIQAAAAAAgAAQiAIBAAAAIAAEQEAAAiERAAgBAA=</HashCode>
+      <HashCode>AKQACAAAAAAAAgAAAiAAAAAAAIAAESEAAAiERAAgAAA=</HashCode>
       <FileName>Person.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -23,7 +23,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>BAWACIQAAgAAAgAAQSAIBAAAAIAAEQEgAAiEAAAgBCA=</HashCode>
+      <HashCode>AAWACAAAAgAAAgAAAyAAAAAAAIAAEQEAAAiEAAAgACA=</HashCode>
       <FileName>MainPerson.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -37,8 +37,29 @@
   <Class Name="PhysicObject2D" Collapsed="true">
     <Position X="2" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AABEIAgAAACAgBEAABCAAAAIAACAAAAAAAIAAkwAAAQ=</HashCode>
+      <HashCode>AABEIIwAAACAgBEAQBCIBAAIAACAAAAgAAIAAkwABAQ=</HashCode>
       <FileName>PhysicObject2D.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PersonContainer">
+    <Position X="7.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAgAAAAAgDAAwAAAQAAAAAAAAAAAQAEAAAAAAA=</HashCode>
+      <FileName>PersonContainer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TriggerContainer">
+    <Position X="9.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAgAAAAAAgAAAQAIACCAAAAAAgAAAAAEAAQAAAA=</HashCode>
+      <FileName>TriggerContainer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ObjectsQueue">
+    <Position X="11.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAgAAAABAAIAAAAAAABAAQAAAAAAAAAA=</HashCode>
+      <FileName>ObjectsQueue.h</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

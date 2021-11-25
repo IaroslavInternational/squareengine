@@ -1,11 +1,11 @@
 #pragma once
 
 #include "InteractableObject2D.h"
-#include <vector>
+#include "ContainerBase.hpp"
 
 class MainPerson;
 
-class InteractableObject2DContainer
+class InteractableObject2DContainer : public ContainerBase<std::unique_ptr<InteractableObject2D>>
 {
 public:
 	friend class GUISystem;
@@ -14,12 +14,6 @@ public:
 	InteractableObject2DContainer(std::string dataPath);
 public:
 	void Translate(DirectX::XMFLOAT2 delta);
-	void DeleteObjectAt(size_t k);
-	void DeleteObjectAt(std::vector<std::unique_ptr<InteractableObject2D>>::iterator it);
 	void CheckOverlap(MainPerson* hero);
-private:
-	std::string dataPath;
-private:
-	std::vector<std::unique_ptr<InteractableObject2D>> objects;
 };
 

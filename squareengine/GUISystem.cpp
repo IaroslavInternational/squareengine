@@ -852,14 +852,14 @@ void GUISystem::ShowIobjList()
 			auto mPosX = (float)wnd->mouse.GetPosX();
 			auto mPosY = (float)wnd->mouse.GetPosY();
 
-			for (size_t i = 0; i < IobjCon->objects.size(); i++)
+			for (size_t i = 0; i < IobjCon->elements.size(); i++)
 			{
-				if (IobjCon->objects[i]->hitbox.IsOverlap({ mPosX, mPosY }))
+				if (IobjCon->elements[i]->hitbox.IsOverlap({ mPosX, mPosY }))
 				{
 					draggingObjId = i;
 					
 					AddLog("Перемещение мышкой объекта ");
-					AddLog(IobjCon->objects[i]->name);
+					AddLog(IobjCon->elements[i]->name);
 					AddLog("\n");
 				}
 			}
@@ -869,7 +869,7 @@ void GUISystem::ShowIobjList()
 	{
 		if (!wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
 		{
-			IobjCon->objects[draggingObjId]->hitbox.visability = true;
+			IobjCon->elements[draggingObjId]->hitbox.visability = true;
 			draggingObjId = -1;		
 
 			AddLog("Перемещение завершенно\n");
@@ -879,22 +879,22 @@ void GUISystem::ShowIobjList()
 			auto mPosX = (float)wnd->mouse.GetPosX();
 			auto mPosY = (float)wnd->mouse.GetPosY();
 
-			float dx = IobjCon->objects[draggingObjId]->hitbox.coordinates.x - IobjCon->objects[draggingObjId]->position.x;
-			float dy = IobjCon->objects[draggingObjId]->hitbox.coordinates.y - IobjCon->objects[draggingObjId]->position.y;
+			float dx = IobjCon->elements[draggingObjId]->hitbox.coordinates.x - IobjCon->elements[draggingObjId]->position.x;
+			float dy = IobjCon->elements[draggingObjId]->hitbox.coordinates.y - IobjCon->elements[draggingObjId]->position.y;
 
-			IobjCon->objects[draggingObjId]->hitbox.visability = false;
+			IobjCon->elements[draggingObjId]->hitbox.visability = false;
 
-			IobjCon->objects[draggingObjId]->SetPosition({ mPosX, mPosY });
-			IobjCon->objects[draggingObjId]->hitbox.coordinates.z = IobjCon->objects[draggingObjId]->position.x + dx + fabs(IobjCon->objects[draggingObjId]->hitbox.coordinates.z - IobjCon->objects[draggingObjId]->hitbox.coordinates.x);
-			IobjCon->objects[draggingObjId]->hitbox.coordinates.w = IobjCon->objects[draggingObjId]->position.y + dy + fabs(IobjCon->objects[draggingObjId]->hitbox.coordinates.w - IobjCon->objects[draggingObjId]->hitbox.coordinates.y);
-			IobjCon->objects[draggingObjId]->hitbox.coordinates.x = IobjCon->objects[draggingObjId]->position.x + dx;
-			IobjCon->objects[draggingObjId]->hitbox.coordinates.y = IobjCon->objects[draggingObjId]->position.y + dy;
+			IobjCon->elements[draggingObjId]->SetPosition({ mPosX, mPosY });
+			IobjCon->elements[draggingObjId]->hitbox.coordinates.z = IobjCon->elements[draggingObjId]->position.x + dx + fabs(IobjCon->elements[draggingObjId]->hitbox.coordinates.z - IobjCon->elements[draggingObjId]->hitbox.coordinates.x);
+			IobjCon->elements[draggingObjId]->hitbox.coordinates.w = IobjCon->elements[draggingObjId]->position.y + dy + fabs(IobjCon->elements[draggingObjId]->hitbox.coordinates.w - IobjCon->elements[draggingObjId]->hitbox.coordinates.y);
+			IobjCon->elements[draggingObjId]->hitbox.coordinates.x = IobjCon->elements[draggingObjId]->position.x + dx;
+			IobjCon->elements[draggingObjId]->hitbox.coordinates.y = IobjCon->elements[draggingObjId]->position.y + dy;
 		}
 	}
 
 	if (ImGui::Begin("Объекты", NULL, SIDE_PANEL_FLAGS))
 	{
-		for (auto o = IobjCon->objects.begin(); o != IobjCon->objects.end(); o++)
+		for (auto o = IobjCon->elements.begin(); o != IobjCon->elements.end(); o++)
 		{
 			char label[128];
 			sprintf_s(label, o->get()->name.c_str(), IobjSelected);
@@ -918,22 +918,22 @@ void GUISystem::ShowIobjList()
 					size_t deletedObjId;
 					size_t deletedObjLayer;
 
-					for (size_t i = 0; i < IobjCon->objects.size(); i++)
+					for (size_t i = 0; i < IobjCon->elements.size(); i++)
 					{
-						if (IobjCon->objects[i]->name == deletedObjName)
+						if (IobjCon->elements[i]->name == deletedObjName)
 						{
 							deletedObjId = i;
-							deletedObjLayer = IobjCon->objects[i]->layer;
+							deletedObjLayer = IobjCon->elements[i]->layer;
 							break;
 						}
 					}
 					
 					objQueue->DeleteObjectAt(o->get()->name);
-					IobjCon->DeleteObjectAt(o);
+					IobjCon->DeleteAt(o);
 
 					EngineFunctions::DeleteJsonObject(deletedObjName, IobjCon->dataPath);
 
-					for (size_t i = deletedObjId; i < IobjCon->objects.size(); i++)
+					for (size_t i = deletedObjId; i < IobjCon->elements.size(); i++)
 					{
 						std::ostringstream src;
 						src << "obj " << i + 1;
@@ -943,7 +943,7 @@ void GUISystem::ShowIobjList()
 
 						EngineFunctions::ChangeObjectName(src.str(), dst.str(), IobjCon->dataPath);
 						
-						IobjCon->objects[i]->name = EngineFunctions::StrReplace(IobjCon->objects[i]->name, src.str(), dst.str());	
+						IobjCon->elements[i]->name = EngineFunctions::StrReplace(IobjCon->elements[i]->name, src.str(), dst.str());	
 					}
 
 					SaveIobjData();
@@ -984,8 +984,8 @@ void GUISystem::ShowIobjList()
 				hb_coord.z = d.value().position.x + im.GetWidth();
 				hb_coord.w = d.value().position.y + im.GetHeight();
 
-				IobjCon->objects.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
-				objQueue->queue.push_back(IobjCon->objects.back().get());
+				IobjCon->elements.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
+				objQueue->queue.push_back(IobjCon->elements.back().get());
 
 				using std::to_string;
 
@@ -2434,10 +2434,10 @@ void GUISystem::ShowIobjControl()
 	if (ImGui::Begin("Опции", NULL, SIDE_PANEL_FLAGS))
 	{
 		// Цикл по интерактивным объектам
-		for (int k = 0; k < IobjCon->objects.size(); k++)
+		for (int k = 0; k < IobjCon->elements.size(); k++)
 		{
 			// Поиск выбранного интерактивного объекта
-			if (IobjCon->objects.at(k)->name == IobjSelected)
+			if (IobjCon->elements.at(k)->name == IobjSelected)
 			{
 				if (ImGui::BeginChild(""))
 				{
@@ -2445,22 +2445,22 @@ void GUISystem::ShowIobjControl()
 					{
 						if (ImGui::BeginTabItem("Объект"))
 						{
-							SpawnDefaultObject2DControl(IobjCon->objects.at(k).get(), IobjCon->dataPath);
+							SpawnDefaultObject2DControl(IobjCon->elements.at(k).get(), IobjCon->dataPath);
 
 							// КОСТЫЛЬ \\ !		
 							if (!IsCaclulatedDeltas)
 							{
-								hb_delta.x = IobjCon->objects.at(k)->hitbox.coordinates.x - IobjCon->objects.at(k)->position.x;
-								hb_delta.y = IobjCon->objects.at(k)->hitbox.coordinates.y - IobjCon->objects.at(k)->position.y;
+								hb_delta.x = IobjCon->elements.at(k)->hitbox.coordinates.x - IobjCon->elements.at(k)->position.x;
+								hb_delta.y = IobjCon->elements.at(k)->hitbox.coordinates.y - IobjCon->elements.at(k)->position.y;
 
 								IsCaclulatedDeltas = true;
 							}
 
 							DirectX::XMFLOAT2 delta;
-							delta.x = IobjCon->objects.at(k)->position.x - IobjCon->objects.at(k)->hitbox.coordinates.x + hb_delta.x;
-							delta.y = IobjCon->objects.at(k)->position.y - IobjCon->objects.at(k)->hitbox.coordinates.y + hb_delta.y;
+							delta.x = IobjCon->elements.at(k)->position.x - IobjCon->elements.at(k)->hitbox.coordinates.x + hb_delta.x;
+							delta.y = IobjCon->elements.at(k)->position.y - IobjCon->elements.at(k)->hitbox.coordinates.y + hb_delta.y;
 
-							IobjCon->objects.at(k)->hitbox.Translate(delta);
+							IobjCon->elements.at(k)->hitbox.Translate(delta);
 
 							ImGui::EndTabItem();
 						}
@@ -2480,9 +2480,9 @@ void GUISystem::ShowIobjControl()
 							if (ImGui::CollapsingHeader("Параметры коллизий", ImGuiTreeNodeFlags_DefaultOpen))
 							{
 								ImGui::Text("Степень прозрачности:");
-								dcheck(ImGui::SliderFloat("Глубина", &IobjCon->objects.at(k)->deep, 1.0f, 100.0f, "%.3f"), deepDirty);
+								dcheck(ImGui::SliderFloat("Глубина", &IobjCon->elements.at(k)->deep, 1.0f, 100.0f, "%.3f"), deepDirty);
 
-								ImGui::Checkbox("Прозрачность", &IobjCon->objects.at(k)->drawGhostable);
+								ImGui::Checkbox("Прозрачность", &IobjCon->elements.at(k)->drawGhostable);
 
 								ImGui::Separator();
 							}
@@ -2493,7 +2493,7 @@ void GUISystem::ShowIobjControl()
 
 							if (ImGui::CollapsingHeader("Hit-box"))
 							{
-								ImGui::Checkbox("Показать", &IobjCon->objects.at(k)->hitbox.visability);
+								ImGui::Checkbox("Показать", &IobjCon->elements.at(k)->hitbox.visability);
 
 								/* Если нажата кнопка изменить HitBox */
 								{
@@ -2502,7 +2502,7 @@ void GUISystem::ShowIobjControl()
 										AddLog("Изменение Hit-box...\n");
 
 										DrawingHitBox = true;
-										IobjCon->objects.at(k)->hitbox.visability = false;
+										IobjCon->elements.at(k)->hitbox.visability = false;
 
 										ImGui::GetStyle().Alpha = 0.1f;
 									}
@@ -2517,8 +2517,8 @@ void GUISystem::ShowIobjControl()
 											AddLog(new_hb.name);
 											AddLog("\n");
 
-											IobjCon->objects.at(k)->SetHitBox(new_hb);
-											IobjCon->objects.at(k)->hitbox.visability = true;
+											IobjCon->elements.at(k)->SetHitBox(new_hb);
+											IobjCon->elements.at(k)->hitbox.visability = true;
 
 											new_hb.Translate(camera->position);
 											EngineFunctions::SaveHitBoxData(IobjSelected, new_hb, IobjCon->dataPath, &applog);
@@ -2538,7 +2538,7 @@ void GUISystem::ShowIobjControl()
 								if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 								{
 									AddLog("Сохранение настроек для ");
-									AddLog(IobjCon->objects.at(k)->name);
+									AddLog(IobjCon->elements.at(k)->name);
 									AddLog("\n");
 
 									SavingSettings = true;
@@ -2548,19 +2548,19 @@ void GUISystem::ShowIobjControl()
 								{
 									EngineFunctions::SetNewValue<float>(
 										IobjSelected,
-										"g-deep", IobjCon->objects.at(k)->deep,
+										"g-deep", IobjCon->elements.at(k)->deep,
 										IobjCon->dataPath,
 										&applog
 										);
 
 									EngineFunctions::SetNewValue<bool>(
 										IobjSelected,
-										"g-able", IobjCon->objects.at(k)->drawGhostable,
+										"g-able", IobjCon->elements.at(k)->drawGhostable,
 										IobjCon->dataPath,
 										&applog
 										);
 
-									auto hitbox = IobjCon->objects.at(k)->hitbox;
+									auto hitbox = IobjCon->elements.at(k)->hitbox;
 									EngineFunctions::SaveHitBoxData(IobjSelected, hitbox, IobjCon->dataPath, &applog);
 
 									AddLog("Настройки сохранены\n");
@@ -3459,7 +3459,7 @@ void GUISystem::ShowLayersControl()
 					{
 						if (objQueue->queue[k]->name.find("obj") != objQueue->queue[k]->name.npos)
 						{
-							for (auto& io : IobjCon->objects)
+							for (auto& io : IobjCon->elements)
 							{
 								if (io->name == objQueue->queue[k]->name)
 								{
@@ -3484,7 +3484,7 @@ void GUISystem::ShowLayersControl()
 					{
 						if (objQueue->queue[k]->name.find("obj") != objQueue->queue[k]->name.npos)
 						{
-							for (auto& io : IobjCon->objects)
+							for (auto& io : IobjCon->elements)
 							{
 								if (io->name == objQueue->queue[k]->name)
 								{
@@ -3815,7 +3815,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 			if (obj->name.find("obj") != obj->name.npos)
 			{
-				for (auto& io : IobjCon->objects)
+				for (auto& io : IobjCon->elements)
 				{
 					if (io->name == obj->name)
 					{
@@ -4606,7 +4606,7 @@ std::optional<IobjData> GUISystem::ShowAddingIobjDialog()
 			if (IobjPath != "")
 			{
 				std::ostringstream n;
-				n << "obj " << IobjCon->objects.size();
+				n << "obj " << IobjCon->elements.size();
 				
 				data.name = n.str();
 				data.pathToSprite = IobjPath;
@@ -5160,20 +5160,20 @@ void GUISystem::SaveIobjData()
 {
 	AddLog("Сохранение настроек для интерактивных объектов...\n");
 
-	for (size_t i = 0; i < IobjCon->objects.size(); i++)
+	for (size_t i = 0; i < IobjCon->elements.size(); i++)
 	{
 		/* Сохранение позиции */
 
 		EngineFunctions::SetNewValue<float>(
-			IobjCon->objects[i]->name,
-			"pos-x", IobjCon->objects[i]->position.x,
+			IobjCon->elements[i]->name,
+			"pos-x", IobjCon->elements[i]->position.x,
 			IobjCon->dataPath,
 			&applog
 			);
 
 		EngineFunctions::SetNewValue<float>(
-			IobjCon->objects[i]->name,
-			"pos-y", IobjCon->objects[i]->position.y,
+			IobjCon->elements[i]->name,
+			"pos-y", IobjCon->elements[i]->position.y,
 			IobjCon->dataPath,
 			&applog
 			);
@@ -5181,21 +5181,21 @@ void GUISystem::SaveIobjData()
 		/**********************/
 
 		EngineFunctions::SetNewValue<float>(
-			IobjCon->objects[i]->name,
-			"g-deep", IobjCon->objects[i]->deep,
+			IobjCon->elements[i]->name,
+			"g-deep", IobjCon->elements[i]->deep,
 			IobjCon->dataPath,
 			&applog
 			);
 
 		EngineFunctions::SetNewValue<bool>(
-			IobjCon->objects[i]->name,
-			"g-able", IobjCon->objects[i]->drawGhostable,
+			IobjCon->elements[i]->name,
+			"g-able", IobjCon->elements[i]->drawGhostable,
 			IobjCon->dataPath,
 			&applog
 			);
 
-		auto hitbox = IobjCon->objects[i]->hitbox;
-		EngineFunctions::SaveHitBoxData(IobjCon->objects[i]->name, hitbox, IobjCon->dataPath, &applog);
+		auto hitbox = IobjCon->elements[i]->hitbox;
+		EngineFunctions::SaveHitBoxData(IobjCon->elements[i]->name, hitbox, IobjCon->dataPath, &applog);
 	}
 
 	AddLog("Настройки сохранены\n");
