@@ -56,28 +56,19 @@ bool Physics::Line::IsIntersect(Line line)
         }
     }
 
-    float Ua, Ub, numerator_a, numerator_b, denominator;
+    float Ua, Ub, denominator;
 
     denominator = (y4 - y3) * (x1 - x2) - (x4 - x3) * (y1 - y2);
 
-    if (denominator == 0) 
+    if (denominator == 0.0f) 
     {
-        if ((x1 * y2 - x2 * y1) * (x4 - x3) - (x3 * y4 - x4 * y3) * (x2 - x1) == 0.0f &&
-            (x1 * y2 - x2 * y1) * (y4 - y3) - (x3 * y4 - x4 * y3) * (y2 - y1) == 0.0f)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return ((x1 * y2 - x2 * y1) * (x4 - x3) - (x3 * y4 - x4 * y3) * (x2 - x1) == 0.0f &&
+                (x1 * y2 - x2 * y1) * (y4 - y3) - (x3 * y4 - x4 * y3) * (y2 - y1) == 0.0f);
     }
     else 
     {
-        numerator_a = (x4 - x2) * (y4 - y3) - (x4 - x3) * (y4 - y2);
-        numerator_b = (x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2);
-        Ua = numerator_a / denominator;
-        Ub = numerator_b / denominator;
+        Ua = (x4 - x2) * (y4 - y3) - (x4 - x3) * (y4 - y2) / denominator;
+        Ub = (x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2) / denominator;
         
         return (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1);
     }

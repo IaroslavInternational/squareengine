@@ -20,15 +20,15 @@ private:
 private:
 	ImguiManager imgui;									// Инициализация интерфейса 
 private:
-	std::shared_ptr<Window> wnd;						// Указатель на окно
+	std::shared_ptr<Window>					wnd;		// Указатель на окно
 	std::shared_ptr<Physics::PhysicsEngine> phEngine;	// Указатель на физический движок
-	std::map<std::string, bool> scenes;					// Контейнер контроля активности сцен
-	std::unique_ptr<Scene> scene;						// Текущая сцена
-	std::shared_ptr<GUISystem> gui;						// Указатель на интерфейс
+	std::map<std::string, bool>				scenes;		// Контейнер контроля активности сцен
+	std::unique_ptr<Scene>					scene;		// Текущая сцена
+	std::shared_ptr<GUISystem>				gui;		// Указатель на интерфейс
 private:
-	std::string commandLine;							// Коммандная строка
-	std::string projectName;							// Имя проекта
+	std::string		commandLine;						// Коммандная строка
+	std::string		projectName;						// Имя проекта
 	ScriptCommander scriptCommander;					// Управление командными скриптами
-	EngineTimer timer;									// Игровой таймер
-	float speed_factor = 1.0f;							// Калибровочный параметр скорости
+	EngineTimer		timer;								// Игровой таймер
+	float			speed_factor = 1.0f;				// Калибровочный параметр скорости
 };

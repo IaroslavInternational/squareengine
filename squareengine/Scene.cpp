@@ -19,6 +19,9 @@ Scene::Scene(std::string							 name,
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
 	camera->Init();
+
+	sdr.~SceneDataReader();
+	mdr.~MainPersonDataReader();
 }
 
 /* Методы сцены */

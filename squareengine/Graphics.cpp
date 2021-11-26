@@ -509,6 +509,12 @@ void Graphics::DrawHitBox(HitBox hb, Color c)
 	DrawLine({ coord.x, coord.w }, { coord.z, coord.w }, c);
 	DrawLine({ coord.x, coord.y }, { coord.x, coord.w }, c);
 	DrawLine({ coord.z, coord.y }, { coord.z, coord.w }, c);
+
+	if (coord.z >= 0 && coord.z < (int)width &&
+		coord.w >= 0 && coord.w < (int)height)
+	{
+		PutPixel(coord.z, coord.w, c);
+	}
 }
 
 void Graphics::DrawSpriteNonChroma(int x, int y, const Surface2D& s)

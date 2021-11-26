@@ -8,6 +8,7 @@ class MainPersonDataReader
 {
 public:
 	MainPersonDataReader(std::string dataPath);
+	~MainPersonDataReader() {};
 public:
 	std::string		  dataPath;
 	std::string		  name;
@@ -20,10 +21,10 @@ public:
 	float			  speed;
 	size_t			  layer;
 	size_t			  camMode;
-	int anim_ps;
-	int anim_pe;
-	int anim_fw;
-	int anim_fh;
-	int anim_fa;
-	float anim_ft;
+	int				  anim_ps;
+	int				  anim_pe;
+	int				  anim_fw;
+	int				  anim_fh;
+	int				  anim_fa;
+	float			  anim_ft;
 };
