@@ -166,33 +166,36 @@ void App::DoFrame(float dt)
 			// Данные о триггере перехода на след. сцену
 			auto t = scene->IsOnTheSceneTrigger();
 			
-			if (t.has_value())
+			if (!gui->IsTriggersAble())
 			{
-				// Делаем новую сцену активной
-				for (auto it = scenes.begin(); it != scenes.end(); ++it)
+				if (t.has_value())
 				{
-					if (it->first == t.value())
+					// Делаем новую сцену активной
+					for (auto it = scenes.begin(); it != scenes.end(); ++it)
 					{
-						it->second = true;
-						
-						std::ostringstream oss;
-						oss << "Projects\\"<< projectName << "\\Scenes\\" << it->first << "\\scene_" 
-							<< EngineFunctions::StrReplace(std::ref(it->first), "Scene ", "") << ".json";
+						if (it->first == t.value())
+						{
+							it->second = true;
 
-						scene = std::make_unique<Scene>(it->first, wnd, oss.str(), phEngine);						
-						gui->LoadScene(scene.get());
-						
-						break;
+							std::ostringstream oss;
+							oss << "Projects\\" << projectName << "\\Scenes\\" << it->first << "\\scene_"
+								<< EngineFunctions::StrReplace(std::ref(it->first), "Scene ", "") << ".json";
+
+							scene = std::make_unique<Scene>(it->first, wnd, oss.str(), phEngine);
+							gui->LoadScene(scene.get());
+
+							break;
+						}
 					}
-				}
 
-				// Делаем старую сцену неактивной
-				for (auto it = scenes.begin(); it != scenes.end(); ++it)
-				{
-					if (it->first == activeSceneName)
+					// Делаем старую сцену неактивной
+					for (auto it = scenes.begin(); it != scenes.end(); ++it)
 					{
-						it->second = false;
-						break;
+						if (it->first == activeSceneName)
+						{
+							it->second = false;
+							break;
+						}
 					}
 				}
 			}

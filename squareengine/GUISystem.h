@@ -48,7 +48,8 @@ public:
 	std::pair<bool, std::string> UpdatingScene();						// Идёт обновление сцены
 	bool						 AddingScene();							// Идёт добавление сцены
 	void						 SetAddingSceneState(bool state);		// Установить статус добавления сцены
-
+	bool						 IsTriggersAble();						// Статус игнорирования триггеров
+	
 	/*******************************************/
 private: 
 	/* Методы настройки и отрисовки панелей */
@@ -90,6 +91,7 @@ private:
 		   Object2D*   obj, 
 		   std::string dataPath);			// Показать модуль настроек для объекта на базе Object2D
 	void   ShowScriptsControl();			// Показать панель настроек для скриптов
+	void   ShowTriggerInfoControl();		// Показать панель настроек для остановки триггеров
 
 	void   ShowLog();						// Показать панель лога
 	void   ShowGPU();						// Показать панель с ифнормацией об FPS и графическом адаптере 
@@ -140,6 +142,7 @@ private:
 	bool ShowLayersSettings			  = false;	// Видимость панели настроек слоёв
 	bool ShowCameraSettings			  = false;	// Видимость панели настроек камеры
 	bool ShowScenesSettings			  = false;	// Видимость панели настроек сцен
+	bool ShowTriggerInfoSettings	  = false;	// Видимость панели настроек контроля триггеров
 
 	bool ShowPhysicsEngineObjInfo	  = true;	// Видимость подписей имён объектов физического движка  
 	bool ShowPhysicsSettings		  = false;	// Видимость панели настроек физического движка
@@ -234,11 +237,12 @@ private:
 private:
 	/* Вспомогательные переменные для работы с контейнером триггеров */
 
-	bool		AddingTrigger	  = false; // Статус добавления триггера
-	std::string trigScenesPreview = "";	   // Выбранная цель триггера (сцена)
-	std::string triggerSelected   = "";	   // Выбранный триггер
-	std::string trigType	      = "";	   // Выбранный тип триггера
-	size_t		trigTypeId	      = 0;	   // Выбранный тип триггера (id)
+	bool	    IsTriggersAvailable = false;   // Статус игнорирования триггеров
+	bool		AddingTrigger		= false;   // Статус добавления триггера
+	std::string trigScenesPreview	= "";	   // Выбранная цель триггера (сцена)
+	std::string triggerSelected		= "";	   // Выбранный триггер
+	std::string trigType			= "";	   // Выбранный тип триггера
+	size_t		trigTypeId			= 0;	   // Выбранный тип триггера (id)
 
 	/*****************************************************************/
 private:

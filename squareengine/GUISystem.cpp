@@ -143,6 +143,11 @@ void GUISystem::SetAddingSceneState(bool state)
 	IsAddingScene = state;
 }
 
+bool GUISystem::IsTriggersAble()
+{
+	return IsTriggersAvailable;
+}
+
 /*******************************************/
 
 /* Методы настройки и отрисовки панелей */
@@ -363,22 +368,32 @@ void GUISystem::ShowMenu()
 					}
 				}
 
-				if (ImGui::MenuItem("Триггеры"))
+				if (ImGui::BeginMenu("Триггеры"))
 				{
-					if (ShowTriggersEnum && ShowTriggersSettings)
+					if (ImGui::MenuItem("Объекты"))
 					{
-						DisableSides();
+						if (ShowTriggersEnum && ShowTriggersSettings)
+						{
+							DisableSides();
 
-						ShowTriggersEnum = false;
-						ShowTriggersSettings = false;
+							ShowTriggersEnum = false;
+							ShowTriggersSettings = false;
+						}
+						else
+						{
+							DisableSides();
+
+							ShowTriggersEnum = true;
+							ShowTriggersSettings = true;
+						}
 					}
-					else
+
+					if (ImGui::MenuItem("Контроль"))
 					{
-						DisableSides();
-
-						ShowTriggersEnum = true;
-						ShowTriggersSettings = true;
+						ShowTriggerInfoSettings ? ShowTriggerInfoSettings = false : ShowTriggerInfoSettings = true;
 					}
+
+					ImGui::EndMenu();
 				}
 
 				ImGui::EndMenu();
@@ -605,6 +620,11 @@ void GUISystem::ShowOptionalPanel()
 	if (ShowScriptsSettings)
 	{
 		ShowScriptsControl();
+	}
+
+	if (ShowTriggerInfoSettings)
+	{
+		ShowTriggerInfoControl();
 	}
 
 	if (mouseHelpInfo == "")
@@ -4065,6 +4085,25 @@ void GUISystem::ShowScriptsControl()
 	ImGui::End();
 }
 
+void GUISystem::ShowTriggerInfoControl()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 DispSize = io.DisplaySize;
+
+	ImVec2 PanelSize = ImVec2(
+		round(DispSize.x * 0.2f),
+		DispSize.y * 0.1f
+	);
+
+	ImGui::SetNextWindowSize(PanelSize);
+	if (ImGui::Begin("Контроль триггеров", &ShowTriggerInfoSettings, ImGuiWindowFlags_NoResize))
+	{
+		ImGui::Checkbox("Игнорировать триггеры", &IsTriggersAvailable);
+	}
+
+	ImGui::End();
+}
+
 void GUISystem::ShowLog()
 {
 	ImGui::Begin("Лог", NULL,
@@ -4080,10 +4119,9 @@ void GUISystem::ShowLog()
 void GUISystem::ShowGPU()
 {
 	if (ImGui::Begin("Представление", NULL,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus))
+		ImGuiWindowFlags_NoMove			  | ImGuiWindowFlags_NoResize		 | 
+		ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | 
+		ImGuiWindowFlags_NoCollapse		  | ImGuiWindowFlags_NoNav			 | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		ImGui::Text("%.3f мс/кадр (%.2f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
