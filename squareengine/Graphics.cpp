@@ -724,7 +724,7 @@ bool Graphics::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceVie
 	unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
 	if (image_data == NULL)
 		return false;
-
+	
 	// Create texture
 	D3D11_TEXTURE2D_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
@@ -758,7 +758,7 @@ bool Graphics::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceVie
 	*out_width = image_width;
 	*out_height = image_height;
 	stbi_image_free(image_data);
-
+	
 	return true;
 }
 
