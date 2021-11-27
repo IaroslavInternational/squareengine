@@ -118,7 +118,7 @@ void GUISystem::LoadScene(Scene* scene)
 	wnd			 = scene->wnd;
 	hero		 = &scene->hero;
 	persons		 = &scene->persons;
-	Iobjects		 = &scene->Iobjects;
+	Iobjects	 = &scene->Iobjects;
 	objQueue	 = &scene->objQueue;
 	phEngPtr	 = scene->phEngine;
 	camera		 = scene->camera;
@@ -668,6 +668,50 @@ void GUISystem::DisableSides()
 
 void GUISystem::ShowMainPersonList()
 {
+	if (draggingObjId == -1)
+	{
+		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			auto mPosX = (float)wnd->mouse.GetPosX();
+			auto mPosY = (float)wnd->mouse.GetPosY();
+
+			if ((hero->hitbox - DirectX::XMFLOAT2(hero->dx, hero->dy)).IsOverlap({ mPosX, mPosY }))
+			{
+				draggingObjId = 0;
+
+				AddLog("Перемещение мышкой объекта ");
+				AddLog(hero->name);
+				AddLog("\n");
+			}
+		}
+	}
+	else
+	{
+		if (!wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			hero->hitbox.visability = true;
+			draggingObjId = -1;
+
+			AddLog("Перемещение завершенно\n");
+		}
+		else
+		{
+			auto mPosX = (float)wnd->mouse.GetPosX();
+			auto mPosY = (float)wnd->mouse.GetPosY();
+
+			float dx = hero->dx;
+			float dy = hero->dy;
+
+			hero->hitbox.visability = false;
+
+			hero->SetPosition({ mPosX, mPosY });
+			hero->hitbox.coordinates.z = hero->position.x + dx + fabs(hero->hitbox.coordinates.z - hero->hitbox.coordinates.x);
+			hero->hitbox.coordinates.w = hero->position.y + dy + fabs(hero->hitbox.coordinates.w - hero->hitbox.coordinates.y);
+			hero->hitbox.coordinates.x = hero->position.x + dx;
+			hero->hitbox.coordinates.y = hero->position.y + dy;
+		}
+	}
+
 	if (ImGui::Begin("Персонажи", NULL, SIDE_PANEL_FLAGS))
 	{
 		ImGui::Bullet();
@@ -683,6 +727,55 @@ void GUISystem::ShowMainPersonList()
 
 void GUISystem::ShowPersonList(float dt)
 {
+	if (draggingObjId == -1)
+	{
+		if (wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			auto mPosX = (float)wnd->mouse.GetPosX();
+			auto mPosY = (float)wnd->mouse.GetPosY();
+
+			for (size_t i = 0; i < persons->elements.size(); i++)
+			{
+				if ((persons->elements[i]->hitbox - DirectX::XMFLOAT2(persons->elements[i]->dx, persons->elements[i]->dy)).IsOverlap({ mPosX, mPosY }))
+				{
+					draggingObjId = i;
+
+					AddLog("Перемещение мышкой объекта ");
+					AddLog(persons->elements[i]->name);
+					AddLog("\n");
+					
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		if (!wnd->mouse.LeftIsPressed() && wnd->mouse.IsInWindow())
+		{
+			persons->elements[draggingObjId]->hitbox.visability = true;
+			draggingObjId = -1;
+
+			AddLog("Перемещение завершенно\n");
+		}
+		else
+		{
+			auto mPosX = (float)wnd->mouse.GetPosX();
+			auto mPosY = (float)wnd->mouse.GetPosY();
+
+			float dx = persons->elements[draggingObjId]->dx;
+			float dy = persons->elements[draggingObjId]->dy;
+
+			persons->elements[draggingObjId]->hitbox.visability = false;
+
+			persons->elements[draggingObjId]->SetPosition({ mPosX, mPosY });
+			persons->elements[draggingObjId]->hitbox.coordinates.z = persons->elements[draggingObjId]->position.x + dx + fabs(persons->elements[draggingObjId]->hitbox.coordinates.z - persons->elements[draggingObjId]->hitbox.coordinates.x);
+			persons->elements[draggingObjId]->hitbox.coordinates.w = persons->elements[draggingObjId]->position.y + dy + fabs(persons->elements[draggingObjId]->hitbox.coordinates.w - persons->elements[draggingObjId]->hitbox.coordinates.y);
+			persons->elements[draggingObjId]->hitbox.coordinates.x = persons->elements[draggingObjId]->position.x + dx;
+			persons->elements[draggingObjId]->hitbox.coordinates.y = persons->elements[draggingObjId]->position.y + dy;
+		}
+	}
+
 	if (ImGui::Begin("Персонажи", NULL, SIDE_PANEL_FLAGS))
 	{
 		for (auto p = persons->elements.begin(); p != persons->elements.end(); p++)
@@ -861,6 +954,8 @@ void GUISystem::ShowIobjList()
 					AddLog("Перемещение мышкой объекта ");
 					AddLog(Iobjects->elements[i]->name);
 					AddLog("\n");
+
+					break;
 				}
 			}
 		}
@@ -3636,14 +3731,14 @@ void GUISystem::ShowCameraControl()
 		{
 			EngineFunctions::SetNewValue<float>(
 				"camera",
-				"pos-x", camera->initPosition.x,
+				"pos-x", camera->position.x,
 				camera->dataPath,
 				&applog
 				);
 
 			EngineFunctions::SetNewValue<float>(
 				"camera",
-				"pos-y", camera->initPosition.y,
+				"pos-y", camera->position.y,
 				camera->dataPath,
 				&applog
 				);
