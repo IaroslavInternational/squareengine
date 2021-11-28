@@ -8,7 +8,7 @@
       "hb-rbx": 425.0,
       "hb-rby": 297.0,
       "layer": 0,
-      "path": "Images\\zabor.bmp",
+      "path": "Assets\\Images\\zabor.bmp",
       "pos-x": 300.0,
       "pos-y": 200.0
     }
@@ -22,7 +22,7 @@
       "hb-rbx": 425.0,
       "hb-rby": 297.0,
       "layer": 1,
-      "path": "Images\\box.bmp",
+      "path": "Assets\\Images\\box.bmp",
       "pos-x": 300.0,
       "pos-y": 300.0
     }

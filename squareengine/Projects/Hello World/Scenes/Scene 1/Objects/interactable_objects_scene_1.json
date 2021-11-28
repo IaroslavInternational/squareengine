@@ -1,1 +1,45 @@
-{"obj 0":[{"g-able":false,"g-deep":2.0,"hb-ltx":267.9700012207031,"hb-lty":254.89999389648438,"hb-rbx":395.9700012207031,"hb-rby":382.8999938964844,"layer":0,"path":"Images/zabor.bmp","pos-x":267.9700012207031,"pos-y":254.89999389648438}],"obj 1":[{"g-able":false,"g-deep":2.0,"hb-ltx":415.0,"hb-lty":261.0,"hb-rbx":518.0,"hb-rby":351.0,"layer":1,"path":"Images/box.bmp","pos-x":398.69000244140625,"pos-y":241.8300018310547}],"obj 2":[{"g-able":true,"g-deep":2.0,"hb-ltx":856.1863403320313,"hb-lty":172.80050659179688,"hb-rbx":955.186279296875,"hb-rby":275.800537109375,"layer":5,"path":"Images/box.bmp","pos-x":837.0,"pos-y":152.0}]}
+{
+  
+  "obj 0": [
+    {
+      "g-able": false,
+      "g-deep": 2.0,
+      "hb-ltx": 267.9700012207031,
+      "hb-lty": 254.89999389648438,
+      "hb-rbx": 395.9700012207031,
+      "hb-rby": 382.8999938964844,
+      "layer": 0,
+      "path": "Assets/Images/zabor.bmp",
+      "pos-x": 267.9700012207031,
+      "pos-y": 254.89999389648438
+    }
+  ],
+  "obj 1": [
+    {
+      "g-able": false,
+      "g-deep": 2.0,
+      "hb-ltx": 415.0,
+      "hb-lty": 261.0,
+      "hb-rbx": 518.0,
+      "hb-rby": 351.0,
+      "layer": 1,
+      "path": "Assets/Images/box.bmp",
+      "pos-x": 398.69000244140625,
+      "pos-y": 241.8300018310547
+    }
+  ],
+  "obj 2": [
+    {
+      "g-able": true,
+      "g-deep": 2.0,
+      "hb-ltx": 856.1863403320313,
+      "hb-lty": 172.80050659179688,
+      "hb-rbx": 955.186279296875,
+      "hb-rby": 275.800537109375,
+      "layer": 5,
+      "path": "Assets/Images/box.bmp",
+      "pos-x": 837.0,
+      "pos-y": 152.0
+    }
+  ]
+}
