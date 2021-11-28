@@ -129,56 +129,18 @@ void MainPerson::Update(float dt)
 	vel.x *= dt;
 	vel.y *= dt;
 
-	if (vel.x < 0) // Moving left
+	if (cameraMode == CameraMode::SteadyPerson)
 	{
-		if (cameraMode == CameraMode::SteadyPerson)
-		{
-			camera->Translate({ -vel.x, 0.0f });
-		}
-		else if (cameraMode == CameraMode::SteadyWorld)
-		{
-			position.x += vel.x;
-			hitbox.UpdateX(vel.x);
-		}
+		camera->Translate({ -vel.x, -vel.y });
+		camera->Translate({ 0.0f, -vel.y });
 	}
-	else if (vel.x > 0)	// Moving right
+	else if (cameraMode == CameraMode::SteadyWorld)
 	{
-		if (cameraMode == CameraMode::SteadyPerson)
-		{
-			camera->Translate({ -vel.x, 0.0f });
-		}
-		else if (cameraMode == CameraMode::SteadyWorld)
-		{
-			position.x += vel.x;
-			hitbox.UpdateX(vel.x);
-		}
+		position.x += vel.x;
+		position.y += vel.y;
+		hitbox.Update(vel.x, vel.y);
 	}
-
-	if (vel.y < 0) // Moving down
-	{
-		if (cameraMode == CameraMode::SteadyPerson)
-		{
-			camera->Translate({ 0.0f, -vel.y });
-		}
-		else if (cameraMode == CameraMode::SteadyWorld)
-		{
-			position.y += vel.y;
-			hitbox.UpdateY(vel.y);
-		}
-	}
-	else if (vel.y > 0)	// Moving up
-	{
-		if (cameraMode == CameraMode::SteadyPerson)
-		{
-			camera->Translate({ 0.0f, -vel.y });
-		}
-		else if (cameraMode == CameraMode::SteadyWorld)
-		{
-			position.y += vel.y;
-			hitbox.UpdateY(vel.y);
-		}	
-	}
-
+	
 	if (IsOnJump)
 	{
 		if (jump_count > 0)
@@ -209,11 +171,9 @@ void MainPerson::Update(float dt)
 	CalculateDeltas();
 
 	animations[(int)iCurSequence].Update(dt);
-	// update effect time if active
 	if (effect.Active)
 	{
 		effect.Time += dt;
-		// deactivate effect if duration exceeded
 		if (effect.Time >= effect.Duration)
 		{
 			effect.Active = false;
