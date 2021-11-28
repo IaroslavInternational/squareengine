@@ -32,11 +32,11 @@ namespace Preprocessor
 
             using (var graphics = Graphics.FromImage(destImage))
             {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingMode    = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.AssumeLinear;
-                graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.None;
+                graphics.InterpolationMode  = InterpolationMode.NearestNeighbor;
+                graphics.SmoothingMode      = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode    = PixelOffsetMode.None;
 
                 using (var wrapMode = new ImageAttributes())
                 {
@@ -50,6 +50,8 @@ namespace Preprocessor
         
         private static Resolution GetResolution(string path)
         {
+            Console.WriteLine("Получение разрешения...");
+
             Resolution resolutionData = new Resolution();
 
             using (FileStream fstream = File.OpenRead($"{path}\\settings.ppinfo"))
@@ -66,17 +68,24 @@ namespace Preprocessor
                 resolutionData.height = Convert.ToInt32(data[1].Split(':').GetValue(1));
             }
 
+            Console.WriteLine("Разрешение получено.");
+
             return resolutionData;
         }
 
         private static void SetResolution(string path, Resolution resolution)
         {
+            Console.WriteLine("Сохранение разрешения...");
+
             string text = "d_width:" + resolution.width + ";\r\nd_height:" + resolution.height;
 
             using (StreamWriter sw = new StreamWriter($"{path}\\settings.ppinfo", false, System.Text.Encoding.Default))
             {
                 sw.WriteLine(text);
             }
+
+            Console.WriteLine("Разрешение сохранено.");
+
         }
 
         static void Main(string[] args)
@@ -92,24 +101,43 @@ namespace Preprocessor
 
             /**********************************************************************************/
 
+            Console.WriteLine("-> Проеверка установленного разрешения монитора ...");
+            
             /* Если разрешение не установлено */
             if (resolutionData.width == 0 && resolutionData.height == 0)
             {
+                Console.WriteLine("-> Разрешение не установлено. Настройка...");
+
                 Rectangle resolution = Screen.PrimaryScreen.Bounds;
                 resolutionData.width = resolution.Width;
                 resolutionData.height = resolution.Height;
 
                 /* Если реальное разрешение соответсвтует исходному */
-                if (resolution.Width != sourceWidth && resolution.Height != sourceHeight)
+                if (resolution.Width != sourceWidth || resolution.Height != sourceHeight)
                 {
-                    resolutionData.koef_w = (double)resolutionData.width  / (double)sourceWidth;
-                    resolutionData.koef_h = (double)resolutionData.height / (double)sourceHeight;
+                    Console.Write("-> Разрешение устройства: ");
+                    Console.Write(resolution.Width);
+                    Console.Write("x");
+                    Console.Write(resolution.Height);
+                    Console.WriteLine("");
 
+                    Console.WriteLine("-> Расчёт коэффициентов...");
+                    
+                    resolutionData.koef_w = Math.Round((double)resolutionData.width  / (double)sourceWidth, 2);
+                    resolutionData.koef_h = Math.Round((double)resolutionData.height / (double)sourceHeight, 2);
+
+                    Console.Write("-> Коэффициент масштабирования ширины экрана: ");
+                    Console.WriteLine(resolutionData.koef_w);
+                    Console.Write("-> Коэффициент масштабирования высоты экрана: ");
+                    Console.WriteLine(resolutionData.koef_h);
+                    
                     SetResolution(path, resolutionData);
                     IsCalculated = false;
                 }
                 else
                 {
+                    Console.WriteLine("-> Настройка не требуется.\nЗапуск...");
+
                     SetResolution(path, resolutionData);
                     IsCalculated = true;
                 }
@@ -122,12 +150,34 @@ namespace Preprocessor
                 /* Если установленное разрешение соотвтествует реальному */
                 if (resolutionData.width == resolution.Width && resolutionData.height == resolution.Height)
                 {
+                    Console.WriteLine("-> Разрешение установлено.\nЗапуск...");
                     IsCalculated = true;
                 }
                 else /* Если установленное разрешение не соотвтествует реальному */
                 {
-                    resolutionData.koef_w = (double)resolution.Width  / (double)resolutionData.width;                                          
-                    resolutionData.koef_h = (double)resolution.Height / (double)resolutionData.height;
+                    Console.WriteLine("-> Настройки разрешения поменялись.");
+
+                    Console.Write("-> Настроенное разрешение устройства: ");
+                    Console.Write(resolutionData.width);
+                    Console.Write("x");
+                    Console.Write(resolutionData.height);
+                    Console.WriteLine("");
+
+                    Console.Write("-> Реальное разрешение устройства: ");
+                    Console.Write(resolution.Width);
+                    Console.Write("x");
+                    Console.Write(resolution.Height);
+                    Console.WriteLine("");
+
+                    Console.WriteLine("-> Расчёт коэффициентов...");
+
+                    resolutionData.koef_w = Math.Round((double)resolution.Width  / (double)resolutionData.width, 2);                                          
+                    resolutionData.koef_h = Math.Round((double)resolution.Height / (double)resolutionData.height, 2);
+
+                    Console.Write("-> Коэффициент масштабирования ширины экрана: ");
+                    Console.WriteLine(resolutionData.koef_w);
+                    Console.Write("-> Коэффициент масштабирования высоты экрана: ");
+                    Console.WriteLine(resolutionData.koef_h);
 
                     resolutionData.width  = resolution.Width;
                     resolutionData.height = resolution.Height;
@@ -141,7 +191,11 @@ namespace Preprocessor
 
             if (!IsCalculated)
             {
+                Console.WriteLine("-> Масштабирование ассетов...");
+
                 List<string> assets = new List<string>();
+
+                Console.WriteLine("-> Получение списка ассетов...");
 
                 DirectoryInfo dir = new DirectoryInfo(path);
 
@@ -150,18 +204,34 @@ namespace Preprocessor
                     if (item.Extension != ".ppinfo")
                     {
                         assets.Add(item.FullName);
+                        Console.Write("+ ");
                         Console.WriteLine(item.Name);
                     }
                 }
 
+                Console.WriteLine("-> Обработка...");
+
                 foreach (var asset in assets)
                 {
-                    Image img = Image.FromFile(asset);
+                    Console.WriteLine("\n************Ассет************\n");
+
+                    Image  img = Image.FromFile(asset);
                     Bitmap bitmap;
                     
                     if (img.Width == img.Height)
                     {
                         int nSize = (int)Math.Ceiling((img.Width * resolutionData.koef_w));
+                        
+                        Console.Write("* ");
+                        Console.Write(img.Width);
+                        Console.Write("x");
+                        Console.Write(img.Height);
+
+                        Console.Write(" -> ");
+                        Console.Write(nSize);
+                        Console.Write("x");
+                        Console.Write(nSize);
+                        Console.WriteLine("");
 
                         bitmap = ResizeImage(img, nSize, nSize);
                     }
@@ -170,18 +240,37 @@ namespace Preprocessor
                         int nWidth  = (int)Math.Ceiling((img.Width  * resolutionData.koef_w));
                         int nHeight = (int)Math.Ceiling((img.Height * resolutionData.koef_h));
 
+                        Console.Write("* ");
+                        Console.Write(img.Width);
+                        Console.Write("x");
+                        Console.Write(img.Height);
+
+                        Console.Write(" -> ");
+                        Console.Write(nWidth);
+                        Console.Write("x");
+                        Console.Write(nHeight);
+                        Console.WriteLine("");
+
                         bitmap = ResizeImage(img, nWidth, nHeight);
                     }
 
                     img.Dispose();
                     File.Delete(asset);
 
+                    Console.WriteLine("-> Сохранение ассета...");
+
                     bitmap.Save(asset, ImageFormat.Bmp);
                     bitmap.Dispose();
+
+                    Console.WriteLine("-> Ассет сохранён и масштабирован.");
+
+                    Console.WriteLine("\n*****************************");
                 }
 
-                Console.ReadKey();
+                Console.WriteLine("Запуск...");
             }
+
+            Console.ReadKey(); // Убрать
         }
     }
 }
