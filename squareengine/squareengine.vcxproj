@@ -134,6 +134,7 @@
     <ClCompile Include="RectI.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneDataReader.cpp" />
+    <ClCompile Include="SceneTransition.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptCompiler.cpp" />
     <ClCompile Include="Surface2D.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="RectI.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneDataReader.h" />
+    <ClInclude Include="SceneTransition.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptCompiler.h" />
     <ClInclude Include="stb_image.h" />

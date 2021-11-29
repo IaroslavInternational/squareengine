@@ -14,6 +14,13 @@ App::App(const std::string& commandLine, const std::string& projectName)
 {
 	{
 		std::ostringstream dataPath;
+		dataPath << "Projects\\" << projectName << "\\transition_settings.json";
+
+		transition = std::make_unique<SceneTransition>(dataPath.str());
+	}
+
+	{
+		std::ostringstream dataPath;
 		dataPath << "Projects\\" << projectName << "\\project_settings.json";
 
 		std::ifstream dataFile(dataPath.str());
@@ -102,21 +109,28 @@ int App::Go()
 
 void App::HandleInput(float dt)
 {
-	scene->ProcessInput(dt);
+	if (!transition->IsRunning())
+	{
+		scene->ProcessInput(dt);
+	}
 }
 
 void App::DoFrame(float dt)
 {
 	wnd->Gfx().BeginFrame();	// Начало кадра
-	gui->BeginFrame();
 
-	wnd->Gfx().DrawBackground();	// Отрисовка заднего фона
-	wnd->Gfx().DrawGrid();			// Отрисовка сетки
+	if (!transition->IsRunning())
+	{
+		gui->BeginFrame();
+
+		wnd->Gfx().DrawBackground();	// Отрисовка заднего фона
+		wnd->Gfx().DrawGrid();			// Отрисовка сетки
+	}
 
 	for (auto& s : scenes)
 	{
 		if (s.second)
-		{			
+		{
 			// Имя активной сцены
 			std::string activeSceneName = scene->GetName();
 
@@ -125,7 +139,7 @@ void App::DoFrame(float dt)
 			{
 				std::ostringstream scName;
 				scName << "Scene " << scenes.size() + 1;
-				
+
 				scenes.emplace(std::pair(scName.str(), false));
 
 				gui->SetAddingSceneState(false);
@@ -137,7 +151,7 @@ void App::DoFrame(float dt)
 				std::ostringstream oss;
 				oss << "Projects\\" << projectName << "\\Scenes\\" << gui->UpdatingScene().second << "\\scene_"
 					<< EngineFunctions::StrReplace(gui->UpdatingScene().second, "Scene ", "") << ".json";
-				
+
 				// Делаем новую сцену активной
 				for (auto it = scenes.begin(); it != scenes.end(); ++it)
 				{
@@ -162,50 +176,78 @@ void App::DoFrame(float dt)
 			}
 
 			scene->Render(dt);	// Отрисовка содержания сцены
-			
+
 			// Данные о триггере перехода на след. сцену
-			auto t = scene->IsOnTheSceneTrigger();
-			
+			if (curTrigger != "WAIT")
+			{
+				curTrigger = scene->IsOnTheSceneTrigger();
+			}
+
 			if (!gui->IsTriggersAble())
 			{
-				if (t.has_value())
+				if (curTrigger.has_value())
 				{
-					// Делаем новую сцену активной
-					for (auto it = scenes.begin(); it != scenes.end(); ++it)
+					if (!transition->Appeared())
 					{
-						if (it->first == t.value())
+						transition->Appear(dt);
+					}
+					else if(curTrigger != "WAIT")
+					{
+						// Делаем новую сцену активной
+						for (auto it = scenes.begin(); it != scenes.end(); ++it)
 						{
-							it->second = true;
+							if (it->first == curTrigger.value())
+							{
+								it->second = true;
 
-							std::ostringstream oss;
-							oss << "Projects\\" << projectName << "\\Scenes\\" << it->first << "\\scene_"
-								<< EngineFunctions::StrReplace(std::ref(it->first), "Scene ", "") << ".json";
+								std::ostringstream oss;
+								oss << "Projects\\" << projectName << "\\Scenes\\" << it->first << "\\scene_"
+									<< EngineFunctions::StrReplace(std::ref(it->first), "Scene ", "") << ".json";
 
-							scene = std::make_unique<Scene>(it->first, wnd, oss.str(), phEngine);
-							gui->LoadScene(scene.get());
+								scene = std::make_unique<Scene>(it->first, wnd, oss.str(), phEngine);
+								gui->LoadScene(scene.get());
 
-							break;
+								break;
+							}
 						}
+
+						// Делаем старую сцену неактивной
+						for (auto it = scenes.begin(); it != scenes.end(); ++it)
+						{
+							if (it->first == activeSceneName)
+							{
+								it->second = false;
+								break;
+							}
+						}
+
+						curTrigger = "WAIT";
+					}
+					else if (!transition->Disappeared())
+					{
+						transition->Disappear(dt);
+					}
+					else
+					{
+						curTrigger.reset();
 					}
 
-					// Делаем старую сцену неактивной
-					for (auto it = scenes.begin(); it != scenes.end(); ++it)
-					{
-						if (it->first == activeSceneName)
-						{
-							it->second = false;
-							break;
-						}
-					}
+					transition->Draw(wnd->Gfx());
 				}
 			}
+
+			break;
 		}
 	}
 
-	phEngine->Draw(wnd->Gfx());	// Отрисовка объектов физического движка
+	if (!transition->IsRunning())
+	{
+		phEngine->Draw(wnd->Gfx());	// Отрисовка объектов физического движка
 
-	gui->Show(dt);	// Отрисовка интерфейса
+		gui->Show(dt);	// Отрисовка интерфейса
 
-	gui->EndFrame();
+		gui->EndFrame();		
+	}
+
 	wnd->Gfx().EndFrame();	// Конец кадра
 }

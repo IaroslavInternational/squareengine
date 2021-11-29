@@ -22,7 +22,7 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 	{
 		for (json::iterator m = j.begin(); m != j.end(); ++m)
 		{
-			auto d = m.key();
+			auto& d = m.key();
 
 			for (const auto& obj : j.at(d))
 			{

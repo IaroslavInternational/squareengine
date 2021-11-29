@@ -103,6 +103,8 @@ public:
 	void DrawSpriteGhost(int x, int y, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
 	void DrawSpriteGhost(int x, int y, const RectI& srcRect, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
 	void DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, float deep = 2.0f, Color chroma = Colors::Magenta);
+	void DrawSpriteGhostNonChroma(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, float deep = 2.0f);
+	void DrawFullscreenImage(const Surface2D& s, float deep);
 public:
 	bool LoadTextureFromFile(std::string filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);
 	bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);

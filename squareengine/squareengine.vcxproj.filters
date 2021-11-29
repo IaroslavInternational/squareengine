@@ -339,6 +339,9 @@
     <ClCompile Include="NodeEditor.cpp">
       <Filter>Исходные файлы\Интерфейс\Модули интерфейса</Filter>
     </ClCompile>
+    <ClCompile Include="SceneTransition.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -571,6 +574,9 @@
     </ClInclude>
     <ClInclude Include="ContainerBase.hpp">
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTransition.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

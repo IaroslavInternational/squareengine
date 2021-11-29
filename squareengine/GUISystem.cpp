@@ -3953,7 +3953,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 		if (ImGui::Button("Применить", ImVec2(100, 20)))
 		{
-			AddLog("Сохранение хромакея для");
+			AddLog("Сохранение хромакея для ");
 			AddLog(obj->name);
 			AddLog("...\n");
 
@@ -4606,8 +4606,8 @@ void GUISystem::ShowViewportControl()
 				vp.Height = (float)viewportHeight;
 				vp.MinDepth = 0.0f;
 				vp.MaxDepth = 1.0f;
-				vp.TopLeftX = float(1366 - viewportWidth) / 2.0f; // Нужно брать актуальные параметры экрана
-				vp.TopLeftY = float(768 - viewportHeight) / 2.0f; // Нужно брать актуальные параметры экрана	
+				vp.TopLeftX = float(1366 - viewportWidth) / 2.0f; // Нужно брать актуальные параметры экрана !!!
+				vp.TopLeftY = float(768 - viewportHeight) / 2.0f; // Нужно брать актуальные параметры экрана !!!	
 
 				wnd->Gfx().SetViewPort(vp);
 

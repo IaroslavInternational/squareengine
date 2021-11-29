@@ -711,6 +711,54 @@ void Graphics::DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, c
 	}
 }
 
+void Graphics::DrawSpriteGhostNonChroma(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, float deep)
+{
+	assert(srcRect.left >= 0);
+	assert(srcRect.right <= s.GetWidth());
+	assert(srcRect.top >= 0);
+	assert(srcRect.bottom <= s.GetHeight());
+	if (x < clip.left)
+	{
+		srcRect.left += clip.left - x;
+		x = clip.left;
+	}
+	if (y < clip.top)
+	{
+		srcRect.top += clip.top - y;
+		y = clip.top;
+	}
+	if (x + srcRect.GetWidth() > clip.right)
+	{
+		srcRect.right -= x + srcRect.GetWidth() - clip.right;
+	}
+	if (y + srcRect.GetHeight() > clip.bottom)
+	{
+		srcRect.bottom -= y + srcRect.GetHeight() - clip.bottom;
+	}
+	for (int sy = srcRect.top; sy < srcRect.bottom; sy++)
+	{
+		for (int sx = srcRect.left; sx < srcRect.right; sx++)
+		{
+			const Color srcPixel = s.GetPixel(sx, sy);
+			const int xDest = x + sx - srcRect.left;
+			const int yDest = y + sy - srcRect.top;
+			const Color dstPixel = GetPixel(xDest, yDest);
+
+			const Color blendedPixel = {
+				unsigned char((dstPixel.GetR() + srcPixel.GetR()) / deep),
+				unsigned char((dstPixel.GetG() + srcPixel.GetG()) / deep),
+				unsigned char((dstPixel.GetB() + srcPixel.GetB()) / deep)
+			};
+			PutPixel(x + sx - srcRect.left, y + sy - srcRect.top, blendedPixel);
+		}
+	}
+}
+
+void Graphics::DrawFullscreenImage(const Surface2D& s, float deep)
+{
+	DrawSpriteGhostNonChroma(0, 0, s.GetRect(), GetScreenRect(), s, deep);
+}
+
 bool Graphics::LoadTextureFromFile(std::string filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
 {
 	return LoadTextureFromFile(filename.c_str(), out_srv, out_width, out_height);

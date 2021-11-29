@@ -5,6 +5,7 @@
 #include "ScriptCommander.h"
 #include "Scene.h"
 #include "GUISystem.h"
+#include "SceneTransition.h"
 
 #include <map>
 
@@ -25,10 +26,13 @@ private:
 	std::map<std::string, bool>				scenes;		// Контейнер контроля активности сцен
 	std::unique_ptr<Scene>					scene;		// Текущая сцена
 	std::shared_ptr<GUISystem>				gui;		// Указатель на интерфейс
+	std::unique_ptr<SceneTransition>		transition;
 private:
 	std::string		commandLine;						// Коммандная строка
 	std::string		projectName;						// Имя проекта
 	ScriptCommander scriptCommander;					// Управление командными скриптами
 	EngineTimer		timer;								// Игровой таймер
+	EngineTimer		timer2;								// Игровой таймер
 	float			speed_factor = 1.0f;				// Калибровочный параметр скорости
+	std::optional<std::string> curTrigger = std::nullopt;
 };
