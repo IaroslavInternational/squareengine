@@ -317,4 +317,16 @@ private:
 	int			draggingObjId = -1;	  // Индекс выбранного интеративного объекта для перемещения мышкой
 
 	/*********************************************/
+private:
+	/* Вспомагательные переменные для работы с камерой */
+	
+	std::string modeSelected = "";
+	std::vector<std::pair<std::string, MainPerson::CameraMode>> cameraModeNames = 
+	{
+		{"Гибридный режим",		   MainPerson::CameraMode::Hybrid },
+		{"Фиксированный персонаж", MainPerson::CameraMode::SteadyPerson },
+		{"Фиксированный мир",	   MainPerson::CameraMode::SteadyWorld }
+	};
+
+	/***************************************************/
 };

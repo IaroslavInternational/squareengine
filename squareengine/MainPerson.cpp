@@ -65,7 +65,7 @@ void MainPerson::Process(float dt)
 		if (AllowedMovingLeft)
 			dir.x -= 1.0f;
 	}
-	if (wnd->kbd.KeyIsPressed('S'))
+	if (wnd->kbd.KeyIsPressed('S') && !IsMovingDown && !IsOnJump)
 	{
 		if (AllowedMovingDown)
 			dir.y += 1.0f;
@@ -93,6 +93,13 @@ void MainPerson::Process(float dt)
 			position.y += d;
 			hitbox.UpdateY(d);
 		}
+		else if (cameraMode == CameraMode::Hybrid)
+		{
+			//camera->Translate({ 0.0f, (float)-d / 1.5f });
+			position.y += d;
+			hitbox.UpdateY(d);
+		}
+
 	}
 
 	SetDirection(dir);
@@ -132,10 +139,16 @@ void MainPerson::Update(float dt)
 	if (cameraMode == CameraMode::SteadyPerson)
 	{
 		camera->Translate({ -vel.x, -vel.y });
-		camera->Translate({ 0.0f, -vel.y });
 	}
 	else if (cameraMode == CameraMode::SteadyWorld)
 	{
+		position.x += vel.x;
+		position.y += vel.y;
+		hitbox.Update(vel.x, vel.y);
+	}
+	else if (cameraMode == CameraMode::Hybrid)
+	{
+		camera->Translate({ -vel.x / 1.5f, -vel.y / 1.5f});
 		position.x += vel.x;
 		position.y += vel.y;
 		hitbox.Update(vel.x, vel.y);
@@ -154,6 +167,12 @@ void MainPerson::Update(float dt)
 			}
 			else if (cameraMode == CameraMode::SteadyWorld)
 			{
+				position.y -= d;
+				hitbox.UpdateY((float)-d);
+			}
+			else if (cameraMode == CameraMode::Hybrid)
+			{
+				//camera->Translate({ 0.0f, float(d) / 1.5f });
 				position.y -= d;
 				hitbox.UpdateY((float)-d);
 			}

@@ -64,7 +64,8 @@ private:
 	enum class CameraMode
 	{
 		SteadyPerson,
-		SteadyWorld
+		SteadyWorld,
+		Hybrid
 	};									// —писок режимов камеры
 	std::shared_ptr<Window> wnd;		// ”казатель на главное окно
 	std::shared_ptr<Camera> camera;		// ”казатель на камеру

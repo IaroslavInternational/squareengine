@@ -26,6 +26,15 @@ GUISystem::GUISystem(Scene* scene)
 	viewportWidth(wnd->Gfx().GetWidth()),
 	viewportHeight(wnd->Gfx().GetHeight())
 {
+	for (size_t i = 0; i < cameraModeNames.size(); i++)
+	{
+		if (cameraModeNames[i].second == hero->cameraMode)
+		{
+			modeSelected == cameraModeNames[i].first;
+			break;
+		}
+	}
+
 	AddLog("Установка цветовой гаммы GUI...\n");
 	SetGUIColors();
 	AddLog("Установка выполнена\n");
@@ -96,7 +105,7 @@ void GUISystem::EndFrame()
 
 void GUISystem::AddLog(const std::ostringstream& oss)
 {
-	AddLog(oss.str());
+	AddLog(oss.str().c_str());
 }
 
 void GUISystem::AddLog(std::string str)
@@ -159,6 +168,8 @@ void GUISystem::SetGUIColors()
 	ImGui::GetStyle().FrameRounding    = 4.0f;								// Закругление компонентов
 	ImGui::GetStyle().WindowBorderSize = 0.0f;								// Размер границы
 	ImGui::GetStyle().WindowRounding   = 10.0f;								// Закругление окон
+	ImGui::GetStyle().GrabRounding     = 10.0f;								// Закругление ползунка
+	ImGui::GetStyle().GrabMinSize      = 20.0f;								// Мин. размер ползунка
 	
 	// Цвета
 	ImVec4* colors = ImGui::GetStyle().Colors;
@@ -176,9 +187,9 @@ void GUISystem::SetGUIColors()
 	colors[ImGuiCol_ButtonHovered]    = ImVec4(0.26f, 0.01f, 0.17f, 1.00f);	// Наведение на кнопку
 	colors[ImGuiCol_ButtonActive]     = ImVec4(0.03f, 0.55f, 0.48f, 1.00f);	// Активная кнопка
 	colors[ImGuiCol_Separator]		  = ImVec4(0.66f, 0.60f, 0.00f, 0.50f);	// Разделитель
-	colors[ImGuiCol_Tab]			  = ImVec4(0.00f, 0.08f, 0.27f, 0.86f);	// Раздел
-	colors[ImGuiCol_TabHovered]		  = ImVec4(0.01f, 0.43f, 0.63f, 0.80f);	// Наведение на раздел
-	colors[ImGuiCol_TabActive]		  = ImVec4(0.66f, 0.60f, 0.00f, 0.50f);	// Активный раздел
+	colors[ImGuiCol_Tab]			  = ImVec4(0.43f, 0.00f, 0.00f, 0.86f);	// Раздел
+	colors[ImGuiCol_TabHovered]		  = ImVec4(0.15f, 0.00f, 0.00f, 0.80f);	// Наведение на раздел
+	colors[ImGuiCol_TabActive]		  = ImVec4(0.11f, 0.63f, 0.14f, 0.53f);	// Активный раздел
 	colors[ImGuiCol_ScrollbarGrab]    = ImVec4(0.19f, 0.67f, 0.65f, 1.00f);	// Ползунок
 	colors[ImGuiCol_TableHeaderBg]    = ImVec4(0.31f, 0.04f, 0.04f, 0.81f);	// Блок заголовка таблицы
 	colors[ImGuiCol_Header]			  = ImVec4(0.50f, 0.09f, 0.70f, 0.31f);	// Заголовок
@@ -3857,16 +3868,22 @@ void GUISystem::ShowScenesControl()
 
 void GUISystem::SpawnCameraToHeroControl()
 {
-	if (ImGui::Button("Фиксировать мир"))
+	if (ImGui::BeginCombo("Режим камеры", modeSelected.c_str()))
 	{
-		AddLog("Режим фиксации мира активирован\n");
-		hero->cameraMode = MainPerson::CameraMode::SteadyWorld;
-	}
+		for (size_t i = 0; i < cameraModeNames.size(); i++)
+		{
+			if (ImGui::Selectable(cameraModeNames.at(i).first.c_str(), modeSelected == cameraModeNames.at(i).first))
+			{				
+				modeSelected = cameraModeNames.at(i).first;
+				hero->cameraMode = cameraModeNames.at(i).second;
 
-	if (ImGui::Button("Фиксировать игрока"))
-	{
-		AddLog("Режим фиксации игрока активирован\n");
-		hero->cameraMode = MainPerson::CameraMode::SteadyPerson;
+				AddLog("Режим камеры \"");
+				AddLog(modeSelected);
+				AddLog("\" установлен\n");
+			}
+		}
+
+		ImGui::EndCombo();
 	}
 }
 
@@ -3943,6 +3960,8 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 			obj->chromaKey = Color(char(chromaColor[0] * 255), char(chromaColor[1] * 255), char(chromaColor[2] * 255));
 
 			EngineFunctions::SaveColorData(obj->name, obj->chromaKey, dataPath);
+
+			AddLog("Цвет хромакея сохранён\n");
 		}
 	}
 

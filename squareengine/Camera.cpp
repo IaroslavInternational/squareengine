@@ -29,7 +29,7 @@ Camera::Camera(MainPerson* hero, PersonContainer* persons, InteractableObject2DC
 
 	for (json::iterator m = j.begin(); m != j.end(); ++m)
 	{
-		auto d = m.key();
+		auto& d = m.key();
 
 		for (const auto& obj : j.at(d))
 		{
