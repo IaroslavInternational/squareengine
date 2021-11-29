@@ -1,11 +1,12 @@
 #include "Object2D.h"
 
-Object2D::Object2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToimage)
+Object2D::Object2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToimage, Color key)
 	:
 	name(name),
 	position(position),
 	layer(layer),
-	image(pathToimage)
+	image(pathToimage),
+	chromaKey(key)
 {
 }
 

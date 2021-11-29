@@ -2,6 +2,7 @@
 
 #include "HitBox.h"
 #include "AnimationData.h"
+#include "Colors.h"
 #include "AppLog.h"
 
 #include <sstream>
@@ -141,6 +142,30 @@ namespace EngineFunctions
 			"a-fa", data.frames,
 			path,
 			applog
+			);
+	}
+
+	inline void static SaveColorData(std::string objectName, Color c, std::string path)
+	{
+		EngineFunctions::SetNewValue<unsigned char>(
+			objectName,
+			"chr-r", c.GetR(),
+			path,
+			nullptr
+			);
+
+		EngineFunctions::SetNewValue<unsigned char>(
+			objectName,
+			"chr-r", c.GetR(),
+			path,
+			nullptr
+			);
+
+		EngineFunctions::SetNewValue<unsigned char>(
+			objectName,
+			"chr-r", c.GetR(),
+			path,
+			nullptr
 			);
 	}
 

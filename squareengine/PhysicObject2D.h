@@ -7,7 +7,7 @@ class PhysicObject2D : public Object2D
 {
 public:
 	PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, HitBox	hitbox, size_t layer, std::string pathToSprite,
-				   int jump_height, float gravity);
+				   Color key, int jump_height, float gravity);
 public:
 	void AllowMoveUp();
 	void AllowMoveDown();

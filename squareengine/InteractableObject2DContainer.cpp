@@ -45,6 +45,11 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 				/* Получение пути к изображению */
 
 				std::string pathToSprite = obj.at("path");
+				size_t key_r = obj.at("chr-r");
+				size_t key_g = obj.at("chr-g");
+				size_t key_b = obj.at("chr-b");
+
+				Color key(key_r, key_g, key_b);
 
 				/********************************/
 
@@ -73,7 +78,7 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 				/* Инициализация объекта */
 
-				Add(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
+				Add(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, key, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
 
 				/*************************/
 			}

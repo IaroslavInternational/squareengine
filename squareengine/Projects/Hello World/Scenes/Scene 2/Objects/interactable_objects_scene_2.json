@@ -10,7 +10,10 @@
       "layer": 0,
       "path": "Assets\\Images\\zabor.bmp",
       "pos-x": 300.0,
-      "pos-y": 200.0
+      "pos-y": 200.0,
+      "chr-r": 0,
+      "chr-g": 0,
+      "chr-b": 0
     }
   ],
   "obj 1": [
@@ -24,7 +27,10 @@
       "layer": 1,
       "path": "Assets\\Images\\box.bmp",
       "pos-x": 300.0,
-      "pos-y": 300.0
+      "pos-y": 300.0,
+      "chr-r": 0,
+      "chr-g": 0,
+      "chr-b": 0
     }
   ]
 }

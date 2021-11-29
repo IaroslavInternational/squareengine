@@ -5,12 +5,12 @@
 #include "EngineFunctions.hpp"
 
 Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
-			   std::string	 pathToSprite, HitBox			 hitbox,
+			   std::string	 pathToSprite, Color key,				   HitBox hitbox,
 			   AnimationData aData,		   std::string       scriptPath,
 			   float	     speed,		   float			 effectDuration,
 			   float	     effectTime,   bool			     effectActive)
 	:
-	PhysicObject2D(name, position, hitbox, layer, pathToSprite, 8, 300),
+	PhysicObject2D(name, position, hitbox, layer, pathToSprite, key, 8, 300),
 	holdTime(aData.ft),
 	speed(speed),
 	scriptPath(scriptPath)
@@ -33,11 +33,11 @@ Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
-		animations.emplace_back(Animation(aData.pStart, aData.pEnd * i, aData.width, aData.height, aData.frames, image, aData.ft, animationNames[i]));
+		animations.emplace_back(Animation(aData.pStart, aData.pEnd * i, aData.width, aData.height, aData.frames, image, aData.ft, animationNames[i], chromaKey));
 	}
 	for (int i = (int)Sequence::StandingLeft; i < (int)Sequence::Count; i++)
 	{
-		animations.emplace_back(Animation(0, aData.pEnd * (i - (int)Sequence::StandingLeft), aData.width, aData.height, 1, image, aData.ft, animationNames[i]));
+		animations.emplace_back(Animation(0, aData.pEnd * (i - (int)Sequence::StandingLeft), aData.width, aData.height, 1, image, aData.ft, animationNames[i], chromaKey));
 	}
 
 	if (scriptPath != "")

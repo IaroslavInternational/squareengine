@@ -876,7 +876,7 @@ void GUISystem::ShowPersonList(float dt)
 					hb_coord.z = optPdata.value().position.x + data.animPersonData[0].width;
 					hb_coord.w = optPdata.value().position.y + data.animPersonData[0].height;
 
-					persons->elements.push_back(std::make_unique<Person>(data.name, data.position, data.layer, data.pathToSprite, HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0], ""));
+					persons->elements.push_back(std::make_unique<Person>(data.name, data.position, data.layer, data.pathToSprite, Color(255, 0, 255), HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0], ""));
 					objQueue->queue.push_back(persons->elements.back().get());
 
 					using std::to_string;
@@ -917,6 +917,10 @@ void GUISystem::ShowPersonList(float dt)
 					newLine << "\"a-ft\" : "   << data.animPersonData[0].ft  << ",";
 					newLine << "\"a-ps\" : "   << data.animPersonData[0].pStart  << ",";
 					newLine << "\"a-pe\" : "   << data.animPersonData[0].pEnd    << ",";
+					newLine << "\"chr-r\" : "  << 255							 << ",";
+					newLine << "\"chr-g\" : "  << 0								 << ",";
+					newLine << "\"chr-b\" : "  << 255							 << ",";
+
 					newLine << "\"script\" : " << ""							 << ",";
 					newLine << "\"path\" : \"" << data.pathToSprite << "\"}]";
 
@@ -1099,7 +1103,7 @@ void GUISystem::ShowIobjList()
 				hb_coord.z = d.value().position.x + im.GetWidth();
 				hb_coord.w = d.value().position.y + im.GetHeight();
 
-				Iobjects->elements.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
+				Iobjects->elements.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, Color(0, 0, 0), HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
 				objQueue->queue.push_back(Iobjects->elements.back().get());
 
 				IsCaclulatedDeltas = false;
@@ -1124,15 +1128,18 @@ void GUISystem::ShowIobjList()
 				std::ostringstream newLine;
 				newLine << "\"" << d.value().name << "\":[{";
 
-				newLine << "\"pos-x\": " << d.value().position.x << ",";
-				newLine << "\"pos-y\" : " << d.value().position.y << ",";
-				newLine << "\"hb-ltx\" : " << hb_coord.x << ",";
-				newLine << "\"hb-lty\" : " << hb_coord.y << ",";
-				newLine << "\"hb-rbx\" : " << hb_coord.z << ",";
-				newLine << "\"hb-rby\" : " << hb_coord.w << ",";
-				newLine << "\"g-deep\" : " << 2.0f << ",";
-				newLine << "\"g-able\" : " << false << ",";
-				newLine << "\"layer\" : " << d.value().layer << ",";
+				newLine << "\"pos-x\": "   << d.value().position.x	 << ",";
+				newLine << "\"pos-y\" : "  << d.value().position.y	 << ",";
+				newLine << "\"hb-ltx\" : " << hb_coord.x			 << ",";
+				newLine << "\"hb-lty\" : " << hb_coord.y			 << ",";
+				newLine << "\"hb-rbx\" : " << hb_coord.z			 << ",";
+				newLine << "\"hb-rby\" : " << hb_coord.w			 << ",";
+				newLine << "\"g-deep\" : " << 2.0f					 << ",";
+				newLine << "\"g-able\" : " << false					 << ",";
+				newLine << "\"layer\" : "  << d.value().layer		 << ",";
+				newLine << "\"chr-r\" : "  << 0						 << ",";
+				newLine << "\"chr-g\" : "  << 0						 << ",";
+				newLine << "\"chr-b\" : "  << 0						 << ",";
 				newLine << "\"path\" : \"" << d.value().pathToSprite << "\"}]";
 
 				// Подготовка к вставке в файл
@@ -3921,6 +3928,24 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		}
 	}
 
+	if (ImGui::CollapsingHeader("Хромакей"))
+	{
+		ImGui::Separator();	// Разделитель
+
+		ImGui::ColorEdit3("Цвет", chromaColor);
+
+		if (ImGui::Button("Применить", ImVec2(100, 20)))
+		{
+			AddLog("Сохранение хромакея для");
+			AddLog(obj->name);
+			AddLog("...\n");
+
+			obj->chromaKey = Color(char(chromaColor[0] * 255), char(chromaColor[1] * 255), char(chromaColor[2] * 255));
+
+			EngineFunctions::SaveColorData(obj->name, obj->chromaKey, dataPath);
+		}
+	}
+
 	if (LoadingSprite)
 	{
 		std::string imagePath = ShowLoadingSpriteDilaog();
@@ -4650,7 +4675,7 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 	{
 		namespace fs = std::filesystem;
 
-		fs::path dir = "Images/";
+		fs::path dir = "Assets/Images/";
 		size_t col_counter = 1;
 
 		if (ImGui::BeginTable("table1", 5))

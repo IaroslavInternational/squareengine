@@ -1,9 +1,9 @@
 #include "InteractableObject2D.h"
 
 InteractableObject2D::InteractableObject2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite, 
-	HitBox hitbox, float gDeep, bool gAble)
+										   Color key, HitBox hitbox, float gDeep, bool gAble)
 	:
-	Object2D(name, position, layer, pathToSprite),
+	Object2D(name, position, layer, pathToSprite, key),
 	deep(gDeep),
 	drawGhostable(gAble),
 	hitbox(hitbox)
@@ -14,7 +14,7 @@ void InteractableObject2D::Draw(Graphics& gfx)
 {
 	if (!drawGhost)
 	{
-		gfx.DrawSprite((int)position.x, (int)position.y, image, Color(0, 0, 0));
+		gfx.DrawSprite((int)position.x, (int)position.y, image, chromaKey);
 	}
 	else if(drawGhostable)
 	{
@@ -29,7 +29,7 @@ void InteractableObject2D::Draw(Graphics& gfx)
 
 void InteractableObject2D::DrawTransparent(Graphics& gfx)
 {
-	gfx.DrawSpriteGhost((int)position.x, (int)position.y, image, deep, Color(0, 0, 0));
+	gfx.DrawSpriteGhost((int)position.x, (int)position.y, image, deep, chromaKey);
 }
 
 void InteractableObject2D::Translate(DirectX::XMFLOAT2 delta)

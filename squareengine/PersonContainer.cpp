@@ -44,6 +44,11 @@ PersonContainer::PersonContainer(std::string dataPath)
 				/* Получение пути к изображению */
 
 				std::string pathToSprite = obj.at("path");
+				size_t key_r = obj.at("chr-r");
+				size_t key_g = obj.at("chr-g");
+				size_t key_b = obj.at("chr-b");
+
+				Color key(key_r, key_g, key_b);
 
 				/********************************/
 
@@ -97,7 +102,7 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 				/* Инициализация объекта */
 
-				Add(std::make_unique<Person>(name, position, layer, pathToSprite, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, speed, eff_d, eff_t, eff_a));
+				Add(std::make_unique<Person>(name, position, layer, pathToSprite, key, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, speed, eff_d, eff_t, eff_a));
 
 				/*************************/
 			}

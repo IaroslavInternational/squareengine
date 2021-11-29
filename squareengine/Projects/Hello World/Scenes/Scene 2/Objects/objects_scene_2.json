@@ -20,7 +20,10 @@
       "script": "Scripts\\script.sqes",
       "pos-x": 700.0,
       "pos-y": 150.3300018310547,
-      "speed": 183.00999450683594
+      "speed": 183.00999450683594,
+      "chr-r": 255,
+      "chr-g": 0,
+      "chr-b": 255
     }
   ],
   "raymond": [
@@ -44,7 +47,10 @@
       "script": "Scripts\\script.sqes",
       "pos-x": 500.0,
       "pos-y": 100.0,
-      "speed": 100.0
+      "speed": 100.0,
+      "chr-r": 255,
+      "chr-g": 0,
+      "chr-b": 255
     }
   ]
 }

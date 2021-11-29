@@ -1,5 +1,7 @@
 #include "MainPersonDataReader.h"
 
+#include "EngineFunctions.hpp"
+
 MainPersonDataReader::MainPersonDataReader(std::string dataPath)
 	:
 	dataPath(dataPath)
@@ -40,6 +42,11 @@ MainPersonDataReader::MainPersonDataReader(std::string dataPath)
 			/* Получение пути к изображению */
 
 			pathToSprite = obj.at("path");
+			size_t key_r = obj.at("chr-r");
+			size_t key_g = obj.at("chr-g");
+			size_t key_b = obj.at("chr-b");
+
+			key = Color(key_r, key_g, key_b);
 
 			/********************************/
 

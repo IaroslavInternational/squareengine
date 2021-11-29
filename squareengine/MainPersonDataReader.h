@@ -1,8 +1,9 @@
 #pragma once
 
-#include <DirectXMath.h>
+#include "Colors.h"
 
-#include "EngineFunctions.hpp"
+#include <DirectXMath.h>
+#include <string>
 
 class MainPersonDataReader
 {
@@ -27,4 +28,5 @@ public:
 	int				  anim_fh;
 	int				  anim_fa;
 	float			  anim_ft;
+	Color			  key;
 };

@@ -13,8 +13,8 @@ public:
 	friend class ObjectsQueue;
 public:
 	Person(std::string   name,		   DirectX::XMFLOAT2   position,
-		   size_t        layer,		   
-		   std::string   pathToSprite, HitBox			   hitbox,
+		   size_t        layer,		   std::string		   pathToSprite, 
+		   Color		 key,		   HitBox			   hitbox,
 		   AnimationData aData,		   std::string		   scriptPath,
 		   float		 speed 			= 1.0f, 
 		   float		 effectDuration	= 0.045f, 

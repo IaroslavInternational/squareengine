@@ -2,7 +2,7 @@
 
 MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera)
 	:
-	PhysicObject2D(data.name, data.position, HitBox(data.name + std::string(" hitbox"), data.hb_coord), data.layer, data.pathToSprite, 8, 300),
+	PhysicObject2D(data.name, data.position, HitBox(data.name + std::string(" hitbox"), data.hb_coord), data.layer, data.pathToSprite, data.key, 8, 300),
 	dataPath(data.dataPath),
 	speed(data.speed),
 	holdTime(data.anim_ft),
@@ -24,11 +24,11 @@ MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, s
 
 	for (int i = 0; i < (int)Sequence::StandingLeft; i++)
 	{
-		animations.emplace_back(Animation(data.anim_ps, data.anim_pe * i, data.anim_fw, data.anim_fh, data.anim_fa, image, data.anim_ft, animationNames[i]));
+		animations.emplace_back(Animation(data.anim_ps, data.anim_pe * i, data.anim_fw, data.anim_fh, data.anim_fa, image, data.anim_ft, animationNames[i], chromaKey));
 	}
 	for (int i = (int)Sequence::StandingLeft; i < (int)Sequence::Count; i++)
 	{
-		animations.emplace_back(Animation(0, data.anim_pe * (i - (int)Sequence::StandingLeft), data.anim_fw, data.anim_fh, 1, image, data.anim_ft, animationNames[i]));
+		animations.emplace_back(Animation(0, data.anim_pe * (i - (int)Sequence::StandingLeft), data.anim_fw, data.anim_fh, 1, image, data.anim_ft, animationNames[i], chromaKey));
 	}
 }
 
