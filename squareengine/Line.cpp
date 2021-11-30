@@ -41,22 +41,19 @@ bool Physics::Line::IsIntersect(Line line)
     if (y1 == y2 && y3 == y4  &&  x3 <= x1 && x2 <= x4 ||
       ((x1 <= x3 && x2 >= x3) || (x1 <= x4 && x2 >= x4)))
     {
-        if (fabs(y1 - y3) <= eps)
-        {
-            return true;
-        }
+        return fabs(y1 - y3) <= eps;
     }
-
-    if (x1 == x2 && x3 == x4  &&  y3 <= y1 && y2 <= y4 ||
-      ((y1 <= y3 && y2 >= y3) || (y1 <= y4 && y2 >= y4)))
+    else if (x1 == x2 && x3 == x4  &&  y3 <= y1 && y2 <= y4 ||
+           ((y1 <= y3 && y2 >= y3) || (y1 <= y4 && y2 >= y4)))
     {
-        if (fabs(x1 - x3) <= eps)
-        {
-            return true;
-        }
+        return fabs(x1 - x3) <= eps;
+    }
+    else
+    {
+        return false;
     }
 
-    float Ua, Ub, denominator;
+  /*  float Ua, Ub, denominator;
 
     denominator = (y4 - y3) * (x1 - x2) - (x4 - x3) * (y1 - y2);
 
@@ -71,7 +68,7 @@ bool Physics::Line::IsIntersect(Line line)
         Ub = (x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2) / denominator;
         
         return (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1);
-    }
+    }*/
 }
 
 bool Physics::Line::IsVisible()

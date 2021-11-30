@@ -77,29 +77,36 @@ void MainPerson::Process(float dt)
 	}
 	if (!IsOnJump && !IsMovingDown && wnd->kbd.KeyIsPressed(VK_SPACE) && AllowedMovingUp)
 	{
+		inertion = dir.x * speed * dt / 2.0f;
 		IsOnJump = true;
 	}
 
-	if (AllowedMovingDown && !IsOnJump && dir.y != -1.0f)
+	if (!IsMovingDown && !IsOnJump)
 	{
+		inertion = 0.0f;
+	}
+
+	if (AllowedMovingDown && !IsOnJump && dir.y != -1.0f)
+	{	
 		float d = gravity * dt;
-		
+
 		if (cameraMode == CameraMode::SteadyPerson)
 		{
-			camera->Translate({ 0.0f, (float)-d });
+			camera->Translate({ -inertion, (float)-d });
 		}
 		else if (cameraMode == CameraMode::SteadyWorld)
 		{
+			position.x += inertion;
 			position.y += d;
-			hitbox.UpdateY(d);
+			hitbox.Update(inertion, d);
 		}
 		else if (cameraMode == CameraMode::Hybrid)
 		{
 			//camera->Translate({ 0.0f, (float)-d / 1.5f });
+			position.x += inertion;		
 			position.y += d;
-			hitbox.UpdateY(d);
+			hitbox.Update(inertion, d);
 		}
-
 	}
 
 	SetDirection(dir);
@@ -158,21 +165,23 @@ void MainPerson::Update(float dt)
 	{
 		if (jump_count > 0)
 		{
-			int d = (jump_count * jump_count) / 2;
+			int d = (jump_count);
 			d *= 60.0f * dt;
 
 			if (cameraMode == CameraMode::SteadyPerson)
 			{
-				camera->Translate({ 0.0f, (float)d });
+				camera->Translate({ -inertion, (float)d });
 			}
 			else if (cameraMode == CameraMode::SteadyWorld)
 			{
+				position.x += inertion;
 				position.y -= d;
 				hitbox.UpdateY((float)-d);
 			}
 			else if (cameraMode == CameraMode::Hybrid)
 			{
 				//camera->Translate({ 0.0f, float(d) / 1.5f });
+				position.x += inertion;
 				position.y -= d;
 				hitbox.UpdateY((float)-d);
 			}

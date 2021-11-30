@@ -26,12 +26,12 @@ private:
 	std::map<std::string, bool>				scenes;		// Контейнер контроля активности сцен
 	std::unique_ptr<Scene>					scene;		// Текущая сцена
 	std::shared_ptr<GUISystem>				gui;		// Указатель на интерфейс
-	std::unique_ptr<SceneTransition>		transition;
+	std::unique_ptr<SceneTransition>		transition; // Система визуального перехода между сценами
 private:
-	std::string				   commandLine;						// Коммандная строка
-	std::string				   projectName;						// Имя проекта
-	ScriptCommander			   scriptCommander;					// Управление командными скриптами
-	EngineTimer				   timer;								// Игровой таймер
-	float					   speed_factor = 1.0f;				// Калибровочный параметр скорости
-	std::optional<std::string> curTrigger = std::nullopt;
+	std::string				   commandLine;					// Коммандная строка
+	std::string				   projectName;					// Имя проекта
+	ScriptCommander			   scriptCommander;				// Управление командными скриптами
+	EngineTimer				   timer;						// Игровой таймер
+	float					   speed_factor = 1.0f;			// Калибровочный параметр скорости
+	std::optional<std::string> curTrigger = std::nullopt;	// Цель триггера
 };
