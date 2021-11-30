@@ -711,6 +711,16 @@ void Graphics::DrawSpriteGhost(int x, int y, RectI srcRect, const RectI& clip, c
 	}
 }
 
+void Graphics::DrawSpriteGhostNonChroma(int x, int y, const Surface2D& s, float deep)
+{
+	DrawSpriteGhostNonChroma(x, y, s.GetRect(), s, deep);
+}
+
+void Graphics::DrawSpriteGhostNonChroma(int x, int y, const RectI& srcRect, const Surface2D& s, float deep)
+{
+	DrawSpriteGhostNonChroma(x, y, srcRect, GetScreenRect(), s, deep);
+}
+
 void Graphics::DrawSpriteGhostNonChroma(int x, int y, RectI srcRect, const RectI& clip, const Surface2D& s, float deep)
 {
 	assert(srcRect.left >= 0);

@@ -14,6 +14,7 @@ public:
 	void Draw(Graphics& gfx);
 	void Appear(float dt);
 	void Disappear(float dt);
+	void Refresh();
 public:
 	bool Appeared();
 	bool Disappeared();
@@ -22,8 +23,14 @@ private:
 	std::string dataPath;
 	bool		IsAppeared    = false;
 	bool		IsDisappeared = false;
-	float		depth		  = 1.0f;
 	bool		IsRun		  = false;
+	struct
+	{
+		float k;
+		float max;
+		float min;
+		float speed;
+	} depth;
 private:
 	std::unique_ptr<Surface2D> fade;
 	std::unique_ptr<Surface2D> dawn;

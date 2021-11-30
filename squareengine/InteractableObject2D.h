@@ -10,7 +10,7 @@ public:
 	friend class ObjectsQueue;
 public:
 	InteractableObject2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite,
-						 Color key, HitBox hitbox, float gDeep = 2.0f, bool gAble = false);
+						 Color key, bool chromaKeyAble, HitBox hitbox, float gDeep = 2.0f, bool gAble = false);
 public:
 	void Draw(Graphics &gfx) override;
 	void DrawTransparent(Graphics& gfx);
@@ -23,6 +23,7 @@ public:
 	HitBox GetHitBox();
 private:
 	float  deep;
+	bool   chromaKeyAble;
 	bool   drawGhost = false;
 	bool   drawGhostable = false;
 	HitBox hitbox;

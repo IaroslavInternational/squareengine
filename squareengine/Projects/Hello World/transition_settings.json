@@ -2,7 +2,10 @@
   "settings": [
     {
       "fade": "Assets/Images/dawn.bmp",
-      "dawn": "Assets/Images/dawn.bmp"
+      "dawn": "Assets/Images/dawn.bmp",
+      "d-s": 50.0,
+      "d-min": 1.0,
+      "d-max": 200.0
     }
   ]
 }

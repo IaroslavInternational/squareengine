@@ -1,9 +1,10 @@
 #include "InteractableObject2D.h"
 
 InteractableObject2D::InteractableObject2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite, 
-										   Color key, HitBox hitbox, float gDeep, bool gAble)
+										   Color key, bool chromaKeyAble, HitBox hitbox, float gDeep, bool gAble)
 	:
 	Object2D(name, position, layer, pathToSprite, key),
+	chromaKeyAble(chromaKeyAble),
 	deep(gDeep),
 	drawGhostable(gAble),
 	hitbox(hitbox)
@@ -14,7 +15,14 @@ void InteractableObject2D::Draw(Graphics& gfx)
 {
 	if (!drawGhost)
 	{
-		gfx.DrawSprite((int)position.x, (int)position.y, image, chromaKey);
+		if (chromaKeyAble)
+		{
+			gfx.DrawSprite((int)position.x, (int)position.y, image, chromaKey);
+		}
+		else
+		{
+			gfx.DrawSpriteNonChroma((int)position.x, (int)position.y, image);
+		}
 	}
 	else if(drawGhostable)
 	{
@@ -29,7 +37,14 @@ void InteractableObject2D::Draw(Graphics& gfx)
 
 void InteractableObject2D::DrawTransparent(Graphics& gfx)
 {
-	gfx.DrawSpriteGhost((int)position.x, (int)position.y, image, deep, chromaKey);
+	if (chromaKeyAble)
+	{
+		gfx.DrawSpriteGhost((int)position.x, (int)position.y, image, deep, chromaKey);
+	}
+	else
+	{
+		gfx.DrawSpriteGhostNonChroma((int)position.x, (int)position.y, image, deep);
+	}
 }
 
 void InteractableObject2D::Translate(DirectX::XMFLOAT2 delta)

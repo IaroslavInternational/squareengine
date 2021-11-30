@@ -51,6 +51,8 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 				Color key(key_r, key_g, key_b);
 
+				bool keyAble = obj.at("chr-a");
+
 				/********************************/
 
 				/* Получение настройки слоя */
@@ -78,7 +80,7 @@ InteractableObject2DContainer::InteractableObject2DContainer(std::string dataPat
 
 				/* Инициализация объекта */
 
-				Add(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, key, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
+				Add(std::make_unique<InteractableObject2D>(name, position, layer, pathToSprite, key, keyAble, HitBox(name + std::string(" hitbox"), hb_coord), gDeep, gAble));
 
 				/*************************/
 			}

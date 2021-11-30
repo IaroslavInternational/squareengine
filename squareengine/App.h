@@ -28,11 +28,10 @@ private:
 	std::shared_ptr<GUISystem>				gui;		// Указатель на интерфейс
 	std::unique_ptr<SceneTransition>		transition;
 private:
-	std::string		commandLine;						// Коммандная строка
-	std::string		projectName;						// Имя проекта
-	ScriptCommander scriptCommander;					// Управление командными скриптами
-	EngineTimer		timer;								// Игровой таймер
-	EngineTimer		timer2;								// Игровой таймер
-	float			speed_factor = 1.0f;				// Калибровочный параметр скорости
+	std::string				   commandLine;						// Коммандная строка
+	std::string				   projectName;						// Имя проекта
+	ScriptCommander			   scriptCommander;					// Управление командными скриптами
+	EngineTimer				   timer;								// Игровой таймер
+	float					   speed_factor = 1.0f;				// Калибровочный параметр скорости
 	std::optional<std::string> curTrigger = std::nullopt;
 };

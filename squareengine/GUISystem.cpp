@@ -1114,7 +1114,7 @@ void GUISystem::ShowIobjList()
 				hb_coord.z = d.value().position.x + im.GetWidth();
 				hb_coord.w = d.value().position.y + im.GetHeight();
 
-				Iobjects->elements.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, Color(0, 0, 0), HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
+				Iobjects->elements.push_back(std::make_unique<InteractableObject2D>(d.value().name, d.value().position, d.value().layer, d.value().pathToSprite, Color(0, 0, 0), false, HitBox(d.value().name + std::string(" hitbox"), hb_coord)));
 				objQueue->queue.push_back(Iobjects->elements.back().get());
 
 				IsCaclulatedDeltas = false;
@@ -1151,6 +1151,7 @@ void GUISystem::ShowIobjList()
 				newLine << "\"chr-r\" : "  << 0						 << ",";
 				newLine << "\"chr-g\" : "  << 0						 << ",";
 				newLine << "\"chr-b\" : "  << 0						 << ",";
+				newLine << "\"chr-a\" : "  << false					 << ",";
 				newLine << "\"path\" : \"" << d.value().pathToSprite << "\"}]";
 
 				// Подготовка к вставке в файл
@@ -2618,6 +2619,7 @@ void GUISystem::ShowIobjControl()
 								dcheck(ImGui::SliderFloat("Глубина", &Iobjects->elements.at(k)->deep, 1.0f, 100.0f, "%.3f"), deepDirty);
 
 								ImGui::Checkbox("Прозрачность", &Iobjects->elements.at(k)->drawGhostable);
+								ImGui::Checkbox("Хромакей", &Iobjects->elements.at(k)->chromaKeyAble);
 
 								ImGui::Separator();
 							}
@@ -2691,6 +2693,13 @@ void GUISystem::ShowIobjControl()
 									EngineFunctions::SetNewValue<bool>(
 										IobjSelected,
 										"g-able", Iobjects->elements.at(k)->drawGhostable,
+										Iobjects->dataPath,
+										&applog
+										);
+
+									EngineFunctions::SetNewValue<bool>(
+										IobjSelected,
+										"chr-a", Iobjects->elements.at(k)->chromaKeyAble,
 										Iobjects->dataPath,
 										&applog
 										);
@@ -3914,7 +3923,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 		ImGui::Separator();	// Разделитель
 	}
-
+	
 	/**************************************************************/
 
 	/* Элементы управления позицией и скорости главного персонажа */
@@ -5211,6 +5220,8 @@ void GUISystem::SaveMainPersonData()
 		&applog
 		);
 
+	EngineFunctions::SaveColorData(hero->name, hero->chromaKey, hero->dataPath);
+
 	/*******************************/
 
 	/* Пересохранение hitbox */
@@ -5322,6 +5333,8 @@ void GUISystem::SavePersonsData()
 			&applog
 			);
 
+		EngineFunctions::SaveColorData(persons->elements[i]->name, persons->elements[i]->chromaKey, persons->dataPath);
+
 		/*******************************/
 
 		/* Пересохранение hitbox */
@@ -5383,6 +5396,15 @@ void GUISystem::SaveIobjData()
 			Iobjects->dataPath,
 			&applog
 			);
+
+		EngineFunctions::SetNewValue<bool>(
+			Iobjects->elements[i]->name,
+			"chr-a", Iobjects->elements[i]->chromaKeyAble,
+			Iobjects->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SaveColorData(Iobjects->elements[i]->name, Iobjects->elements[i]->chromaKey, Iobjects->dataPath);
 
 		auto hitbox = Iobjects->elements[i]->hitbox;
 		EngineFunctions::SaveHitBoxData(Iobjects->elements[i]->name, hitbox, Iobjects->dataPath, &applog);

@@ -13,7 +13,8 @@
       "pos-y": 200.0,
       "chr-r": 0,
       "chr-g": 0,
-      "chr-b": 0
+      "chr-b": 0,
+      "chr-a": false
     }
   ],
   "obj 1": [
@@ -30,7 +31,8 @@
       "pos-y": 300.0,
       "chr-r": 0,
       "chr-g": 0,
-      "chr-b": 0
+      "chr-b": 0,
+      "chr-a": false
     }
   ]
 }

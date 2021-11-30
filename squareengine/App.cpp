@@ -230,6 +230,7 @@ void App::DoFrame(float dt)
 					else
 					{
 						curTrigger.reset();
+						transition->Refresh();
 					}
 
 					transition->Draw(wnd->Gfx());

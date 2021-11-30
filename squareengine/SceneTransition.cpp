@@ -31,6 +31,11 @@ SceneTransition::SceneTransition(std::string dataPath)
 				fade = std::make_unique<Surface2D>(obj.at("fade"));
 				dawn = std::make_unique<Surface2D>(obj.at("dawn"));
 
+				depth.speed = obj.at("d-s");
+				depth.min   = obj.at("d-min");
+				depth.max   = obj.at("d-max");
+				depth.k	    = depth.min;
+
 				/**********************************/
 			
 				break;
@@ -41,36 +46,43 @@ SceneTransition::SceneTransition(std::string dataPath)
 
 void SceneTransition::Draw(Graphics& gfx)
 {
-	gfx.DrawFullscreenImage(*fade.get(), depth);
+	gfx.DrawFullscreenImage(*fade.get(), depth.k);
 }
 
 void SceneTransition::Appear(float dt)
 {
 	IsRun = true;
 
-	if (depth <= 200.0f)
+	if (depth.k <= depth.max)
 	{
-		depth += 1 + dt * 50.0f;
+		depth.k += 1 + dt * depth.speed;
 	}
 	else
 	{
-		depth = 200.0f;
+		depth.k = depth.max;
 		IsAppeared = true;
 	}
 }
 
 void SceneTransition::Disappear(float dt)
 {
-	if (depth >= 1.0f)
+	if (depth.k >= depth.min)
 	{
-		depth -= 1 + dt * 50.0f;
+		depth.k -= 1 + dt * depth.speed;
 	}
 	else
 	{
-		depth = 1.0f;
+		depth.k = depth.min;
 		IsDisappeared = true;
 		IsRun = false;
 	}
+}
+
+void SceneTransition::Refresh()
+{
+	IsAppeared = false;
+	IsDisappeared = false;
+	IsRun = false;
 }
 
 bool SceneTransition::Appeared()
