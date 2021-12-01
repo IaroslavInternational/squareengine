@@ -342,6 +342,9 @@
     <ClCompile Include="SceneTransition.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -576,6 +579,9 @@
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
     <ClInclude Include="SceneTransition.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>

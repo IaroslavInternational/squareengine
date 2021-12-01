@@ -1,18 +1,13 @@
 #include "Camera.h"
 
-#include "MainPerson.h"
-#include "PersonContainer.h"
-#include "InteractableObject2DContainer.h"
-#include "TriggerContainer.h"
+#include "Map.h"
 
 #include "EngineFunctions.hpp"
 
-Camera::Camera(MainPerson* hero, PersonContainer* persons, InteractableObject2DContainer* Iobjects, TriggerContainer* triggers, std::shared_ptr<Physics::PhysicsEngine> phEngPtr, std::string dataPath)
+Camera::Camera(Map* map, MainPerson* hero, std::shared_ptr<Physics::PhysicsEngine> phEngPtr, std::string dataPath)
 	:
 	hero(hero),
-	persons(persons),
-	Iobjects(Iobjects),
-	triggers(triggers),
+	map(map),
 	phEngPtr(phEngPtr),
 	dataPath(dataPath)
 {
@@ -63,9 +58,7 @@ void Camera::Translate(DirectX::XMFLOAT2 delta)
 	position.y -= delta.y;
 
 	phEngPtr->TranslateObjects(delta);
-	Iobjects->Translate(delta);
-	triggers->Translate(delta);
-	persons->Translate(delta);
+	map->Translate(delta);
 }
 
 void Camera::TranslateAll(DirectX::XMFLOAT2 delta)
@@ -91,9 +84,7 @@ void Camera::SetPosition(DirectX::XMFLOAT2 pos)
 	position = pos;
 
 	phEngPtr->TranslateObjects(dif);
-	Iobjects->Translate(dif);
-	triggers->Translate(dif);
-	persons->Translate(dif);
+	map->Translate(dif);
 	hero->Translate(dif);
 }
 

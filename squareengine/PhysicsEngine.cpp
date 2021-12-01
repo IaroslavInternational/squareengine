@@ -222,7 +222,6 @@ bool Physics::PhysicsEngine::CheckLineCollision(Line line)
 		if (line.IsIntersect(l))
 		{
 			return true;
-			break;
 		}
 	}
 
@@ -235,7 +234,6 @@ bool Physics::PhysicsEngine::CheckLineCollision(Line line)
 			if (line.IsIntersect(lns[i]))
 			{
 				return true;
-				break;
 			}
 		}
 	}

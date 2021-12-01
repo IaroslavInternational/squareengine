@@ -2,12 +2,9 @@
 
 #include "Window.h"
 
-#include "SceneDataReader.h"
-#include "ObjectsQueue.h"
 #include "PhysicsEngine.h"
-#include "Camera.h"
-#include "TriggerContainer.h"
-#include "ScriptCompiler.h"
+#include "SceneDataReader.h"
+#include "Map.h"
 
 class Scene
 {
@@ -45,17 +42,8 @@ private:
 	SceneDataReader			sdr;	// –идер данных сцены
 	std::shared_ptr<Window> wnd;	// ”казатель на главное окно 
 	std::shared_ptr<Camera> camera;	// ”казатель на камеру 
-	MainPersonDataReader	mdr;	// –идер данных главного персонажа
 
 	/******************************/
 private:
-	/* ќбъекты */
-
-	MainPerson					  hero;
-	PersonContainer				  persons;
-	InteractableObject2DContainer Iobjects;
-	ObjectsQueue				  objQueue;
-	TriggerContainer			  triggers;
-
-	/***********/
+	Map world;
 };

@@ -14,11 +14,11 @@ GUISystem::GUISystem(Scene* scene)
 	:
 	curSceneName(scene->name),
 	wnd(scene->wnd),
-	hero(&scene->hero),
-	persons(&scene->persons),
-	Iobjects(&scene->Iobjects),
-	objQueue(&scene->objQueue),
-	triggers(&scene->triggers),
+	hero(&scene->world.hero),
+	persons(&scene->world.persons),
+	Iobjects(&scene->world.Iobjects),
+	objQueue(&scene->world.objQueue),
+	triggers(&scene->world.triggers),
 	phEngPtr(scene->phEngine),
 	nEditor(),
 	camera(scene->camera),
@@ -125,10 +125,10 @@ void GUISystem::LoadScene(Scene* scene)
 
 	curSceneName = scene->name;
 	wnd			 = scene->wnd;
-	hero		 = &scene->hero;
-	persons		 = &scene->persons;
-	Iobjects	 = &scene->Iobjects;
-	objQueue	 = &scene->objQueue;
+	hero		 = &scene->world.hero;
+	persons		 = &scene->world.persons;
+	Iobjects	 = &scene->world.Iobjects;
+	objQueue	 = &scene->world.objQueue;
 	phEngPtr	 = scene->phEngine;
 	camera		 = scene->camera;
 
