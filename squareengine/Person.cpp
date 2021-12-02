@@ -4,13 +4,14 @@
 #include "ScriptCompiler.h"
 #include "EngineFunctions.hpp"
 
-Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position, size_t layer,
+Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position,
+			   float		 health,	   float			 damage,   size_t layer,
 			   std::string	 pathToSprite, Color key,				   HitBox hitbox,
 			   AnimationData aData,		   std::string       scriptPath,
 			   float	     speed,		   float			 effectDuration,
 			   float	     effectTime,   bool			     effectActive)
 	:
-	PhysicObject2D(name, position, hitbox, layer, pathToSprite, key, 8, 300),
+	AliveObject2D(name, position, health, damage, hitbox, layer, pathToSprite, key, 8, 300),
 	holdTime(aData.ft),
 	speed(speed),
 	scriptPath(scriptPath)

@@ -95,6 +95,13 @@ MainPersonDataReader::MainPersonDataReader(std::string dataPath)
 			anim_ft = obj.at("a-ft");
 
 			/********************************/
+
+			/* Получение настройки атаки */
+
+			health = obj.at("hlt");
+			damage = obj.at("dmg");
+			
+			/*****************************/
 		}
 	}
 }

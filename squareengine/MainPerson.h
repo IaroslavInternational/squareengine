@@ -1,12 +1,12 @@
 #pragma once
 
 #include "MainPersonDataReader.h"
-#include "PhysicObject2D.h"
+#include "AliveObject2D.h"
 #include "Animation.h"
 #include "Window.h"
 #include "Camera.h"
 
-class MainPerson : public PhysicObject2D
+class MainPerson : public AliveObject2D
 {
 public:
 	friend class GUISystem;
@@ -26,8 +26,8 @@ public:
 public:
 	/* Главные методы для взаимодействия с главным персонажем */
 	
-	void   Translate(DirectX::XMFLOAT2 delta);
-	void   SetAnimation(std::vector<Animation> anim);
+	void Translate(DirectX::XMFLOAT2 delta);
+	void SetAnimation(std::vector<Animation> anim);
 
 	/**********************************************************/
 private:

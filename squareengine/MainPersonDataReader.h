@@ -29,4 +29,6 @@ public:
 	int				  anim_fa;
 	float			  anim_ft;
 	Color			  key;
+	float			  health;
+	float			  damage;
 };

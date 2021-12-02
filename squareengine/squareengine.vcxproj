@@ -100,6 +100,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AdapterData.cpp" />
+    <ClCompile Include="AliveObject2D.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -181,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdapterData.h" />
+    <ClInclude Include="AliveObject2D.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationData.h" />
     <ClInclude Include="App.h" />

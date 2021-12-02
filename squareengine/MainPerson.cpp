@@ -2,7 +2,7 @@
 
 MainPerson::MainPerson(MainPersonDataReader data, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera)
 	:
-	PhysicObject2D(data.name, data.position, HitBox(data.name + std::string(" hitbox"), data.hb_coord), data.layer, data.pathToSprite, data.key, 8, 300),
+	AliveObject2D(data.name, data.position, data.health, data.damage, HitBox(data.name + std::string(" hitbox"), data.hb_coord), data.layer, data.pathToSprite, data.key, 8, 300),
 	dataPath(data.dataPath),
 	speed(data.speed),
 	holdTime(data.anim_ft),

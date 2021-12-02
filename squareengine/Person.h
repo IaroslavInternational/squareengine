@@ -1,18 +1,19 @@
 #pragma once
 
-#include "PhysicObject2D.h"
+#include "AliveObject2D.h"
 #include "Animation.h"
 #include "Script.h"
 
 struct AnimationData;
 
-class Person : public PhysicObject2D
+class Person : public AliveObject2D
 {
 public:
 	friend class GUISystem;
 	friend class ObjectsQueue;
 public:
 	Person(std::string   name,		   DirectX::XMFLOAT2   position,
+		   float		 health,	   float			   damage,
 		   size_t        layer,		   std::string		   pathToSprite, 
 		   Color		 key,		   HitBox			   hitbox,
 		   AnimationData aData,		   std::string		   scriptPath,

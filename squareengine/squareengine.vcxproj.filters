@@ -339,11 +339,14 @@
     <ClCompile Include="NodeEditor.cpp">
       <Filter>Исходные файлы\Интерфейс\Модули интерфейса</Filter>
     </ClCompile>
+    <ClCompile Include="AliveObject2D.cpp">
+      <Filter>Исходные файлы\Сцена\Объекты\База объектов</Filter>
+    </ClCompile>
     <ClCompile Include="SceneTransition.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Сцена</Filter>
     </ClCompile>
     <ClCompile Include="Map.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Сцена</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -578,11 +581,14 @@
     <ClInclude Include="ContainerBase.hpp">
       <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
-    <ClInclude Include="SceneTransition.h">
-      <Filter>Заголовочные файлы</Filter>
+    <ClInclude Include="AliveObject2D.h">
+      <Filter>Заголовочные файлы\Сцена\Объекты\База объектов</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\Сцена\Объекты</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTransition.h">
+      <Filter>Заголовочные файлы\Сцена</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

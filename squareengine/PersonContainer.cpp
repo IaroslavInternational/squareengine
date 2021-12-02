@@ -100,9 +100,16 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 				/**************************/
 
+				/* Получение настройки атаки */
+
+				float health = obj.at("hlt");
+				float damage = obj.at("dmg");
+
+				/*****************************/
+
 				/* Инициализация объекта */
 
-				Add(std::make_unique<Person>(name, position, layer, pathToSprite, key, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, speed, eff_d, eff_t, eff_a));
+				Add(std::make_unique<Person>(name, position, health, damage, layer, pathToSprite, key, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, speed, eff_d, eff_t, eff_a));
 
 				/*************************/
 			}
