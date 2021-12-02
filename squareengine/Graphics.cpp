@@ -32,7 +32,7 @@ Graphics::Graphics(HWND hWnd, int width, int height, std::string dataPath)
 	{
 		throw ("Не удаётся открыть файл с данными о графике");
 	}
-
+	
 	json j;
 	dataFile >> j;
 
@@ -71,7 +71,7 @@ Graphics::Graphics(HWND hWnd, int width, int height, std::string dataPath)
 			/**********************************/
 		}
 	}
-
+	
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
@@ -132,7 +132,6 @@ Graphics::Graphics(HWND hWnd, int width, int height, std::string dataPath)
 		//throw ENGINE_GFX_EXCEPTION(hr, L"Creating render target view on backbuffer");
 	}
 
-
 	// set backbuffer as the render target using created view
 	pImmediateContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
 
@@ -160,7 +159,7 @@ Graphics::Graphics(HWND hWnd, int width, int height, std::string dataPath)
 	sysTexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	sysTexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	sysTexDesc.MiscFlags = 0;
-
+	
 	// create the texture
 	if (FAILED(hr = pDevice->CreateTexture2D(&sysTexDesc, nullptr, &pSysBufferTexture)))
 	{

@@ -9,7 +9,7 @@ Scene::Scene(std::string							 name,
 	phEngine(phEngine),
 	wnd(wnd),
 	sdr(scData), 
-	world(sdr.GetMainPersonDataPath(), sdr.GetPersonContainerPath(), sdr.GetInteractableObjectsDataPath(), sdr.GetTriggerContainerDataPath(), wnd, camera),
+	world("Assets/Images/map.bmp", sdr.GetMainPersonDataPath(), sdr.GetPersonContainerPath(), sdr.GetInteractableObjectsDataPath(), sdr.GetTriggerContainerDataPath(), wnd, camera),
 	camera(std::make_shared<Camera>(&world, &world.hero, phEngine, sdr.GetCameraDataPath()))
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
@@ -92,6 +92,7 @@ void Scene::Render(float dt)
 {
 	/* Отрисовка */
 
+	world.Draw(wnd->Gfx());
 	world.objQueue.Draw(wnd->Gfx());	
 	world.triggers.Draw(wnd->Gfx());
 

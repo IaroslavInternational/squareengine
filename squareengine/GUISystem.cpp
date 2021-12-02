@@ -3201,7 +3201,6 @@ void GUISystem::ShowPhysicsEngineObjControl()
 											secondPoint = { (float)pos.first, (float)pos.second };
 
 											Line line_new(objectSelected, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
-											line_new.Translate(camera->position);
 											phEngPtr->UpdateLineAt(k, line_new);
 
 											std::ostringstream oss;

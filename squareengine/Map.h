@@ -12,8 +12,9 @@ public:
 	friend class Scene;
 	friend class GUISystem;
 public:
-	Map(std::string heroData, std::string personData, std::string IobjectsData, std::string triggerData, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera);
+	Map(std::string mapData, std::string heroData, std::string personData, std::string IobjectsData, std::string triggerData, std::shared_ptr<Window> wnd, std::shared_ptr<Camera> camera);
 public:
+	void Draw(Graphics& gfx);
 	void Translate(DirectX::XMFLOAT2 delta);
 private:
 	MainPersonDataReader mdr;
@@ -27,4 +28,7 @@ private:
 	TriggerContainer			  triggers;
 
 	/***********/
+private:
+	DirectX::XMFLOAT2 position = {0.0f, 0.0f};
+	Surface2D sprite;
 };
