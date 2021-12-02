@@ -70,9 +70,9 @@ void Camera::TranslateAll(DirectX::XMFLOAT2 delta)
 	hero->Translate(delta);
 }
 
-bool Camera::GetNoClipState()
+void Camera::ToggleNoClip()
 {
-	return noclip;
+	noclip ? noclip = false : noclip = true;
 }
 
 void Camera::SetPosition(DirectX::XMFLOAT2 pos)

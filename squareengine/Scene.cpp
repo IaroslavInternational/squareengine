@@ -36,11 +36,13 @@ void Scene::ProcessInput(float dt)
 			{
 				wnd->DisableCursor();
 				wnd->mouse.EnableRaw();
+				camera->ToggleNoClip();
 			}
 			else
 			{
 				wnd->EnableCursor();
 				wnd->mouse.DisableRaw();
+				camera->ToggleNoClip();
 			}
 			break;
 		default:
@@ -48,26 +50,23 @@ void Scene::ProcessInput(float dt)
 		}
 	}
 
-	if (camera->GetNoClipState())
+	if (!wnd->CursorEnabled())
 	{
-		if (!wnd->CursorEnabled())
+		if (wnd->kbd.KeyIsPressed('W'))
 		{
-			if (wnd->kbd.KeyIsPressed('W'))
-			{
-				camera->TranslateAll({ 0.0f, dt});
-			}
-			if (wnd->kbd.KeyIsPressed('A'))
-			{
-				camera->TranslateAll({ dt, 0.0f });
-			}
-			if (wnd->kbd.KeyIsPressed('S'))
-			{
-				camera->TranslateAll({ 0.0f, -dt});
-			}
-			if (wnd->kbd.KeyIsPressed('D'))
-			{
-				camera->TranslateAll({ -dt, 0.0f });
-			}
+			camera->TranslateAll({ 0.0f, dt });
+		}
+		if (wnd->kbd.KeyIsPressed('A'))
+		{
+			camera->TranslateAll({ dt, 0.0f });
+		}
+		if (wnd->kbd.KeyIsPressed('S'))
+		{
+			camera->TranslateAll({ 0.0f, -dt });
+		}
+		if (wnd->kbd.KeyIsPressed('D'))
+		{
+			camera->TranslateAll({ -dt, 0.0f });
 		}
 	}
 
@@ -80,7 +79,7 @@ void Scene::ProcessInput(float dt)
 	
 	world.Iobjects.CheckOverlap(&world.hero);
 
-	if (!camera->GetNoClipState())
+	if (wnd->CursorEnabled())
 	{
 		world.hero.Process(dt);
 	}
