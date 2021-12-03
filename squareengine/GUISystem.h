@@ -89,7 +89,10 @@ private:
 	void   SpawnCameraToHeroControl();		// Показать модуль настроек для взаимодейтсвия камеры и героя
 	void   SpawnDefaultObject2DControl(
 		   Object2D*   obj, 
-		   std::string dataPath);			// Показать модуль настроек для объекта на базе Object2D
+		   std::string dataPath);			// Показать модуль настроек для объекта на базе Object2D	
+	void   SpawnDefaultAliveObject2DControl(
+		   AliveObject2D*   obj, 
+		   std::string dataPath);			// Показать модуль настроек для объекта на базе AliveObject2D
 	void   ShowScriptsControl();			// Показать панель настроек для скриптов
 	void   ShowTriggerInfoControl();		// Показать панель настроек для остановки триггеров
 

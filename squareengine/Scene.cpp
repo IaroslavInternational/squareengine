@@ -36,21 +36,20 @@ void Scene::ProcessInput(float dt)
 			{
 				wnd->DisableCursor();
 				wnd->mouse.EnableRaw();
-				camera->ToggleNoClip();
 			}
 			else
 			{
 				wnd->EnableCursor();
 				wnd->mouse.DisableRaw();
-				camera->ToggleNoClip();
 			}
+			camera->ToggleNoClip();
 			break;
 		default:
 			break;
 		}
 	}
 
-	if (!wnd->CursorEnabled())
+	if (wnd->CursorEnabled())
 	{
 		if (wnd->kbd.KeyIsPressed('W'))
 		{
@@ -79,7 +78,7 @@ void Scene::ProcessInput(float dt)
 	
 	world.Iobjects.CheckOverlap(&world.hero);
 
-	if (wnd->CursorEnabled())
+	if (!wnd->CursorEnabled())
 	{
 		world.hero.Process(dt);
 	}

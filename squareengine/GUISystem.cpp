@@ -1823,6 +1823,13 @@ void GUISystem::ShowMainPersonControl(float dt)
 					ImGui::EndTabItem();
 				}
 
+				if (ImGui::BeginTabItem("Бой"))
+				{
+					SpawnDefaultAliveObject2DControl(hero, hero->dataPath);
+
+					ImGui::EndTabItem();
+				}
+
 				if (ImGui::BeginTabItem("Дополнительно"))
 				{
 					/* Переменные управления сбросом интерфейса */
@@ -1902,7 +1909,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 									hero->SetHitBox(new_hb);
 									hero->hitbox.visability = true;
 
-									new_hb.Translate(camera->position);
+									//new_hb.Translate(camera->position);
 									EngineFunctions::SaveHitBoxData(heroSelected, new_hb, hero->dataPath, &applog);
 								}
 							}
@@ -2187,6 +2194,13 @@ void GUISystem::ShowPersonControl(float dt)
 							delta.y = persons->elements.at(k)->position.y - persons->elements.at(k)->hitbox.coordinates.y + persons->elements.at(k)->dy;
 
 							persons->elements.at(k)->hitbox.Translate(delta);
+
+							ImGui::EndTabItem();
+						}
+
+						if (ImGui::BeginTabItem("Бой"))
+						{
+							SpawnDefaultAliveObject2DControl(persons->elements.at(k).get(), persons->dataPath);
 
 							ImGui::EndTabItem();
 						}
@@ -4067,6 +4081,74 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 	/*********************************************************************/
 }
 
+void GUISystem::SpawnDefaultAliveObject2DControl(AliveObject2D* obj, std::string dataPath)
+{
+	/* Переменные управления сбросом интерфейса */
+
+	bool hDirty = false; // Контроль здоровья
+	bool dDirty = false; // Контроль урона
+
+	const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+	/********************************************/
+
+	/* Элементы управления уровнями атак и здоровья */
+
+	if (ImGui::CollapsingHeader("Общее", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Text("Здоровье:");
+		dcheck(ImGui::SliderFloat("HP", &obj->health, 0.0f, 1000.0f, "%.2f"), hDirty);
+
+		ImGui::Text("Урон:");
+		dcheck(ImGui::SliderFloat("ATK", &obj->damage, 0.0f, 1000.0f, "%.2f"), dDirty);
+
+		ImGui::Separator();	// Разделитель
+	}
+
+	/**************************************************************/
+
+	ImGui::NewLine();
+	ImGui::NewLine();
+
+	/* Если нажата кнопка сохранить текущие настройки для объекта */
+	{
+		if (ImGui::Button("Сохранить", ImVec2(100, 20)))
+		{
+			AddLog("Сохранение настроек для ");
+			AddLog(obj->name);
+			AddLog("...\n");
+
+			SavingSettings = true;
+		}
+
+		if (SavingSettings)
+		{
+			/* Сохранение позиции */
+
+			EngineFunctions::SetNewValue<float>(
+				obj->name,
+				"hlt", obj->health,
+				dataPath,
+				&applog
+				);
+
+			EngineFunctions::SetNewValue<float>(
+				obj->name,
+				"dmg", obj->damage,
+				dataPath,
+				&applog
+				);
+
+			/**********************/
+
+			AddLog("Настройки сохранены\n");
+
+			SavingSettings = false;
+		}
+	}
+	/*********************************************************************/
+}
+
 void GUISystem::ShowScriptsControl()
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -5242,6 +5324,24 @@ void GUISystem::SaveMainPersonData()
 
 	/******************************/
 
+	/* Сохранение настроек боя */
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"hlt", hero->health,
+		hero->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"dmg", hero->damage,
+		hero->dataPath,
+		&applog
+		);
+
+	/***************************/
+
 	/* Сохранение настроек анимаций */
 
 	EngineFunctions::SetNewValue<float>(
@@ -5342,6 +5442,24 @@ void GUISystem::SavePersonsData()
 		EngineFunctions::SaveHitBoxData(persons->elements[i]->name, hitbox, persons->dataPath, &applog);
 
 		/*************************/
+
+		/* Сохранение настроек боя */
+
+		EngineFunctions::SetNewValue<float>(
+			persons->elements[i]->name,
+			"hlt", persons->elements[i]->health,
+			persons->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			persons->elements[i]->name,
+			"dmg", persons->elements[i]->damage,
+			persons->dataPath,
+			&applog
+			);
+
+		/***************************/
 
 		/* Сохранение скрипта */
 
