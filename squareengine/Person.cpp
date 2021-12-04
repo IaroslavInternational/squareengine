@@ -191,14 +191,6 @@ void Person::SetDirection(DirectX::XMFLOAT2 dir)
 	{
 		iCurSequence = Sequence::WalkingLeft;
 	}
-	else if (dir.y < 0.0f)
-	{
-		iCurSequence = Sequence::WalkingUp;
-	}
-	else if (dir.y > 0.0f)
-	{
-		iCurSequence = Sequence::WalkingDown;
-	}
 	else
 	{
 		if (vel.x > 0.0f)
@@ -208,14 +200,6 @@ void Person::SetDirection(DirectX::XMFLOAT2 dir)
 		else if (vel.x < 0.0f)
 		{
 			iCurSequence = Sequence::StandingLeft;
-		}
-		else if (vel.y < 0.0f)
-		{
-			iCurSequence = Sequence::StandingUp;
-		}
-		else if (vel.y > 0.0f)
-		{
-			iCurSequence = Sequence::StandingDown;
 		}
 	}
 

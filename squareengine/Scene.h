@@ -5,6 +5,7 @@
 #include "PhysicsEngine.h"
 #include "SceneDataReader.h"
 #include "Map.h"
+#include "FightSystem.h"
 
 class Scene
 {
@@ -42,6 +43,7 @@ private:
 	SceneDataReader			sdr;	// –идер данных сцены
 	std::shared_ptr<Window> wnd;	// ”казатель на главное окно 
 	std::shared_ptr<Camera> camera;	// ”казатель на камеру 
+	FightSystem				fs;		// —истема бо€
 
 	/******************************/
 private:

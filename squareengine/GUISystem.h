@@ -59,7 +59,7 @@ private:
 								 float height,			float x_offset = 0.0f, 
 								 float y_offset = 0.0f); 	
 	void ShowMenu(); 															// Верхняя панель меню
-	void ShowLeftSide(float dt);														// Левая панель	
+	void ShowLeftSide(float dt);												// Левая панель	
 	void ShowRightSide(float dt);												// Правая панель
 	void ShowLeftBottomSide();													// Левая нижняя панель
 	void ShowBottomPanel();														// Нижняя панель

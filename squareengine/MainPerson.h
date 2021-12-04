@@ -49,17 +49,8 @@ private:
 private:
 	/* Переменные описания работы с анимациями */
 
-	enum class Sequence
-	{
-		WalkingLeft,
-		WalkingRight,
-		StandingLeft,
-		StandingRight,
-		Count
-	};																// Список анимаций
-	std::vector<Animation> animations;								// Вектор анимаций
-	Sequence			   iCurSequence = Sequence::StandingRight;	// Текущее состояние анимаций
-	float				   holdTime;								// Задержка анимации
+	std::vector<Animation> animations;	// Вектор анимаций
+	float				   holdTime;	// Задержка анимации
 
 	/*******************************************/
 private:

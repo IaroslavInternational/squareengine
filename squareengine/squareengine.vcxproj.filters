@@ -348,6 +348,9 @@
     <ClCompile Include="Map.cpp">
       <Filter>Исходные файлы\Сцена</Filter>
     </ClCompile>
+    <ClCompile Include="FightSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -589,6 +592,9 @@
     </ClInclude>
     <ClInclude Include="SceneTransition.h">
       <Filter>Заголовочные файлы\Сцена</Filter>
+    </ClInclude>
+    <ClInclude Include="FightSystem.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

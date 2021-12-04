@@ -23,14 +23,15 @@ public:
 	void   SetHitBox(HitBox hb); // Установить hitbox
 	HitBox GetHitBox();			 // Получить hitbox
 	void   CalculateDeltas();	 // Рассчитать корректирующие отступы hitbox от блока спрайта персонажа
+	int    GetDirection();
 
 	/*********************/
 protected:
-	int   jump_height;		     // Высота прыжка
-	int	  jump_count;			 // Вспомогательня переменная для прыжка
-	bool  IsOnJump     = false;	 // Состояние прыжка
-	bool  IsMovingDown = false;	 // Состояние движения после прыжка
-	float gravity;				 // Коэффицент притяжения
+	int				  jump_height;		    // Высота прыжка
+	int				  jump_count;			// Вспомогательня переменная для прыжка
+	bool			  IsOnJump     = false;	// Состояние прыжка
+	bool			  IsMovingDown = false;	// Состояние движения после прыжка
+	float			  gravity;				// Коэффицент притяжения
 protected:
 	bool AllowedMovingUp    = true; // Состояние ограничения движения вверх
 	bool AllowedMovingDown  = true;	// Состояние ограничения движения вниз
@@ -45,5 +46,15 @@ protected:
 	float  dy;							// Корректирующий отступ hitbox от блока спрайта по оси y
 
 	/***************************************/
+protected:
+	enum class Sequence
+	{
+		WalkingLeft,
+		WalkingRight,
+		StandingLeft,
+		StandingRight,
+		Count
+	};
+	Sequence iCurSequence = Sequence::StandingRight;	// Текущее состояние анимаций
 };
 

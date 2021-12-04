@@ -105,6 +105,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cnpy.cpp" />
+    <ClCompile Include="FightSystem.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GUISystem.cpp" />
     <ClCompile Include="HitBox.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="dirent.h" />
     <ClInclude Include="EngineConverter.h" />
     <ClInclude Include="EngineFunctions.hpp" />
+    <ClInclude Include="FightSystem.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="GUISystem.h" />
     <ClInclude Include="HitBox.h" />

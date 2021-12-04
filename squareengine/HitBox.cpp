@@ -80,6 +80,16 @@ void HitBox::UpdateY(float dy)
 	coordinates.w += dy;
 }
 
+void HitBox::UpdateLeftSide(float dx)
+{
+	coordinates.x -= dx;
+}
+
+void HitBox::UpdateRightSide(float dz)
+{
+	coordinates.z += dz;
+}
+
 std::string HitBox::GetName()
 {
 	return name;

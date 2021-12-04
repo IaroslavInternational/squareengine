@@ -29,6 +29,8 @@ public:
 	void			   Update(float dx, float dy);		// Обновить 4 координаты углов hitbox корректирующими отступами
 	void			   UpdateX(float dx);				// Обновить 2 координаты углов hitbox корректирующими отступами
 	void			   UpdateY(float dy);				// Обновить 2 координаты углов hitbox корректирующими отступами
+	void			   UpdateLeftSide(float dx);		// Обновить 1 координату угла hitbox корректирующим отступом
+	void			   UpdateRightSide(float dz);		// Обновить 1 координату угла hitbox корректирующим отступом
 	std::string		   GetName();						// Получить имя
 	DirectX::XMFLOAT4& GetCoordinates();				// Получить 4 координаты углов hitbox 
 

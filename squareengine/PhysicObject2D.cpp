@@ -72,4 +72,16 @@ void PhysicObject2D::CalculateDeltas()
 	dy = hitbox.GetCoordinates().y - position.y;
 }
 
+int PhysicObject2D::GetDirection()
+{
+	if (iCurSequence == Sequence::StandingLeft)
+	{
+		return -1;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
 /*********************/

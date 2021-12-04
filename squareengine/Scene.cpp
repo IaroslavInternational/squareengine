@@ -10,10 +10,18 @@ Scene::Scene(std::string							 name,
 	wnd(wnd),
 	sdr(scData), 
 	world("Assets/Images/map.bmp", sdr.GetMainPersonDataPath(), sdr.GetPersonContainerPath(), sdr.GetInteractableObjectsDataPath(), sdr.GetTriggerContainerDataPath(), wnd, camera),
-	camera(std::make_shared<Camera>(&world, &world.hero, phEngine, sdr.GetCameraDataPath()))
+	camera(std::make_shared<Camera>(&world, &world.hero, phEngine, sdr.GetCameraDataPath())),
+	fs(wnd)
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
 	camera->Init();
+
+	fs.SetFighter(&world.hero);
+	
+	for (size_t i = 0; i < world.persons.GetSize(); i++)
+	{
+		fs.Add(world.persons.Get(i).get());
+	}
 
 	sdr.~SceneDataReader();
 }
@@ -84,6 +92,7 @@ void Scene::ProcessInput(float dt)
 	}
 
 	world.persons.Process(dt);
+	fs.ProcessFight();
 }
 
 void Scene::Render(float dt)
