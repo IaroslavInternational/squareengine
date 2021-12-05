@@ -102,6 +102,8 @@ void Scene::Render(float dt)
 	world.Draw(wnd->Gfx());
 	world.objQueue.Draw(wnd->Gfx());	
 	world.triggers.Draw(wnd->Gfx());
+	
+	fs.DrawDebug();
 
 	/*************/
 }

@@ -74,7 +74,7 @@ void PhysicObject2D::CalculateDeltas()
 
 int PhysicObject2D::GetDirection()
 {
-	if (iCurSequence == Sequence::StandingLeft)
+	if (iCurSequence == Sequence::StandingLeft || iCurSequence == Sequence::WalkingLeft)
 	{
 		return -1;
 	}

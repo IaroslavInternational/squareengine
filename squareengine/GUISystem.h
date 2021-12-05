@@ -186,6 +186,7 @@ private:
 	InteractableObject2DContainer* Iobjects;	// ”казатель на	контейнер интерактивных объектов
 	ObjectsQueue*				   objQueue;	// ”казатель на	контейнер, определ€ющий очередь (слои) отрисовки
 	TriggerContainer*			   triggers;	// ”казатель на контейнер триггеров
+	FightSystem*				   fs;			// ”казатель на систему бо€
 
 	/************************/
 private:

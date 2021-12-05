@@ -24,3 +24,8 @@ bool AliveObject2D::IsAlive()
 {
 	return health >= 0.0f;
 }
+
+float AliveObject2D::GetHitBoxOffset()
+{
+	return attack_hb_offset;
+}

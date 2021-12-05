@@ -19,6 +19,7 @@ GUISystem::GUISystem(Scene* scene)
 	Iobjects(&scene->world.Iobjects),
 	objQueue(&scene->world.objQueue),
 	triggers(&scene->world.triggers),
+	fs(&scene->fs),
 	phEngPtr(scene->phEngine),
 	nEditor(),
 	camera(scene->camera),
@@ -4087,6 +4088,7 @@ void GUISystem::SpawnDefaultAliveObject2DControl(AliveObject2D* obj, std::string
 
 	bool hDirty = false; // Контроль здоровья
 	bool dDirty = false; // Контроль урона
+	bool oDirty = false; // Контроль отступа
 
 	const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
 
@@ -4100,7 +4102,12 @@ void GUISystem::SpawnDefaultAliveObject2DControl(AliveObject2D* obj, std::string
 		dcheck(ImGui::SliderFloat("HP", &obj->health, 0.0f, 1000.0f, "%.2f"), hDirty);
 
 		ImGui::Text("Урон:");
-		dcheck(ImGui::SliderFloat("ATK", &obj->damage, 0.0f, 1000.0f, "%.2f"), dDirty);
+		dcheck(ImGui::SliderFloat("ATK", &obj->damage, 0.0f, 1000.0f, "%.2f"), dDirty);		
+		
+		ImGui::Text("Радиус поражения:");
+		dcheck(ImGui::SliderFloat("OFT", &obj->attack_hb_offset, 0.0f, 75.0f, "%.3f"), oDirty);
+
+		ImGui::Checkbox("HitBox", &fs->IsShowHitBoxes);
 
 		ImGui::Separator();	// Разделитель
 	}
@@ -4135,6 +4142,13 @@ void GUISystem::SpawnDefaultAliveObject2DControl(AliveObject2D* obj, std::string
 			EngineFunctions::SetNewValue<float>(
 				obj->name,
 				"dmg", obj->damage,
+				dataPath,
+				&applog
+				);
+
+			EngineFunctions::SetNewValue<float>(
+				obj->name,
+				"a-oft", obj->attack_hb_offset,
 				dataPath,
 				&applog
 				);
@@ -5340,6 +5354,13 @@ void GUISystem::SaveMainPersonData()
 		&applog
 		);
 
+	EngineFunctions::SetNewValue<float>(
+		hero->name,
+		"a-oft", hero->attack_hb_offset,
+		hero->dataPath,
+		&applog
+		);
+
 	/***************************/
 
 	/* Сохранение настроек анимаций */
@@ -5455,6 +5476,13 @@ void GUISystem::SavePersonsData()
 		EngineFunctions::SetNewValue<float>(
 			persons->elements[i]->name,
 			"dmg", persons->elements[i]->damage,
+			persons->dataPath,
+			&applog
+			);
+
+		EngineFunctions::SetNewValue<float>(
+			persons->elements[i]->name,
+			"a-oft", persons->elements[i]->attack_hb_offset,
 			persons->dataPath,
 			&applog
 			);

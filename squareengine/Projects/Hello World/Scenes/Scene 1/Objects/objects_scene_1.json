@@ -26,7 +26,8 @@
       "script": "Scripts\\script.sqes",
       "speed": 183.00999450683594,
       "hlt": 100.0,
-      "dmg": 10.0
+      "dmg": 10.0,
+      "a-oft": 50.0
     }
   ],
   "raymond": [
@@ -55,7 +56,8 @@
       "script": "Scripts\\script.sqes",
       "speed": 100.0,
       "hlt": 100.0,
-      "dmg": 10.0
+      "dmg": 10.0,
+      "a-oft": 50.0
     }
   ]
 }

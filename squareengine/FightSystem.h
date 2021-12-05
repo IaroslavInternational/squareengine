@@ -7,16 +7,19 @@
 class FightSystem : public ContainerBase<AliveObject2D*>
 {
 public:
+	friend class GUISystem;
+public:
 	FightSystem(std::shared_ptr<Window> wnd);
 public:
 	void SetFighter(AliveObject2D* fighter);
 	void ProcessFight();
+	void DrawDebug();
 private:
 	AliveObject2D* fighter = nullptr;
 	char		   attack_btn = 'F';
 private:
 	std::shared_ptr<Window> wnd;
-	float					attack_hb_offset = 50.0f;
-	bool IsClicked = false;
+	bool					IsClicked	   = false;
+	bool				    IsShowHitBoxes = true;
 };
 
