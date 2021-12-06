@@ -176,14 +176,14 @@ void MainPerson::Update(float dt)
 			{
 				position.x += inertion;
 				position.y -= d;
-				hitbox.UpdateY((float)-d);
+				hitbox.Update(inertion, (float)-d);
 			}
 			else if (cameraMode == CameraMode::Hybrid)
 			{
 				//camera->Translate({ 0.0f, float(d) / 1.5f });
 				position.x += inertion;
 				position.y -= d;
-				hitbox.UpdateY((float)-d);
+				hitbox.Update(inertion, (float)-d);
 			}
 		}
 		else

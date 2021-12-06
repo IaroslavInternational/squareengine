@@ -57,6 +57,13 @@ void Scene::ProcessInput(float dt)
 		}
 	}
 
+	phEngine->CheckCollision(&world.hero);
+
+	for (size_t i = 0; i < world.persons.GetSize(); i++)
+	{
+		phEngine->CheckCollision(world.persons.Get(i).get());
+	}
+
 	if (wnd->CursorEnabled())
 	{
 		if (wnd->kbd.KeyIsPressed('W'))
@@ -76,13 +83,6 @@ void Scene::ProcessInput(float dt)
 			camera->TranslateAll({ -dt, 0.0f });
 		}
 	}
-
-	phEngine->CheckCollision(&world.hero);
-
-	for (size_t i = 0; i < world.persons.GetSize(); i++)
-	{
-		phEngine->CheckCollision(world.persons.Get(i).get());
-	}
 	
 	world.Iobjects.CheckOverlap(&world.hero);
 
@@ -92,6 +92,15 @@ void Scene::ProcessInput(float dt)
 	}
 
 	world.persons.Process(dt);
+
+	// ¬тора€ проверка физики лишн€€ ?
+	phEngine->CheckCollision(&world.hero);
+
+	for (size_t i = 0; i < world.persons.GetSize(); i++)
+	{
+		phEngine->CheckCollision(world.persons.Get(i).get());
+	}
+
 	fs.ProcessFight();
 }
 
