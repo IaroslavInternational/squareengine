@@ -115,16 +115,23 @@ private:
 private:
 	/* Методы сохранения данных */
 
-	void SaveAll();					// Сохранить все настройки
-	void SaveMainPersonData();		// Сохранить настройки для главного персонажа
-	void SavePersonsData();			// Сохранить настройки для персонажей
-	void SaveIobjData();			// Сохранить настройки для интерактивных объектов
-	void SaveTriggersData();		// Сохранить настройки для триггеров
-	void SaveLayersData();			// Сохранить настройки для слоёв
-	void SaveCameraData();			// Сохранить настройки для камеры
-	void SaveScenesData();			// Сохранить настройки для сцен
-	void SavePhysicsEngineData();	// Сохранить настройки для физического движка
-	void SaveGraphicsEngineData();	// Сохранить настройки для графического движка
+	void SaveObject2D(		Object2D& obj,		 const std::string& dataPath); // Сохранение настроек для объекта на базе Object2D
+	void SavePhysicObject2D(PhysicObject2D& obj, const std::string& dataPath); // Сохранение настроек для объекта на базе PhysicObject2D
+	void SaveAliveObject2D( AliveObject2D& obj,  const std::string& dataPath); // Сохранение настроек для объекта на базе AliveObject2D
+
+	void SaveAll();								   // Сохранить все настройки
+	void SaveMainPersonData();					   // Сохранить настройки для главного персонажа
+	void SavePersonData(Person& person);		   // Сохранить настройки для персонажа
+	void SavePersonsData();						   // Сохранить настройки для персонажей
+	void SaveIobjData(InteractableObject2D& Iobj); // Сохранить настройки для интерактивного объекта
+	void SaveIobjsData();						   // Сохранить настройки для интерактивных объектов
+	void SaveTriggerData(Trigger& trigger);		   // Сохранить настройки для триггера
+	void SaveTriggersData();					   // Сохранить настройки для триггеров
+	void SaveLayersData();						   // Сохранить настройки для слоёв
+	void SaveCameraData();						   // Сохранить настройки для камеры
+	void SaveScenesData();						   // Сохранить настройки для сцен
+	void SavePhysicsEngineData();				   // Сохранить настройки для физического движка
+	void SaveGraphicsEngineData();				   // Сохранить настройки для графического движка
 
 	/****************************/
 private:

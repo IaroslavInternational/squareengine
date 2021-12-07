@@ -1077,7 +1077,8 @@ void GUISystem::ShowIobjList()
 						Iobjects->elements[i]->name = EngineFunctions::StrReplace(Iobjects->elements[i]->name, src.str(), dst.str());	
 					}
 
-					SaveIobjData();
+					// Нужно ?
+					SaveIobjsData();
 					SaveLayersData();
 
 					AddLog("Интерактивный объект ");
@@ -2067,89 +2068,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 						if (SavingSettings)
 						{
-							/* Сохранение скорости */
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"speed", hero->speed,
-								hero->dataPath,
-								&applog
-								);
-
-							/**********************/
-
-							/* Сохранение настроек эффекта */
-
-							EngineFunctions::SetNewValue<bool>(
-								hero->name,
-								"eff-a", hero->effect.Active,
-								hero->dataPath,
-								&applog
-								);
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"eff-d", hero->effect.Duration,
-								hero->dataPath,
-								&applog
-								);
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"eff-t", hero->effect.Time,
-								hero->dataPath,
-								&applog
-								);
-
-							/*******************************/
-
-							/* Пересохранение hitbox */
-
-							auto actual_hb = hero->hitbox;
-
-							EngineFunctions::SaveHitBoxData(hero->name, actual_hb, hero->dataPath, &applog);
-
-							/*************************/
-
-							/* Сохранение настроек камеры */
-
-							EngineFunctions::SetNewValue<size_t>(
-								hero->name,
-								"camera-mode", static_cast<size_t>(hero->cameraMode),
-								hero->dataPath,
-								&applog
-								);
-
-							/******************************/
-
-							/* Сохранение настроек анимаций */
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"a-ft", hero->holdTime,
-								hero->dataPath,
-								&applog
-								);
-
-							/********************************/
-
-							/* Сохранение настроек физики для персонажа */
-
-							EngineFunctions::SetNewValue<float>(
-								hero->name,
-								"gravity", hero->gravity,
-								hero->dataPath,
-								&applog
-								);
-
-							EngineFunctions::SetNewValue<int>(
-								hero->name,
-								"j-h", hero->jump_height,
-								hero->dataPath,
-								&applog
-								);
-
-							/********************************************/
+							SaveMainPersonData();
 
 							AddLog("Настройки сохранены\n");
 
@@ -2222,6 +2141,19 @@ void GUISystem::ShowPersonControl(float dt)
 								}
 
 								ImGui::Text(oss.str().c_str());
+								
+								if (ImGui::Button("Удалить"))
+								{
+									persons->elements.at(k)->script = Script();
+									persons->elements.at(k)->scriptPath = "";
+
+									EngineFunctions::SetNewValue<std::string>(
+										persons->elements.at(k)->name,
+										"script", "",
+										persons->dataPath,
+										&applog
+										);
+								}
 
 								if (ImGui::CollapsingHeader("Код"))
 								{
@@ -2487,48 +2419,7 @@ void GUISystem::ShowPersonControl(float dt)
 
 								if (SavingSettings)
 								{
-									/* Сохранение скорости */
-
-									EngineFunctions::SetNewValue<float>(
-										personSelected,
-										"speed", persons->elements.at(k)->speed,
-										persons->dataPath,
-										&applog
-										);
-
-									/***********************/
-
-									/* Сохранение настроек эффекта */
-
-									EngineFunctions::SetNewValue<bool>(
-										personSelected,
-										"eff-a", persons->elements.at(k)->effect.Active,
-										persons->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<float>(
-										personSelected,
-										"eff-d", persons->elements.at(k)->effect.Duration,
-										persons->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<float>(
-										personSelected,
-										"eff-t", persons->elements.at(k)->effect.Time,
-										persons->dataPath,
-										&applog
-										);
-
-									/*******************************/
-
-									/* Пересохранение hitbox */
-									
-									auto hitbox = persons->elements[k]->hitbox;
-									EngineFunctions::SaveHitBoxData(personSelected, hitbox, persons->dataPath, &applog);
-
-									/*************************/
+									SavePersonData(*persons->elements.at(k).get());
 
 									AddLog("Настройки сохранены\n");
 
@@ -2698,29 +2589,7 @@ void GUISystem::ShowIobjControl()
 
 								if (SavingSettings)
 								{
-									EngineFunctions::SetNewValue<float>(
-										IobjSelected,
-										"g-deep", Iobjects->elements.at(k)->deep,
-										Iobjects->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<bool>(
-										IobjSelected,
-										"g-able", Iobjects->elements.at(k)->drawGhostable,
-										Iobjects->dataPath,
-										&applog
-										);
-
-									EngineFunctions::SetNewValue<bool>(
-										IobjSelected,
-										"chr-a", Iobjects->elements.at(k)->chromaKeyAble,
-										Iobjects->dataPath,
-										&applog
-										);
-
-									auto hitbox = Iobjects->elements.at(k)->hitbox;
-									EngineFunctions::SaveHitBoxData(IobjSelected, hitbox, Iobjects->dataPath, &applog);
+									SaveIobjData(*Iobjects->elements.at(k).get());
 
 									AddLog("Настройки сохранены\n");
 
@@ -3021,7 +2890,7 @@ void GUISystem::ShowTriggerControl()
 							if (ImGui::Button("Сохранить", ImVec2(100, 20)))
 							{
 								AddLog("Сохранение настроек для ");
-								AddLog(phEngPtr->lines.at(k).name);
+								AddLog(triggers->elements.at(k).name);
 								AddLog("\n");
 
 								SavingSettings = true;
@@ -3029,37 +2898,7 @@ void GUISystem::ShowTriggerControl()
 
 							if (SavingSettings)
 							{
-								/* Сохранение координат */
-
-								EngineFunctions::SetNewValue<float>(
-									triggerSelected,
-									"start-x", triggers->elements.at(k).line.start.x,
-									triggers->dataPath,
-									&applog
-									);
-
-								EngineFunctions::SetNewValue<float>(
-									triggerSelected,
-									"end-x", triggers->elements.at(k).line.end.x,
-									triggers->dataPath,
-									&applog
-									);
-
-								EngineFunctions::SetNewValue<float>(
-									triggerSelected,
-									"start-y", triggers->elements.at(k).line.start.y,
-									triggers->dataPath,
-									&applog
-									);
-
-								EngineFunctions::SetNewValue<float>(
-									triggerSelected,
-									"end-y", triggers->elements.at(k).line.end.y,
-									triggers->dataPath,
-									&applog
-									);
-
-								/************************/
+								SaveTriggerData(triggers->elements.at(k));
 
 								AddLog("Настройки сохранены\n");
 
@@ -4045,34 +3884,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 		if (SavingSettings)
 		{
-			/* Сохранение позиции */
-
-			EngineFunctions::SetNewValue<float>(
-				obj->name,
-				"pos-x", obj->position.x,
-				dataPath,
-				&applog
-				);
-
-			EngineFunctions::SetNewValue<float>(
-				obj->name,
-				"pos-y", obj->position.y,
-				dataPath,
-				&applog
-				);
-
-			/**********************/
-
-			/* Сохранение изображения */
-
-			EngineFunctions::SetNewValue<std::string>(
-				obj->name,
-				"path", obj->image.GetFileName(),
-				dataPath,
-				&applog
-				);
-
-			/**************************/
+			SaveObject2D(*obj, dataPath);
 			
 			AddLog("Настройки сохранены\n");
 
@@ -4130,30 +3942,7 @@ void GUISystem::SpawnDefaultAliveObject2DControl(AliveObject2D* obj, std::string
 
 		if (SavingSettings)
 		{
-			/* Сохранение позиции */
-
-			EngineFunctions::SetNewValue<float>(
-				obj->name,
-				"hlt", obj->health,
-				dataPath,
-				&applog
-				);
-
-			EngineFunctions::SetNewValue<float>(
-				obj->name,
-				"dmg", obj->damage,
-				dataPath,
-				&applog
-				);
-
-			EngineFunctions::SetNewValue<float>(
-				obj->name,
-				"a-oft", obj->attack_hb_offset,
-				dataPath,
-				&applog
-				);
-
-			/**********************/
+			SaveAliveObject2D(*obj, dataPath);
 
 			AddLog("Настройки сохранены\n");
 
@@ -5231,13 +5020,93 @@ std::vector<AnimationData> GUISystem::ShowAnimationCreatingDialog(float dt)
 
 /* Методы сохранения данных */
 
+void GUISystem::SaveObject2D(Object2D& obj, const std::string& dataPath)
+{
+	EngineFunctions::SetNewValue<float>(
+		obj.name,
+		"pos-x", obj.position.x,
+		dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		obj.name,
+		"pos-y", obj.position.y,
+		dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<size_t>(
+		obj.name,
+		"layer", obj.layer,
+		dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<std::string>(
+		obj.name,
+		"path", obj.image.GetFileName(),
+		dataPath,
+		&applog
+		);
+
+	EngineFunctions::SaveColorData(obj.name, obj.chromaKey, dataPath);
+}
+
+void GUISystem::SavePhysicObject2D(PhysicObject2D& obj, const std::string& dataPath)
+{
+	SaveObject2D(obj, dataPath);
+
+	EngineFunctions::SaveHitBoxData(obj.name, obj.hitbox, dataPath, &applog);
+
+	EngineFunctions::SetNewValue<float>(
+		obj.name,
+		"gravity", obj.gravity,
+		dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<int>(
+		obj.name,
+		"j-h", obj.jump_height,
+		dataPath,
+		&applog
+		);
+}
+
+void GUISystem::SaveAliveObject2D(AliveObject2D& obj, const std::string& dataPath)
+{
+	SavePhysicObject2D(obj, dataPath);
+
+	EngineFunctions::SetNewValue<float>(
+		obj.name,
+		"hlt", obj.health,
+		dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		obj.name,
+		"dmg", obj.damage,
+		dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		obj.name,
+		"a-oft", obj.attack_hb_offset,
+		dataPath,
+		&applog
+		);
+}
+
 void GUISystem::SaveAll()
 {
 	AddLog("Сохранение всех настроек и изменений...\n");
 
 	SaveMainPersonData();
 	SavePersonsData();
-	SaveIobjData();
+	SaveIobjsData();
 	SaveTriggersData();
 	SaveLayersData();
 	SaveCameraData();
@@ -5252,34 +5121,7 @@ void GUISystem::SaveMainPersonData()
 {
 	AddLog("Сохранение настроек для главного персонажа...\n");
 
-	/* Сохранение позиции */
-
-	EngineFunctions::SetNewValue<float>(
-		hero->name,
-		"pos-x", hero->position.x,
-		hero->dataPath,
-		&applog
-		);
-
-	EngineFunctions::SetNewValue<float>(
-		hero->name,
-		"pos-y", hero->position.y,
-		hero->dataPath,
-		&applog
-		);
-
-	/**********************/
-
-	/* Сохранение изображения */
-
-	EngineFunctions::SetNewValue<std::string>(
-		hero->name,
-		"path", hero->image.GetFileName(),
-		hero->dataPath,
-		&applog
-		);
-
-	/**************************/
+	SaveAliveObject2D(*hero, hero->dataPath);
 
 	/* Сохранение скорости */
 
@@ -5315,17 +5157,7 @@ void GUISystem::SaveMainPersonData()
 		&applog
 		);
 
-	EngineFunctions::SaveColorData(hero->name, hero->chromaKey, hero->dataPath);
-
 	/*******************************/
-
-	/* Пересохранение hitbox */
-
-	auto actual_hb = hero->hitbox;
-
-	EngineFunctions::SaveHitBoxData(hero->name, actual_hb, hero->dataPath, &applog);
-
-	/*************************/
 
 	/* Сохранение настроек камеры */
 
@@ -5338,31 +5170,6 @@ void GUISystem::SaveMainPersonData()
 
 	/******************************/
 
-	/* Сохранение настроек боя */
-
-	EngineFunctions::SetNewValue<float>(
-		hero->name,
-		"hlt", hero->health,
-		hero->dataPath,
-		&applog
-		);
-
-	EngineFunctions::SetNewValue<float>(
-		hero->name,
-		"dmg", hero->damage,
-		hero->dataPath,
-		&applog
-		);
-
-	EngineFunctions::SetNewValue<float>(
-		hero->name,
-		"a-oft", hero->attack_hb_offset,
-		hero->dataPath,
-		&applog
-		);
-
-	/***************************/
-
 	/* Сохранение настроек анимаций */
 
 	EngineFunctions::SetNewValue<float>(
@@ -5374,25 +5181,59 @@ void GUISystem::SaveMainPersonData()
 
 	/********************************/
 
-	/* Сохранение настроек физики для персонажа */
+	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SavePersonData(Person& person)
+{
+	SaveAliveObject2D(person, persons->dataPath);
+
+	/* Сохранение скорости */
 
 	EngineFunctions::SetNewValue<float>(
-		hero->name,
-		"gravity", hero->gravity,
-		hero->dataPath,
+		person.name,
+		"speed", person.speed,
+		persons->dataPath,
 		&applog
 		);
 
-	EngineFunctions::SetNewValue<int>(
-		hero->name,
-		"j-h", hero->jump_height,
-		hero->dataPath,
+	/***********************/
+
+	/* Сохранение настроек эффекта */
+
+	EngineFunctions::SetNewValue<bool>(
+		person.name,
+		"eff-a", person.effect.Active,
+		persons->dataPath,
 		&applog
 		);
 
-	/********************************************/
+	EngineFunctions::SetNewValue<float>(
+		person.name,
+		"eff-d", person.effect.Duration,
+		persons->dataPath,
+		&applog
+		);
 
-	AddLog("Настройки сохранены\n");
+	EngineFunctions::SetNewValue<float>(
+		person.name,
+		"eff-t", person.effect.Time,
+		persons->dataPath,
+		&applog
+		);
+
+	/*******************************/
+
+	/* Сохранение скрипта */
+
+	EngineFunctions::SetNewValue<std::string>(
+		person.name,
+		"script", person.scriptPath,
+		persons->dataPath,
+		&applog
+		);
+
+	/**********************/
 }
 
 void GUISystem::SavePersonsData()
@@ -5401,161 +5242,99 @@ void GUISystem::SavePersonsData()
 
 	for (size_t i = 0; i < persons->elements.size(); i++)
 	{
-		/* Сохранение позиции */
-
-		EngineFunctions::SetNewValue<float>(
-			persons->elements[i]->name,
-			"pos-x", persons->elements[i]->position.x,
-			persons->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			persons->elements[i]->name,
-			"pos-y", persons->elements[i]->position.y,
-			persons->dataPath,
-			&applog
-			);
-
-		/**********************/
-
-		/* Сохранение скорости */
-
-		EngineFunctions::SetNewValue<float>(
-			persons->elements[i]->name,
-			"speed", persons->elements[i]->speed,
-			persons->dataPath,
-			&applog
-			);
-
-		/***********************/
-
-		/* Сохранение настроек эффекта */
-
-		EngineFunctions::SetNewValue<bool>(
-			persons->elements[i]->name,
-			"eff-a", persons->elements[i]->effect.Active,
-			persons->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			persons->elements[i]->name,
-			"eff-d", persons->elements[i]->effect.Duration,
-			persons->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			persons->elements[i]->name,
-			"eff-t", persons->elements[i]->effect.Time,
-			persons->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SaveColorData(persons->elements[i]->name, persons->elements[i]->chromaKey, persons->dataPath);
-
-		/*******************************/
-
-		/* Пересохранение hitbox */
-
-		auto hitbox = persons->elements[i]->hitbox;
-		EngineFunctions::SaveHitBoxData(persons->elements[i]->name, hitbox, persons->dataPath, &applog);
-
-		/*************************/
-
-		/* Сохранение настроек боя */
-
-		EngineFunctions::SetNewValue<float>(
-			persons->elements[i]->name,
-			"hlt", persons->elements[i]->health,
-			persons->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			persons->elements[i]->name,
-			"dmg", persons->elements[i]->damage,
-			persons->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			persons->elements[i]->name,
-			"a-oft", persons->elements[i]->attack_hb_offset,
-			persons->dataPath,
-			&applog
-			);
-
-		/***************************/
-
-		/* Сохранение скрипта */
-
-		EngineFunctions::SetNewValue<std::string>(
-			persons->elements[i]->name,
-			"script", persons->elements[i]->scriptPath,
-			persons->dataPath,
-			&applog
-			);
-
-		/**********************/
+		SavePersonData(*persons->elements[i].get());
 	}
 
 	AddLog("Настройки сохранены\n");
 }
 
-void GUISystem::SaveIobjData()
+void GUISystem::SaveIobjData(InteractableObject2D& Iobj)
+{
+	SaveObject2D(Iobj, Iobjects->dataPath);
+
+	EngineFunctions::SetNewValue<float>(
+		Iobj.name,
+		"g-deep", Iobj.deep,
+		Iobjects->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<bool>(
+		Iobj.name,
+		"g-able", Iobj.drawGhostable,
+		Iobjects->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<bool>(
+		Iobj.name,
+		"chr-a", Iobj.chromaKeyAble,
+		Iobjects->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SaveHitBoxData(Iobj.name, Iobj.hitbox, Iobjects->dataPath, &applog);
+}
+
+void GUISystem::SaveIobjsData()
 {
 	AddLog("Сохранение настроек для интерактивных объектов...\n");
 
 	for (size_t i = 0; i < Iobjects->elements.size(); i++)
 	{
-		/* Сохранение позиции */
-
-		EngineFunctions::SetNewValue<float>(
-			Iobjects->elements[i]->name,
-			"pos-x", Iobjects->elements[i]->position.x,
-			Iobjects->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			Iobjects->elements[i]->name,
-			"pos-y", Iobjects->elements[i]->position.y,
-			Iobjects->dataPath,
-			&applog
-			);
-
-		/**********************/
-
-		EngineFunctions::SetNewValue<float>(
-			Iobjects->elements[i]->name,
-			"g-deep", Iobjects->elements[i]->deep,
-			Iobjects->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<bool>(
-			Iobjects->elements[i]->name,
-			"g-able", Iobjects->elements[i]->drawGhostable,
-			Iobjects->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<bool>(
-			Iobjects->elements[i]->name,
-			"chr-a", Iobjects->elements[i]->chromaKeyAble,
-			Iobjects->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SaveColorData(Iobjects->elements[i]->name, Iobjects->elements[i]->chromaKey, Iobjects->dataPath);
-
-		auto hitbox = Iobjects->elements[i]->hitbox;
-		EngineFunctions::SaveHitBoxData(Iobjects->elements[i]->name, hitbox, Iobjects->dataPath, &applog);
+		SaveIobjData(*Iobjects->elements[i].get());
 	}
 
 	AddLog("Настройки сохранены\n");
+}
+
+void GUISystem::SaveTriggerData(Trigger& trigger)
+{
+	/* Сохранение координат */
+
+	EngineFunctions::SetNewValue<float>(
+		trigger.name,
+		"start-x", trigger.line.start.x,
+		triggers->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		trigger.name,
+		"end-x", trigger.line.end.x,
+		triggers->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		trigger.name,
+		"start-y", trigger.line.start.y,
+		triggers->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<float>(
+		trigger.name,
+		"end-y", trigger.line.end.y,
+		triggers->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<size_t>(
+		trigger.name,
+		"type", static_cast<size_t>(trigger.type),
+		triggers->dataPath,
+		&applog
+		);
+
+	EngineFunctions::SetNewValue<std::string>(
+		trigger.name,
+		"goaol", trigger.goal,
+		triggers->dataPath,
+		&applog
+		);
+
+	/************************/
 }
 
 void GUISystem::SaveTriggersData()
@@ -5564,37 +5343,7 @@ void GUISystem::SaveTriggersData()
 
 	for (size_t i = 0; i < triggers->elements.size(); i++)
 	{
-		/* Сохранение координат */
-
-		EngineFunctions::SetNewValue<float>(
-			triggers->elements[i].name,
-			"start-x", triggers->elements.at(i).line.start.x,
-			triggers->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			triggers->elements[i].name,
-			"end-x", triggers->elements.at(i).line.end.x,
-			triggers->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			triggers->elements[i].name,
-			"start-y", triggers->elements.at(i).line.start.y,
-			triggers->dataPath,
-			&applog
-			);
-
-		EngineFunctions::SetNewValue<float>(
-			triggers->elements[i].name,
-			"end-y", triggers->elements.at(i).line.end.y,
-			triggers->dataPath,
-			&applog
-			);
-
-		/************************/
+		SaveTriggerData(triggers->elements[i]);
 	}
 	
 	AddLog("Настройки сохранены\n");

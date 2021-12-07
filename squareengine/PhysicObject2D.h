@@ -6,6 +6,8 @@
 class PhysicObject2D : public Object2D
 {
 public:
+	friend class GUISystem;
+public:
 	PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, HitBox	hitbox, size_t layer, std::string pathToSprite,
 				   Color key, int jump_height, float gravity);
 public:
