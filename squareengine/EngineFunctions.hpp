@@ -504,4 +504,14 @@ namespace EngineFunctions
 			return ud(rng);
 		}
 	}
+
+	inline size_t static GetScreenRefreshTime()
+	{
+		HDC hDCScreen = GetDC(NULL);
+		int RefreshFrequency = GetDeviceCaps(hDCScreen, VREFRESH);
+
+		ReleaseDC(NULL, hDCScreen);
+
+		return size_t(RefreshFrequency);
+	}
 }

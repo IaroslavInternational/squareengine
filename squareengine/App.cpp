@@ -85,7 +85,9 @@ App::App(const std::string& commandLine, const std::string& projectName)
 
 	scene = std::make_unique<Scene>("Scene 1", wnd, dir.str(), phEngine);
 	gui = std::make_shared<GUISystem>(scene.get());
-}
+
+	speed_factor = (float)EngineFunctions::GetScreenRefreshTime() / 60.0f;
+ }
 
 int App::Go()
 {
