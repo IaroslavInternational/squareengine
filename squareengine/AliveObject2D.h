@@ -8,7 +8,7 @@ public:
 	friend class GUISystem;
 public:
 	AliveObject2D(std::string name, DirectX::XMFLOAT2 position, float health, float damage, 
-				  HitBox hitbox, size_t layer, std::string pathToSprite, Color key, int jump_height, float gravity);
+				  HitBox hitbox, size_t layer, std::string pathToSprite, Color key, float speed, int jump_height, float gravity);
 public:
 	void  Attack(AliveObject2D* enemy);
 	void  Hit(float damage);

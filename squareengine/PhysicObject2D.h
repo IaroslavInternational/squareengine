@@ -9,7 +9,7 @@ public:
 	friend class GUISystem;
 public:
 	PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, HitBox	hitbox, size_t layer, std::string pathToSprite,
-				   Color key, int jump_height, float gravity);
+				   Color key, float speed, int jump_height, float gravity);
 public:
 	void AllowMoveUp();
 	void AllowMoveDown();
@@ -25,15 +25,18 @@ public:
 	void   SetHitBox(HitBox hb); // Установить hitbox
 	HitBox GetHitBox();			 // Получить hitbox
 	void   CalculateDeltas();	 // Рассчитать корректирующие отступы hitbox от блока спрайта персонажа
-	int    GetDirection();
+	int    GetDirection();		 // Получить направление
 
 	/*********************/
 protected:
-	int				  jump_height;		    // Высота прыжка
-	int				  jump_count;			// Вспомогательня переменная для прыжка
-	bool			  IsOnJump     = false;	// Состояние прыжка
-	bool			  IsMovingDown = false;	// Состояние движения после прыжка
-	float			  gravity;				// Коэффицент притяжения
+	int				  jump_height;					 // Высота прыжка
+	int				  jump_count;					 // Вспомогательня переменная для прыжка
+	bool			  IsOnJump     = false;			 // Состояние прыжка
+	bool			  IsMovingDown = false;			 // Состояние движения после прыжка
+	float			  gravity;						 // Коэффицент притяжения
+	float			  speed;						 // Скорость
+	DirectX::XMFLOAT2 vel		   = { 0.0f, 0.0f }; // Вектор скорости движения
+	float			  inertion	   = 0.0f;			 // Инерция
 protected:
 	bool AllowedMovingUp    = true; // Состояние ограничения движения вверх
 	bool AllowedMovingDown  = true;	// Состояние ограничения движения вниз

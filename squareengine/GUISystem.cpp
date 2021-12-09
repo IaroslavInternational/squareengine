@@ -5,8 +5,6 @@
 #include "HitBox.h"
 #include "Line.h"
 
-#include <future>
-
 #define BIG_POPUP_PANEL_FLAGS ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
 #define SIDE_PANEL_FLAGS      BIG_POPUP_PANEL_FLAGS   | ImGuiWindowFlags_NoBringToFrontOnFocus
 
@@ -14,6 +12,7 @@ GUISystem::GUISystem(Scene* scene)
 	:
 	curSceneName(scene->name),
 	wnd(scene->wnd),
+	world(&scene->world),
 	hero(&scene->world.hero),
 	persons(&scene->world.persons),
 	Iobjects(&scene->world.Iobjects),
@@ -31,7 +30,7 @@ GUISystem::GUISystem(Scene* scene)
 	{
 		if (cameraModeNames[i].second == hero->cameraMode)
 		{
-			modeSelected == cameraModeNames[i].first;
+			modeSelected = cameraModeNames[i].first;
 			break;
 		}
 	}
@@ -237,8 +236,7 @@ void GUISystem::ShowMenu()
 		{
 			if (ImGui::MenuItem("Сохранить всё"))
 			{
-				auto thread = std::async(&GUISystem::SaveAll, this);
-				thread.get();
+				SaveAll();
 			}
 
 			if (ImGui::MenuItem("Выход"))
@@ -326,6 +324,11 @@ void GUISystem::ShowMenu()
 
 			if (ImGui::BeginMenu("Объекты"))
 			{
+				if (ImGui::MenuItem("Карта мира"))
+				{
+					ShowMapSettings ? ShowMapSettings = false : ShowMapSettings = true;
+				}
+
 				if (ImGui::MenuItem("Главный персонаж"))
 				{
 					if (ShowMainPersonEnum && ShowMainPersonSettings)
@@ -601,6 +604,12 @@ void GUISystem::ShowOptionalPanel()
 	{
 		SetPanelSizeAndPosition(0, 0.25f, 0.65f, 0.375f, 0.1625f);
 		ShowViewportControl();
+	}
+
+	if (ShowMapSettings)
+	{
+		SetPanelSizeAndPosition(0, 0.25f, 0.65f, 0.375f, 0.1625f);
+		ShowMapControl();
 	}
 
 	if (ShowProjectSettings)
@@ -911,27 +920,31 @@ void GUISystem::ShowPersonList(float dt)
 					std::ostringstream newLine;
 					newLine << "\"" << data.name << "\":[{";
 
-					newLine << "\"pos-x\": "   << data.position.x << ",";
-					newLine << "\"pos-y\" : "  << data.position.y << ",";
-					newLine << "\"hb-ltx\" : " << hb_coord.x << ",";
-					newLine << "\"hb-lty\" : " << hb_coord.y << ",";
-					newLine << "\"hb-rbx\" : " << hb_coord.z << ",";
-					newLine << "\"hb-rby\" : " << hb_coord.w << ",";
-					newLine << "\"layer\" : "  << data.layer << ",";
-					newLine << "\"speed\" : "  << 100.0f     << ",";
-					newLine << "\"eff-a\" : "  << false      << ",";
-					newLine << "\"eff-d\" : "  << 0.045f     << ",";
-					newLine << "\"eff-t\" : "  << 0.0f       << ",";
-					newLine << "\"name\" : \"" << data.name  << "\",";
+					newLine << "\"pos-x\": "   << data.position.x				 << ",";
+					newLine << "\"pos-y\" : "  << data.position.y				 << ",";
+					newLine << "\"hb-ltx\" : " << hb_coord.x					 << ",";
+					newLine << "\"hb-lty\" : " << hb_coord.y					 << ",";
+					newLine << "\"hb-rbx\" : " << hb_coord.z					 << ",";
+					newLine << "\"hb-rby\" : " << hb_coord.w					 << ",";
+					newLine << "\"layer\" : "  << data.layer					 << ",";
+					newLine << "\"speed\" : "  << 100.0f						 << ",";
+					newLine << "\"eff-a\" : "  << false							 << ",";
+					newLine << "\"eff-d\" : "  << 0.045f						 << ",";
+					newLine << "\"eff-t\" : "  << 0.0f							 << ",";
+					newLine << "\"name\" : \"" << data.name						 << "\",";
 					newLine << "\"a-fa\" : "   << data.animPersonData[0].frames  << ",";
 					newLine << "\"a-fw\" : "   << data.animPersonData[0].width   << ",";
 					newLine << "\"a-fh\" : "   << data.animPersonData[0].height  << ",";
-					newLine << "\"a-ft\" : "   << data.animPersonData[0].ft  << ",";
+					newLine << "\"a-ft\" : "   << data.animPersonData[0].ft		 << ",";
 					newLine << "\"a-ps\" : "   << data.animPersonData[0].pStart  << ",";
 					newLine << "\"a-pe\" : "   << data.animPersonData[0].pEnd    << ",";
 					newLine << "\"chr-r\" : "  << 255							 << ",";
 					newLine << "\"chr-g\" : "  << 0								 << ",";
 					newLine << "\"chr-b\" : "  << 255							 << ",";
+					newLine << "\"dmg\" : "    << 10							 << ",";
+					newLine << "\"hlt\" : "    << 100							 << ",";
+					newLine << "\"a-oft\" : "  << 50.0							 << ",";
+					newLine << "\"j-h\" : "    << 10							 << ",";
 
 					newLine << "\"script\" : " << ""							 << ",";
 					newLine << "\"path\" : \"" << data.pathToSprite << "\"}]";
@@ -1852,14 +1865,7 @@ void GUISystem::ShowMainPersonControl(float dt)
 
 					if (ImGui::CollapsingHeader("Физика", ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						ImGui::Text("Скорость:");
-						dcheck(ImGui::SliderFloat(" ", &hero->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
-
-						ImGui::Text("Гравитация:");
-						dcheck(ImGui::SliderFloat("у.е.", &hero->gravity, 0.0f, 1000.0f, "%.2f"), gravityDirty);
-
-						ImGui::Text("Высота прыжка:");
-						dcheck(ImGui::SliderInt("степень", &hero->jump_height, 0, 20), jHeightDirty);
+						SpawnDefaultPhysicObject2DControl(hero, hero->dataPath);
 						
 						ImGui::Separator();	// Разделитель
 					}
@@ -1879,49 +1885,6 @@ void GUISystem::ShowMainPersonControl(float dt)
 					}
 
 					/***************************************************/
-
-					/* Элементы управления хитбоксом главного персонажа */
-
-					if (ImGui::CollapsingHeader("Hit-box"))
-					{
-						ImGui::Checkbox("Показать", &hero->hitbox.visability);
-
-						/* Если нажата кнопка изменить HitBox */
-						{
-							if (ImGui::Button("Изменить", ImVec2(100, 20)))
-							{
-								AddLog("Изменение Hit-box...\n");
-
-								DrawingHitBox = true;
-								hero->hitbox.visability = false;
-
-								ImGui::GetStyle().Alpha = 0.1f;
-							}
-
-							if (DrawingHitBox)
-							{
-								auto new_hb = CreateNewHitBox();
-
-								if (new_hb.name != "empty")
-								{
-									AddLog("Создан Hit-box ");
-									AddLog(new_hb.name);
-									AddLog("\n");
-
-									hero->SetHitBox(new_hb);
-									hero->hitbox.visability = true;
-
-									//new_hb.Translate(camera->position);
-									EngineFunctions::SaveHitBoxData(heroSelected, new_hb, hero->dataPath, &applog);
-								}
-							}
-						}
-						/**************************************/
-
-						ImGui::Separator(); // Разделитель
-					}
-
-					/****************************************************/
 
 					/* Элементы управления анимацией главного персонажа */
 
@@ -2212,7 +2175,6 @@ void GUISystem::ShowPersonControl(float dt)
 							/* Переменные управления сбросом интерфейса */
 
 							bool effDirty = false;		// Котнроль эффекта
-							bool speedDirty = false;	// Котнроль скорости
 							bool a_hdDirty = false;		// Котнроль скорости анимации
 							bool a_sDirty = false;		// Котнроль анимации
 							bool a_sizeDirty = false;	// Котнроль анимации
@@ -2225,8 +2187,7 @@ void GUISystem::ShowPersonControl(float dt)
 
 							if (ImGui::CollapsingHeader("Физика", ImGuiTreeNodeFlags_DefaultOpen))
 							{
-								ImGui::Text("Скорость:");
-								dcheck(ImGui::SliderFloat(" ", &persons->elements.at(k)->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
+								SpawnDefaultPhysicObject2DControl(persons->elements.at(k).get(), persons->dataPath);
 
 								ImGui::Separator(); // Разделитель
 							}
@@ -2246,48 +2207,6 @@ void GUISystem::ShowPersonControl(float dt)
 							}
 
 							/******************************************/
-
-							/* Элементы управления хитбоксом персонажа */
-
-							if (ImGui::CollapsingHeader("Hit-box"))
-							{
-								ImGui::Checkbox("Показать", &persons->elements.at(k)->hitbox.visability);
-
-								/* Если нажата кнопка изменить HitBox */
-								{
-									if (ImGui::Button("Изменить", ImVec2(100, 20)))
-									{
-										AddLog("Изменение Hit-box...\n");
-
-										DrawingHitBox = true;
-										persons->elements.at(k)->hitbox.visability = false;
-
-										ImGui::GetStyle().Alpha = 0.1f;
-									}
-
-									if (DrawingHitBox)
-									{
-										auto new_hb = CreateNewHitBox();
-
-										if (new_hb.name != "empty")
-										{
-											AddLog("Создан Hit-box ");
-											AddLog(new_hb.name);
-											AddLog("\n");
-
-											persons->elements.at(k)->SetHitBox(new_hb);
-											persons->elements.at(k)->hitbox.visability = true;
-
-											new_hb.Translate(camera->position);
-											EngineFunctions::SaveHitBoxData(personSelected, new_hb, persons->dataPath, &applog);
-										}
-									}
-								}
-								/**************************************/
-
-								ImGui::Separator(); // Разделитель
-							}
-							/*******************************************/
 
 							/* Элементы управления анимацией главного персонажа */
 
@@ -3599,7 +3518,7 @@ void GUISystem::ShowCameraControl()
 
 		/* Элементы управления no-clip камеры */
 
-		if (ImGui::CollapsingHeader("Перемещение"))
+		if (ImGui::CollapsingHeader("Перемещение", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Checkbox("No-clip", &camera->noclip);
 			dcheck(ImGui::SliderFloat("Скорость No-clip", &camera->noclipSpeed, 1.0f, 1000.0f), speedDirty);
@@ -3950,6 +3869,72 @@ void GUISystem::SpawnDefaultAliveObject2DControl(AliveObject2D* obj, std::string
 		}
 	}
 	/*********************************************************************/
+}
+
+void GUISystem::SpawnDefaultPhysicObject2DControl(PhysicObject2D* obj, std::string dataPath)
+{
+	bool speedDirty = false;	// Котнроль скорости
+	bool gravityDirty = false;	// Контроль гравитации
+	bool jHeightDirty = false;	// Контроль высоты прыжка
+
+	const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+	/* Элементы управления позицией и скорости главного персонажа */
+	ImGui::Text("Скорость:");
+	dcheck(ImGui::SliderFloat(" ", &obj->speed, 0.0f, 1000.0f, "%.2f"), speedDirty);
+
+	ImGui::Text("Гравитация:");
+	dcheck(ImGui::SliderFloat("у.е.", &obj->gravity, 0.0f, 1000.0f, "%.2f"), gravityDirty);
+
+	ImGui::Text("Высота прыжка:");
+	dcheck(ImGui::SliderInt("степень", &obj->jump_height, 0, 20), jHeightDirty);
+
+	ImGui::Separator();	// Разделитель
+
+/**************************************************************/
+
+/* Элементы управления хитбоксом главного персонажа */
+
+	if (ImGui::CollapsingHeader("Hit-box"))
+	{
+		ImGui::Checkbox("Показать", &obj->hitbox.visability);
+
+		/* Если нажата кнопка изменить HitBox */
+		{
+			if (ImGui::Button("Изменить", ImVec2(100, 20)))
+			{
+				AddLog("Изменение Hit-box...\n");
+
+				DrawingHitBox = true;
+				obj->hitbox.visability = false;
+
+				ImGui::GetStyle().Alpha = 0.1f;
+			}
+
+			if (DrawingHitBox)
+			{
+				auto new_hb = CreateNewHitBox();
+
+				if (new_hb.name != "empty")
+				{
+					AddLog("Создан Hit-box ");
+					AddLog(new_hb.name);
+					AddLog("\n");
+
+					hero->SetHitBox(new_hb);
+					hero->hitbox.visability = true;
+
+					//new_hb.Translate(camera->position);
+					EngineFunctions::SaveHitBoxData(obj->name, new_hb, dataPath, &applog);
+				}
+			}
+		}
+		/**************************************/
+
+		ImGui::Separator(); // Разделитель
+	}
+
+	/****************************************************/
 }
 
 void GUISystem::ShowScriptsControl()
@@ -4515,6 +4500,63 @@ void GUISystem::ShowViewportControl()
 	ImGui::End();
 }
 
+void GUISystem::ShowMapControl()
+{
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.039f, 0.0f, 0.015f, 0.95f));
+	if (ImGui::Begin("Настройки карты", &ShowMapSettings, BIG_POPUP_PANEL_FLAGS))
+	{
+		if (ImGui::CollapsingHeader("Настройки"))
+		{
+			bool dirty = false;
+
+			const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
+
+			if (!LoadedPreview)
+			{
+				bool ret = wnd->Gfx().LoadTextureFromFile(world->sprite.GetFileName().c_str(), loadedSprite.GetAddressOf(), &sprite_width, &sprite_height);
+				IM_ASSERT(ret);
+
+				LoadedPreview = true;
+			}
+
+			dcheck(ImGui::SliderFloat("Размер", &scaleObj, 0.1f, 20.0f, "%.4f"), dirty);
+
+			ImGui::Image((void*)loadedSprite.Get(), ImVec2(sprite_width * scaleObj, sprite_height * scaleObj));
+
+			ImGui::Separator();	// Разделитель
+
+			if (ImGui::Button("Загрузить", ImVec2(100, 20)))
+			{
+				AddLog("Загрузка нового спрайта для карты");
+				AddLog("...\n");
+
+				LoadingSprite = true;
+			}
+
+			if (LoadingSprite)
+			{
+				std::string imagePath = ShowLoadingSpriteDilaog();
+
+				if (imagePath != "")
+				{
+					Surface2D im(imagePath);
+					world->sprite = im;
+
+					AddLog("Новый спрайт загружен\n");
+
+					LoadingSprite = false;
+					LoadedPreview = false;
+				}
+			}
+
+			ImGui::Separator();
+		}
+	}
+	ImGui::PopStyleColor();
+
+	ImGui::End();
+}
+
 HitBox GUISystem::CreateNewHitBox()
 {	
 	HitBox hb_new("empty", 0.0f, 0.0f, 0.0f, 0.0f);
@@ -5059,6 +5101,17 @@ void GUISystem::SavePhysicObject2D(PhysicObject2D& obj, const std::string& dataP
 
 	EngineFunctions::SaveHitBoxData(obj.name, obj.hitbox, dataPath, &applog);
 
+	/* Сохранение скорости */
+
+	EngineFunctions::SetNewValue<float>(
+		obj.name,
+		"speed", obj.speed,
+		dataPath,
+		&applog
+		);
+
+	/**********************/
+
 	EngineFunctions::SetNewValue<float>(
 		obj.name,
 		"gravity", obj.gravity,
@@ -5123,17 +5176,6 @@ void GUISystem::SaveMainPersonData()
 
 	SaveAliveObject2D(*hero, hero->dataPath);
 
-	/* Сохранение скорости */
-
-	EngineFunctions::SetNewValue<float>(
-		hero->name,
-		"speed", hero->speed,
-		hero->dataPath,
-		&applog
-		);
-
-	/**********************/
-
 	/* Сохранение настроек эффекта */
 
 	EngineFunctions::SetNewValue<bool>(
@@ -5187,17 +5229,6 @@ void GUISystem::SaveMainPersonData()
 void GUISystem::SavePersonData(Person& person)
 {
 	SaveAliveObject2D(person, persons->dataPath);
-
-	/* Сохранение скорости */
-
-	EngineFunctions::SetNewValue<float>(
-		person.name,
-		"speed", person.speed,
-		persons->dataPath,
-		&applog
-		);
-
-	/***********************/
 
 	/* Сохранение настроек эффекта */
 

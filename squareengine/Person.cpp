@@ -11,9 +11,8 @@ Person::Person(std::string	 name,		   DirectX::XMFLOAT2 position,
 			   float	     speed,		   float			 effectDuration,
 			   float	     effectTime,   bool			     effectActive)
 	:
-	AliveObject2D(name, position, health, damage, hitbox, layer, pathToSprite, key, 8, 300),
+	AliveObject2D(name, position, health, damage, hitbox, layer, pathToSprite, key, speed, 8, 300),
 	holdTime(aData.ft),
-	speed(speed),
 	scriptPath(scriptPath)
 {
 	effect.Duration = effectDuration;

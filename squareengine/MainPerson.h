@@ -34,9 +34,6 @@ private:
 	/* Переменные описания состояния персонажа */
 
 	std::string		  dataPath;				// Путь к данным о главном персонаже
-	float			  speed;
-	DirectX::XMFLOAT2 vel = { 0.0f, 0.0f };	// Вектор скорости движения
-	float			  inertion = 0.0f;
 
 	struct
 	{

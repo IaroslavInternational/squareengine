@@ -93,6 +93,9 @@ private:
 	void   SpawnDefaultAliveObject2DControl(
 		   AliveObject2D*   obj, 
 		   std::string dataPath);			// Показать модуль настроек для объекта на базе AliveObject2D
+	void   SpawnDefaultPhysicObject2DControl(
+		   PhysicObject2D* obj,
+		   std::string dataPath);			// Показать модуль настроек для объекта на базе PhysicObject2D
 	void   ShowScriptsControl();			// Показать панель настроек для скриптов
 	void   ShowTriggerInfoControl();		// Показать панель настроек для остановки триггеров
 
@@ -104,6 +107,7 @@ private:
 	void   ShowGraphicsEngineSettings();	// Показать панель настроек графики
 	void   ShowProjectControl();			// Показать панель настроек проекта
 	void   ShowViewportControl();			// Показать панель настроек Viewport
+	void   ShowMapControl();				// Показать панель настроек для карты
 	HitBox CreateNewHitBox();				// Создать HitBox с помощью интерфейса
 	
 	std::string					ShowLoadingSpriteDilaog();				// Показать диалоговое окно для загрузки спрайта
@@ -159,6 +163,7 @@ private:
 	bool ShowGraphicsSettings		  = false;	// Видимость панели настроек графики
 	bool ShowProjectSettings		  = false;	// Видимость панели настроек проекта
 	bool ShowViewportSettings		  = false;	// Видимость панели настроек Viewport
+	bool ShowMapSettings			  = false;	// Видимость панели настроек карты мира
 	bool ShowLogs					  = true;	// Видимость лога
 	bool ShowHardwareInfo 			  =	true;	// Видимость FPS и информации о графическом адаптере
 	bool ShowFPSChart 				  =	false;	// Видимость графика изменения FPS
@@ -188,6 +193,7 @@ private:
 private:
 	/* Указатели на объекты */
 
+	Map*						   world;		// Указатель на карту мира
 	MainPerson*					   hero;		// Указатель на главного персонажа
 	PersonContainer*			   persons;		// Указатель на	контейнер персонажей
 	InteractableObject2DContainer* Iobjects;	// Указатель на	контейнер интерактивных объектов
