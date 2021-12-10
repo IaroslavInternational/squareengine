@@ -26,7 +26,6 @@ public:
 public:
 	/* Главные методы для взаимодействия с главным персонажем */
 	
-	void Translate(DirectX::XMFLOAT2 delta);
 	void SetAnimation(std::vector<Animation> anim);
 
 	/**********************************************************/

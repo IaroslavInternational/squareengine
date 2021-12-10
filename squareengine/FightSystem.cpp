@@ -13,7 +13,7 @@ void FightSystem::SetFighter(AliveObject2D* fighter)
 
 void FightSystem::ProcessFight()
 {
-	assert(fighter == nullptr);
+//	assert(fighter == nullptr);
 
 	if (!IsClicked && wnd->kbd.KeyIsPressed(attack_btn))
 	{

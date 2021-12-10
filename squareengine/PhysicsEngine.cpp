@@ -198,7 +198,7 @@ void Physics::PhysicsEngine::CheckCollision(PhysicObject2D* obj)
 
 	if (CheckLineCollision(lns[2]))
 	{
-		obj->DisAllowMoveLeft();
+		obj->DisAllowMoveLeft();		
 	}
 	else
 	{
@@ -213,6 +213,8 @@ void Physics::PhysicsEngine::CheckCollision(PhysicObject2D* obj)
 	{
 		obj->AllowMoveRight();
 	}
+
+	CheckOverlapping(obj);
 }
 
 bool Physics::PhysicsEngine::CheckLineCollision(Line line)
@@ -241,16 +243,69 @@ bool Physics::PhysicsEngine::CheckLineCollision(Line line)
 	return false;
 }
 
+void Physics::PhysicsEngine::CheckOverlapping(PhysicObject2D* obj)
+{
+	DirectX::XMFLOAT2 delta;
+	
+	for (auto& hb : hitboxes)
+	{
+		if (hb.GetCoordinates().x < obj->GetHitBox().GetCoordinates().z &&
+			hb.GetCoordinates().y < obj->GetHitBox().GetCoordinates().w)
+		{
+			delta.x = obj->GetHitBox().GetCoordinates().z - hb.GetCoordinates().x;
+			delta.y = obj->GetHitBox().GetCoordinates().w - hb.GetCoordinates().y;
+
+			if (delta.x > delta.y)
+			{
+				//up
+				obj->Translate({ 0.0f, -delta.y });
+
+				break;
+			}
+			else if(delta.x < delta.y)
+			{
+				// left
+				obj->Translate({ -delta.x, 0.0f });
+
+				break;
+			}
+		}
+		else if(hb.GetCoordinates().z > obj->GetHitBox().GetCoordinates().x &&
+				hb.GetCoordinates().y < obj->GetHitBox().GetCoordinates().w)
+		{
+			/*dx = hb.GetCoordinates().z - obj->GetHitBox().GetCoordinates().x;
+			dy = obj->GetHitBox().GetCoordinates().w - hb.GetCoordinates().y;
+
+			if (dx > dy)
+			{
+				//up
+				obj->Translate({ 0.0f, -dy });
+				obj->GetHitBox().Translate({ 0.0f, -dy });
+
+				break;
+			}
+			else
+			{
+				// right
+				obj->Translate({ dx, 0.0f });
+				obj->GetHitBox().Translate({ dx, 0.0f });
+
+				break;
+			}*/
+		}
+	}
+}
+
 std::vector<Physics::Line>  Physics::PhysicsEngine::GetLines(HitBox hb)
 {
 	auto hbCoord = hb.GetCoordinates();
 
 	std::vector<Physics::Line> lines =
 	{
-		Line(std::string("Line hitbox top"),    hbCoord.x - deltaCollision, hbCoord.y - deltaCollision, hbCoord.z + deltaCollision, hbCoord.y - deltaCollision),	// top
-		Line(std::string("Line hitbox bottom"), hbCoord.x - deltaCollision, hbCoord.w + deltaCollision, hbCoord.z + deltaCollision, hbCoord.w + deltaCollision),	// bot
-		Line(std::string("Line hitbox left"),   hbCoord.x - deltaCollision, hbCoord.y - deltaCollision, hbCoord.x - deltaCollision, hbCoord.w + deltaCollision),	// left
-		Line(std::string("Line hitbox right"),  hbCoord.z + deltaCollision, hbCoord.y + deltaCollision, hbCoord.z + deltaCollision, hbCoord.w + deltaCollision),	// right
+		Line(std::string("Line hb top"),    hbCoord.x - deltaCollision, hbCoord.y - deltaCollision, hbCoord.z + deltaCollision, hbCoord.y - deltaCollision),	// top
+		Line(std::string("Line hb bottom"), hbCoord.x - deltaCollision, hbCoord.w + deltaCollision, hbCoord.z + deltaCollision, hbCoord.w + deltaCollision),	// bot
+		Line(std::string("Line hb left"),   hbCoord.x - deltaCollision, hbCoord.y - deltaCollision, hbCoord.x - deltaCollision, hbCoord.w + deltaCollision),	// left
+		Line(std::string("Line hb right"),  hbCoord.z + deltaCollision, hbCoord.y + deltaCollision, hbCoord.z + deltaCollision, hbCoord.w + deltaCollision),	// right
 	};
 
 	return lines;

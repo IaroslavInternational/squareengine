@@ -22,6 +22,7 @@ public:
 public:
 	/* Внутренние методы */
 	
+	void   Translate(DirectX::XMFLOAT2 delta);
 	void   SetHitBox(HitBox hb); // Установить hitbox
 	HitBox GetHitBox();			 // Получить hitbox
 	void   CalculateDeltas();	 // Рассчитать корректирующие отступы hitbox от блока спрайта персонажа

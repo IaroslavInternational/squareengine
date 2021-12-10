@@ -56,6 +56,14 @@ void PhysicObject2D::DisAllowMoveRight()
 
 /* Внутренние методы */
 
+void PhysicObject2D::Translate(DirectX::XMFLOAT2 delta)
+{
+	position.x += delta.x;
+	position.y += delta.y;
+
+	hitbox.Translate(delta);
+}
+
 void PhysicObject2D::SetHitBox(HitBox hb)
 {
 	hitbox = hb + DirectX::XMFLOAT2(dx, dy);

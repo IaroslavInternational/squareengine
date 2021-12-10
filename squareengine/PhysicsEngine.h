@@ -38,6 +38,7 @@ namespace Physics
 	public:
 		void					   CheckCollision(PhysicObject2D* obj);
 		bool					   CheckLineCollision(Line line);
+		void					   CheckOverlapping(PhysicObject2D* obj);
 		std::vector<Physics::Line> GetLines(HitBox hb);
 	private:
 		std::string dataPath = "";
