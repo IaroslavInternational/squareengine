@@ -248,6 +248,41 @@ void GUISystem::ShowMenu()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Виджеты"))
+		{
+			if (ImGui::MenuItem("Конроль триггеров"))
+			{
+				ShowTriggerInfoSettings ? ShowTriggerInfoSettings = false : ShowTriggerInfoSettings = true;
+			}
+
+			if (ImGui::MenuItem("Камера"))
+			{
+				ShowCameraSettings ? ShowCameraSettings = false : ShowCameraSettings = true;
+			}
+
+			if (ImGui::MenuItem("Слои"))
+			{
+				ShowLayersSettings ? ShowLayersSettings = false : ShowLayersSettings = true;
+			}
+
+			if (ImGui::MenuItem("GPU"))
+			{
+				ShowHardwareInfo ? ShowHardwareInfo = false : ShowHardwareInfo = true;
+			}
+
+			if (ImGui::MenuItem("График FPS"))
+			{
+				ShowFPSChart ? ShowFPSChart = false : ShowFPSChart = true;
+			}
+
+			if (ImGui::MenuItem("Лог"))
+			{
+				ShowLogs ? ShowLogs = false : ShowLogs = true;
+			}
+
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("Окна"))
 		{
 			if (ImGui::MenuItem("Сцены"))
@@ -312,11 +347,6 @@ void GUISystem::ShowMenu()
 
 				if (ImGui::MenuItem("Звук"))
 				{
-				}
-
-				if (ImGui::MenuItem("Камера"))
-				{
-					ShowCameraSettings ? ShowCameraSettings = false : ShowCameraSettings = true;
 				}
 
 				ImGui::EndMenu();
@@ -403,40 +433,10 @@ void GUISystem::ShowMenu()
 						}
 					}
 
-					if (ImGui::MenuItem("Контроль"))
-					{
-						ShowTriggerInfoSettings ? ShowTriggerInfoSettings = false : ShowTriggerInfoSettings = true;
-					}
-
 					ImGui::EndMenu();
 				}
 
 				ImGui::EndMenu();
-			}
-
-			if (ImGui::MenuItem("Камера"))
-			{
-				ShowCameraSettings ? ShowCameraSettings = false : ShowCameraSettings = true;
-			}
-
-			if (ImGui::MenuItem("Слои"))
-			{
-				ShowLayersSettings ? ShowLayersSettings = false : ShowLayersSettings = true;
-			}
-
-			if (ImGui::MenuItem("GPU"))
-			{
-				ShowHardwareInfo ? ShowHardwareInfo = false : ShowHardwareInfo = true;
-			}
-
-			if (ImGui::MenuItem("График FPS"))
-			{
-				ShowFPSChart ? ShowFPSChart = false : ShowFPSChart = true;
-			}
-
-			if (ImGui::MenuItem("Лог"))
-			{
-				ShowLogs ? ShowLogs = false : ShowLogs = true;
 			}
 
 			std::string title = "";

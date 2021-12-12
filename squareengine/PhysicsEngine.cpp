@@ -264,12 +264,12 @@ void Physics::PhysicsEngine::CheckOverlapping(PhysicObject2D* obj)
 					// Выталкнуть хитбокс вверх
 					if (delta.x > delta.y)
 					{
-						obj->Translate({ 0.0f, -delta.y - 2.0f });
+						obj->Translate({ 0.0f, -delta.y });
 						break;
 					}
 					else if (delta.x < delta.y) // Выталкнуть хитбокс влево
 					{
-						obj->Translate({ -delta.x - 2.0f, 0.0f });
+						obj->Translate({ -delta.x, 0.0f });
 						break;
 					}
 				}
@@ -286,12 +286,12 @@ void Physics::PhysicsEngine::CheckOverlapping(PhysicObject2D* obj)
 					// Выталкнуть хитбокс вверх
 					if (delta.x > delta.y)
 					{
-						obj->Translate({ 0.0f, -delta.y - 2.0f });
+						obj->Translate({ 0.0f, -delta.y });
 						break;
 					}
 					else if (delta.x < delta.y) // Выталкнуть хитбокс вправо
 					{
-						obj->Translate({ delta.x + 2.0f, 0.0f });
+						obj->Translate({ delta.x, 0.0f });
 						break;
 					}
 				}
