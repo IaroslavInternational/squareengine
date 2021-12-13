@@ -32,6 +32,7 @@ struct PersonData
 
 class GUISystem
 {
+	typedef Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ImageResource;	// Объявление нового типа для простоты применения
 public:
 	GUISystem(Scene* scene);	// Конструктор (принимает указатель на сцену)
 public:
@@ -66,6 +67,7 @@ private:
 	void ShowOptionalPanel();													// Дополнительная панель
 	void ShowMouseHelperPanel(std::string info);								// Панель под курсором
 	void DisableSides();														// Отключить боковые панели
+	void ShowGameMenu();
 
 	/****************************************/
 private: 
@@ -168,6 +170,7 @@ private:
 	bool ShowHardwareInfo 			  =	true;	// Видимость FPS и информации о графическом адаптере
 	bool ShowFPSChart 				  =	false;	// Видимость графика изменения FPS
 	bool ShowScriptsSettings		  = false;	// Видимость панели настроек скриптов
+	bool ShowGameControl			  = true;	// Видимость панели настроек игры
 
 	/********************************/
 private:
@@ -205,15 +208,17 @@ private:
 private:
 	/* Общие переменные для работы с интерфейсом */
 
-	bool			  DrawingHitBox		= false;	// Статус отрисовки хитбокса
-	bool			  DrawingLine		= false;	// Статус отрисовки линии
-	bool			  SavingSettings    = false;	// Статус сохранения настроек
-	bool			  CreatingScript    = false;	// Статус создания скрипта
-	bool			  SettedFirstPoint  = false;	// Статус установки первой точки изменяемого объекта
-	bool			  SettedSecondPoint = false;	// Статус установки второй точки изменяемого объекта
-	DirectX::XMFLOAT2 firstPoint  = {0.0f, 0.0f};	// Координаты первой точки изменяемого объекта
-	DirectX::XMFLOAT2 secondPoint = {0.0f, 0.0f};	// Координаты второй точки изменяемого объекта
-	float			  chromaColor[3];				// Цвет хромакея, выбранного в диалоговом окне 
+	bool			  DrawingHitBox		= false;		// Статус отрисовки хитбокса
+	bool			  DrawingLine		= false;		// Статус отрисовки линии
+	bool			  SavingSettings    = false;		// Статус сохранения настроек
+	bool			  CreatingScript    = false;		// Статус создания скрипта
+	bool			  SettedFirstPoint  = false;		// Статус установки первой точки изменяемого объекта
+	bool			  SettedSecondPoint = false;		// Статус установки второй точки изменяемого объекта
+	DirectX::XMFLOAT2 firstPoint		= {0.0f, 0.0f};	// Координаты первой точки изменяемого объекта
+	DirectX::XMFLOAT2 secondPoint		= {0.0f, 0.0f};	// Координаты второй точки изменяемого объекта
+	float			  chromaColor[3];					// Цвет хромакея, выбранного в диалоговом окне 
+	ImageResource	  playIco			= NULL;			// Иконка "Play"
+	ImageResource	  pauseIco			= NULL;			// Иконка "Pause"
 
 	/*********************************************/
 private:
@@ -266,14 +271,12 @@ private:
 private:
 	/* Вспомагательные переменные для работы с объектом (база - Object2D) */
 	
-	typedef Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ImageResource;	// Объявления нового типа для простоты применения
-
 	int           sprite_width  = 0;		// Ширина спрайта
 	int           sprite_height = 0;		// Высота спрайта
 	bool          LoadingSprite = false;	// Статус загрузки спрайта
 	bool          LoadedPreview = false;	// Статус загрузки превью спрайта
 	float         scaleObj      = 1.0f;		// Множитель размера превью спрайта
-	ImageResource loadedSprite  = NULL;		// Спрайт для внутренних операций в интерфейсе
+	ImageResource loadedSprite  = NULL;		// Спрайт для внутренних операций в интерфейсе	
 
 	/***********************************************************/
 private:

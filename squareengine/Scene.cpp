@@ -94,12 +94,12 @@ void Scene::ProcessInput(float dt)
 	world.persons.Process(dt);
 
 	// ¬тора€ проверка физики лишн€€ ?
-	phEngine->CheckCollision(&world.hero);
+	/*phEngine->CheckCollision(&world.hero);
 
 	for (size_t i = 0; i < world.persons.GetSize(); i++)
 	{
 		phEngine->CheckCollision(world.persons.Get(i).get());
-	}
+	}*/
 
 	fs.ProcessFight();
 }

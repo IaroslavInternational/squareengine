@@ -66,6 +66,18 @@ GUISystem::GUISystem(Scene* scene)
 	animationNames.push_back("Покой вверх");
 	animationNames.push_back("Покой вниз");
 	AddLog("Установка выполнена\n");
+	
+	AddLog("Загрузка ассетов интерфейса...\n");
+	int x = 30;
+	int y = 30;
+
+	bool ret = wnd->Gfx().LoadTextureFromFile("Icons\\play.png", playIco.GetAddressOf(), &x, &y);
+	IM_ASSERT(ret);
+
+	ret = wnd->Gfx().LoadTextureFromFile("Icons\\pause.png", pauseIco.GetAddressOf(), &x, &y);
+	IM_ASSERT(ret);
+
+	AddLog("Загрузка выполнена\n");
 }
 
 /* Главные методы для отрисовки интерфейса */
@@ -645,7 +657,14 @@ void GUISystem::ShowOptionalPanel()
 
 	if (ShowTriggerInfoSettings)
 	{
+		SetPanelSizeAndPosition(0, 0.25f, 0.65f, 0.375f, 0.1625f);
 		ShowTriggerInfoControl();
+	}
+
+	if (ShowGameControl)
+	{
+		SetPanelSizeAndPosition(0, 0.6f, 0.07f, 0.2f);
+		ShowGameMenu();
 	}
 
 	if (mouseHelpInfo == "")
@@ -701,6 +720,52 @@ void GUISystem::DisableSides()
 	ShowFPSChart = false;
 	ShowIobjEnum = false;
 	ShowIobjSettings = false;
+}
+
+void GUISystem::ShowGameMenu()
+{
+	if (ImGui::Begin("Игра", NULL,
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | 
+		ImGuiWindowFlags_NoNav    | ImGuiWindowFlags_NoMove     | ImGuiWindowFlags_NoTitleBar))
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.00f, 0.00f, 0.00f, 0.0f));
+		if (ImGui::ImageButton(playIco.Get(), {30.0f, 30.0f}))
+		{
+			AddLog("Запуск игрового цикла\n");
+			
+			persons->IsScriptsRunning = true;
+
+			if (wnd->CursorEnabled())
+			{
+				wnd->DisableCursor();
+				wnd->mouse.EnableRaw();
+			}
+
+			camera->noclip = false;
+		}
+		ImGui::PopStyleColor();
+
+		ImGui::SameLine();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.00f, 0.00f, 0.00f, 0.0f));
+		if (ImGui::ImageButton(pauseIco.Get(), { 30.0f, 30.0f }))
+		{
+			AddLog("Остановка игрового цикла\n");
+
+			persons->IsScriptsRunning = false;
+
+			if (!wnd->CursorEnabled())
+			{
+				wnd->EnableCursor();
+				wnd->mouse.DisableRaw();
+			}
+
+			camera->noclip = true;
+		}
+		ImGui::PopStyleColor();
+	}
+
+	ImGui::End();
 }
 
 /****************************************/
