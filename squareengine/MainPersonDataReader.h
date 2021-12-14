@@ -31,4 +31,6 @@ public:
 	Color			  key;
 	float			  health;
 	float			  damage;
+	int				  j_h;
+	int				  gravity;
 };

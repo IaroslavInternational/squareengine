@@ -17,6 +17,8 @@ public:
 		   size_t        layer,		   std::string		   pathToSprite, 
 		   Color		 key,		   HitBox			   hitbox,
 		   AnimationData aData,		   std::string		   scriptPath,
+		   int			 jumpHeight		= 12,
+		   int			 gravity		= 300,
 		   float		 speed 			= 1.0f, 
 		   float		 effectDuration	= 0.045f, 
 		   float		 effectTime 	= 0.0f, 

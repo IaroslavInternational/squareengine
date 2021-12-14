@@ -102,6 +102,13 @@ MainPersonDataReader::MainPersonDataReader(std::string dataPath)
 			damage = obj.at("dmg");
 			
 			/*****************************/
+
+			/* Получение настройки физики */
+
+			j_h		= obj.at("j-h");
+			gravity = obj.at("gravity");
+
+			/*****************************/
 		}
 	}
 }

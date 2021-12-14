@@ -107,9 +107,16 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 				/*****************************/
 
+				/* Получение настройки физики */
+
+				float j_h	  = obj.at("j-h");
+				float gravity = obj.at("gravity");
+
+				/*****************************/
+
 				/* Инициализация объекта */
 
-				Add(std::make_unique<Person>(name, position, health, damage, layer, pathToSprite, key, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, speed, eff_d, eff_t, eff_a));
+				Add(std::make_unique<Person>(name, position, health, damage, layer, pathToSprite, key, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, j_h, gravity, speed, eff_d, eff_t, eff_a));
 
 				/*************************/
 			}
