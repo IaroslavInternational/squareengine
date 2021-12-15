@@ -11,7 +11,8 @@ Scene::Scene(std::string							 name,
 	sdr(scData), 
 	world("Assets/Images/map.bmp", sdr.GetMainPersonDataPath(), sdr.GetPersonContainerPath(), sdr.GetInteractableObjectsDataPath(), sdr.GetTriggerContainerDataPath(), wnd, camera),
 	camera(std::make_shared<Camera>(&world, &world.hero, phEngine, sdr.GetCameraDataPath())),
-	fs(wnd)
+	fs(wnd),
+	test("Assets/Images/link90x90.png")
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
 	camera->Init();

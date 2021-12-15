@@ -2,67 +2,88 @@
 #include "EngineWin.h"
 #include <cassert>
 #include <fstream>
+#include <png++/image.hpp>
+#include <png++/rgb_pixel.hpp>
 
 Surface2D::Surface2D( std::string filename )
 	:
 	filename(filename)
 {
-	std::ifstream file( filename,std::ios::binary );
-	assert( file );
-
-	BITMAPFILEHEADER bmFileHeader;
-	file.read( reinterpret_cast<char*>(&bmFileHeader),sizeof( bmFileHeader ) );
-
-	BITMAPINFOHEADER bmInfoHeader;
-	file.read( reinterpret_cast<char*>(&bmInfoHeader),sizeof( bmInfoHeader ) );
-
-	assert( bmInfoHeader.biBitCount == 24 || bmInfoHeader.biBitCount == 32 );
-	assert( bmInfoHeader.biCompression == BI_RGB );
-
-	const bool is32b = bmInfoHeader.biBitCount == 32;
-
-	width = bmInfoHeader.biWidth;
-
-	// test for reverse row order and control
-	// y loop accordingly
-	int yStart;
-	int yEnd;
-	int dy;
-	if( bmInfoHeader.biHeight < 0 )
+	if (filename.contains(".bmp"))
 	{
-		height = -bmInfoHeader.biHeight;
-		yStart = 0;
-		yEnd = height;
-		dy = 1;
-	}
-	else
-	{
-		height = bmInfoHeader.biHeight;
-		yStart = height - 1;
-		yEnd = -1;
-		dy = -1;
-	}
-	
-	pPixels = new Color[width*height];
+		std::ifstream file(filename, std::ios::binary);
+		assert(file);
 
-	file.seekg( bmFileHeader.bfOffBits );
-	// padding is for the case of of 24 bit depth only
-	const int padding = (4 - (width * 3) % 4) % 4;
+		BITMAPFILEHEADER bmFileHeader;
+		file.read(reinterpret_cast<char*>(&bmFileHeader), sizeof(bmFileHeader));
 
-	for( int y = yStart; y != yEnd; y += dy )
-	{
-		for( int x = 0; x < width; x++ )
+		BITMAPINFOHEADER bmInfoHeader;
+		file.read(reinterpret_cast<char*>(&bmInfoHeader), sizeof(bmInfoHeader));
+
+		assert(bmInfoHeader.biBitCount == 24 || bmInfoHeader.biBitCount == 32);
+		assert(bmInfoHeader.biCompression == BI_RGB);
+
+		const bool is32b = bmInfoHeader.biBitCount == 32;
+
+		width = bmInfoHeader.biWidth;
+
+		// test for reverse row order and control
+		// y loop accordingly
+		int yStart;
+		int yEnd;
+		int dy;
+		if (bmInfoHeader.biHeight < 0)
 		{
-			PutPixel( x,y,Color( file.get(),file.get(),file.get() ) );
-			if( is32b )
+			height = -bmInfoHeader.biHeight;
+			yStart = 0;
+			yEnd = height;
+			dy = 1;
+		}
+		else
+		{
+			height = bmInfoHeader.biHeight;
+			yStart = height - 1;
+			yEnd = -1;
+			dy = -1;
+		}
+
+		pPixels = new Color[width * height];
+
+		file.seekg(bmFileHeader.bfOffBits);
+		// padding is for the case of of 24 bit depth only
+		const int padding = (4 - (width * 3) % 4) % 4;
+
+		for (int y = yStart; y != yEnd; y += dy)
+		{
+			for (int x = 0; x < width; x++)
 			{
-				file.seekg( 1,std::ios::cur );
+				PutPixel(x, y, Color(file.get(), file.get(), file.get()));
+				if (is32b)
+				{
+					file.seekg(1, std::ios::cur);
+				}
+			}
+			if (!is32b)
+			{
+				file.seekg(padding, std::ios::cur);
 			}
 		}
-		if( !is32b )
-		{
-			file.seekg( padding,std::ios::cur );
-		}
+	}
+	else if (filename.contains(".png"))
+	{
+		const std::string path = filename;
+		png::image< png::basic_rgb_pixel <unsigned char> > pic(path);
+		auto pixel = pic.get_pixel(35, 35);
+		auto pixelp = &pixel;
+		
+		//auto r = (int)pic[35][35].red 
+		//auto g = pixel.red;
+		//auto b = pixelp;
+
+		//pic.read(path);
+
+		//std::cout << "value=" << (int)pic[10][10].red << std::endl; //nothing
+		//pic.write("picOutput.png");  //same picture
 	}
 }
 
