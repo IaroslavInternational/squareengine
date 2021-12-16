@@ -2,14 +2,12 @@
 #include "EngineWin.h"
 #include <cassert>
 #include <fstream>
-#include <png++/image.hpp>
-#include <png++/rgb_pixel.hpp>
 
 Surface2D::Surface2D( std::string filename )
 	:
 	filename(filename)
 {
-	if (filename.contains(".bmp"))
+	if (filename.find(".bmp") != filename.npos)
 	{
 		std::ifstream file(filename, std::ios::binary);
 		assert(file);
@@ -69,12 +67,12 @@ Surface2D::Surface2D( std::string filename )
 			}
 		}
 	}
-	else if (filename.contains(".png"))
+	else if (filename.find(".png") != filename.npos)
 	{
-		const std::string path = filename;
-		png::image< png::basic_rgb_pixel <unsigned char> > pic(path);
-		auto pixel = pic.get_pixel(35, 35);
-		auto pixelp = &pixel;
+		//const std::string path = filename;
+		//png::image< png::basic_rgb_pixel <unsigned char> > pic(path);
+		//auto pixel = pic.get_pixel(35, 35);
+		//auto pixelp = &pixel;
 		
 		//auto r = (int)pic[35][35].red 
 		//auto g = pixel.red;
