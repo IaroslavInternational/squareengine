@@ -8,6 +8,7 @@ Object2D::Object2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, s
 	image(pathToimage),
 	chromaKey(key)
 {
+	chromaKey.SetA(255);
 }
 
 /* Главные методы для описания объекта */

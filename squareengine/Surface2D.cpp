@@ -57,7 +57,7 @@ Surface2D::Surface2D( std::string filename )
 		{
 			for (int x = 0; x < width; x++)
 			{
-				PutPixel(x, y, Color(file.get(), file.get(), file.get()));
+				PutPixel(x, y, Color(255, file.get(), file.get(), file.get()));
 				if (is32b)
 				{
 					file.seekg(1, std::ios::cur);
@@ -71,19 +71,27 @@ Surface2D::Surface2D( std::string filename )
 	}
 	else if (filename.find(".png") != filename.npos)
 	{
-		const std::string path = filename;
-		png::image< png::basic_rgba_pixel <unsigned char> > pic(path);
-		auto pixel = pic.get_pixel(40, 17);
-		auto pixelp = &pixel;
+		// Изображение
+		png::image<png::basic_rgba_pixel<unsigned char>> pic(filename);
 		
-		//auto r = (int)pic[35][35].red 
-		//auto g = pixel.red;
-		//auto b = pixelp;
+		// Получить ширину		
+		width = pic.get_width();
 
-		//pic.read(path);
+		// Получить высоту
+		height = pic.get_height();
 
-		//std::cout << "value=" << (int)pic[10][10].red << std::endl; //nothing
-		//pic.write("picOutput.png");  //same picture
+		// Создать массив
+		pPixels = new Color[width * height];
+
+		// Заполнить массив
+		for (size_t i = 0; i < height; i++)
+		{
+			for (size_t j = 0; j < width; j++)
+			{
+				auto pixel = pic.get_pixel(j, i);
+				PutPixel(j, i, Color(pixel.alpha, pixel.red, pixel.green, pixel.blue));
+			}
+		}
 	}
 }
 

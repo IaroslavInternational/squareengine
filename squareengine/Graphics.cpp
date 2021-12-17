@@ -554,7 +554,8 @@ void Graphics::DrawSpriteNonChroma(int x, int y, RectI srcRect, const RectI& cli
 	{
 		for (int sx = srcRect.left; sx < srcRect.right; sx++)
 		{
-			PutPixel(x + sx - srcRect.left, y + sy - srcRect.top, s.GetPixel(sx, sy));
+			if(s.GetPixel(sx, sy).GetA() != 0)
+				PutPixel(x + sx - srcRect.left, y + sy - srcRect.top, s.GetPixel(sx, sy));
 		}
 	}
 }

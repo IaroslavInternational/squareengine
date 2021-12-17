@@ -12,7 +12,7 @@ Scene::Scene(std::string							 name,
 	world("Assets/Images/map.bmp", sdr.GetMainPersonDataPath(), sdr.GetPersonContainerPath(), sdr.GetInteractableObjectsDataPath(), sdr.GetTriggerContainerDataPath(), wnd, camera),
 	camera(std::make_shared<Camera>(&world, &world.hero, phEngine, sdr.GetCameraDataPath())),
 	fs(wnd),
-	test("Assets/Images/link90x90.png")
+	test("Assets/Images/Beg-spr.png")
 {
 	phEngine->LoadData(sdr.GetPhysicsDataPath());
 	camera->Init();
@@ -109,10 +109,10 @@ void Scene::Render(float dt)
 {
 	/* Отрисовка */
 
-	world.Draw(wnd->Gfx());
+	//world.Draw(wnd->Gfx());
 	world.objQueue.Draw(wnd->Gfx());	
 	world.triggers.Draw(wnd->Gfx());
-	
+	wnd->Gfx().DrawSpriteNonChroma(500, 300, test);
 	fs.DrawDebug();
 
 	/*************/

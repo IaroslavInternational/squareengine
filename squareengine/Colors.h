@@ -87,15 +87,21 @@ namespace Colors
 	{
 		return (r << 16) | (g << 8) | b;
 	}
-	static constexpr Color White = MakeRGB( 255u,255u,255u );
-	static constexpr Color Black = MakeRGB( 0u,0u,0u );
-	static constexpr Color Gray = MakeRGB( 0x80u,0x80u,0x80u );
-	static constexpr Color LightGray = MakeRGB( 0xD3u,0xD3u,0xD3u );
-	static constexpr Color Red = MakeRGB( 255u,0u,0u );
-	static constexpr Color Green = MakeRGB( 0u,255u,0u );
-	static constexpr Color Blue = MakeRGB( 0u,0u,255u );
-	static constexpr Color Yellow = MakeRGB( 255u,255u,0u );
-	static constexpr Color Cyan = MakeRGB( 0u,255u,255u );
-	static constexpr Color Magenta = MakeRGB( 255u,0u,255u );
-	static constexpr Color DodgerBlue = MakeRGB( 36u,195u,238u );
+
+	static constexpr Color MakeRGBA(unsigned char a, unsigned char r, unsigned char g, unsigned char b)
+	{		
+		return Color(a, r, g, b);
+	}
+
+	static constexpr Color White =		MakeRGBA( 255u, 255u,255u,255u );
+	static constexpr Color Black =		MakeRGBA( 255u, 0u,0u,0u );
+	static constexpr Color Gray =		MakeRGBA( 255u, 0x80u,0x80u,0x80u );
+	static constexpr Color LightGray =  MakeRGBA( 255u, 0xD3u,0xD3u,0xD3u );
+	static constexpr Color Red =		MakeRGBA( 255u, 255u,0u,0u );
+	static constexpr Color Green =		MakeRGBA( 255u, 0u,255u,0u );
+	static constexpr Color Blue =		MakeRGBA( 255u, 0u,0u,255u );
+	static constexpr Color Yellow =		MakeRGBA( 255u, 255u,255u,0u );
+	static constexpr Color Cyan =		MakeRGBA( 255u, 0u,255u,255u );
+	static constexpr Color Magenta =	MakeRGBA( 255u, 255u,0u,255u );
+	static constexpr Color DodgerBlue = MakeRGBA( 255u, 36u,195u,238u );
 }
