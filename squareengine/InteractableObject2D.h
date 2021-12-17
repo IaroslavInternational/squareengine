@@ -23,7 +23,6 @@ public:
 	HitBox GetHitBox();
 private:
 	float  deep;
-	bool   chromaKeyAble;
 	bool   drawGhost = false;
 	bool   drawGhostable = false;
 	HitBox hitbox;

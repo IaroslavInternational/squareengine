@@ -962,7 +962,9 @@ void GUISystem::ShowPersonList(float dt)
 					hb_coord.z = optPdata.value().position.x + data.animPersonData[0].width;
 					hb_coord.w = optPdata.value().position.y + data.animPersonData[0].height;
 
-					persons->elements.push_back(std::make_unique<Person>(data.name, data.position, 100.0f, 10.0f, data.layer, data.pathToSprite, Color(255, 0, 255), HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0], ""));
+					bool chr_a = data.pathToSprite.find(".bmp") != data.pathToSprite.npos;
+
+					persons->elements.push_back(std::make_unique<Person>(data.name, data.position, 100.0f, 10.0f, data.layer, data.pathToSprite, Color(255, 255, 0, 255), chr_a, HitBox(data.name + std::string(" hitbox"), hb_coord), data.animPersonData[0], ""));
 					objQueue->queue.push_back(persons->elements.back().get());
 
 					using std::to_string;
@@ -1004,6 +1006,7 @@ void GUISystem::ShowPersonList(float dt)
 					newLine << "\"a-ps\" : "   << data.animPersonData[0].pStart  << ",";
 					newLine << "\"a-pe\" : "   << data.animPersonData[0].pEnd    << ",";
 					newLine << "\"chr-r\" : "  << 255							 << ",";
+					newLine << "\"chr-a\" : "  << chr_a							 << ",";
 					newLine << "\"chr-g\" : "  << 0								 << ",";
 					newLine << "\"chr-b\" : "  << 255							 << ",";
 					newLine << "\"dmg\" : "    << 10							 << ",";
@@ -2509,7 +2512,6 @@ void GUISystem::ShowIobjControl()
 								dcheck(ImGui::SliderFloat("Глубина", &Iobjects->elements.at(k)->deep, 1.0f, 100.0f, "%.3f"), deepDirty);
 
 								ImGui::Checkbox("Прозрачность", &Iobjects->elements.at(k)->drawGhostable);
-								ImGui::Checkbox("Хромакей", &Iobjects->elements.at(k)->chromaKeyAble);
 
 								ImGui::Separator();
 							}
@@ -3739,6 +3741,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 
 	bool posDirty = false; // Контроль позиции
 	bool scaleDirty = false; // Контроль позиции
+	bool chDirty = false; // Контроль хромакея
 
 	const auto dcheck = [](bool d, bool& carry) { carry = carry || d; }; // Выражение
 
@@ -3796,6 +3799,7 @@ void GUISystem::SpawnDefaultObject2DControl(Object2D* obj, std::string dataPath)
 		ImGui::Separator();	// Разделитель
 
 		ImGui::ColorEdit3("Цвет", chromaColor);
+		dcheck(ImGui::Checkbox("Показать", &obj->chromaKeyAble), chDirty);
 
 		if (ImGui::Button("Применить", ImVec2(100, 20)))
 		{
@@ -4701,7 +4705,7 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 		{
 			for (fs::directory_iterator it(dir), end; it != end; ++it)
 			{
-				if (it->path().extension() == ".bmp")
+				if (it->path().extension() == ".bmp" || it->path().extension() == ".png")
 				{
 					if (col_counter == 1)
 					{
@@ -4716,8 +4720,16 @@ std::string GUISystem::ShowLoadingSpriteDilaog()
 
 					ImGui::TableNextColumn();
 
-					bool ret = wnd->Gfx().LoadTextureFromFile("Icons/bmp_icon.bmp", loadedSprite.GetAddressOf(), &sprite_width, &sprite_height);
-					IM_ASSERT(ret);
+					if (it->path().extension() == ".bmp")
+					{
+						bool ret = wnd->Gfx().LoadTextureFromFile("Icons/bmp_icon.bmp", loadedSprite.GetAddressOf(), &sprite_width, &sprite_height);
+						IM_ASSERT(ret);
+					}
+					else
+					{
+						bool ret = wnd->Gfx().LoadTextureFromFile("Icons/png_icon.png", loadedSprite.GetAddressOf(), &sprite_width, &sprite_height);
+						IM_ASSERT(ret);
+					}
 
 					ImGui::Image((void*)loadedSprite.Get(), ImVec2((float)sprite_width, (float)sprite_height));
 
@@ -5157,6 +5169,13 @@ void GUISystem::SaveObject2D(Object2D& obj, const std::string& dataPath)
 		&applog
 		);
 
+	EngineFunctions::SetNewValue<bool>(
+		obj.name,
+		"chr-a", obj.chromaKeyAble,
+		dataPath,
+		&applog
+		);
+
 	EngineFunctions::SaveColorData(obj.name, obj.chromaKey, dataPath);
 }
 
@@ -5358,13 +5377,6 @@ void GUISystem::SaveIobjData(InteractableObject2D& Iobj)
 	EngineFunctions::SetNewValue<bool>(
 		Iobj.name,
 		"g-able", Iobj.drawGhostable,
-		Iobjects->dataPath,
-		&applog
-		);
-
-	EngineFunctions::SetNewValue<bool>(
-		Iobj.name,
-		"chr-a", Iobj.chromaKeyAble,
 		Iobjects->dataPath,
 		&applog
 		);

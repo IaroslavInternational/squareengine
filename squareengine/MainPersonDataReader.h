@@ -29,6 +29,7 @@ public:
 	int				  anim_fa;
 	float			  anim_ft;
 	Color			  key;
+	bool			  chr_a;
 	float			  health;
 	float			  damage;
 	int				  j_h;

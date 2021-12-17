@@ -6,13 +6,14 @@
 
 Person::Person(std::string	 name,			  DirectX::XMFLOAT2 position,
 			   float		 health,		  float			    damage,   size_t layer,
-			   std::string	 pathToSprite,	  Color key,				  HitBox hitbox,
+			   std::string	 pathToSprite,	  Color key,				  bool chromaKeyAble,
+			   HitBox		 hitbox,
 			   AnimationData aData,			  std::string       scriptPath,
 			   int			 jumpHeight,      int				gravity,
 			   float	     speed,			  float				effectDuration,
 			   float	     effectTime,	  bool			    effectActive)
 	:
-	AliveObject2D(name, position, health, damage, hitbox, layer, pathToSprite, key, speed, jumpHeight, gravity),
+	AliveObject2D(name, position, health, damage, hitbox, layer, pathToSprite, key, chromaKeyAble, speed, jumpHeight, gravity),
 	holdTime(aData.ft),
 	scriptPath(scriptPath)
 {
@@ -62,7 +63,14 @@ void Person::Draw(Graphics& gfx)
 	}
 	else
 	{
-		animations[(int)iCurSequence].Draw(DirectX::XMFLOAT2({ position.x - dx, position.y - dy}), gfx);
+		if (chromaKeyAble)
+		{
+			animations[(int)iCurSequence].Draw(DirectX::XMFLOAT2({ position.x - dx, position.y - dy }), gfx);
+		}
+		else
+		{
+			animations[(int)iCurSequence].DrawNonChroma(DirectX::XMFLOAT2({ position.x - dx, position.y - dy }), gfx);
+		}
 	}
 
 	if (hitbox.IsVisible())

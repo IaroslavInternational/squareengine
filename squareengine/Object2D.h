@@ -18,7 +18,7 @@ public:
 	// Конструктор объекта требует следующие поля:
 	// name - имя объекта
 	// position - позиция объекта
-	Object2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite, Color key);
+	Object2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite, Color key, bool chromaKeyAble);
 	virtual ~Object2D() {};
 public:
 	/* Главные методы для описания объекта */
@@ -44,6 +44,7 @@ protected:
 	size_t			  layer;	 // Номер слоя
 	Surface2D		  image;	 // Плоскость изображения спрайта
 	Color			  chromaKey; // Цвет хромокея
+	bool			  chromaKeyAble;
 
 	/*******************************/
 };

@@ -26,6 +26,16 @@ void Animation::Draw(DirectX::XMFLOAT2 coordinates,Graphics& gfx,const RectI& cl
 	gfx.DrawSprite(coordinates.x, coordinates.y,frames[iCurFrame],clip,sprite,chroma );
 }
 
+void Animation::DrawNonChroma(DirectX::XMFLOAT2 coordinates, Graphics& gfx) const
+{
+	gfx.DrawSpriteNonChroma(coordinates.x, coordinates.y, frames[iCurFrame], sprite);
+}
+
+void Animation::DrawNonChroma(DirectX::XMFLOAT2 coordinates, Graphics& gfx, const RectI& clip) const
+{
+	gfx.DrawSpriteNonChroma(coordinates.x, coordinates.y, frames[iCurFrame], clip, sprite);
+}
+
 void Animation::DrawColor(DirectX::XMFLOAT2 coordinates,Graphics& gfx,Color c ) const
 {
 	gfx.DrawSpriteSubstitute(coordinates.x, coordinates.y,c,frames[iCurFrame],sprite,chroma );

@@ -47,6 +47,7 @@ PersonContainer::PersonContainer(std::string dataPath)
 				size_t key_r = obj.at("chr-r");
 				size_t key_g = obj.at("chr-g");
 				size_t key_b = obj.at("chr-b");
+				bool   chr_a = obj.at("chr-a");
 
 				Color key(key_r, key_g, key_b);
 
@@ -116,7 +117,7 @@ PersonContainer::PersonContainer(std::string dataPath)
 
 				/* Инициализация объекта */
 
-				Add(std::make_unique<Person>(name, position, health, damage, layer, pathToSprite, key, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, j_h, gravity, speed, eff_d, eff_t, eff_a));
+				Add(std::make_unique<Person>(name, position, health, damage, layer, pathToSprite, key, chr_a, HitBox(name + std::string(" hitbox"), hb_coord), aData, scriptPath, j_h, gravity, speed, eff_d, eff_t, eff_a));
 
 				/*************************/
 			}

@@ -28,7 +28,8 @@
       "dmg": 10.0,
       "a-oft": 50.0,
       "j-h": 12,
-      "gravity": 300
+      "gravity": 300,
+      "chr-a": true
     }
   ],
   "raymond": [
@@ -40,6 +41,7 @@
       "a-pe": 90,
       "a-ps": 90,
       "eff-a": false,
+      "chr-a": true,
       "eff-d": 0.04500000178813934,
       "eff-t": 0.0,
       "hb-ltx": 524.0,

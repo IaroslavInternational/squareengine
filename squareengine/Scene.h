@@ -48,5 +48,4 @@ private:
 	/******************************/
 private:
 	Map world;
-	Surface2D test;
 };

@@ -1,12 +1,13 @@
 #include "Object2D.h"
 
-Object2D::Object2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToimage, Color key)
+Object2D::Object2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToimage, Color key, bool chromaKeyAble)
 	:
 	name(name),
 	position(position),
 	layer(layer),
 	image(pathToimage),
-	chromaKey(key)
+	chromaKey(key),
+	chromaKeyAble(chromaKeyAble)
 {
 	chromaKey.SetA(255);
 }

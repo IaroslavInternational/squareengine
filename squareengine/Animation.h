@@ -13,6 +13,9 @@ public:
 	Animation( int x,int y,int width,int height,int count,Surface2D& sprite,float holdTime, std::string name, Color chroma = Colors::Magenta);
 	void Draw(DirectX::XMFLOAT2 coordinates,Graphics& gfx ) const;
 	void Draw(DirectX::XMFLOAT2 coordinates,Graphics& gfx,const RectI& clip ) const;
+	void DrawNonChroma(DirectX::XMFLOAT2 coordinates, Graphics& gfx) const;
+	void DrawNonChroma(DirectX::XMFLOAT2 coordinates, Graphics& gfx, const RectI& clip) const;
+
 	// this version of draw replaces all opaque pixels with specified color
 	void DrawColor( DirectX::XMFLOAT2 coordinates,Graphics& gfx,Color c ) const;
 	void Update( float dt );

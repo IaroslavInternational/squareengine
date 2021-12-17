@@ -3,8 +3,7 @@
 InteractableObject2D::InteractableObject2D(std::string name, DirectX::XMFLOAT2 position, size_t layer, std::string pathToSprite, 
 										   Color key, bool chromaKeyAble, HitBox hitbox, float gDeep, bool gAble)
 	:
-	Object2D(name, position, layer, pathToSprite, key),
-	chromaKeyAble(chromaKeyAble),
+	Object2D(name, position, layer, pathToSprite, key, chromaKeyAble),
 	deep(gDeep),
 	drawGhostable(gAble),
 	hitbox(hitbox)

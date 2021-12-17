@@ -1,9 +1,9 @@
 #include "PhysicObject2D.h"
 
 PhysicObject2D::PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, HitBox	hitbox, size_t layer, std::string pathToSprite,
-							   Color key, float speed, int jump_height, float gravity)
+							   Color key, bool chromaKeyAble, float speed, int jump_height, float gravity)
 	:
-	Object2D(name, position, layer, pathToSprite, key),
+	Object2D(name, position, layer, pathToSprite, key, chromaKeyAble),
 	jump_height(jump_height),
 	jump_count(jump_height),
 	gravity(gravity),

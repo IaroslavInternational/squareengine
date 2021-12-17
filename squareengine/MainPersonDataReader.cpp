@@ -45,6 +45,7 @@ MainPersonDataReader::MainPersonDataReader(std::string dataPath)
 			size_t key_r = obj.at("chr-r");
 			size_t key_g = obj.at("chr-g");
 			size_t key_b = obj.at("chr-b");
+			chr_a		 = obj.at("chr-a");
 
 			key = Color(key_r, key_g, key_b);
 

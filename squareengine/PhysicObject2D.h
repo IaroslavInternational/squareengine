@@ -9,7 +9,7 @@ public:
 	friend class GUISystem;
 public:
 	PhysicObject2D(std::string name, DirectX::XMFLOAT2 position, HitBox	hitbox, size_t layer, std::string pathToSprite,
-				   Color key, float speed, int jump_height, float gravity);
+				   Color key, bool chromaKeyAble, float speed, int jump_height, float gravity);
 public:
 	void AllowMoveUp();
 	void AllowMoveDown();
