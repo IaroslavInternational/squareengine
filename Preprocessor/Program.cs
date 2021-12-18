@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
+//using System.Drawing.Drawing2D;
+//using System.Drawing.Imaging;
 using System.Windows;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
+using LazZiya.ImageResize;
 
 namespace Preprocessor
 {
@@ -22,7 +23,7 @@ namespace Preprocessor
             public double koef_w;
             public double koef_h;
         };
-
+        /*
         private static Bitmap ResizeImage(Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
@@ -47,7 +48,7 @@ namespace Preprocessor
 
             return destImage;
         }
-        
+        */
         private static Resolution GetResolution(string path)
         {
             Console.WriteLine("Получение разрешения...");
@@ -211,6 +212,8 @@ namespace Preprocessor
 
                 Console.WriteLine("-> Обработка...");
 
+                /*
+                Способ 1
                 foreach (var asset in assets)
                 {
                     Console.WriteLine("\n************Ассет************\n");
@@ -265,6 +268,34 @@ namespace Preprocessor
                     Console.WriteLine("-> Ассет сохранён и масштабирован.");
 
                     Console.WriteLine("\n*****************************");
+                }
+                */
+
+                foreach (var asset in assets)
+                {
+                    Image img = Image.FromFile(asset);
+                    Bitmap bitmap;
+
+                    int nWidth;
+                    int nHeight;
+
+                    if (img.Width == img.Height)
+                    {
+                        nWidth = (int)Math.Ceiling((img.Width * resolutionData.koef_w));
+                        nHeight = nWidth;
+                    }
+                    else
+                    {
+                        nWidth = (int)Math.Ceiling((img.Width * resolutionData.koef_w));
+                        nHeight = (int)Math.Ceiling((img.Height * resolutionData.koef_h));
+                    }
+
+                    bitmap = (Bitmap)img.Scale(nWidth, nHeight);
+                    
+                    img.Dispose();
+                    File.Delete(asset);
+
+                    bitmap.SaveAs(asset, 100);
                 }
 
                 Console.WriteLine("Запуск...");
